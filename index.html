@@ -56,9 +56,17 @@
             --harp-secondary: #FBBF24;
             --harp-glow: rgba(251, 191, 36, 0.4);
         }
+        
+        /* Chuyển màu mượt mà */
         .harp-path { transition: stroke 1s ease-in-out, fill 1s ease-in-out; }
         #harp-glow { transition: background-color 1s ease-in-out; background-color: var(--harp-glow); }
 
+        /* Các class CSS chuyên dụng trị lỗi không nhận màu của Chrome Desktop */
+        .harp-stroke-primary { stroke: var(--harp-primary); }
+        .harp-stroke-secondary { stroke: var(--harp-secondary); }
+        .harp-fill-secondary { fill: var(--harp-secondary); }
+
+        /* Khai báo màu cho từng Rank */
         /* 0: Khởi đầu (Mộc) */
         .rank-wood { --harp-primary: #D97706; --harp-secondary: #FBBF24; --harp-glow: rgba(217, 119, 6, 0.3); }
         /* 15: Màu Đồng */
@@ -215,24 +223,24 @@
                     </div>
 
                     <div class="flex flex-col items-center justify-center relative w-full">
-                        <!-- CHUYỂN CLASS RANK VÀO THẺ WRAPPER (HỘP CHỨA) NÀY ĐỂ MÀU SẮC ĐƯỢC KẾ THỪA ĐỒNG BỘ -->
+                        <!-- Wrapper chứa danh hiệu, các thuộc tính CSS Variables sẽ được cấp phát từ class này -->
                         <div id="harp-wrapper" class="relative flex flex-col items-center justify-center h-56 w-56 mx-auto mb-2 rank-wood">
                             <!-- Hào quang phát sáng -->
                             <div id="harp-glow" class="absolute inset-0 rounded-full blur-3xl animate-pulse hidden"></div>
                             
-                            <!-- Đàn Hạc (SVG chính) -->
+                            <!-- Đàn Hạc (SVG chính) sử dụng class màu để render ổn định trên mọi nền tảng -->
                             <svg id="harp-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 150" class="w-44 h-44 relative z-10 transition-all duration-1000 scale-90 opacity-80">
-                                <path class="harp-path" d="M 25 45 C 25 100 15 130 40 140 L 80 140 C 105 130 95 100 95 45" fill="none" stroke="var(--harp-primary)" stroke-width="8" stroke-linecap="round" />
-                                <line class="harp-path" x1="12" y1="45" x2="108" y2="45" stroke="var(--harp-primary)" stroke-width="8" stroke-linecap="round" />
-                                <line class="harp-path" x1="40" y1="45" x2="40" y2="135" stroke="var(--harp-secondary)" stroke-width="2"/>
-                                <line class="harp-path" x1="60" y1="45" x2="60" y2="139" stroke="var(--harp-secondary)" stroke-width="2"/>
-                                <line class="harp-path" x1="80" y1="45" x2="80" y2="135" stroke="var(--harp-secondary)" stroke-width="2"/>
+                                <path class="harp-path harp-stroke-primary" d="M 25 45 C 25 100 15 130 40 140 L 80 140 C 105 130 95 100 95 45" fill="none" stroke-width="8" stroke-linecap="round" />
+                                <line class="harp-path harp-stroke-primary" x1="12" y1="45" x2="108" y2="45" stroke-width="8" stroke-linecap="round" />
+                                <line class="harp-path harp-stroke-secondary" x1="40" y1="45" x2="40" y2="135" stroke-width="2"/>
+                                <line class="harp-path harp-stroke-secondary" x1="60" y1="45" x2="60" y2="139" stroke-width="2"/>
+                                <line class="harp-path harp-stroke-secondary" x1="80" y1="45" x2="80" y2="135" stroke-width="2"/>
                                 
                                 <!-- Hiệu ứng lấp lánh (Sparkles) cho Rank cao -->
                                 <g id="harp-sparkles" class="opacity-0 transition-opacity duration-1000">
-                                    <path d="M 0 -10 L 2 -2 L 10 0 L 2 2 L 0 10 L -2 2 L -10 0 L -2 -2 Z" fill="var(--harp-secondary)" transform="translate(15, 25) scale(0.6)" class="animate-pulse" style="animation-duration: 1.5s" />
-                                    <path d="M 0 -10 L 2 -2 L 10 0 L 2 2 L 0 10 L -2 2 L -10 0 L -2 -2 Z" fill="var(--harp-secondary)" transform="translate(105, 35) scale(0.8)" class="animate-bounce" style="animation-duration: 2s" />
-                                    <path d="M 0 -10 L 2 -2 L 10 0 L 2 2 L 0 10 L -2 2 L -10 0 L -2 -2 Z" fill="var(--harp-secondary)" transform="translate(60, 140) scale(0.7)" class="animate-ping" style="animation-duration: 2.5s" />
+                                    <path d="M 0 -10 L 2 -2 L 10 0 L 2 2 L 0 10 L -2 2 L -10 0 L -2 -2 Z" class="harp-fill-secondary animate-pulse" transform="translate(15, 25) scale(0.6)" style="animation-duration: 1.5s" />
+                                    <path d="M 0 -10 L 2 -2 L 10 0 L 2 2 L 0 10 L -2 2 L -10 0 L -2 -2 Z" class="harp-fill-secondary animate-bounce" transform="translate(105, 35) scale(0.8)" style="animation-duration: 2s" />
+                                    <path d="M 0 -10 L 2 -2 L 10 0 L 2 2 L 0 10 L -2 2 L -10 0 L -2 -2 Z" class="harp-fill-secondary animate-ping" transform="translate(60, 140) scale(0.7)" style="animation-duration: 2.5s" />
                                     <path d="M 0 -10 L 2 -2 L 10 0 L 2 2 L 0 10 L -2 2 L -10 0 L -2 -2 Z" fill="#FFF" transform="translate(25, 110) scale(0.5)" class="animate-pulse" style="animation-duration: 1.2s" />
                                     <path d="M 0 -10 L 2 -2 L 10 0 L 2 2 L 0 10 L -2 2 L -10 0 L -2 -2 Z" fill="#FFF" transform="translate(95, 110) scale(0.6)" class="animate-pulse" style="animation-duration: 1.8s" />
                                 </g>
@@ -308,271 +316,4 @@
                         <span class="text-[10px] font-bold text-blue-500 uppercase block">Chuỗi</span>
                         <span id="tube-blue-text" class="text-xl font-black text-blue-600">0</span>
                     </div>
-                    <div class="w-full md:w-10 h-10 md:h-[380px] bg-slate-50 rounded-[24px] border-[4px] border-slate-200/80 glass-tube relative overflow-hidden flex items-center md:items-end justify-start md:justify-center">
-                        <div id="tube-blue-liquid" class="relative tube-liquid-blue transition-all duration-1000 ease-in-out flex items-center md:items-start justify-end md:justify-center" style="--fill-level: 6%;">
-                            <div class="wave-mask-v-1"></div>
-                            <div class="wave-mask-v-2"></div>
-                            <div class="wave-mask-h-1"></div>
-                            <div class="wave-mask-h-2"></div>
-                        </div>
-                        <div class="absolute inset-0 rounded-[20px] pointer-events-none glass-tube-overlay"></div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const API_URL = 'https://giuchuoitinhnguyen.onrender.com/api';
-        let userData = null;
-        let originalUserData = null; 
-        let authMode = 'login'; 
-        let isProcessing = false;
-        let isTestMode = false; 
-
-        // --- HỆ THỐNG DANH HIỆU TỰ ĐỘNG ---
-        const rankData = [
-            { id: 0, streak: 0, name: "Người Tìm Kiếm (Mộc)", class: "rank-wood", hasSparkle: false },
-            { id: 1, streak: 15, name: "Đồng Kiên Tâm", class: "rank-bronze", hasSparkle: false },
-            { id: 2, streak: 30, name: "Sắt Bền Bỉ", class: "rank-iron", hasSparkle: false },
-            { id: 3, streak: 45, name: "Vàng Vinh Hiển", class: "rank-gold", hasSparkle: false },
-            { id: 4, streak: 60, name: "Bạch Kim Tỏa Sáng", class: "rank-platinum", hasSparkle: true },
-            { id: 5, streak: 75, name: "Kim Cương Vĩnh Cửu", class: "rank-diamond", hasSparkle: true },
-            { id: 6, streak: 90, name: "Hồng Ngọc Quý Giá", class: "rank-ruby", hasSparkle: true }
-        ];
-
-        function getCurrentRankInfo(streak) {
-            let current = rankData[0];
-            for (let i = rankData.length - 1; i >= 0; i--) {
-                if (streak >= rankData[i].streak) return rankData[i];
-            }
-            return current;
-        }
-
-        function renderRanksModal(currentStreak) {
-            const container = document.getElementById('ranks-list-container');
-            let html = '';
-            rankData.forEach((r) => {
-                const isUnlocked = currentStreak >= r.streak;
-                html += `
-                    <div class="flex items-center gap-4 p-4 rounded-2xl ${isUnlocked ? 'bg-slate-50 border-amber-200 shadow-sm' : 'bg-slate-50 border-slate-200 opacity-60'} border relative overflow-hidden shrink-0">
-                        ${!isUnlocked ? `<div class="absolute inset-0 bg-slate-900/5 z-10 flex items-center justify-center backdrop-blur-[1px]"><span class="bg-white/90 text-xs font-bold px-3 py-1 rounded-full text-slate-500 shadow-sm">🔒 Đạt ${r.streak} chuỗi</span></div>` : ''}
-                        
-                        <div class="relative w-12 h-12 flex justify-center items-center">
-                            <svg viewBox="0 0 120 150" class="${r.class} w-12 h-12 relative z-10">
-                                <path class="harp-path" d="M 25 45 C 25 100 15 130 40 140 L 80 140 C 105 130 95 100 95 45" fill="none" stroke="var(--harp-primary)" stroke-width="8" stroke-linecap="round" />
-                                <line class="harp-path" x1="12" y1="45" x2="108" y2="45" stroke="var(--harp-primary)" stroke-width="8" />
-                                <line class="harp-path" x1="40" y1="45" x2="40" y2="135" stroke="var(--harp-secondary)" stroke-width="2"/>
-                                <line class="harp-path" x1="60" y1="45" x2="60" y2="139" stroke="var(--harp-secondary)" stroke-width="2"/>
-                                <line class="harp-path" x1="80" y1="45" x2="80" y2="135" stroke="var(--harp-secondary)" stroke-width="2"/>
-                            </svg>
-                        </div>
-                        
-                        <div>
-                            <h4 class="font-bold ${isUnlocked ? 'text-slate-800' : 'text-slate-500'}">${r.name}</h4>
-                            <p class="text-[11px] text-slate-500">Mốc: ${r.streak} ngày</p>
-                        </div>
-                    </div>
-                `;
-            });
-            container.innerHTML = html;
-        }
-
-        const bibleVerses = [
-            { text: "Lời Chúa là ngọn đèn cho chân tôi, ánh sáng cho đường lối tôi.", ref: "Thi Thiên 119:105" }
-        ];
-
-        // Mở/Đóng Modal Danh Hiệu
-        document.getElementById('btn-show-ranks').addEventListener('click', () => {
-            renderRanksModal(userData ? userData.currentStreak : 0); // Render lại để cập nhật khóa
-            document.getElementById('rank-modal').classList.remove('hidden');
-            setTimeout(() => {
-                document.getElementById('rank-modal').classList.add('opacity-100');
-                document.getElementById('rank-modal-content').classList.remove('scale-95');
-            }, 10);
-        });
-
-        document.getElementById('btn-close-rank').addEventListener('click', () => {
-            document.getElementById('rank-modal').classList.remove('opacity-100');
-            document.getElementById('rank-modal-content').classList.add('scale-95');
-            setTimeout(() => document.getElementById('rank-modal').classList.add('hidden'), 300);
-        });
-
-        // Xử lý Auth
-        document.getElementById('tab-login').addEventListener('click', () => { authMode = 'login'; document.getElementById('tab-login').className = "flex-1 pb-2 border-b-2 border-amber-500 text-amber-600 font-bold transition-all"; document.getElementById('tab-register').className = "flex-1 pb-2 border-b-2 border-transparent text-slate-400 font-bold"; document.getElementById('btn-auth-action').innerText = "Vào Ứng Dụng"; });
-        document.getElementById('tab-register').addEventListener('click', () => { authMode = 'register'; document.getElementById('tab-register').className = "flex-1 pb-2 border-b-2 border-amber-500 text-amber-600 font-bold transition-all"; document.getElementById('tab-login').className = "flex-1 pb-2 border-b-2 border-transparent text-slate-400 font-bold"; document.getElementById('btn-auth-action').innerText = "Đăng Ký Tài Khoản"; });
-        document.getElementById('btn-logout').addEventListener('click', () => location.reload());
-
-        document.getElementById('btn-auth-action').addEventListener('click', async () => {
-            const u = document.getElementById('auth-username').value.trim();
-            const p = document.getElementById('auth-password').value.trim();
-            if(!u || !p) return;
-            const btn = document.getElementById('btn-auth-action');
-            btn.innerText = "Đang kết nối..."; btn.disabled = true;
-            try {
-                const res = await fetch(`${API_URL}${authMode === 'register' ? '/register' : '/login'}`, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: u, password: p })
-                });
-                const data = await res.json();
-                if (data.success) { userData = data.user; enterApp(); } 
-                else { document.getElementById('auth-error').innerText = data.message; document.getElementById('auth-error').classList.remove('hidden'); }
-            } catch (err) { alert("Lỗi kết nối Server"); }
-            finally { btn.innerText = authMode === 'register' ? "Đăng Ký Tài Khoản" : "Vào Ứng Dụng"; btn.disabled = false; }
-        });
-
-        function enterApp() {
-            document.getElementById('auth-screen').classList.add('hidden');
-            document.getElementById('main-app').classList.remove('hidden');
-            document.getElementById('main-app').classList.add('flex');
-            updateUIFromData();
-        }
-
-        function updateUIFromData() {
-            if(!userData) return;
-            
-            if (isTestMode) document.getElementById('test-mode-badge').classList.remove('hidden');
-            else document.getElementById('test-mode-badge').classList.add('hidden');
-
-            document.getElementById('ui-username').innerText = userData.username;
-            document.getElementById('user-avatar-text').innerText = userData.username.charAt(0);
-            document.getElementById('ui-max-streak').innerText = userData.maxStreak;
-            document.getElementById('ui-lost-streaks').innerText = userData.lostStreaks;
-            document.getElementById('ui-total-points').innerText = userData.totalPoints;
-            document.getElementById('streak-count').innerText = userData.currentStreak;
-            
-            // --- CẬP NHẬT GIAO DIỆN THEO RANK ---
-            const currentRank = getCurrentRankInfo(userData.currentStreak);
-            const harpWrapper = document.getElementById('harp-wrapper');
-            const harpSvg = document.getElementById('harp-svg');
-            const sparkles = document.getElementById('harp-sparkles');
-            
-            // Xóa tất cả class rank cũ trên Wrapper, thêm class rank mới
-            harpWrapper.classList.remove('rank-wood', 'rank-bronze', 'rank-iron', 'rank-gold', 'rank-platinum', 'rank-diamond', 'rank-ruby');
-            harpWrapper.classList.add(currentRank.class);
-
-            document.getElementById('rank-name-display').innerText = `Danh hiệu: ${currentRank.name}`;
-
-            if (currentRank.hasSparkle) {
-                sparkles.classList.remove('opacity-0');
-                sparkles.classList.add('opacity-100');
-            } else {
-                sparkles.classList.remove('opacity-100');
-                sparkles.classList.add('opacity-0');
-            }
-
-            updateTubesUI();
-
-            if (userData.role === 'admin') document.getElementById('btn-open-admin').classList.remove('hidden');
-
-            const btn = document.getElementById('checkin-btn');
-            btn.disabled = false;
-            if (userData.hasCheckedInToday) {
-                document.getElementById('harp-glow').classList.remove('hidden');
-                harpSvg.classList.add('scale-100'); harpSvg.classList.remove('scale-90');
-                btn.className = 'w-full py-3.5 px-6 rounded-[1.25rem] font-bold text-lg bg-slate-100 text-slate-500 cursor-default shadow-inner';
-                btn.innerHTML = `Đã Hoàn Thành Hôm Nay ✓`;
-            } else {
-                document.getElementById('harp-glow').classList.add('hidden');
-                harpSvg.classList.remove('scale-100'); harpSvg.classList.add('scale-90');
-                btn.className = 'w-full py-3.5 px-6 rounded-[1.25rem] font-bold text-lg bg-gradient-to-r from-amber-400 to-yellow-500 text-white shadow-xl hover:-translate-y-1';
-                btn.innerHTML = `Hoàn Thành Tĩnh Nguyện →`;
-            }
-        }
-
-        function updateTubesUI() {
-            const maxCap = 90; // Tăng max lên 90 để thanh nước chạy dài tới Ruby
-            document.getElementById('tube-red-text').innerText = userData.totalCheckins;
-            document.getElementById('tube-blue-text').innerText = userData.currentStreak;
-            
-            document.getElementById('tube-red-liquid').style.setProperty('--fill-level', `${Math.max(6, Math.min((userData.totalCheckins / maxCap) * 100, 100))}%`);
-            document.getElementById('tube-blue-liquid').style.setProperty('--fill-level', `${Math.max(6, Math.min((userData.currentStreak / maxCap) * 100, 100))}%`);
-        }
-
-        // ==========================================
-        // CÔNG CỤ TEST DÀNH CHO ADMIN NÂNG CẤP
-        // ==========================================
-        function enableTestMode() {
-            if (!isTestMode) {
-                originalUserData = JSON.parse(JSON.stringify(userData)); 
-                isTestMode = true;
-            }
-        }
-
-        document.getElementById('btn-test-next-day').addEventListener('click', () => {
-            enableTestMode();
-            userData.hasCheckedInToday = false; 
-            updateUIFromData();
-            document.getElementById('btn-close-admin').click();
-        });
-
-        document.getElementById('btn-test-rank-go').addEventListener('click', () => {
-            enableTestMode();
-            const selectValue = parseInt(document.getElementById('test-rank-select').value);
-            userData.currentStreak = selectValue; // Set đúng số ngày trước khi lên cấp
-            userData.hasCheckedInToday = false;
-            updateUIFromData();
-            document.getElementById('btn-close-admin').click();
-        });
-
-        document.getElementById('btn-test-reset').addEventListener('click', () => {
-            if (isTestMode && originalUserData) {
-                userData = JSON.parse(JSON.stringify(originalUserData)); 
-                isTestMode = false;
-                updateUIFromData();
-                alert("Đã khôi phục dữ liệu thật từ máy chủ!");
-            }
-        });
-
-        document.getElementById('checkin-btn').addEventListener('click', async () => {
-            if (!userData.hasCheckedInToday && !isProcessing) {
-                isProcessing = true;
-                
-                const sound = document.getElementById('blessing-sound');
-                sound.volume = 1.0; 
-                sound.play().catch(e => console.log("Trình duyệt chặn âm thanh"));
-
-                document.getElementById('celebration').classList.remove('hidden');
-                setTimeout(() => document.getElementById('celebration').classList.add('hidden'), 3000);
-                
-                if (isTestMode) {
-                    userData.currentStreak++;
-                    userData.maxStreak = Math.max(userData.maxStreak, userData.currentStreak);
-                    userData.totalCheckins++;
-                    userData.totalPoints++;
-                    userData.hasCheckedInToday = true;
-                    updateUIFromData();
-                    isProcessing = false;
-                    return; 
-                }
-
-                try {
-                    const res = await fetch(`${API_URL}/update-streak`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: userData._id, action: 'checkin' }) });
-                    const data = await res.json();
-                    if (data.success) userData = data.user;
-                } catch (error) { alert("Lỗi kết nối!") } 
-                finally { isProcessing = false; updateUIFromData(); }
-            }
-        });
-
-        // Bảng Admin
-        document.getElementById('btn-open-admin').addEventListener('click', async () => {
-            document.getElementById('admin-modal').classList.remove('hidden');
-            setTimeout(() => document.getElementById('admin-modal').classList.add('opacity-100'), 10);
-            const res = await fetch(`${API_URL}/users`);
-            const data = await res.json();
-            if(data.success) {
-                let html = '';
-                data.users.forEach(u => { html += `<tr><td class="p-4">${u.username}</td><td class="p-4">${u.role}</td><td class="p-4 font-bold">${u.totalPoints}</td><td class="p-4 text-amber-500 font-bold">${u.maxStreak}</td><td class="p-4 text-blue-500 font-bold">${u.currentStreak}</td></tr>`; });
-                document.getElementById('admin-table-body').innerHTML = html;
-            }
-        });
-        document.getElementById('btn-close-admin').addEventListener('click', () => { document.getElementById('admin-modal').classList.remove('opacity-100'); setTimeout(() => document.getElementById('admin-modal').classList.add('hidden'), 300); });
-
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('verse-text').innerText = bibleVerses[0].text;
-            document.getElementById('verse-ref').innerText = `— ${bibleVerses[0].ref}`;
-        });
-    </script>
-</body>
-</html>
+                    <div class="w-full md:w-10 h-10 md:h-[380px] bg-slate-50 rounded-[24px] border-[4px] border-slate-200/80 glass-tube relative overflow-hidden flex
