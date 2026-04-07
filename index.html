@@ -47,15 +47,15 @@
         @media (min-width: 768px) { .wave-mask-h-1, .wave-mask-h-2 { display: none; } }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* --- HỆ THỐNG RANK: CÁNH RỘNG NGANG VÀ ÔM VÒNG --- */
+        /* --- HỆ THỐNG RANK: ĐÔI CÁNH THIÊN THẦN DANG RỘNG BỀ NGANG --- */
         :root {
             --harp-primary: #4E342E; 
             --harp-secondary: #8D6E63;
             --harp-glow: rgba(78, 52, 46, 0.2);
             --harp-stroke: url(#wood-pattern);
             --wing-scale: 0;
-            --wing-rot-l: -40deg;
-            --wing-rot-r: 40deg;
+            --wing-rot-l: -25deg;
+            --wing-rot-r: 25deg;
             --wing-y: 15px;
             --halo-scale: 0;
             --extra-opacity: 0;
@@ -67,29 +67,29 @@
         .harp-stroke-secondary { stroke: var(--harp-secondary); }
         .harp-fill-secondary { fill: var(--harp-secondary); }
 
-        /* Mộc - Đồng - Sắt (Chưa mọc cánh) */
+        /* Các mốc không cánh */
         .rank-wood { --harp-primary: #4E342E; --harp-secondary: #8D6E63; --harp-glow: rgba(78, 52, 46, 0.2); --harp-stroke: url(#wood-pattern); --wing-scale: 0; --wing-rot-l: -40deg; --wing-rot-r: 40deg; --wing-y: 15px; --halo-scale: 0; --extra-opacity: 0; }
-        .rank-bronze { --harp-primary: #B87333; --harp-secondary: #FDE047; --harp-glow: rgba(184, 115, 51, 0.5); --harp-stroke: var(--harp-primary); --wing-scale: 0; --wing-rot-l: -30deg; --wing-rot-r: 30deg; --wing-y: 10px; --halo-scale: 0; --extra-opacity: 0; }
-        .rank-iron { --harp-primary: #64748B; --harp-secondary: #CBD5E1; --harp-glow: rgba(100, 116, 139, 0.4); --harp-stroke: var(--harp-primary); --wing-scale: 0; --wing-rot-l: -20deg; --wing-rot-r: 20deg; --wing-y: 5px; --halo-scale: 0; --extra-opacity: 0; }
+        .rank-bronze { --harp-primary: #B87333; --harp-secondary: #FDE047; --harp-glow: rgba(184, 115, 51, 0.5); --harp-stroke: var(--harp-primary); --wing-scale: 0; --wing-rot-l: -40deg; --wing-rot-r: 40deg; --wing-y: 10px; --halo-scale: 0; --extra-opacity: 0; }
+        .rank-iron { --harp-primary: #64748B; --harp-secondary: #CBD5E1; --harp-glow: rgba(100, 116, 139, 0.4); --harp-stroke: var(--harp-primary); --wing-scale: 0; --wing-rot-l: -40deg; --wing-rot-r: 40deg; --wing-y: 5px; --halo-scale: 0; --extra-opacity: 0; }
         
-        /* Vàng: Hé mở, chĩa xuống (Góc âm) */
-        .rank-gold { --harp-primary: #EAB308; --harp-secondary: #FEF08A; --harp-glow: rgba(234, 179, 8, 0.6); --harp-stroke: var(--harp-primary); --wing-scale: 0.55; --wing-rot-l: -25deg; --wing-rot-r: 25deg; --wing-y: 10px; --halo-scale: 0.65; --extra-opacity: 1; }
+        /* Vàng: Cánh nhú ra, dang ngang */
+        .rank-gold { --harp-primary: #EAB308; --harp-secondary: #FEF08A; --harp-glow: rgba(234, 179, 8, 0.6); --harp-stroke: var(--harp-primary); --wing-scale: 0.65; --wing-rot-l: -25deg; --wing-rot-r: 25deg; --wing-y: 10px; --halo-scale: 0.65; --extra-opacity: 1; }
         
-        /* Bạch Kim: Bắt đầu vươn ngang ra xa (Góc xấp xỉ 0) */
-        .rank-platinum { --harp-primary: #94A3B8; --harp-secondary: #60A5FA; --harp-glow: rgba(96, 165, 250, 0.5); --harp-stroke: var(--harp-primary); --wing-scale: 0.85; --wing-rot-l: -10deg; --wing-rot-r: 10deg; --wing-y: 5px; --halo-scale: 0.85; --extra-opacity: 1; }
+        /* Bạch Kim: Giang rộng hơn */
+        .rank-platinum { --harp-primary: #94A3B8; --harp-secondary: #60A5FA; --harp-glow: rgba(96, 165, 250, 0.5); --harp-stroke: var(--harp-primary); --wing-scale: 0.95; --wing-rot-l: -20deg; --wing-rot-r: 20deg; --wing-y: 5px; --halo-scale: 0.85; --extra-opacity: 1; }
         
-        /* Kim Cương: Cánh khổng lồ giang ngang tuyệt đối */
-        .rank-diamond { --harp-primary: #06B6D4; --harp-secondary: #CFFAFE; --harp-glow: rgba(6, 182, 212, 0.7); --harp-stroke: var(--harp-primary); --wing-scale: 1.15; --wing-rot-l: 5deg; --wing-rot-r: -5deg; --wing-y: -5px; --halo-scale: 1.0; --extra-opacity: 1; }
+        /* Kim Cương: Siêu rộng ngang */
+        .rank-diamond { --harp-primary: #06B6D4; --harp-secondary: #CFFAFE; --harp-glow: rgba(6, 182, 212, 0.7); --harp-stroke: var(--harp-primary); --wing-scale: 1.3; --wing-rot-l: -15deg; --wing-rot-r: 15deg; --wing-y: 0px; --halo-scale: 1.0; --extra-opacity: 1; }
         
-        /* Ruby: Đôi cánh bẻ gập vào trong ôm trọn lấy đỉnh đàn (Góc quay cực lớn) */
-        .rank-ruby { --harp-primary: #E11D48; --harp-secondary: #FECDD3; --harp-glow: rgba(225, 29, 72, 0.7); --harp-stroke: var(--harp-primary); --wing-scale: 1.35; --wing-rot-l: 60deg; --wing-rot-r: -60deg; --wing-y: -15px; --halo-scale: 1.25; --extra-opacity: 1; }
+        /* Ruby: Cánh khổng lồ ngang, uốn vút nhẹ đỉnh (Rot giảm để cánh vươn cao ở chóp) */
+        .rank-ruby { --harp-primary: #E11D48; --harp-secondary: #FECDD3; --harp-glow: rgba(225, 29, 72, 0.7); --harp-stroke: var(--harp-primary); --wing-scale: 1.7; --wing-rot-l: -10deg; --wing-rot-r: 10deg; --wing-y: -5px; --halo-scale: 1.25; --extra-opacity: 1; }
 
         /* --- HIỆU ỨNG LƠ LỬNG & VẪY CÁNH (HOVER & FLAP) --- */
         @keyframes float-harp { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
         .harp-floating { animation: float-harp 4s ease-in-out infinite; }
 
-        @keyframes flap-left { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(6deg); } }
-        @keyframes flap-right { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-6deg); } }
+        @keyframes flap-left { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(4deg); } }
+        @keyframes flap-right { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-4deg); } }
         .wing-flap-l { animation: flap-left 3s ease-in-out infinite; transform-origin: 50px 90px; }
         .wing-flap-r { animation: flap-right 3s ease-in-out infinite; transform-origin: 110px 90px; }
 
@@ -110,14 +110,14 @@
                 <stop offset="100%" stop-color="#4E342E"/>
             </linearGradient>
             
-            <!-- Cấu trúc cánh chim 3 lớp chi tiết (Wide Horizontal) -->
+            <!-- Đôi cánh nằm ngang vút lên (Thiết kế mới hoành tráng) -->
             <g id="angel-wing-detailed">
-                <!-- Lớp lông vũ lớn ngoài cùng -->
-                <path d="M 50 90 C 10 90 -30 75 -60 40 Q -35 50 -15 50 Q -45 25 -50 0 Q -25 15 -5 25 Q -35 -5 -30 -25 Q -10 0 10 10 Q -15 -25 -5 -45 Q 10 -15 20 -5 Q 15 -35 30 -50 Q 30 -15 35 0 C 45 -10 50 20 50 90 Z" class="harp-fill-secondary" opacity="0.8"/>
+                <!-- Lông vũ lớp ngoài cùng (sải rộng ngang, đỉnh vút lên) -->
+                <path d="M 50 90 C 10 90 -40 70 -75 25 Q -40 40 -15 45 Q -55 10 -60 -25 Q -30 0 -5 20 Q -40 -20 -25 -50 Q -5 -15 15 5 Q -10 -40 10 -60 Q 20 -20 35 10 C 45 -10 50 20 50 90 Z" class="harp-fill-secondary" opacity="0.8"/>
                 <!-- Lớp lông vũ giữa -->
-                <path d="M 45 80 C 15 80 -15 65 -40 35 Q -20 45 -5 45 Q -30 20 -35 0 Q -15 15 5 20 Q -20 -5 -15 -20 Q 0 5 15 10 Q -5 -15 5 -30 Q 15 -5 25 0 Q 20 -20 30 -35 C 40 -5 45 20 45 80 Z" fill="#FFF" opacity="0.5"/>
+                <path d="M 45 80 C 15 80 -25 60 -55 25 Q -25 35 -5 40 Q -40 10 -45 -15 Q -20 5 5 15 Q -25 -15 -15 -35 Q 5 -10 20 5 Q 0 -25 15 -40 C 35 0 45 20 45 80 Z" fill="#FFF" opacity="0.5"/>
                 <!-- Lớp lông tơ mịn bên trong -->
-                <path d="M 40 70 C 20 70 0 55 -20 30 Q -5 35 5 35 Q -15 15 -20 0 Q -5 10 10 15 Q -5 0 0 -10 Q 10 5 20 10 Q 10 -5 15 -15 C 30 0 40 20 40 70 Z" fill="#FFF" opacity="0.9"/>
+                <path d="M 40 70 C 20 70 -10 50 -35 25 Q -10 30 5 35 Q -25 10 -30 -5 Q -5 5 15 15 Q -10 -5 0 -20 C 20 0 40 20 40 70 Z" fill="#FFF" opacity="0.9"/>
             </g>
         </defs>
     </svg>
@@ -256,7 +256,7 @@
                         <p class="text-slate-500 mt-2" id="rank-name-display">Gần gũi Chúa thêm mỗi ngày</p>
                     </div>
 
-                    <div class="flex flex-col items-center justify-center relative w-full">
+                    <div class="flex flex-col items-center justify-center relative w-full mt-4">
                         
                         <div id="harp-wrapper" class="relative flex flex-col items-center justify-center h-56 w-56 mx-auto mb-2 rank-wood harp-floating">
                             
@@ -282,13 +282,11 @@
                                 </g>
 
                                 <g class="harp-wings" style="opacity: var(--extra-opacity); transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);">
-                                    <!-- Cánh Trái Dùng Hình Chắn Ngang Rộng (Gọi SVG Def) -->
                                     <g style="transform: translate(0px, var(--wing-y)) scale(var(--wing-scale)) rotate(var(--wing-rot-l)); transform-origin: 50px 90px; transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);">
                                         <g class="wing-flap-l">
                                             <use href="#angel-wing-detailed" />
                                         </g>
                                     </g>
-                                    <!-- Cánh Phải Dùng Lệnh Scale(-1, 1) để Lật Ngược Khớp 100% Cánh Trái -->
                                     <g style="transform: translate(0px, var(--wing-y)) scale(var(--wing-scale)) rotate(var(--wing-rot-r)); transform-origin: 110px 90px; transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);">
                                         <g class="wing-flap-r">
                                             <use href="#angel-wing-detailed" transform="translate(160, 0) scale(-1, 1)" />
