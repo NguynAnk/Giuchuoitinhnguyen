@@ -11,7 +11,7 @@ app.use(express.json());
 
 // --- 1. KẾT NỐI DATABASE MONGODB ---
 // ⚠️ QUAN TRỌNG: HÃY DÁN ĐƯỜNG LINK MONGODB CỦA BẠN (CHỨA MẬT KHẨU) VÀO TRONG DẤU NGOẶC KÉP BÊN DƯỚI:
-const MONGO_URI = "mongodb+srv://admin:16102006@cluster0.iwcowsc.mongodb.net/TinhNguyenApp?retryWrites=true&w=majority";
+const MONGO_URI = "mongodb+srv://nguyenanh:16102006@cluster0.iwcowsc.mongodb.net/TinhNguyenApp?retryWrites=true&w=majority";
 
 mongoose.connect(MONGO_URI)
   .then(() => console.log('Đã kết nối Database thành công!'))
