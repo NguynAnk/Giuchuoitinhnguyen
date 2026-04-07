@@ -50,13 +50,16 @@
         @media (min-width: 768px) { .wave-mask-h-1, .wave-mask-h-2 { display: none; } }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* --- HỆ THỐNG RANK CÂY ĐÀN --- */
+        /* --- HỆ THỐNG RANK CÂY ĐÀN VỚI CHUYỂN ĐỘNG CÁNH ĐỘC LẬP --- */
         :root {
             --harp-primary: #4E342E; 
             --harp-secondary: #8D6E63;
             --harp-glow: rgba(78, 52, 46, 0.2);
             --harp-stroke: url(#wood-pattern);
             --wing-scale: 0;
+            --wing-rot-l: -40deg;
+            --wing-rot-r: 40deg;
+            --wing-y: 15px;
             --halo-scale: 0;
             --extra-opacity: 0;
         }
@@ -71,37 +74,37 @@
         .rank-wood { 
             --harp-primary: #4E342E; --harp-secondary: #8D6E63; --harp-glow: rgba(78, 52, 46, 0.2); 
             --harp-stroke: url(#wood-pattern);
-            --wing-scale: 0; --halo-scale: 0; --extra-opacity: 0;
+            --wing-scale: 0; --wing-rot-l: -40deg; --wing-rot-r: 40deg; --wing-y: 15px; --halo-scale: 0; --extra-opacity: 0;
         }
         .rank-bronze { 
             --harp-primary: #B87333; --harp-secondary: #FDE047; --harp-glow: rgba(184, 115, 51, 0.5); 
             --harp-stroke: var(--harp-primary);
-            --wing-scale: 0; --halo-scale: 0; --extra-opacity: 0;
+            --wing-scale: 0; --wing-rot-l: -30deg; --wing-rot-r: 30deg; --wing-y: 10px; --halo-scale: 0; --extra-opacity: 0;
         }
         .rank-iron { 
             --harp-primary: #64748B; --harp-secondary: #CBD5E1; --harp-glow: rgba(100, 116, 139, 0.4); 
             --harp-stroke: var(--harp-primary);
-            --wing-scale: 0; --halo-scale: 0; --extra-opacity: 0;
+            --wing-scale: 0; --wing-rot-l: -20deg; --wing-rot-r: 20deg; --wing-y: 5px; --halo-scale: 0; --extra-opacity: 0;
         }
         .rank-gold { 
             --harp-primary: #EAB308; --harp-secondary: #FEF08A; --harp-glow: rgba(234, 179, 8, 0.6); 
             --harp-stroke: var(--harp-primary);
-            --wing-scale: 0.6; --halo-scale: 0.6; --extra-opacity: 1;
+            --wing-scale: 0.55; --wing-rot-l: -25deg; --wing-rot-r: 25deg; --wing-y: 8px; --halo-scale: 0.65; --extra-opacity: 1;
         }
         .rank-platinum { 
             --harp-primary: #94A3B8; --harp-secondary: #60A5FA; --harp-glow: rgba(96, 165, 250, 0.5); 
             --harp-stroke: var(--harp-primary);
-            --wing-scale: 0.8; --halo-scale: 0.8; --extra-opacity: 1;
+            --wing-scale: 0.85; --wing-rot-l: -10deg; --wing-rot-r: 10deg; --wing-y: 4px; --halo-scale: 0.85; --extra-opacity: 1;
         }
         .rank-diamond { 
             --harp-primary: #06B6D4; --harp-secondary: #CFFAFE; --harp-glow: rgba(6, 182, 212, 0.7); 
             --harp-stroke: var(--harp-primary);
-            --wing-scale: 1.0; --halo-scale: 1.0; --extra-opacity: 1;
+            --wing-scale: 1.15; --wing-rot-l: 0deg; --wing-rot-r: 0deg; --wing-y: -2px; --halo-scale: 1.0; --extra-opacity: 1;
         }
         .rank-ruby { 
             --harp-primary: #E11D48; --harp-secondary: #FECDD3; --harp-glow: rgba(225, 29, 72, 0.7); 
             --harp-stroke: var(--harp-primary);
-            --wing-scale: 1.25; --halo-scale: 1.25; --extra-opacity: 1;
+            --wing-scale: 1.5; --wing-rot-l: 18deg; --wing-rot-r: -18deg; --wing-y: -12px; --halo-scale: 1.25; --extra-opacity: 1;
         }
 
         /* --- HIỆU ỨNG BAY LÊN (FLOATING) CHO +1 LV / +1 XP --- */
@@ -289,11 +292,17 @@
                                     <line x1="105" y1="15" x2="95" y2="15" class="harp-stroke-secondary" stroke-width="2" stroke-linecap="round" />
                                 </g>
 
-                                <g class="harp-wings" style="transform: scale(var(--wing-scale)); opacity: var(--extra-opacity); transform-origin: 60px 70px; transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);">
-                                    <path d="M 40 80 C 10 70 -5 30 15 15 C 20 30 30 40 40 45 C 25 25 30 5 45 0 C 40 20 45 35 50 45 C 50 45 45 65 40 80 Z" class="harp-fill-secondary" opacity="0.6"/>
-                                    <path d="M 80 80 C 110 70 125 30 105 15 C 100 30 90 40 80 45 C 95 25 90 5 75 0 C 80 20 75 35 70 45 C 70 45 75 65 80 80 Z" class="harp-fill-secondary" opacity="0.6"/>
-                                    <path d="M 45 70 C 25 60 15 35 25 25 C 30 35 35 40 42 45 C 35 30 38 15 48 10 Z" fill="#FFF" opacity="0.4"/>
-                                    <path d="M 75 70 C 95 60 105 35 95 25 C 90 35 85 40 78 45 C 85 30 82 15 72 10 Z" fill="#FFF" opacity="0.4"/>
+                                <g class="harp-wings" style="opacity: var(--extra-opacity); transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);">
+                                    <!-- Cánh Trái xoay độc lập -->
+                                    <g style="transform: translate(0px, var(--wing-y)) scale(var(--wing-scale)) rotate(var(--wing-rot-l)); transform-origin: 45px 80px; transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);">
+                                        <path d="M 40 80 C 10 70 -5 30 15 15 C 20 30 30 40 40 45 C 25 25 30 5 45 0 C 40 20 45 35 50 45 C 50 45 45 65 40 80 Z" class="harp-fill-secondary" opacity="0.6"/>
+                                        <path d="M 45 70 C 25 60 15 35 25 25 C 30 35 35 40 42 45 C 35 30 38 15 48 10 Z" fill="#FFF" opacity="0.4"/>
+                                    </g>
+                                    <!-- Cánh Phải xoay độc lập -->
+                                    <g style="transform: translate(0px, var(--wing-y)) scale(var(--wing-scale)) rotate(var(--wing-rot-r)); transform-origin: 75px 80px; transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);">
+                                        <path d="M 80 80 C 110 70 125 30 105 15 C 100 30 90 40 80 45 C 95 25 90 5 75 0 C 80 20 75 35 70 45 C 70 45 75 65 80 80 Z" class="harp-fill-secondary" opacity="0.6"/>
+                                        <path d="M 75 70 C 95 60 105 35 95 25 C 90 35 85 40 78 45 C 85 30 82 15 72 10 Z" fill="#FFF" opacity="0.4"/>
+                                    </g>
                                 </g>
 
                                 <path class="harp-path harp-stroke-primary" d="M 25 45 C 25 100 15 130 40 140 L 80 140 C 105 130 95 100 95 45" fill="none" stroke-width="8" stroke-linecap="round" />
@@ -443,15 +452,19 @@
                                     <line x1="15" y1="15" x2="25" y2="15" class="harp-stroke-secondary" stroke-width="2" stroke-linecap="round" />
                                     <line x1="105" y1="15" x2="95" y2="15" class="harp-stroke-secondary" stroke-width="2" stroke-linecap="round" />
                                 </g>
-                                <g class="harp-wings" style="transform: scale(var(--wing-scale)); opacity: var(--extra-opacity); transform-origin: 60px 70px;">
-                                    <path d="M 40 80 C 10 70 -5 30 15 15 C 20 30 30 40 40 45 C 25 25 30 5 45 0 C 40 20 45 35 50 45 C 50 45 45 65 40 80 Z" class="harp-fill-secondary" opacity="0.6"/>
-                                    <path d="M 80 80 C 110 70 125 30 105 15 C 100 30 90 40 80 45 C 95 25 90 5 75 0 C 80 20 75 35 70 45 C 70 45 75 65 80 80 Z" class="harp-fill-secondary" opacity="0.6"/>
-                                    <path d="M 45 70 C 25 60 15 35 25 25 C 30 35 35 40 42 45 C 35 30 38 15 48 10 Z" fill="#FFF" opacity="0.4"/>
-                                    <path d="M 75 70 C 95 60 105 35 95 25 C 90 35 85 40 78 45 C 85 30 82 15 72 10 Z" fill="#FFF" opacity="0.4"/>
+                                <g class="harp-wings" style="opacity: var(--extra-opacity);">
+                                    <g style="transform: translate(0px, var(--wing-y)) scale(var(--wing-scale)) rotate(var(--wing-rot-l)); transform-origin: 45px 80px;">
+                                        <path d="M 40 80 C 10 70 -5 30 15 15 C 20 30 30 40 40 45 C 25 25 30 5 45 0 C 40 20 45 35 50 45 C 50 45 45 65 40 80 Z" class="harp-fill-secondary" opacity="0.6"/>
+                                        <path d="M 45 70 C 25 60 15 35 25 25 C 30 35 35 40 42 45 C 35 30 38 15 48 10 Z" fill="#FFF" opacity="0.4"/>
+                                    </g>
+                                    <g style="transform: translate(0px, var(--wing-y)) scale(var(--wing-scale)) rotate(var(--wing-rot-r)); transform-origin: 75px 80px;">
+                                        <path d="M 80 80 C 110 70 125 30 105 15 C 100 30 90 40 80 45 C 95 25 90 5 75 0 C 80 20 75 35 70 45 C 70 45 75 65 80 80 Z" class="harp-fill-secondary" opacity="0.6"/>
+                                        <path d="M 75 70 C 95 60 105 35 95 25 C 90 35 85 40 78 45 C 85 30 82 15 72 10 Z" fill="#FFF" opacity="0.4"/>
+                                    </g>
                                 </g>
 
                                 <path class="harp-path harp-stroke-primary" d="M 25 45 C 25 100 15 130 40 140 L 80 140 C 105 130 95 100 95 45" fill="none" stroke-width="8" stroke-linecap="round" />
-                                <line class="harp-path harp-stroke-primary" x1="12" y1="45" x2="108" y2="45" stroke-width="8" stroke-linecap="round" />
+                                <line class="harp-path harp-stroke-primary" x1="12" y1="45" x2="108" y2="45" stroke-width="8" />
                                 <line class="harp-path harp-stroke-secondary" x1="40" y1="45" x2="40" y2="135" stroke-width="2"/>
                                 <line class="harp-path harp-stroke-secondary" x1="60" y1="45" x2="60" y2="139" stroke-width="2"/>
                                 <line class="harp-path harp-stroke-secondary" x1="80" y1="45" x2="80" y2="135" stroke-width="2"/>
