@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giữ Chuỗi Tĩnh Nguyện</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .bg-pattern {
+            background-image: radial-gradient(rgba(251, 191, 36, 0.15) 2px, transparent 2px);
+            background-size: 40px 40px;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        /* Hiệu ứng ống nghiệm */
+        .glass-tube {
+            box-shadow: inset 5px 0 15px rgba(255,255,255,0.8), inset -5px 0 15px rgba(0,0,0,0.1), 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+        .liquid-surface {
+            box-shadow: inset 0 3px 5px rgba(255,255,255,0.5);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-amber-50 bg-pattern flex items-center justify-center p-2 md:p-4 text-slate-800 relative overflow-x-hidden">
+
+    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden flex items-center justify-center">
+        <div class="absolute top-[-10%] left-[-5%] w-[400px] h-[400px] bg-blue-300/20 rounded-full blur-[100px]"></div>
+        <div class="absolute bottom-[-10%] right-[-5%] w-[400px] h-[400px] bg-amber-400/20 rounded-full blur-[100px]"></div>
+    </div>
+
+    <div id="screen-flash" class="fixed inset-0 bg-white opacity-0 pointer-events-none z-50 transition-opacity duration-300"></div>
+
+    <!-- ==================== MÀN HÌNH ĐĂNG NHẬP / ĐĂNG KÝ ==================== -->
+    <div id="auth-screen" class="bg-white/95 backdrop-blur-sm rounded-[2.5rem] shadow-2xl shadow-blue-100/50 w-full max-w-md border border-white relative z-20 p-8 flex flex-col gap-6 items-center">
+        <div class="text-center w-full">
+            <div class="flex justify-center items-center gap-2 mb-2 text-amber-500">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+            </div>
+            <h1 class="text-2xl font-bold text-slate-800">Cổng Tĩnh Nguyện</h1>
+            <p class="text-slate-500 mt-1 text-sm">Chào mừng bạn quay trở lại</p>
+        </div>
+
+        <div class="w-full flex flex-col gap-4">
+            <div class="flex gap-2 mb-2 border-b border-slate-200">
+                <button id="tab-login" class="flex-1 pb-2 border-b-2 border-amber-500 text-amber-600 font-bold transition-all">Đăng Nhập</button>
+                <button id="tab-register" class="flex-1 pb-2 border-b-2 border-transparent text-slate-400 font-bold hover:text-slate-600 transition-all">Đăng Ký</button>
+            </div>
+
+            <div>
+                <label id="auth-name-label" class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 block">Họ và Tên / Tài khoản</label>
+                <input type="text" id="auth-username" placeholder="Ví dụ: Nguyễn Văn A" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-amber-400 outline-none transition-all">
+                <p id="register-hint" class="text-[10px] text-slate-400 mt-1 hidden">* Nhập đầy đủ Họ Tên, không ký hiệu đặc biệt.</p>
+            </div>
+            <div>
+                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 block">Mật khẩu</label>
+                <input type="password" id="auth-password" placeholder="••••••••" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-amber-400 outline-none transition-all">
+            </div>
+            <p id="auth-error" class="text-red-500 text-sm font-medium text-center hidden"></p>
+            <button id="btn-auth-action" class="w-full py-3.5 px-6 rounded-xl font-bold text-lg text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:shadow-lg transition-all mt-2">
+                Vào Ứng Dụng
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== MÀN HÌNH QUẢN TRỊ ==================== -->
+    <div id="admin-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden transform scale-95 transition-transform duration-300" id="admin-modal-content">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <div class="flex items-center gap-3 text-red-600 font-bold">
+                    <h2 class="text-xl">Bảng Quản Trị (Admin)</h2>
+                </div>
+                <button id="btn-close-admin" class="p-2 hover:bg-slate-200 rounded-full transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="p-0 overflow-y-auto flex-1 bg-white">
+                <table class="w-full text-left border-collapse min-w-max text-sm">
+                    <thead class="bg-slate-50 sticky top-0 shadow-sm z-10 font-bold">
+                        <tr>
+                            <th class="p-4 uppercase text-slate-500">Người dùng</th>
+                            <th class="p-4 text-center">Vai trò</th>
+                            <th class="p-4 text-center">Tổng Điểm</th>
+                            <th class="p-4 text-center text-amber-500">Kỷ Lục Max</th>
+                            <th class="p-4 text-center text-blue-500">Chuỗi Hiện Tại</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-table-body" class="divide-y divide-slate-100"></tbody>
+                </table>
+                <div id="admin-loading" class="p-8 text-center text-slate-400 hidden">Đang tải dữ liệu...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== ỨNG DỤNG CHÍNH ==================== -->
+    <div id="main-app" class="w-full max-w-[80rem] hidden flex-col gap-4 relative z-10">
+        
+        <!-- Top Bar -->
+        <div class="bg-white/90 backdrop-blur-md rounded-2xl p-4 shadow-sm border border-white flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-4 w-full md:w-auto justify-between md:justify-start">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-lg shadow-inner uppercase" id="user-avatar-text">U</div>
+                    <div>
+                        <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Xin chào,</p>
+                        <p class="text-sm font-bold text-slate-800" id="ui-username">Đang tải...</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 bg-gradient-to-r from-yellow-100 to-amber-100 px-4 py-1.5 rounded-xl border border-yellow-200">
+                    <span class="font-bold text-amber-700">Điểm:</span>
+                    <span class="font-black text-amber-600 text-lg" id="ui-total-points">0</span>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-3 text-sm font-medium flex-wrap justify-center">
+                <div class="flex items-center gap-1.5 text-amber-600 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-100">
+                    Kỷ lục: <span id="ui-max-streak" class="font-bold">0</span>
+                </div>
+                <div class="flex items-center gap-1.5 text-red-500 bg-red-50 px-3 py-1.5 rounded-lg border border-red-100">
+                    Lỡ chuỗi: <span id="ui-lost-streaks" class="font-bold">0</span>
+                </div>
+                <button id="btn-open-admin" class="hidden items-center gap-1.5 text-white bg-red-500 hover:bg-red-600 px-4 py-1.5 rounded-lg font-bold shadow-md transition-colors">
+                    Bảng Admin
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Card -->
+        <div class="bg-white/95 backdrop-blur-sm rounded-[2.5rem] shadow-2xl shadow-blue-100/50 w-full border border-white flex flex-col md:flex-row p-6 md:p-8 gap-4 items-stretch justify-between relative z-10">
+            
+            <!-- Ống Đỏ (Tổng ngày) -->
+            <div class="hidden md:flex flex-col items-center justify-center gap-3 w-16 shrink-0">
+                <div class="text-center bg-red-50/80 px-2 py-1.5 rounded-xl border border-red-100 w-full shadow-sm">
+                    <span class="text-[10px] font-bold text-red-500 uppercase block">Tổng</span>
+                    <span id="tube-red-text" class="text-2xl font-black text-red-600">0</span>
+                </div>
+                <div class="w-12 h-[340px] bg-slate-50 rounded-[24px] shadow-inner border-[4px] border-slate-200/80 glass-tube relative overflow-hidden flex items-end p-1">
+                    <div id="tube-red-liquid" class="w-full bg-gradient-to-t from-red-600 via-red-500 to-red-400 rounded-[18px] transition-all duration-1000 relative flex justify-center" style="height: 6%;">
+                        <div class="absolute top-0 w-8 h-1.5 bg-white/50 rounded-full mt-1 liquid-surface"></div>
+                        <div class="absolute bottom-2 w-1.5 h-1.5 bg-white/50 rounded-full animate-bounce"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="flex-1 flex flex-col md:flex-row gap-6 md:gap-8 items-center justify-center w-full max-w-[65rem]">
+                
+                <div class="w-full flex-1 flex flex-col items-center justify-center relative">
+                    <div id="celebration" class="absolute inset-0 pointer-events-none z-50 flex items-center justify-center overflow-hidden hidden">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-yellow-400 animate-ping opacity-30"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+                    </div>
+
+                    <div class="text-center mb-6">
+                        <div class="flex justify-center items-center gap-2 mb-2 text-amber-500">
+                            <span class="text-sm font-semibold tracking-wider uppercase text-amber-600">Buổi Sáng Phước Hạnh</span>
+                        </div>
+                        <h1 class="text-2xl md:text-3xl font-bold text-slate-800">GIỮ CHUỖI TĨNH NGUYỆN</h1>
+                        <p class="text-slate-500 mt-2">Gần gũi Chúa thêm mỗi ngày</p>
+                    </div>
+
+                    <div class="flex flex-col items-center justify-center relative w-full">
+                        <div class="relative flex flex-col items-center justify-center h-56 w-56 mx-auto mb-2">
+                            <div id="harp-glow" class="absolute inset-0 bg-yellow-300 rounded-full blur-3xl opacity-50 animate-pulse hidden"></div>
+                            <svg id="harp-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 150" class="w-44 h-44 relative z-10 transition-all duration-1000 scale-90 opacity-70">
+                                <path d="M 25 45 C 25 100 15 130 40 140 L 80 140 C 105 130 95 100 95 45" fill="none" stroke="#D97706" stroke-width="8" stroke-linecap="round" />
+                                <line x1="12" y1="45" x2="108" y2="45" stroke="#D97706" stroke-width="8" />
+                                <line x1="40" y1="45" x2="40" y2="135" stroke="#FBBF24" stroke-width="2"/>
+                                <line x1="60" y1="45" x2="60" y2="139" stroke="#FBBF24" stroke-width="2"/>
+                                <line x1="80" y1="45" x2="80" y2="135" stroke="#FBBF24" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <div class="text-center z-10">
+                            <h2 class="text-6xl font-black text-slate-800" id="streak-count">0</h2>
+                            <p class="text-sm font-bold text-amber-600 uppercase tracking-widest mt-1">Ngày Liên Tiếp</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hidden md:block w-px h-[340px] bg-gradient-to-b from-transparent via-blue-100 to-transparent shrink-0"></div>
+
+                <div class="w-full flex-1 flex flex-col gap-4 relative z-10">
+                    <div id="verse-container" class="bg-blue-50/60 rounded-3xl p-5 border border-blue-100 relative shadow-sm transition-opacity duration-300">
+                        <p id="verse-text" class="italic text-slate-700 leading-relaxed font-medium">Đang tải Lời Chúa...</p>
+                        <p id="verse-ref" class="text-right text-sm font-semibold text-blue-600 mt-3">—</p>
+                    </div>
+
+                    <div class="bg-white/70 rounded-2xl p-4 border border-white shadow-sm flex flex-col gap-3">
+                        <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1">Thực Hành Hôm Nay</h3>
+                        <div class="flex flex-col gap-2">
+                           <label class="flex items-center gap-3 cursor-pointer"><input type="checkbox" class="w-5 h-5 rounded border-slate-300 text-green-500 focus:ring-green-400"><span id="task-1-text" class="text-slate-700 text-sm">...</span></label>
+                           <label class="flex items-center gap-3 cursor-pointer"><input type="checkbox" class="w-5 h-5 rounded border-slate-300 text-green-500 focus:ring-green-400"><span id="task-2-text" class="text-slate-700 text-sm">...</span></label>
+                           <label class="flex items-center gap-3 cursor-pointer"><input type="checkbox" class="w-5 h-5 rounded border-slate-300 text-green-500 focus:ring-green-400"><span id="task-3-text" class="text-slate-700 text-sm">...</span></label>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50/50 rounded-2xl p-3 border border-slate-100 flex justify-between" id="calendar-container"></div>
+                    
+                    <div class="mt-1">
+                        <button id="checkin-btn" class="w-full py-3.5 px-6 rounded-[1.25rem] font-bold text-lg flex items-center justify-center gap-2 transition-all duration-500 bg-gradient-to-r from-amber-400 to-yellow-500 text-white shadow-xl hover:-translate-y-1" disabled>Kết nối Server...</button>
+                        <div class="flex justify-between items-center mt-3 px-1">
+                            <span class="text-[11px] text-slate-400 font-medium">* Bấm nút trên để lưu kết quả</span>
+                            <button id="next-day-btn" class="text-[13px] text-blue-600 hover:text-blue-800 font-bold flex items-center gap-1 bg-blue-50 px-2.5 py-1 rounded-lg transition-colors">
+                                Qua ngày tiếp theo →
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ống Xanh (Chuỗi liên tục) -->
+            <div class="hidden md:flex flex-col items-center justify-center gap-3 w-16 shrink-0">
+                <div class="text-center bg-blue-50/80 px-2 py-1.5 rounded-xl border border-blue-100 w-full shadow-sm">
+                    <span class="text-[10px] font-bold text-blue-500 uppercase block">Chuỗi</span>
+                    <span id="tube-blue-text" class="text-2xl font-black text-blue-600">0</span>
+                </div>
+                <div class="w-12 h-[340px] bg-slate-50 rounded-[24px] shadow-inner border-[4px] border-slate-200/80 glass-tube relative overflow-hidden flex items-end p-1">
+                    <div id="tube-blue-liquid" class="w-full bg-gradient-to-t from-blue-600 via-blue-500 to-blue-400 rounded-[18px] transition-all duration-1000 relative flex justify-center" style="height: 6%;">
+                        <div class="absolute top-0 w-8 h-1.5 bg-white/50 rounded-full mt-1 liquid-surface"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== LOGIC KẾT NỐI API SERVER ==================== -->
+    <script>
+        // CẤU HÌNH LIÊN KẾT ĐẾN SERVER NODE.JS CỦA BẠN
+        const API_URL = 'http://localhost:3000/api';
+        
+        let userData = null;
+        let authMode = 'login'; 
+        let isProcessing = false;
+        
+        let dayLabels = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
+        let dayStatus = [true, true, true, true, true, true, false];
+        let currentVerseIndex = 0;
+
+        const bibleVerses = [
+            { text: "Lời Chúa là ngọn đèn cho chân tôi, ánh sáng cho đường lối tôi.", ref: "Thi Thiên 119:105", tasks: ["Đọc Thi Thiên 119:105", "Ghi ra quyết định cần Chúa dẫn dắt", "Cầu nguyện xin Chúa soi sáng"] },
+            { text: "Hãy hết lòng tin cậy Đức Giê-hô-va...", ref: "Châm Ngôn 3:5", tasks: ["Đọc Châm Ngôn 3:5", "Giao phó một nỗi lo cho Chúa", "Cầu nguyện xin ban thêm đức tin"] }
+        ];
+        const heartSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>`;
+
+        // === 1. XỬ LÝ AUTH (GỌI API) ===
+        document.getElementById('tab-login').addEventListener('click', () => {
+            authMode = 'login';
+            document.getElementById('tab-login').className = "flex-1 pb-2 border-b-2 border-amber-500 text-amber-600 font-bold transition-all";
+            document.getElementById('tab-register').className = "flex-1 pb-2 border-b-2 border-transparent text-slate-400 font-bold hover:text-slate-600 transition-all";
+            document.getElementById('btn-auth-action').innerText = "Vào Ứng Dụng";
+            document.getElementById('register-hint').classList.add('hidden');
+            document.getElementById('auth-error').classList.add('hidden');
+        });
+
+        document.getElementById('tab-register').addEventListener('click', () => {
+            authMode = 'register';
+            document.getElementById('tab-register').className = "flex-1 pb-2 border-b-2 border-amber-500 text-amber-600 font-bold transition-all";
+            document.getElementById('tab-login').className = "flex-1 pb-2 border-b-2 border-transparent text-slate-400 font-bold hover:text-slate-600 transition-all";
+            document.getElementById('btn-auth-action').innerText = "Đăng Ký Tài Khoản";
+            document.getElementById('register-hint').classList.remove('hidden');
+            document.getElementById('auth-error').classList.add('hidden');
+        });
+
+        document.getElementById('btn-auth-action').addEventListener('click', async () => {
+            const usernameInput = document.getElementById('auth-username').value.trim();
+            const passwordInput = document.getElementById('auth-password').value.trim();
+            const err = document.getElementById('auth-error');
+            const btn = document.getElementById('btn-auth-action');
+            
+            if(!usernameInput || !passwordInput) {
+                err.innerText = "Vui lòng nhập đủ thông tin!";
+                err.classList.remove('hidden'); return;
+            }
+
+            try {
+                btn.innerText = "Đang kết nối Server...";
+                btn.disabled = true;
+
+                const endpoint = authMode === 'register' ? '/register' : '/login';
+                const response = await fetch(`${API_URL}${endpoint}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: usernameInput, password: passwordInput })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    userData = data.user;
+                    enterApp();
+                } else {
+                    err.innerText = data.message;
+                    err.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error(error);
+                err.innerText = "Không thể kết nối đến máy chủ. Hãy chắc chắn Server Node.js đang chạy.";
+                err.classList.remove('hidden');
+            } finally {
+                btn.innerText = authMode === 'register' ? "Đăng Ký Tài Khoản" : "Vào Ứng Dụng";
+                btn.disabled = false;
+            }
+        });
+
+        function enterApp() {
+            document.getElementById('auth-screen').classList.add('hidden');
+            document.getElementById('main-app').classList.remove('hidden');
+            document.getElementById('main-app').classList.add('flex');
+            updateUIFromData();
+        }
+
+        // === 2. CẬP NHẬT GIAO DIỆN TỪ DỮ LIỆU SERVER ===
+        function updateUIFromData() {
+            if(!userData) return;
+            
+            document.getElementById('ui-username').innerText = userData.username;
+            document.getElementById('user-avatar-text').innerText = userData.username.charAt(0);
+            document.getElementById('ui-max-streak').innerText = userData.maxStreak;
+            document.getElementById('ui-lost-streaks').innerText = userData.lostStreaks;
+            document.getElementById('ui-total-points').innerText = userData.totalPoints;
+            document.getElementById('streak-count').innerText = userData.currentStreak;
+            
+            updateTubesUI();
+
+            if (userData.role === 'admin') {
+                document.getElementById('btn-open-admin').classList.remove('hidden');
+                document.getElementById('btn-open-admin').classList.add('flex');
+            }
+
+            const btn = document.getElementById('checkin-btn');
+            btn.disabled = false;
+
+            if (userData.hasCheckedInToday) {
+                document.getElementById('harp-glow').classList.remove('hidden');
+                document.getElementById('harp-svg').classList.add('scale-110', 'opacity-100');
+                btn.className = 'w-full py-3.5 px-6 rounded-[1.25rem] font-bold text-lg bg-slate-100 text-slate-500 cursor-default shadow-inner';
+                btn.innerHTML = `Đã Hoàn Thành Hôm Nay ✓`;
+            } else {
+                document.getElementById('harp-glow').classList.add('hidden');
+                document.getElementById('harp-svg').classList.remove('scale-110', 'opacity-100');
+                btn.className = 'w-full py-3.5 px-6 rounded-[1.25rem] font-bold text-lg bg-gradient-to-r from-amber-400 to-yellow-500 text-white shadow-xl hover:-translate-y-1';
+                btn.innerHTML = `Hoàn Thành Tĩnh Nguyện →`;
+            }
+
+            renderCalendar();
+        }
+
+        function updateTubesUI() {
+            const maxCapacity = 30; 
+            const pctRed = Math.min((userData.totalCheckins / maxCapacity) * 100, 100);
+            const pctBlue = Math.min((userData.currentStreak / maxCapacity) * 100, 100);
+
+            document.getElementById('tube-red-text').innerText = userData.totalCheckins;
+            document.getElementById('tube-blue-text').innerText = userData.currentStreak;
+            document.getElementById('tube-red-liquid').style.height = `${Math.max(6, pctRed)}%`;
+            document.getElementById('tube-blue-liquid').style.height = `${Math.max(6, pctBlue)}%`;
+        }
+
+        // === 3. GỌI API CẬP NHẬT CHUỖI ===
+        async function sendStreakUpdate(actionType) {
+            if (isProcessing) return;
+            isProcessing = true;
+            document.getElementById('checkin-btn').innerText = "Đang xử lý...";
+            
+            try {
+                const response = await fetch(`${API_URL}/update-streak`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId: userData._id, action: actionType })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    userData = data.user;
+                }
+            } catch (error) {
+                console.error("Lỗi cập nhật:", error);
+                alert("Lỗi kết nối máy chủ!");
+            } finally {
+                isProcessing = false;
+                updateUIFromData();
+            }
+        }
+
+        document.getElementById('checkin-btn').addEventListener('click', async () => {
+            if (!userData.hasCheckedInToday) {
+                document.getElementById('celebration').classList.remove('hidden');
+                setTimeout(() => celebration.classList.add('hidden'), 3000);
+                await sendStreakUpdate('checkin');
+            } else {
+                await sendStreakUpdate('undo');
+            }
+        });
+
+        document.getElementById('next-day-btn').addEventListener('click', async () => {
+            dayLabels.shift(); dayLabels.push('T?');
+            dayStatus.shift(); dayStatus.push(false);
+            await sendStreakUpdate('miss');
+        });
+
+        function renderCalendar() {
+            const container = document.getElementById('calendar-container');
+            container.innerHTML = '';
+            dayLabels.forEach((day, index) => {
+                const active = (index === 6 && userData.hasCheckedInToday);
+                container.innerHTML += `<div class="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold ${active ? 'bg-amber-100 text-amber-600' : 'bg-slate-50 text-slate-400'}">${day}</div>`;
+            });
+        }
+
+        // === 4. QUẢN TRỊ VIÊN ===
+        document.getElementById('btn-open-admin').addEventListener('click', async () => {
+            const adminModal = document.getElementById('admin-modal');
+            adminModal.classList.remove('hidden');
+            adminModal.classList.add('opacity-100');
+            const res = await fetch(`${API_URL}/users`);
+            const data = await res.json();
+            if(data.success) {
+                let html = '';
+                data.users.forEach(u => {
+                    html += `<tr><td class="p-4">${u.username}</td><td class="p-4 text-center">${u.role}</td><td class="p-4 text-center font-bold">${u.totalPoints}</td><td class="p-4 text-center font-bold text-amber-500">${u.maxStreak}</td><td class="p-4 text-center font-bold text-blue-500">${u.currentStreak}</td></tr>`;
+                });
+                document.getElementById('admin-table-body').innerHTML = html;
+            }
+        });
+
+        document.getElementById('btn-close-admin').addEventListener('click', () => {
+            document.getElementById('admin-modal').classList.add('hidden');
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const firstVerse = bibleVerses[0];
+            document.getElementById('verse-text').innerText = firstVerse.text;
+            document.getElementById('verse-ref').innerText = `— ${firstVerse.ref}`;
+            document.getElementById('task-1-text').innerText = firstVerse.tasks[0];
+            document.getElementById('task-2-text').innerText = firstVerse.tasks[1];
+            document.getElementById('task-3-text').innerText = firstVerse.tasks[2];
+        });
+    </script>
+</body>
+</html>
