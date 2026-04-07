@@ -25,6 +25,11 @@
 </head>
 <body class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-amber-50 bg-pattern flex items-center justify-center p-2 md:p-4 text-slate-800 relative overflow-x-hidden">
 
+    <!-- CẢNH BÁO CHẾ ĐỘ TEST CỦA ADMIN -->
+    <div id="test-mode-badge" class="hidden fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-600 text-white text-[11px] font-bold px-4 py-1.5 rounded-full shadow-lg animate-pulse z-[100] border-2 border-white">
+        ĐANG Ở CHẾ ĐỘ TEST (KHÔNG LƯU DB)
+    </div>
+
     <audio id="blessing-sound" src="https://actions.google.com/sounds/v1/magic/fairy_glissando_short.ogg" preload="auto"></audio>
 
     <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden flex items-center justify-center">
@@ -32,11 +37,12 @@
         <div class="absolute bottom-[-10%] right-[-5%] w-[400px] h-[400px] bg-amber-400/20 rounded-full blur-[100px]"></div>
     </div>
 
+    <!-- MÀN HÌNH XEM DANH HIỆU -->
     <div id="rank-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6 transform scale-95 transition-transform duration-300" id="rank-modal-content">
             <div class="flex justify-between items-center mb-6 border-b border-slate-100 pb-3">
                 <h3 class="text-xl font-bold text-amber-600 flex items-center gap-2">🏆 Hành Trình Danh Hiệu</h3>
-                <button id="btn-close-rank" class="text-slate-400 hover:bg-slate-100 p-2 rounded-full transition-colors">✕</button>
+                <button id="btn-close-rank" class="text-slate-400 hover:bg-slate-100 p-2 rounded-full transition-colors font-bold">✕</button>
             </div>
             <div class="flex flex-col gap-4">
                 <div class="flex items-center gap-4 p-4 rounded-2xl bg-amber-50 border border-amber-100">
@@ -62,6 +68,7 @@
         </div>
     </div>
 
+    <!-- MÀN HÌNH ĐĂNG NHẬP -->
     <div id="auth-screen" class="bg-white/95 backdrop-blur-sm rounded-[2.5rem] shadow-2xl shadow-blue-100/50 w-full max-w-md border border-white relative z-20 p-8 flex flex-col gap-6 items-center">
         <div class="text-center w-full">
             <h1 class="text-2xl font-bold text-slate-800">Cổng Tĩnh Nguyện</h1>
@@ -85,12 +92,34 @@
         </div>
     </div>
 
+    <!-- MÀN HÌNH QUẢN TRỊ (BỔ SUNG KHU VỰC TEST CHO ADMIN) -->
     <div id="admin-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden" id="admin-modal-content">
-            <div class="p-4 border-b border-slate-100 flex justify-between bg-slate-50">
+            <div class="p-4 border-b border-slate-100 flex justify-between bg-slate-50 items-center">
                 <h2 class="text-xl font-bold text-red-600">Bảng Quản Trị (Admin)</h2>
-                <button id="btn-close-admin" class="font-bold">✕</button>
+                <button id="btn-close-admin" class="font-bold text-slate-400 hover:text-slate-600 px-2">✕</button>
             </div>
+            
+            <!-- KHU VỰC CÔNG CỤ TEST (Chỉ hiển thị trong bảng Admin) -->
+            <div class="p-4 bg-amber-50 border-b border-amber-100 flex flex-col gap-2 relative">
+                <h3 class="text-[13px] font-bold text-amber-800 uppercase tracking-wider flex items-center gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                    Công Cụ Test Giao Diện
+                </h3>
+                <p class="text-[11px] text-amber-600 font-medium">Chế độ này cho phép bạn mở khóa nút bấm và thay đổi ngày để thử nghiệm hiệu ứng, <strong class="text-red-500 underline">không làm thay đổi dữ liệu thật</strong> trên Server.</p>
+                <div class="flex gap-2 flex-wrap mt-1">
+                    <button id="btn-test-next-day" class="text-[11px] bg-white border border-amber-300 text-amber-700 px-3 py-1.5 rounded-lg hover:bg-amber-200 font-bold shadow-sm transition-colors">
+                        🔓 Mở Khóa Ngày Tiếp Theo
+                    </button>
+                    <button id="btn-test-rank-15" class="text-[11px] bg-white border border-amber-300 text-amber-700 px-3 py-1.5 rounded-lg hover:bg-amber-200 font-bold shadow-sm transition-colors">
+                        ⭐ Test Lên Rank (14 ngày)
+                    </button>
+                    <button id="btn-test-reset" class="text-[11px] bg-slate-800 text-white px-3 py-1.5 rounded-lg hover:bg-slate-700 font-bold shadow-sm transition-colors ml-auto">
+                        Khôi Phục Dữ Liệu Thật
+                    </button>
+                </div>
+            </div>
+
             <div class="p-0 overflow-y-auto flex-1 bg-white">
                 <table class="w-full text-left border-collapse text-sm">
                     <thead class="bg-slate-50 font-bold">
@@ -102,11 +131,12 @@
         </div>
     </div>
 
+    <!-- ==================== ỨNG DỤNG CHÍNH ==================== -->
     <div id="main-app" class="w-full max-w-[80rem] hidden flex-col gap-4 relative z-10">
         
         <div class="bg-white/90 backdrop-blur-md rounded-2xl p-4 shadow-sm border border-white flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="flex items-center gap-4">
-                <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-lg" id="user-avatar-text">U</div>
+                <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-lg shadow-inner" id="user-avatar-text">U</div>
                 <div>
                     <p class="text-xs text-slate-400 font-semibold uppercase">Xin chào,</p>
                     <p class="text-sm font-bold text-slate-800" id="ui-username">Đang tải...</p>
@@ -120,8 +150,8 @@
             <div class="flex items-center gap-3 text-sm font-medium flex-wrap">
                 <div class="text-amber-600 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-100">Kỷ lục: <span id="ui-max-streak" class="font-bold">0</span></div>
                 <div class="text-red-500 bg-red-50 px-3 py-1.5 rounded-lg border border-red-100">Lỡ chuỗi: <span id="ui-lost-streaks" class="font-bold">0</span></div>
-                <button id="btn-open-admin" class="hidden text-white bg-red-500 px-4 py-1.5 rounded-lg font-bold">Admin</button>
-                <button id="btn-logout" class="text-slate-500 hover:text-red-500 bg-slate-50 px-3 py-1.5 rounded-lg border font-bold">Đăng xuất</button>
+                <button id="btn-open-admin" class="hidden text-white bg-red-500 px-4 py-1.5 rounded-lg font-bold shadow-md hover:bg-red-600">Bảng Admin</button>
+                <button id="btn-logout" class="text-slate-500 hover:text-red-500 bg-slate-50 px-3 py-1.5 rounded-lg border font-bold hover:bg-red-50">Đăng xuất</button>
             </div>
         </div>
 
@@ -152,7 +182,7 @@
                                 <line x1="80" y1="45" x2="80" y2="135" stroke="#FBBF24" stroke-width="2"/>
                             </svg>
 
-                            <svg id="medal-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="w-40 h-40 relative z-10 transition-all duration-1000 hidden">
+                            <svg id="medal-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="w-40 h-40 relative z-10 transition-all duration-1000 hidden drop-shadow-[0_0_15px_rgba(251,191,36,0.6)]">
                                 <polygon points="50,5 90,28 90,72 50,95 10,72 10,28" fill="#D97706"/>
                                 <polygon points="50,12 82,31 82,69 50,88 18,69 18,31" fill="#F59E0B"/>
                                 <path d="M 35 65 L 50 50 L 65 65" fill="none" stroke="#FEF3C7" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
@@ -240,8 +270,10 @@
     <script>
         const API_URL = 'https://giuchuoitinhnguyen.onrender.com/api';
         let userData = null;
+        let originalUserData = null; // Biến lưu dữ liệu thật khi vào chế độ Test
         let authMode = 'login'; 
         let isProcessing = false;
+        let isTestMode = false; // Cờ theo dõi chế độ Test
 
         const bibleVerses = [
             { text: "Lời Chúa là ngọn đèn cho chân tôi, ánh sáng cho đường lối tôi.", ref: "Thi Thiên 119:105" }
@@ -255,11 +287,15 @@
                 document.getElementById('rank-modal-content').classList.remove('scale-95');
             }, 10);
             
-            // Xử lý mở khóa Rank 2
+            // Xử lý mở khóa Rank 2 hiển thị
             if(userData && userData.currentStreak >= 15) {
                 document.getElementById('rank-2-lock').classList.add('hidden');
                 document.getElementById('rank-2-card').classList.add('border-amber-400', 'bg-amber-50/50');
                 document.getElementById('rank-2-card').classList.remove('border-slate-200', 'bg-slate-50');
+            } else {
+                document.getElementById('rank-2-lock').classList.remove('hidden');
+                document.getElementById('rank-2-card').classList.remove('border-amber-400', 'bg-amber-50/50');
+                document.getElementById('rank-2-card').classList.add('border-slate-200', 'bg-slate-50');
             }
         });
 
@@ -269,7 +305,7 @@
             setTimeout(() => document.getElementById('rank-modal').classList.add('hidden'), 300);
         });
 
-        // Xử lý Auth (Giữ nguyên)
+        // Xử lý Auth
         document.getElementById('tab-login').addEventListener('click', () => { authMode = 'login'; document.getElementById('tab-login').className = "flex-1 pb-2 border-b-2 border-amber-500 text-amber-600 font-bold transition-all"; document.getElementById('tab-register').className = "flex-1 pb-2 border-b-2 border-transparent text-slate-400 font-bold"; document.getElementById('btn-auth-action').innerText = "Vào Ứng Dụng"; });
         document.getElementById('tab-register').addEventListener('click', () => { authMode = 'register'; document.getElementById('tab-register').className = "flex-1 pb-2 border-b-2 border-amber-500 text-amber-600 font-bold transition-all"; document.getElementById('tab-login').className = "flex-1 pb-2 border-b-2 border-transparent text-slate-400 font-bold"; document.getElementById('btn-auth-action').innerText = "Đăng Ký Tài Khoản"; });
         document.getElementById('btn-logout').addEventListener('click', () => location.reload());
@@ -300,6 +336,11 @@
 
         function updateUIFromData() {
             if(!userData) return;
+            
+            // Cảnh báo chế độ Test
+            if (isTestMode) document.getElementById('test-mode-badge').classList.remove('hidden');
+            else document.getElementById('test-mode-badge').classList.add('hidden');
+
             document.getElementById('ui-username').innerText = userData.username;
             document.getElementById('user-avatar-text').innerText = userData.username.charAt(0);
             document.getElementById('ui-max-streak').innerText = userData.maxStreak;
@@ -345,6 +386,41 @@
             document.getElementById('tube-blue-liquid').style.height = `${Math.max(6, Math.min((userData.currentStreak / maxCap) * 100, 100))}%`;
         }
 
+        // ==========================================
+        // CÔNG CỤ TEST DÀNH CHO ADMIN
+        // ==========================================
+        function enableTestMode() {
+            if (!isTestMode) {
+                originalUserData = JSON.parse(JSON.stringify(userData)); // Sao lưu dữ liệu thật
+                isTestMode = true;
+            }
+        }
+
+        document.getElementById('btn-test-next-day').addEventListener('click', () => {
+            enableTestMode();
+            userData.hasCheckedInToday = false; // Mở khóa trạng thái để bấm tiếp
+            updateUIFromData();
+            document.getElementById('btn-close-admin').click();
+        });
+
+        document.getElementById('btn-test-rank-15').addEventListener('click', () => {
+            enableTestMode();
+            userData.currentStreak = 14; // Đặt sẵn 14 để admin bấm 1 lần là lên 15 biến hình
+            userData.hasCheckedInToday = false;
+            updateUIFromData();
+            document.getElementById('btn-close-admin').click();
+        });
+
+        document.getElementById('btn-test-reset').addEventListener('click', () => {
+            if (isTestMode && originalUserData) {
+                userData = JSON.parse(JSON.stringify(originalUserData)); // Trả lại dữ liệu thật
+                isTestMode = false;
+                updateUIFromData();
+                alert("Đã khôi phục dữ liệu thật từ máy chủ!");
+            }
+        });
+
+        // Cập nhật Logic Điểm Danh (Hỗ trợ Test Mode)
         document.getElementById('checkin-btn').addEventListener('click', async () => {
             if (!userData.hasCheckedInToday && !isProcessing) {
                 isProcessing = true;
@@ -352,24 +428,38 @@
                 // Kích hoạt Âm Thanh To Rõ
                 const sound = document.getElementById('blessing-sound');
                 sound.volume = 1.0; 
-                sound.play().catch(e => console.log("Trình duyệt chặn tự động phát âm thanh"));
+                sound.play().catch(e => console.log("Trình duyệt chặn âm thanh"));
 
                 // Kích hoạt hiệu ứng ánh sáng
                 document.getElementById('celebration').classList.remove('hidden');
                 setTimeout(() => document.getElementById('celebration').classList.add('hidden'), 3000);
                 
+                if (isTestMode) {
+                    // Nếu đang test: Chỉ đổi số trên màn hình, không gọi API
+                    userData.currentStreak++;
+                    userData.maxStreak = Math.max(userData.maxStreak, userData.currentStreak);
+                    userData.totalCheckins++;
+                    userData.totalPoints++;
+                    userData.hasCheckedInToday = true;
+                    updateUIFromData();
+                    isProcessing = false;
+                    return; // Kết thúc tại đây, không gọi xuống Server
+                }
+
+                // Nếu không test thì gọi Server lưu dữ liệu thật
                 try {
                     const res = await fetch(`${API_URL}/update-streak`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: userData._id, action: 'checkin' }) });
                     const data = await res.json();
                     if (data.success) userData = data.user;
-                } catch (error) {} finally { isProcessing = false; updateUIFromData(); }
+                } catch (error) { alert("Lỗi kết nối!") } 
+                finally { isProcessing = false; updateUIFromData(); }
             }
         });
 
         // Bảng Admin
         document.getElementById('btn-open-admin').addEventListener('click', async () => {
             document.getElementById('admin-modal').classList.remove('hidden');
-            document.getElementById('admin-modal').classList.add('opacity-100');
+            setTimeout(() => document.getElementById('admin-modal').classList.add('opacity-100'), 10);
             const res = await fetch(`${API_URL}/users`);
             const data = await res.json();
             if(data.success) {
