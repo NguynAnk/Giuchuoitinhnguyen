@@ -407,6 +407,31 @@
         let isProcessing = false;
         let isTestMode = false; 
 
+        // Bộ sưu tập Kinh Thánh để thay đổi mỗi ngày/mỗi lần load
+        const bibleVerses = [
+            { text: "Lời Chúa là ngọn đèn cho chân tôi, ánh sáng cho đường lối tôi.", ref: "Thi Thiên 119:105" },
+            { text: "Mọi sự hiệp lại làm ích cho kẻ yêu mến Đức Chúa Trời.", ref: "Rô-ma 8:28" },
+            { text: "Hãy phó thác đường lối mình cho Đức Giê-hô-va, và nhờ cậy nơi Ngài, thì Ngài sẽ làm thành việc đó.", ref: "Thi Thiên 37:5" },
+            { text: "Tôi làm được mọi sự nhờ Đấng ban thêm sức cho tôi.", ref: "Phi-líp 4:13" },
+            { text: "Đức Giê-hô-va là Đấng chăn giữ tôi: tôi sẽ chẳng thiếu thốn gì.", ref: "Thi Thiên 23:1" },
+            { text: "Lòng vui mừng vốn một phương thuốc hay; Còn trí nao sờn làm khô xương cốt.", ref: "Châm-ngôn 17:22" },
+            { text: "Hãy hết lòng tin cậy Đức Giê-hô-va, chớ nương cậy nơi sự thông sáng của mình.", ref: "Châm-ngôn 3:5" }
+        ];
+
+        // Khởi tạo Lời Chúa ngẫu nhiên ngay lập tức
+        function loadDailyVerse() {
+            const verseTextEl = document.getElementById('verse-text');
+            const verseRefEl = document.getElementById('verse-ref');
+            if (verseTextEl && verseRefEl) {
+                const randomVerse = bibleVerses[Math.floor(Math.random() * bibleVerses.length)];
+                verseTextEl.innerText = randomVerse.text;
+                verseRefEl.innerText = `— ${randomVerse.ref}`;
+            }
+        }
+        
+        // Chạy hàm ngay khi script được tải
+        loadDailyVerse();
+
         // --- HỆ THỐNG DANH HIỆU TỰ ĐỘNG ---
         const rankData = [
             { id: 0, streak: 0, name: "Người Tìm Kiếm (Mộc)", class: "rank-wood", hasSparkle: false },
