@@ -228,7 +228,7 @@
 
     <!-- ==================== LOGIC KẾT NỐI API SERVER ==================== -->
     <script>
-        // CẤU HÌNH LIÊN KẾT ĐẾN SERVER NODE.JS CỦA BẠN
+        // CẤU HÌNH LIÊN KẾT ĐẾN SERVER NODE.JS CỦA BẠN TRÊN RENDER
         const API_URL = 'https://giuchuoitinhnguyen.onrender.com/api';
         
         let userData = null;
@@ -297,7 +297,7 @@
                 }
             } catch (error) {
                 console.error(error);
-                err.innerText = "Không thể kết nối đến máy chủ. Hãy chắc chắn Server Node.js đang chạy.";
+                err.innerText = "Chưa kết nối được với Server (nếu vừa tạo máy chủ Render, vui lòng đợi thêm 1 phút để máy chủ khởi động).";
                 err.classList.remove('hidden');
             } finally {
                 btn.innerText = authMode === 'register' ? "Đăng Ký Tài Khoản" : "Vào Ứng Dụng";
@@ -387,7 +387,7 @@
         document.getElementById('checkin-btn').addEventListener('click', async () => {
             if (!userData.hasCheckedInToday) {
                 document.getElementById('celebration').classList.remove('hidden');
-                setTimeout(() => celebration.classList.add('hidden'), 3000);
+                setTimeout(() => document.getElementById('celebration').classList.add('hidden'), 3000);
                 await sendStreakUpdate('checkin');
             } else {
                 await sendStreakUpdate('undo');
