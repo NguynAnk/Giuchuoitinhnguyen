@@ -71,41 +71,37 @@
         .harp-stroke-secondary { stroke: var(--harp-secondary); }
         .harp-fill-secondary { fill: var(--harp-secondary); }
 
-        .rank-wood { 
-            --harp-primary: #4E342E; --harp-secondary: #8D6E63; --harp-glow: rgba(78, 52, 46, 0.2); 
-            --harp-stroke: url(#wood-pattern);
-            --wing-scale: 0; --wing-rot-l: -40deg; --wing-rot-r: 40deg; --wing-y: 15px; --halo-scale: 0; --extra-opacity: 0;
+        /* Kịch bản chuyển hướng cánh: Dang ra -> Hướng lên -> Vòng ôm cụp vào */
+        .rank-wood { --harp-primary: #4E342E; --harp-secondary: #8D6E63; --harp-glow: rgba(78, 52, 46, 0.2); --harp-stroke: url(#wood-pattern); --wing-scale: 0; --wing-rot-l: -40deg; --wing-rot-r: 40deg; --wing-y: 15px; --halo-scale: 0; --extra-opacity: 0; }
+        .rank-bronze { --harp-primary: #B87333; --harp-secondary: #FDE047; --harp-glow: rgba(184, 115, 51, 0.5); --harp-stroke: var(--harp-primary); --wing-scale: 0; --wing-rot-l: -30deg; --wing-rot-r: 30deg; --wing-y: 10px; --halo-scale: 0; --extra-opacity: 0; }
+        .rank-iron { --harp-primary: #64748B; --harp-secondary: #CBD5E1; --harp-glow: rgba(100, 116, 139, 0.4); --harp-stroke: var(--harp-primary); --wing-scale: 0; --wing-rot-l: -20deg; --wing-rot-r: 20deg; --wing-y: 5px; --halo-scale: 0; --extra-opacity: 0; }
+        
+        /* Bắt đầu mọc cánh dang rộng */
+        .rank-gold { --harp-primary: #EAB308; --harp-secondary: #FEF08A; --harp-glow: rgba(234, 179, 8, 0.6); --harp-stroke: var(--harp-primary); --wing-scale: 0.55; --wing-rot-l: -35deg; --wing-rot-r: 35deg; --wing-y: 15px; --halo-scale: 0.65; --extra-opacity: 1; }
+        /* Cánh vươn lên dần */
+        .rank-platinum { --harp-primary: #94A3B8; --harp-secondary: #60A5FA; --harp-glow: rgba(96, 165, 250, 0.5); --harp-stroke: var(--harp-primary); --wing-scale: 0.85; --wing-rot-l: -20deg; --wing-rot-r: 20deg; --wing-y: 5px; --halo-scale: 0.85; --extra-opacity: 1; }
+        /* Cánh thẳng đứng mạnh mẽ */
+        .rank-diamond { --harp-primary: #06B6D4; --harp-secondary: #CFFAFE; --harp-glow: rgba(6, 182, 212, 0.7); --harp-stroke: var(--harp-primary); --wing-scale: 1.15; --wing-rot-l: -5deg; --wing-rot-r: 5deg; --wing-y: -5px; --halo-scale: 1.0; --extra-opacity: 1; }
+        /* Cánh ôm vòng cụp vào trong che chở */
+        .rank-ruby { --harp-primary: #E11D48; --harp-secondary: #FECDD3; --harp-glow: rgba(225, 29, 72, 0.7); --harp-stroke: var(--harp-primary); --wing-scale: 1.4; --wing-rot-l: 25deg; --wing-rot-r: -25deg; --wing-y: -15px; --halo-scale: 1.25; --extra-opacity: 1; }
+
+        /* --- HIỆU ỨNG LƠ LỬNG & VẪY CÁNH (HOVER & FLAP) --- */
+        @keyframes float-harp {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
         }
-        .rank-bronze { 
-            --harp-primary: #B87333; --harp-secondary: #FDE047; --harp-glow: rgba(184, 115, 51, 0.5); 
-            --harp-stroke: var(--harp-primary);
-            --wing-scale: 0; --wing-rot-l: -30deg; --wing-rot-r: 30deg; --wing-y: 10px; --halo-scale: 0; --extra-opacity: 0;
+        .harp-floating { animation: float-harp 4s ease-in-out infinite; }
+
+        @keyframes flap-left {
+            0%, 100% { transform: rotate(0deg) scaleX(1); }
+            50% { transform: rotate(4deg) scaleX(0.9); }
         }
-        .rank-iron { 
-            --harp-primary: #64748B; --harp-secondary: #CBD5E1; --harp-glow: rgba(100, 116, 139, 0.4); 
-            --harp-stroke: var(--harp-primary);
-            --wing-scale: 0; --wing-rot-l: -20deg; --wing-rot-r: 20deg; --wing-y: 5px; --halo-scale: 0; --extra-opacity: 0;
+        @keyframes flap-right {
+            0%, 100% { transform: rotate(0deg) scaleX(1); }
+            50% { transform: rotate(-4deg) scaleX(0.9); }
         }
-        .rank-gold { 
-            --harp-primary: #EAB308; --harp-secondary: #FEF08A; --harp-glow: rgba(234, 179, 8, 0.6); 
-            --harp-stroke: var(--harp-primary);
-            --wing-scale: 0.55; --wing-rot-l: -25deg; --wing-rot-r: 25deg; --wing-y: 8px; --halo-scale: 0.65; --extra-opacity: 1;
-        }
-        .rank-platinum { 
-            --harp-primary: #94A3B8; --harp-secondary: #60A5FA; --harp-glow: rgba(96, 165, 250, 0.5); 
-            --harp-stroke: var(--harp-primary);
-            --wing-scale: 0.85; --wing-rot-l: -10deg; --wing-rot-r: 10deg; --wing-y: 4px; --halo-scale: 0.85; --extra-opacity: 1;
-        }
-        .rank-diamond { 
-            --harp-primary: #06B6D4; --harp-secondary: #CFFAFE; --harp-glow: rgba(6, 182, 212, 0.7); 
-            --harp-stroke: var(--harp-primary);
-            --wing-scale: 1.15; --wing-rot-l: 0deg; --wing-rot-r: 0deg; --wing-y: -2px; --halo-scale: 1.0; --extra-opacity: 1;
-        }
-        .rank-ruby { 
-            --harp-primary: #E11D48; --harp-secondary: #FECDD3; --harp-glow: rgba(225, 29, 72, 0.7); 
-            --harp-stroke: var(--harp-primary);
-            --wing-scale: 1.5; --wing-rot-l: 18deg; --wing-rot-r: -18deg; --wing-y: -12px; --halo-scale: 1.25; --extra-opacity: 1;
-        }
+        .wing-flap-l { animation: flap-left 3s ease-in-out infinite; transform-origin: 40px 80px; }
+        .wing-flap-r { animation: flap-right 3s ease-in-out infinite; transform-origin: 80px 80px; }
 
         /* --- HIỆU ỨNG BAY LÊN (FLOATING) CHO +1 LV / +1 XP --- */
         @keyframes floatUp {
@@ -114,9 +110,7 @@
             70% { opacity: 1; transform: translateY(-35px) scale(1); }
             100% { opacity: 0; transform: translateY(-60px) scale(0.9); }
         }
-        .float-up-anim {
-            animation: floatUp 2.5s cubic-bezier(0.2, 0, 0.2, 1) forwards;
-        }
+        .float-up-anim { animation: floatUp 2.5s cubic-bezier(0.2, 0, 0.2, 1) forwards; }
     </style>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-amber-50 bg-pattern flex items-center justify-center p-2 md:p-4 text-slate-800 relative overflow-x-hidden">
@@ -136,8 +130,9 @@
         ĐANG Ở CHẾ ĐỘ TEST (KHÔNG LƯU DB)
     </div>
 
-    <!-- Âm thanh hoàn thành tĩnh nguyện -->
-    <audio id="blessing-sound" src="https://actions.google.com/sounds/v1/magic/fairy_glissando_short.ogg" preload="auto"></audio>
+    <!-- Âm thanh hoàn thành tĩnh nguyện (Tách làm 2 loại) -->
+    <audio id="daily-sound" src="https://actions.google.com/sounds/v1/water/water_drop.ogg" preload="auto"></audio>
+    <audio id="rankup-sound" src="https://actions.google.com/sounds/v1/magic/fairy_glissando_short.ogg" preload="auto"></audio>
 
     <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden flex items-center justify-center">
         <div class="absolute top-[-10%] left-[-5%] w-[400px] h-[400px] bg-blue-300/20 rounded-full blur-[100px]"></div>
@@ -268,7 +263,8 @@
 
                     <div class="flex flex-col items-center justify-center relative w-full">
                         
-                        <div id="harp-wrapper" class="relative flex flex-col items-center justify-center h-56 w-56 mx-auto mb-2 rank-wood">
+                        <!-- Wrapper chứa hiệu ứng FLOAT LƠ LỬNG -->
+                        <div id="harp-wrapper" class="relative flex flex-col items-center justify-center h-56 w-56 mx-auto mb-2 rank-wood harp-floating">
                             
                             <div id="harp-glow" class="absolute inset-0 rounded-full blur-3xl animate-pulse hidden"></div>
 
@@ -282,7 +278,8 @@
                                 <span class="text-2xl whitespace-nowrap">+1 XP</span>
                             </div>
                             
-                            <svg id="harp-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 150" class="w-44 h-44 relative z-10 transition-all duration-1000 scale-90 opacity-80">
+                            <!-- SVG phải có overflow-visible để đôi cánh ôm rộng không bị cắt -->
+                            <svg id="harp-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 150" class="w-44 h-44 relative z-10 transition-all duration-1000 scale-90 opacity-80 overflow-visible">
                                 
                                 <g class="harp-halo" style="transform: scale(var(--halo-scale)); opacity: var(--extra-opacity); transform-origin: 60px 15px; transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);">
                                     <ellipse cx="60" cy="15" rx="35" ry="10" fill="none" class="harp-stroke-primary animate-pulse" stroke-width="3" />
@@ -293,15 +290,19 @@
                                 </g>
 
                                 <g class="harp-wings" style="opacity: var(--extra-opacity); transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);">
-                                    <!-- Cánh Trái xoay độc lập -->
+                                    <!-- Cánh Trái (Có hiệu ứng vẫy) -->
                                     <g style="transform: translate(0px, var(--wing-y)) scale(var(--wing-scale)) rotate(var(--wing-rot-l)); transform-origin: 45px 80px; transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);">
-                                        <path d="M 40 80 C 10 70 -5 30 15 15 C 20 30 30 40 40 45 C 25 25 30 5 45 0 C 40 20 45 35 50 45 C 50 45 45 65 40 80 Z" class="harp-fill-secondary" opacity="0.6"/>
-                                        <path d="M 45 70 C 25 60 15 35 25 25 C 30 35 35 40 42 45 C 35 30 38 15 48 10 Z" fill="#FFF" opacity="0.4"/>
+                                        <g class="wing-flap-l">
+                                            <path d="M 42 80 C 20 80 -10 60 -5 35 Q 5 40 10 30 C -5 15 0 -10 15 -15 Q 20 -5 25 -10 C 20 -35 40 -40 50 -35 C 40 -20 35 -5 45 5 C 40 20 45 40 42 80 Z" class="harp-fill-secondary" opacity="0.6"/>
+                                            <path d="M 40 75 C 25 70 10 55 10 35 M 38 55 C 20 50 15 25 25 10 M 42 35 C 30 25 35 -5 45 -15" fill="none" stroke="#FFF" stroke-width="1.5" opacity="0.4" />
+                                        </g>
                                     </g>
-                                    <!-- Cánh Phải xoay độc lập -->
+                                    <!-- Cánh Phải (Có hiệu ứng vẫy) -->
                                     <g style="transform: translate(0px, var(--wing-y)) scale(var(--wing-scale)) rotate(var(--wing-rot-r)); transform-origin: 75px 80px; transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);">
-                                        <path d="M 80 80 C 110 70 125 30 105 15 C 100 30 90 40 80 45 C 95 25 90 5 75 0 C 80 20 75 35 70 45 C 70 45 75 65 80 80 Z" class="harp-fill-secondary" opacity="0.6"/>
-                                        <path d="M 75 70 C 95 60 105 35 95 25 C 90 35 85 40 78 45 C 85 30 82 15 72 10 Z" fill="#FFF" opacity="0.4"/>
+                                        <g class="wing-flap-r">
+                                            <path d="M 78 80 C 100 80 130 60 125 35 Q 115 40 110 30 C 125 15 120 -10 105 -15 Q 100 -5 95 -10 C 100 -35 80 -40 70 -35 C 80 -20 85 -5 75 5 C 80 20 75 40 78 80 Z" class="harp-fill-secondary" opacity="0.6"/>
+                                            <path d="M 80 75 C 95 70 110 55 110 35 M 82 55 C 100 50 105 25 95 10 M 78 35 C 90 25 85 -5 75 -15" fill="none" stroke="#FFF" stroke-width="1.5" opacity="0.4" />
+                                        </g>
                                     </g>
                                 </g>
 
@@ -444,7 +445,7 @@
                         ${!isUnlocked ? `<div class="absolute inset-0 bg-slate-900/5 z-10 flex items-center justify-center backdrop-blur-[1px]"><span class="bg-white/90 text-xs font-bold px-3 py-1 rounded-full text-slate-500 shadow-sm">🔒 Đạt ${r.streak} chuỗi</span></div>` : ''}
                         
                         <div class="relative w-12 h-12 flex justify-center items-center ${r.class}">
-                            <svg viewBox="0 0 120 150" class="w-12 h-12 relative z-10">
+                            <svg viewBox="0 0 120 150" class="w-12 h-12 relative z-10 overflow-visible">
                                 <g class="harp-halo" style="transform: scale(var(--halo-scale)); opacity: var(--extra-opacity); transform-origin: 60px 15px;">
                                     <ellipse cx="60" cy="15" rx="35" ry="10" fill="none" class="harp-stroke-primary" stroke-width="3" />
                                     <ellipse cx="60" cy="15" rx="42" ry="14" fill="none" class="harp-stroke-secondary" stroke-width="1.5" opacity="0.8" />
@@ -454,12 +455,12 @@
                                 </g>
                                 <g class="harp-wings" style="opacity: var(--extra-opacity);">
                                     <g style="transform: translate(0px, var(--wing-y)) scale(var(--wing-scale)) rotate(var(--wing-rot-l)); transform-origin: 45px 80px;">
-                                        <path d="M 40 80 C 10 70 -5 30 15 15 C 20 30 30 40 40 45 C 25 25 30 5 45 0 C 40 20 45 35 50 45 C 50 45 45 65 40 80 Z" class="harp-fill-secondary" opacity="0.6"/>
-                                        <path d="M 45 70 C 25 60 15 35 25 25 C 30 35 35 40 42 45 C 35 30 38 15 48 10 Z" fill="#FFF" opacity="0.4"/>
+                                        <path d="M 42 80 C 20 80 -10 60 -5 35 Q 5 40 10 30 C -5 15 0 -10 15 -15 Q 20 -5 25 -10 C 20 -35 40 -40 50 -35 C 40 -20 35 -5 45 5 C 40 20 45 40 42 80 Z" class="harp-fill-secondary" opacity="0.6"/>
+                                        <path d="M 40 75 C 25 70 10 55 10 35 M 38 55 C 20 50 15 25 25 10 M 42 35 C 30 25 35 -5 45 -15" fill="none" stroke="#FFF" stroke-width="1.5" opacity="0.4" />
                                     </g>
                                     <g style="transform: translate(0px, var(--wing-y)) scale(var(--wing-scale)) rotate(var(--wing-rot-r)); transform-origin: 75px 80px;">
-                                        <path d="M 80 80 C 110 70 125 30 105 15 C 100 30 90 40 80 45 C 95 25 90 5 75 0 C 80 20 75 35 70 45 C 70 45 75 65 80 80 Z" class="harp-fill-secondary" opacity="0.6"/>
-                                        <path d="M 75 70 C 95 60 105 35 95 25 C 90 35 85 40 78 45 C 85 30 82 15 72 10 Z" fill="#FFF" opacity="0.4"/>
+                                        <path d="M 78 80 C 100 80 130 60 125 35 Q 115 40 110 30 C 125 15 120 -10 105 -15 Q 100 -5 95 -10 C 100 -35 80 -40 70 -35 C 80 -20 85 -5 75 5 C 80 20 75 40 78 80 Z" class="harp-fill-secondary" opacity="0.6"/>
+                                        <path d="M 80 75 C 95 70 110 55 110 35 M 82 55 C 100 50 105 25 95 10 M 78 35 C 90 25 85 -5 75 -15" fill="none" stroke="#FFF" stroke-width="1.5" opacity="0.4" />
                                     </g>
                                 </g>
 
@@ -480,10 +481,6 @@
             });
             container.innerHTML = html;
         }
-
-        const bibleVerses = [
-            { text: "Lời Chúa là ngọn đèn cho chân tôi, ánh sáng cho đường lối tôi.", ref: "Thi Thiên 119:105" }
-        ];
 
         // Mở/Đóng Modal Danh Hiệu
         document.getElementById('btn-show-ranks').addEventListener('click', () => {
@@ -630,15 +627,8 @@
             if (!userData.hasCheckedInToday && !isProcessing) {
                 isProcessing = true;
                 
-                // PHÁT ÂM THANH NGAY LẬP TỨC TRƯỚC KHI GỌI SERVER
-                const sound = document.getElementById('blessing-sound');
-                if (sound) {
-                    sound.pause();
-                    sound.currentTime = 0;
-                    sound.volume = 1.0; 
-                    sound.play().catch(e => console.log("Trình duyệt chặn âm thanh do chưa tương tác"));
-                }
-
+                const oldRank = getCurrentRankInfo(userData.currentStreak);
+                
                 // HIỆU ỨNG TỎA SÁNG
                 document.getElementById('celebration').classList.remove('hidden');
                 setTimeout(() => document.getElementById('celebration').classList.add('hidden'), 3000);
@@ -647,32 +637,39 @@
                 const floatXp = document.getElementById('float-xp');
                 const floatLv = document.getElementById('float-lv');
                 if (floatXp && floatLv) {
-                    // Reset animation để có thể bấm nhiều lần
-                    floatXp.classList.remove('float-up-anim');
-                    floatLv.classList.remove('float-up-anim');
-                    void floatXp.offsetWidth; // Trigger reflow
-                    
-                    floatXp.classList.add('float-up-anim');
-                    floatLv.classList.add('float-up-anim');
+                    floatXp.classList.remove('float-up-anim'); floatLv.classList.remove('float-up-anim');
+                    void floatXp.offsetWidth; 
+                    floatXp.classList.add('float-up-anim'); floatLv.classList.add('float-up-anim');
                 }
 
+                // Xử lý dữ liệu (Test Mode hoặc Thật)
                 if (isTestMode) {
                     userData.currentStreak++;
                     userData.maxStreak = Math.max(userData.maxStreak, userData.currentStreak);
                     userData.totalCheckins++;
                     userData.totalPoints++;
                     userData.hasCheckedInToday = true;
-                    updateUIFromData();
-                    isProcessing = false;
-                    return; 
+                } else {
+                    try {
+                        const res = await fetch(`${API_URL}/update-streak`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: userData._id, action: 'checkin' }) });
+                        const data = await res.json();
+                        if (data.success) userData = data.user;
+                    } catch (error) { alert("Lỗi kết nối!") } 
                 }
 
-                try {
-                    const res = await fetch(`${API_URL}/update-streak`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: userData._id, action: 'checkin' }) });
-                    const data = await res.json();
-                    if (data.success) userData = data.user;
-                } catch (error) { alert("Lỗi kết nối!") } 
-                finally { isProcessing = false; updateUIFromData(); }
+                // Kiểm tra xem có thăng cấp không để phát đúng âm thanh
+                const newRank = getCurrentRankInfo(userData.currentStreak);
+                
+                if (newRank.id > oldRank.id) {
+                    const sound = document.getElementById('rankup-sound');
+                    if (sound) { sound.pause(); sound.currentTime = 0; sound.volume = 1.0; sound.play().catch(e=>{}); }
+                } else {
+                    const sound = document.getElementById('daily-sound');
+                    if (sound) { sound.pause(); sound.currentTime = 0; sound.volume = 1.0; sound.play().catch(e=>{}); }
+                }
+
+                isProcessing = false; 
+                updateUIFromData();
             }
         });
 
@@ -690,10 +687,6 @@
         });
         document.getElementById('btn-close-admin').addEventListener('click', () => { document.getElementById('admin-modal').classList.remove('opacity-100'); setTimeout(() => document.getElementById('admin-modal').classList.add('hidden'), 300); });
 
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('verse-text').innerText = bibleVerses[0].text;
-            document.getElementById('verse-ref').innerText = `— ${bibleVerses[0].ref}`;
-        });
     </script>
 </body>
 </html>
