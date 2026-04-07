@@ -24,60 +24,59 @@
         
         /* Cấu hình chất lỏng đa chiều (Ngang/Dọc) */
         .tube-liquid-red {
-            width: var(--fill-level, 6%);
-            height: 100%;
+            width: var(--fill-level, 6%); height: 100%;
             background-image: linear-gradient(to right, #dc2626, #ef4444, #f87171);
         }
         .tube-liquid-blue {
-            width: var(--fill-level, 6%);
-            height: 100%;
+            width: var(--fill-level, 6%); height: 100%;
             background-image: linear-gradient(to right, #2563eb, #3b82f6, #60a5fa);
         }
-        
         @media (min-width: 768px) {
-            .tube-liquid-red {
-                width: 100%;
-                height: var(--fill-level, 6%);
-                background-image: linear-gradient(to top, #dc2626, #ef4444, #f87171);
-            }
-            .tube-liquid-blue {
-                width: 100%;
-                height: var(--fill-level, 6%);
-                background-image: linear-gradient(to top, #2563eb, #3b82f6, #60a5fa);
-            }
+            .tube-liquid-red { width: 100%; height: var(--fill-level, 6%); background-image: linear-gradient(to top, #dc2626, #ef4444, #f87171); }
+            .tube-liquid-blue { width: 100%; height: var(--fill-level, 6%); background-image: linear-gradient(to top, #2563eb, #3b82f6, #60a5fa); }
         }
 
-        /* Sóng dọc (Dành cho máy tính) */
-        .wave-mask-v-1, .wave-mask-v-2 {
-            position: absolute;
-            width: 250px; height: 250px;
-            left: -105px; pointer-events: none;
-        }
+        /* Sóng dọc (Máy tính) */
+        .wave-mask-v-1, .wave-mask-v-2 { position: absolute; width: 250px; height: 250px; left: -105px; pointer-events: none; }
         .wave-mask-v-1 { top: -243px; border-radius: 40%; background: rgba(248, 250, 252, 0.5); animation: spin 5s linear infinite; }
         .wave-mask-v-2 { top: -247px; border-radius: 45%; background: rgb(248, 250, 252); box-shadow: 0 5px 8px -2px rgba(0,0,0,0.15); animation: spin 7s linear infinite; }
 
-        /* Sóng ngang (Dành cho điện thoại) */
-        .wave-mask-h-1, .wave-mask-h-2 {
-            position: absolute;
-            width: 250px; height: 250px;
-            top: -105px; pointer-events: none;
-        }
+        /* Sóng ngang (Điện thoại) */
+        .wave-mask-h-1, .wave-mask-h-2 { position: absolute; width: 250px; height: 250px; top: -105px; pointer-events: none; }
         .wave-mask-h-1 { right: -243px; border-radius: 40%; background: rgba(248, 250, 252, 0.5); animation: spin 5s linear infinite; }
         .wave-mask-h-2 { right: -247px; border-radius: 45%; background: rgb(248, 250, 252); box-shadow: -5px 0 8px -2px rgba(0,0,0,0.15); animation: spin 7s linear infinite; }
 
-        @media (max-width: 767px) {
-            .wave-mask-v-1, .wave-mask-v-2 { display: none; }
-        }
-        @media (min-width: 768px) {
-            .wave-mask-h-1, .wave-mask-h-2 { display: none; }
-        }
-
+        @media (max-width: 767px) { .wave-mask-v-1, .wave-mask-v-2 { display: none; } }
+        @media (min-width: 768px) { .wave-mask-h-1, .wave-mask-h-2 { display: none; } }
         @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* --- HỆ THỐNG RANK CÂY ĐÀN --- */
+        :root {
+            --harp-primary: #D97706; /* Mặc định: Mộc */
+            --harp-secondary: #FBBF24;
+            --harp-glow: rgba(251, 191, 36, 0.4);
+        }
+        .harp-path { transition: stroke 1s ease-in-out, fill 1s ease-in-out; }
+        #harp-glow { transition: background-color 1s ease-in-out; background-color: var(--harp-glow); }
+
+        /* 0: Khởi đầu (Mộc) */
+        .rank-wood { --harp-primary: #D97706; --harp-secondary: #FBBF24; --harp-glow: rgba(217, 119, 6, 0.3); }
+        /* 15: Màu Đồng */
+        .rank-bronze { --harp-primary: #B87333; --harp-secondary: #FDE047; --harp-glow: rgba(184, 115, 51, 0.5); }
+        /* 30: Màu Sắt */
+        .rank-iron { --harp-primary: #64748B; --harp-secondary: #CBD5E1; --harp-glow: rgba(100, 116, 139, 0.4); }
+        /* 45: Màu Vàng */
+        .rank-gold { --harp-primary: #EAB308; --harp-secondary: #FEF08A; --harp-glow: rgba(234, 179, 8, 0.6); }
+        /* 60: Bạch Kim */
+        .rank-platinum { --harp-primary: #94A3B8; --harp-secondary: #FFFFFF; --harp-glow: rgba(255, 255, 255, 0.8); }
+        /* 75: Kim Cương */
+        .rank-diamond { --harp-primary: #06B6D4; --harp-secondary: #CFFAFE; --harp-glow: rgba(6, 182, 212, 0.7); }
+        /* 90: Hồng Ngọc (Ruby) */
+        .rank-ruby { --harp-primary: #E11D48; --harp-secondary: #FECDD3; --harp-glow: rgba(225, 29, 72, 0.7); }
     </style>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-amber-50 bg-pattern flex items-center justify-center p-2 md:p-4 text-slate-800 relative overflow-x-hidden">
 
-    <!-- CẢNH BÁO CHẾ ĐỘ TEST CỦA ADMIN -->
     <div id="test-mode-badge" class="hidden fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-600 text-white text-[11px] font-bold px-4 py-1.5 rounded-full shadow-lg animate-pulse z-[100] border-2 border-white">
         ĐANG Ở CHẾ ĐỘ TEST (KHÔNG LƯU DB)
     </div>
@@ -91,31 +90,14 @@
 
     <!-- MÀN HÌNH XEM DANH HIỆU -->
     <div id="rank-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
-        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6 transform scale-95 transition-transform duration-300" id="rank-modal-content">
-            <div class="flex justify-between items-center mb-6 border-b border-slate-100 pb-3">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6 transform scale-95 transition-transform duration-300 flex flex-col max-h-[85vh]">
+            <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3 shrink-0">
                 <h3 class="text-xl font-bold text-amber-600 flex items-center gap-2">🏆 Hành Trình Danh Hiệu</h3>
                 <button id="btn-close-rank" class="text-slate-400 hover:bg-slate-100 p-2 rounded-full transition-colors font-bold">✕</button>
             </div>
-            <div class="flex flex-col gap-4">
-                <div class="flex items-center gap-4 p-4 rounded-2xl bg-amber-50 border border-amber-100">
-                    <svg viewBox="0 0 120 150" class="w-12 h-12 opacity-80"><path d="M 25 45 C 25 100 15 130 40 140 L 80 140 C 105 130 95 100 95 45" fill="none" stroke="#D97706" stroke-width="8" stroke-linecap="round" /><line x1="12" y1="45" x2="108" y2="45" stroke="#D97706" stroke-width="8" /><line x1="40" y1="45" x2="40" y2="135" stroke="#FBBF24" stroke-width="2"/><line x1="60" y1="45" x2="60" y2="139" stroke="#FBBF24" stroke-width="2"/><line x1="80" y1="45" x2="80" y2="135" stroke="#FBBF24" stroke-width="2"/></svg>
-                    <div>
-                        <h4 class="font-bold text-slate-800">Người Tìm Kiếm</h4>
-                        <p class="text-xs text-slate-500">Mốc: 0 ngày chuỗi</p>
-                    </div>
-                </div>
-                <div class="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-200 relative overflow-hidden group" id="rank-2-card">
-                    <div class="absolute inset-0 bg-slate-900/5 z-10 flex items-center justify-center backdrop-blur-[1px]" id="rank-2-lock">
-                        <span class="bg-white/90 text-xs font-bold px-3 py-1 rounded-full text-slate-500 shadow-sm">🔒 Đạt 15 chuỗi để mở</span>
-                    </div>
-                    <svg viewBox="0 0 100 100" class="w-12 h-12">
-                        <polygon points="50,5 90,28 90,72 50,95 10,72 10,28" fill="#D97706"/><polygon points="50,12 82,31 82,69 50,88 18,69 18,31" fill="#F59E0B"/><path d="M 35 65 L 50 50 L 65 65" fill="none" stroke="#FEF3C7" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M 35 75 L 50 60 L 65 75" fill="none" stroke="#FEF3C7" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M 35 55 L 50 40 L 65 55" fill="none" stroke="#FEF3C7" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M 75 15 Q 75 25 85 25 Q 75 25 75 35 Q 75 25 65 25 Q 75 25 75 15" fill="white"/>
-                    </svg>
-                    <div>
-                        <h4 class="font-bold text-slate-800">Chiến Binh Tinh Sương</h4>
-                        <p class="text-xs text-slate-500">Mốc: 15 ngày chuỗi</p>
-                    </div>
-                </div>
+            <!-- Nơi chứa danh sách Rank tự động gen từ JS -->
+            <div id="ranks-list-container" class="flex flex-col gap-3 overflow-y-auto pr-2 flex-1">
+                <!-- Data injected via JS -->
             </div>
         </div>
     </div>
@@ -152,22 +134,32 @@
                 <button id="btn-close-admin" class="font-bold text-slate-400 hover:text-slate-600 px-2">✕</button>
             </div>
             
-            <!-- KHU VỰC CÔNG CỤ TEST -->
+            <!-- KHU VỰC CÔNG CỤ TEST ĐƯỢC NÂNG CẤP -->
             <div class="p-4 bg-amber-50 border-b border-amber-100 flex flex-col gap-2 relative">
                 <h3 class="text-[13px] font-bold text-amber-800 uppercase tracking-wider flex items-center gap-1.5">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
                     Công Cụ Test Giao Diện
                 </h3>
-                <p class="text-[11px] text-amber-600 font-medium">Chế độ này cho phép bạn mở khóa nút bấm và thay đổi ngày để thử nghiệm hiệu ứng, <strong class="text-red-500 underline">không làm thay đổi dữ liệu thật</strong> trên Server.</p>
-                <div class="flex gap-2 flex-wrap mt-1">
+                <p class="text-[11px] text-amber-600 font-medium">Chọn một mốc để hệ thống giả lập ngay trước khi thăng cấp.</p>
+                <div class="flex gap-2 flex-wrap mt-1 items-center">
                     <button id="btn-test-next-day" class="text-[11px] bg-white border border-amber-300 text-amber-700 px-3 py-1.5 rounded-lg hover:bg-amber-200 font-bold shadow-sm transition-colors">
-                        🔓 Mở Khóa Ngày Tiếp Theo
+                        🔓 Mở Khóa Ngày Hôm Nay
                     </button>
-                    <button id="btn-test-rank-15" class="text-[11px] bg-white border border-amber-300 text-amber-700 px-3 py-1.5 rounded-lg hover:bg-amber-200 font-bold shadow-sm transition-colors">
-                        ⭐ Test Lên Rank (14 ngày)
+                    
+                    <select id="test-rank-select" class="text-[11px] font-bold bg-white border border-amber-300 text-amber-700 px-2 py-1.5 rounded-lg outline-none">
+                        <option value="14">Mộc ➞ Đồng (14 ngày)</option>
+                        <option value="29">Đồng ➞ Sắt (29 ngày)</option>
+                        <option value="44">Sắt ➞ Vàng (44 ngày)</option>
+                        <option value="59">Vàng ➞ Bạch Kim (59 ngày)</option>
+                        <option value="74">Bạch Kim ➞ Kim Cương (74 ngày)</option>
+                        <option value="89">Kim Cương ➞ Ruby (89 ngày)</option>
+                    </select>
+                    <button id="btn-test-rank-go" class="text-[11px] bg-amber-500 text-white px-3 py-1.5 rounded-lg hover:bg-amber-600 font-bold shadow-sm transition-colors">
+                        ⭐ Test Rank
                     </button>
+
                     <button id="btn-test-reset" class="text-[11px] bg-slate-800 text-white px-3 py-1.5 rounded-lg hover:bg-slate-700 font-bold shadow-sm transition-colors ml-auto">
-                        Khôi Phục Dữ Liệu Thật
+                        Khôi Phục Dữ Liệu
                     </button>
                 </div>
             </div>
@@ -219,28 +211,30 @@
                     <div class="text-center mb-6">
                         <span class="text-sm font-semibold tracking-wider uppercase text-amber-600">Một Ngày Phước Hạnh</span>
                         <h1 class="text-2xl md:text-3xl font-bold text-slate-800">GIỮ CHUỖI TĨNH NGUYỆN</h1>
-                        <p class="text-slate-500 mt-2">Gần gũi Chúa thêm mỗi ngày</p>
+                        <p class="text-slate-500 mt-2" id="rank-name-display">Gần gũi Chúa thêm mỗi ngày</p>
                     </div>
 
                     <div class="flex flex-col items-center justify-center relative w-full">
                         <div class="relative flex flex-col items-center justify-center h-56 w-56 mx-auto mb-2">
-                            <div id="harp-glow" class="absolute inset-0 bg-yellow-300 rounded-full blur-3xl opacity-50 animate-pulse hidden"></div>
+                            <!-- Hào quang phát sáng có màu thay đổi -->
+                            <div id="harp-glow" class="absolute inset-0 rounded-full blur-3xl animate-pulse hidden"></div>
                             
-                            <svg id="harp-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 150" class="w-44 h-44 relative z-10 transition-all duration-1000 scale-90 opacity-80">
-                                <path d="M 25 45 C 25 100 15 130 40 140 L 80 140 C 105 130 95 100 95 45" fill="none" stroke="#D97706" stroke-width="8" stroke-linecap="round" />
-                                <line x1="12" y1="45" x2="108" y2="45" stroke="#D97706" stroke-width="8" />
-                                <line x1="40" y1="45" x2="40" y2="135" stroke="#FBBF24" stroke-width="2"/>
-                                <line x1="60" y1="45" x2="60" y2="139" stroke="#FBBF24" stroke-width="2"/>
-                                <line x1="80" y1="45" x2="80" y2="135" stroke="#FBBF24" stroke-width="2"/>
-                            </svg>
-
-                            <svg id="medal-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="w-40 h-40 relative z-10 transition-all duration-1000 hidden drop-shadow-[0_0_15px_rgba(251,191,36,0.6)]">
-                                <polygon points="50,5 90,28 90,72 50,95 10,72 10,28" fill="#D97706"/>
-                                <polygon points="50,12 82,31 82,69 50,88 18,69 18,31" fill="#F59E0B"/>
-                                <path d="M 35 65 L 50 50 L 65 65" fill="none" stroke="#FEF3C7" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M 35 75 L 50 60 L 65 75" fill="none" stroke="#FEF3C7" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M 35 55 L 50 40 L 65 55" fill="none" stroke="#FEF3C7" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M 75 15 Q 75 25 85 25 Q 75 25 75 35 Q 75 25 65 25 Q 75 25 75 15" fill="white"/>
+                            <!-- Đàn Hạc (SVG chính) thay đổi màu theo Class -->
+                            <svg id="harp-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 150" class="rank-wood w-44 h-44 relative z-10 transition-all duration-1000 scale-90 opacity-80">
+                                <path class="harp-path" d="M 25 45 C 25 100 15 130 40 140 L 80 140 C 105 130 95 100 95 45" fill="none" stroke="var(--harp-primary)" stroke-width="8" stroke-linecap="round" />
+                                <line class="harp-path" x1="12" y1="45" x2="108" y2="45" stroke="var(--harp-primary)" stroke-width="8" stroke-linecap="round" />
+                                <line class="harp-path" x1="40" y1="45" x2="40" y2="135" stroke="var(--harp-secondary)" stroke-width="2"/>
+                                <line class="harp-path" x1="60" y1="45" x2="60" y2="139" stroke="var(--harp-secondary)" stroke-width="2"/>
+                                <line class="harp-path" x1="80" y1="45" x2="80" y2="135" stroke="var(--harp-secondary)" stroke-width="2"/>
+                                
+                                <!-- Hiệu ứng lấp lánh (Sparkles) cho Rank cao -->
+                                <g id="harp-sparkles" class="opacity-0 transition-opacity duration-1000">
+                                    <path d="M 0 -10 L 2 -2 L 10 0 L 2 2 L 0 10 L -2 2 L -10 0 L -2 -2 Z" fill="var(--harp-secondary)" transform="translate(15, 25) scale(0.6)" class="animate-pulse" style="animation-duration: 1.5s" />
+                                    <path d="M 0 -10 L 2 -2 L 10 0 L 2 2 L 0 10 L -2 2 L -10 0 L -2 -2 Z" fill="var(--harp-secondary)" transform="translate(105, 35) scale(0.8)" class="animate-bounce" style="animation-duration: 2s" />
+                                    <path d="M 0 -10 L 2 -2 L 10 0 L 2 2 L 0 10 L -2 2 L -10 0 L -2 -2 Z" fill="var(--harp-secondary)" transform="translate(60, 140) scale(0.7)" class="animate-ping" style="animation-duration: 2.5s" />
+                                    <path d="M 0 -10 L 2 -2 L 10 0 L 2 2 L 0 10 L -2 2 L -10 0 L -2 -2 Z" fill="#FFF" transform="translate(25, 110) scale(0.5)" class="animate-pulse" style="animation-duration: 1.2s" />
+                                    <path d="M 0 -10 L 2 -2 L 10 0 L 2 2 L 0 10 L -2 2 L -10 0 L -2 -2 Z" fill="#FFF" transform="translate(95, 110) scale(0.6)" class="animate-pulse" style="animation-duration: 1.8s" />
+                                </g>
                             </svg>
                         </div>
                         <div class="text-center z-10">
@@ -292,7 +286,6 @@
             <!-- CỤM 2 ỐNG NGHIỆM TỰ ĐỘNG XOAY CHIỀU -->
             <div class="flex flex-col md:flex-row gap-4 md:gap-5 shrink-0 border-t md:border-t-0 md:border-l border-slate-100 pt-6 md:pt-0 pl-0 md:pl-6 items-center md:items-end justify-center w-full md:w-auto mt-6 md:mt-0">
                 
-                <!-- ỐNG ĐỎ (TỔNG NGÀY) -->
                 <div class="flex flex-row md:flex-col items-center justify-center gap-3 w-full md:w-14">
                     <div class="text-center bg-red-50/80 px-2 py-1.5 rounded-xl border border-red-100 w-16 md:w-full shrink-0 shadow-sm">
                         <span class="text-[10px] font-bold text-red-500 uppercase block">Tổng</span>
@@ -309,7 +302,6 @@
                     </div>
                 </div>
 
-                <!-- ỐNG XANH (CHUỖI LIÊN TỤC) -->
                 <div class="flex flex-row md:flex-col items-center justify-center gap-3 w-full md:w-14">
                     <div class="text-center bg-blue-50/80 px-2 py-1.5 rounded-xl border border-blue-100 w-16 md:w-full shrink-0 shadow-sm">
                         <span class="text-[10px] font-bold text-blue-500 uppercase block">Chuỗi</span>
@@ -333,10 +325,58 @@
     <script>
         const API_URL = 'https://giuchuoitinhnguyen.onrender.com/api';
         let userData = null;
-        let originalUserData = null; // Biến lưu dữ liệu thật khi vào chế độ Test
+        let originalUserData = null; 
         let authMode = 'login'; 
         let isProcessing = false;
-        let isTestMode = false; // Cờ theo dõi chế độ Test
+        let isTestMode = false; 
+
+        // --- HỆ THỐNG DANH HIỆU TỰ ĐỘNG ---
+        const rankData = [
+            { id: 0, streak: 0, name: "Người Tìm Kiếm (Mộc)", class: "rank-wood", hasSparkle: false },
+            { id: 1, streak: 15, name: "Đồng Kiên Tâm", class: "rank-bronze", hasSparkle: false },
+            { id: 2, streak: 30, name: "Sắt Bền Bỉ", class: "rank-iron", hasSparkle: false },
+            { id: 3, streak: 45, name: "Vàng Vinh Hiển", class: "rank-gold", hasSparkle: false },
+            { id: 4, streak: 60, name: "Bạch Kim Tỏa Sáng", class: "rank-platinum", hasSparkle: true },
+            { id: 5, streak: 75, name: "Kim Cương Vĩnh Cửu", class: "rank-diamond", hasSparkle: true },
+            { id: 6, streak: 90, name: "Hồng Ngọc Quý Giá", class: "rank-ruby", hasSparkle: true }
+        ];
+
+        function getCurrentRankInfo(streak) {
+            let current = rankData[0];
+            for (let i = rankData.length - 1; i >= 0; i--) {
+                if (streak >= rankData[i].streak) return rankData[i];
+            }
+            return current;
+        }
+
+        function renderRanksModal(currentStreak) {
+            const container = document.getElementById('ranks-list-container');
+            let html = '';
+            rankData.forEach((r) => {
+                const isUnlocked = currentStreak >= r.streak;
+                html += `
+                    <div class="flex items-center gap-4 p-4 rounded-2xl ${isUnlocked ? 'bg-slate-50 border-amber-200 shadow-sm' : 'bg-slate-50 border-slate-200 opacity-60'} border relative overflow-hidden shrink-0">
+                        ${!isUnlocked ? `<div class="absolute inset-0 bg-slate-900/5 z-10 flex items-center justify-center backdrop-blur-[1px]"><span class="bg-white/90 text-xs font-bold px-3 py-1 rounded-full text-slate-500 shadow-sm">🔒 Đạt ${r.streak} chuỗi</span></div>` : ''}
+                        
+                        <div class="relative w-12 h-12 flex justify-center items-center">
+                            <svg viewBox="0 0 120 150" class="${r.class} w-12 h-12 relative z-10">
+                                <path class="harp-path" d="M 25 45 C 25 100 15 130 40 140 L 80 140 C 105 130 95 100 95 45" fill="none" stroke="var(--harp-primary)" stroke-width="8" stroke-linecap="round" />
+                                <line class="harp-path" x1="12" y1="45" x2="108" y2="45" stroke="var(--harp-primary)" stroke-width="8" />
+                                <line class="harp-path" x1="40" y1="45" x2="40" y2="135" stroke="var(--harp-secondary)" stroke-width="2"/>
+                                <line class="harp-path" x1="60" y1="45" x2="60" y2="139" stroke="var(--harp-secondary)" stroke-width="2"/>
+                                <line class="harp-path" x1="80" y1="45" x2="80" y2="135" stroke="var(--harp-secondary)" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-bold ${isUnlocked ? 'text-slate-800' : 'text-slate-500'}">${r.name}</h4>
+                            <p class="text-[11px] text-slate-500">Mốc: ${r.streak} ngày</p>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
 
         const bibleVerses = [
             { text: "Lời Chúa là ngọn đèn cho chân tôi, ánh sáng cho đường lối tôi.", ref: "Thi Thiên 119:105" }
@@ -344,22 +384,12 @@
 
         // Mở/Đóng Modal Danh Hiệu
         document.getElementById('btn-show-ranks').addEventListener('click', () => {
+            renderRanksModal(userData ? userData.currentStreak : 0); // Render lại để cập nhật khóa
             document.getElementById('rank-modal').classList.remove('hidden');
             setTimeout(() => {
                 document.getElementById('rank-modal').classList.add('opacity-100');
                 document.getElementById('rank-modal-content').classList.remove('scale-95');
             }, 10);
-            
-            // Xử lý mở khóa Rank 2 hiển thị
-            if(userData && userData.currentStreak >= 15) {
-                document.getElementById('rank-2-lock').classList.add('hidden');
-                document.getElementById('rank-2-card').classList.add('border-amber-400', 'bg-amber-50/50');
-                document.getElementById('rank-2-card').classList.remove('border-slate-200', 'bg-slate-50');
-            } else {
-                document.getElementById('rank-2-lock').classList.remove('hidden');
-                document.getElementById('rank-2-card').classList.remove('border-amber-400', 'bg-amber-50/50');
-                document.getElementById('rank-2-card').classList.add('border-slate-200', 'bg-slate-50');
-            }
         });
 
         document.getElementById('btn-close-rank').addEventListener('click', () => {
@@ -400,7 +430,6 @@
         function updateUIFromData() {
             if(!userData) return;
             
-            // Cảnh báo chế độ Test
             if (isTestMode) document.getElementById('test-mode-badge').classList.remove('hidden');
             else document.getElementById('test-mode-badge').classList.add('hidden');
 
@@ -411,13 +440,21 @@
             document.getElementById('ui-total-points').innerText = userData.totalPoints;
             document.getElementById('streak-count').innerText = userData.currentStreak;
             
-            // Xử lý Rank: Đổi Cây Đàn thành Huân Chương nếu >= 15 chuỗi
-            if (userData.currentStreak >= 15) {
-                document.getElementById('harp-svg').classList.add('hidden');
-                document.getElementById('medal-svg').classList.remove('hidden');
+            // --- CẬP NHẬT GIAO DIỆN THEO RANK ---
+            const currentRank = getCurrentRankInfo(userData.currentStreak);
+            const harpSvg = document.getElementById('harp-svg');
+            const sparkles = document.getElementById('harp-sparkles');
+            
+            // Xóa tất cả class rank cũ, thêm class rank mới
+            harpSvg.className = `w-44 h-44 relative z-10 transition-all duration-1000 scale-90 opacity-80 ${currentRank.class}`;
+            document.getElementById('rank-name-display').innerText = `Danh hiệu: ${currentRank.name}`;
+
+            if (currentRank.hasSparkle) {
+                sparkles.classList.remove('opacity-0');
+                sparkles.classList.add('opacity-100');
             } else {
-                document.getElementById('harp-svg').classList.remove('hidden');
-                document.getElementById('medal-svg').classList.add('hidden');
+                sparkles.classList.remove('opacity-100');
+                sparkles.classList.add('opacity-0');
             }
 
             updateTubesUI();
@@ -428,49 +465,47 @@
             btn.disabled = false;
             if (userData.hasCheckedInToday) {
                 document.getElementById('harp-glow').classList.remove('hidden');
-                document.getElementById('harp-svg').classList.add('scale-100');
-                document.getElementById('medal-svg').classList.add('scale-110');
+                harpSvg.classList.add('scale-100'); harpSvg.classList.remove('scale-90');
                 btn.className = 'w-full py-3.5 px-6 rounded-[1.25rem] font-bold text-lg bg-slate-100 text-slate-500 cursor-default shadow-inner';
                 btn.innerHTML = `Đã Hoàn Thành Hôm Nay ✓`;
             } else {
                 document.getElementById('harp-glow').classList.add('hidden');
-                document.getElementById('harp-svg').classList.remove('scale-100');
-                document.getElementById('medal-svg').classList.remove('scale-110');
+                harpSvg.classList.remove('scale-100'); harpSvg.classList.add('scale-90');
                 btn.className = 'w-full py-3.5 px-6 rounded-[1.25rem] font-bold text-lg bg-gradient-to-r from-amber-400 to-yellow-500 text-white shadow-xl hover:-translate-y-1';
                 btn.innerHTML = `Hoàn Thành Tĩnh Nguyện →`;
             }
         }
 
         function updateTubesUI() {
-            const maxCap = 30; 
+            const maxCap = 90; // Tăng max lên 90 để thanh nước chạy dài tới Ruby
             document.getElementById('tube-red-text').innerText = userData.totalCheckins;
             document.getElementById('tube-blue-text').innerText = userData.currentStreak;
             
-            // Thay vì đổi chiều cao tĩnh (height), bây giờ chúng ta sẽ truyền "Biến" CSS (fill-level)
             document.getElementById('tube-red-liquid').style.setProperty('--fill-level', `${Math.max(6, Math.min((userData.totalCheckins / maxCap) * 100, 100))}%`);
             document.getElementById('tube-blue-liquid').style.setProperty('--fill-level', `${Math.max(6, Math.min((userData.currentStreak / maxCap) * 100, 100))}%`);
         }
 
         // ==========================================
-        // CÔNG CỤ TEST DÀNH CHO ADMIN
+        // CÔNG CỤ TEST DÀNH CHO ADMIN NÂNG CẤP
         // ==========================================
         function enableTestMode() {
             if (!isTestMode) {
-                originalUserData = JSON.parse(JSON.stringify(userData)); // Sao lưu dữ liệu thật
+                originalUserData = JSON.parse(JSON.stringify(userData)); 
                 isTestMode = true;
             }
         }
 
         document.getElementById('btn-test-next-day').addEventListener('click', () => {
             enableTestMode();
-            userData.hasCheckedInToday = false; // Mở khóa trạng thái để bấm tiếp
+            userData.hasCheckedInToday = false; 
             updateUIFromData();
             document.getElementById('btn-close-admin').click();
         });
 
-        document.getElementById('btn-test-rank-15').addEventListener('click', () => {
+        document.getElementById('btn-test-rank-go').addEventListener('click', () => {
             enableTestMode();
-            userData.currentStreak = 14; // Đặt sẵn 14 để admin bấm 1 lần là lên 15 biến hình
+            const selectValue = parseInt(document.getElementById('test-rank-select').value);
+            userData.currentStreak = selectValue; // Set đúng số ngày trước khi lên cấp
             userData.hasCheckedInToday = false;
             updateUIFromData();
             document.getElementById('btn-close-admin').click();
@@ -478,29 +513,25 @@
 
         document.getElementById('btn-test-reset').addEventListener('click', () => {
             if (isTestMode && originalUserData) {
-                userData = JSON.parse(JSON.stringify(originalUserData)); // Trả lại dữ liệu thật
+                userData = JSON.parse(JSON.stringify(originalUserData)); 
                 isTestMode = false;
                 updateUIFromData();
                 alert("Đã khôi phục dữ liệu thật từ máy chủ!");
             }
         });
 
-        // Cập nhật Logic Điểm Danh (Hỗ trợ Test Mode)
         document.getElementById('checkin-btn').addEventListener('click', async () => {
             if (!userData.hasCheckedInToday && !isProcessing) {
                 isProcessing = true;
                 
-                // Kích hoạt Âm Thanh To Rõ
                 const sound = document.getElementById('blessing-sound');
                 sound.volume = 1.0; 
                 sound.play().catch(e => console.log("Trình duyệt chặn âm thanh"));
 
-                // Kích hoạt hiệu ứng ánh sáng
                 document.getElementById('celebration').classList.remove('hidden');
                 setTimeout(() => document.getElementById('celebration').classList.add('hidden'), 3000);
                 
                 if (isTestMode) {
-                    // Nếu đang test: Chỉ đổi số trên màn hình, không gọi API
                     userData.currentStreak++;
                     userData.maxStreak = Math.max(userData.maxStreak, userData.currentStreak);
                     userData.totalCheckins++;
@@ -508,10 +539,9 @@
                     userData.hasCheckedInToday = true;
                     updateUIFromData();
                     isProcessing = false;
-                    return; // Kết thúc tại đây, không gọi xuống Server
+                    return; 
                 }
 
-                // Nếu không test thì gọi Server lưu dữ liệu thật
                 try {
                     const res = await fetch(`${API_URL}/update-streak`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: userData._id, action: 'checkin' }) });
                     const data = await res.json();
