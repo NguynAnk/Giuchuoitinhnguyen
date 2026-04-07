@@ -98,3 +98,13 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Server Backend đang chạy tại cổng http://localhost:${PORT}`);
 });
+// API Lấy danh sách tất cả người dùng (Dành cho Admin)
+app.get('/api/users', async (req, res) => {
+  try {
+    // Tìm tất cả user và sắp xếp theo Tổng điểm giảm dần (-1)
+    const users = await User.find({}).sort({ totalPoints: -1 }); 
+    res.json({ success: true, users: users });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Lỗi lấy dữ liệu' });
+  }
+});
