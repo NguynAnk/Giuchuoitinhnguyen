@@ -52,43 +52,88 @@
 
         /* --- HỆ THỐNG RANK CÂY ĐÀN --- */
         :root {
-            --harp-primary: #4E342E; /* Mặc định: Mộc nâu cũ kĩ */
+            --harp-primary: #4E342E; 
             --harp-secondary: #8D6E63;
             --harp-glow: rgba(78, 52, 46, 0.2);
+            --harp-stroke: url(#wood-pattern);
+            --wing-scale: 0;
+            --halo-scale: 0;
+            --extra-opacity: 0;
         }
         
-        /* Chuyển màu mượt mà */
         .harp-path { transition: stroke 1s ease-in-out, fill 1s ease-in-out; }
         #harp-glow { transition: background-color 1s ease-in-out; background-color: var(--harp-glow); }
 
-        /* Các class CSS chuyên dụng trị lỗi không nhận màu của Chrome Desktop */
-        .harp-stroke-primary { stroke: var(--harp-primary); }
+        .harp-stroke-primary { stroke: var(--harp-stroke, var(--harp-primary)); }
         .harp-stroke-secondary { stroke: var(--harp-secondary); }
         .harp-fill-secondary { fill: var(--harp-secondary); }
 
-        /* Khai báo màu cho từng Rank */
-        /* 0: Khởi đầu (Mộc) - Gỗ màu nâu sẫm, cũ kĩ */
-        .rank-wood { --harp-primary: #4E342E; --harp-secondary: #8D6E63; --harp-glow: rgba(78, 52, 46, 0.2); }
-        /* 15: Màu Đồng */
-        .rank-bronze { --harp-primary: #B87333; --harp-secondary: #FDE047; --harp-glow: rgba(184, 115, 51, 0.5); }
-        /* 30: Màu Sắt */
-        .rank-iron { --harp-primary: #64748B; --harp-secondary: #CBD5E1; --harp-glow: rgba(100, 116, 139, 0.4); }
-        /* 45: Màu Vàng */
-        .rank-gold { --harp-primary: #EAB308; --harp-secondary: #FEF08A; --harp-glow: rgba(234, 179, 8, 0.6); }
-        /* 60: Bạch Kim - Dây đàn ánh xanh dương để nổi bật trên nền trắng */
-        .rank-platinum { --harp-primary: #94A3B8; --harp-secondary: #60A5FA; --harp-glow: rgba(96, 165, 250, 0.5); }
-        /* 75: Kim Cương */
-        .rank-diamond { --harp-primary: #06B6D4; --harp-secondary: #CFFAFE; --harp-glow: rgba(6, 182, 212, 0.7); }
-        /* 90: Hồng Ngọc (Ruby) */
-        .rank-ruby { --harp-primary: #E11D48; --harp-secondary: #FECDD3; --harp-glow: rgba(225, 29, 72, 0.7); }
+        .rank-wood { 
+            --harp-primary: #4E342E; --harp-secondary: #8D6E63; --harp-glow: rgba(78, 52, 46, 0.2); 
+            --harp-stroke: url(#wood-pattern);
+            --wing-scale: 0; --halo-scale: 0; --extra-opacity: 0;
+        }
+        .rank-bronze { 
+            --harp-primary: #B87333; --harp-secondary: #FDE047; --harp-glow: rgba(184, 115, 51, 0.5); 
+            --harp-stroke: var(--harp-primary);
+            --wing-scale: 0; --halo-scale: 0; --extra-opacity: 0;
+        }
+        .rank-iron { 
+            --harp-primary: #64748B; --harp-secondary: #CBD5E1; --harp-glow: rgba(100, 116, 139, 0.4); 
+            --harp-stroke: var(--harp-primary);
+            --wing-scale: 0; --halo-scale: 0; --extra-opacity: 0;
+        }
+        .rank-gold { 
+            --harp-primary: #EAB308; --harp-secondary: #FEF08A; --harp-glow: rgba(234, 179, 8, 0.6); 
+            --harp-stroke: var(--harp-primary);
+            --wing-scale: 0.6; --halo-scale: 0.6; --extra-opacity: 1;
+        }
+        .rank-platinum { 
+            --harp-primary: #94A3B8; --harp-secondary: #60A5FA; --harp-glow: rgba(96, 165, 250, 0.5); 
+            --harp-stroke: var(--harp-primary);
+            --wing-scale: 0.8; --halo-scale: 0.8; --extra-opacity: 1;
+        }
+        .rank-diamond { 
+            --harp-primary: #06B6D4; --harp-secondary: #CFFAFE; --harp-glow: rgba(6, 182, 212, 0.7); 
+            --harp-stroke: var(--harp-primary);
+            --wing-scale: 1.0; --halo-scale: 1.0; --extra-opacity: 1;
+        }
+        .rank-ruby { 
+            --harp-primary: #E11D48; --harp-secondary: #FECDD3; --harp-glow: rgba(225, 29, 72, 0.7); 
+            --harp-stroke: var(--harp-primary);
+            --wing-scale: 1.25; --halo-scale: 1.25; --extra-opacity: 1;
+        }
+
+        /* --- HIỆU ỨNG BAY LÊN (FLOATING) CHO +1 LV / +1 XP --- */
+        @keyframes floatUp {
+            0% { opacity: 0; transform: translateY(15px) scale(0.8); }
+            20% { opacity: 1; transform: translateY(-10px) scale(1.2); }
+            70% { opacity: 1; transform: translateY(-35px) scale(1); }
+            100% { opacity: 0; transform: translateY(-60px) scale(0.9); }
+        }
+        .float-up-anim {
+            animation: floatUp 2.5s cubic-bezier(0.2, 0, 0.2, 1) forwards;
+        }
     </style>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-amber-50 bg-pattern flex items-center justify-center p-2 md:p-4 text-slate-800 relative overflow-x-hidden">
+
+    <svg width="0" height="0" class="absolute pointer-events-none">
+        <defs>
+            <linearGradient id="wood-pattern" x1="0" y1="0" x2="12" y2="20" gradientUnits="userSpaceOnUse" spreadMethod="repeat">
+                <stop offset="0%" stop-color="#4E342E"/>
+                <stop offset="40%" stop-color="#3E2723"/>
+                <stop offset="60%" stop-color="#5D4037"/>
+                <stop offset="100%" stop-color="#4E342E"/>
+            </linearGradient>
+        </defs>
+    </svg>
 
     <div id="test-mode-badge" class="hidden fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-600 text-white text-[11px] font-bold px-4 py-1.5 rounded-full shadow-lg animate-pulse z-[100] border-2 border-white">
         ĐANG Ở CHẾ ĐỘ TEST (KHÔNG LƯU DB)
     </div>
 
+    <!-- Âm thanh hoàn thành tĩnh nguyện -->
     <audio id="blessing-sound" src="https://actions.google.com/sounds/v1/magic/fairy_glissando_short.ogg" preload="auto"></audio>
 
     <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden flex items-center justify-center">
@@ -103,10 +148,7 @@
                 <h3 class="text-xl font-bold text-amber-600 flex items-center gap-2">🏆 Hành Trình Danh Hiệu</h3>
                 <button id="btn-close-rank" class="text-slate-400 hover:bg-slate-100 p-2 rounded-full transition-colors font-bold">✕</button>
             </div>
-            <!-- Nơi chứa danh sách Rank tự động gen từ JS -->
-            <div id="ranks-list-container" class="flex flex-col gap-3 overflow-y-auto pr-2 flex-1">
-                <!-- Data injected via JS -->
-            </div>
+            <div id="ranks-list-container" class="flex flex-col gap-3 overflow-y-auto pr-2 flex-1"></div>
         </div>
     </div>
 
@@ -142,7 +184,6 @@
                 <button id="btn-close-admin" class="font-bold text-slate-400 hover:text-slate-600 px-2">✕</button>
             </div>
             
-            <!-- KHU VỰC CÔNG CỤ TEST ĐƯỢC NÂNG CẤP -->
             <div class="p-4 bg-amber-50 border-b border-amber-100 flex flex-col gap-2 relative">
                 <h3 class="text-[13px] font-bold text-amber-800 uppercase tracking-wider flex items-center gap-1.5">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
@@ -223,20 +264,44 @@
                     </div>
 
                     <div class="flex flex-col items-center justify-center relative w-full">
-                        <!-- Wrapper chứa danh hiệu, các thuộc tính CSS Variables sẽ được cấp phát từ class này -->
+                        
                         <div id="harp-wrapper" class="relative flex flex-col items-center justify-center h-56 w-56 mx-auto mb-2 rank-wood">
-                            <!-- Hào quang phát sáng -->
-                            <div id="harp-glow" class="absolute inset-0 rounded-full blur-3xl animate-pulse hidden"></div>
                             
-                            <!-- Đàn Hạc (SVG chính) sử dụng class màu để render ổn định trên mọi nền tảng -->
+                            <div id="harp-glow" class="absolute inset-0 rounded-full blur-3xl animate-pulse hidden"></div>
+
+                            <!-- HIỆU ỨNG CHỮ BAY LÊN KHI ĐIỂM DANH -->
+                            <div id="float-lv" class="absolute left-[-20px] top-[20%] text-red-500 font-black flex flex-col items-center opacity-0 pointer-events-none z-50 drop-shadow-md">
+                                <span class="text-xl leading-none">↑</span>
+                                <span class="text-2xl whitespace-nowrap">+1 LV</span>
+                            </div>
+                            <div id="float-xp" class="absolute right-[-20px] top-[20%] text-blue-500 font-black flex flex-col items-center opacity-0 pointer-events-none z-50 drop-shadow-md">
+                                <span class="text-xl leading-none">↑</span>
+                                <span class="text-2xl whitespace-nowrap">+1 XP</span>
+                            </div>
+                            
                             <svg id="harp-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 150" class="w-44 h-44 relative z-10 transition-all duration-1000 scale-90 opacity-80">
+                                
+                                <g class="harp-halo" style="transform: scale(var(--halo-scale)); opacity: var(--extra-opacity); transform-origin: 60px 15px; transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);">
+                                    <ellipse cx="60" cy="15" rx="35" ry="10" fill="none" class="harp-stroke-primary animate-pulse" stroke-width="3" />
+                                    <ellipse cx="60" cy="15" rx="42" ry="14" fill="none" class="harp-stroke-secondary" stroke-width="1.5" opacity="0.8" />
+                                    <line x1="60" y1="-5" x2="60" y2="5" class="harp-stroke-secondary" stroke-width="2" stroke-linecap="round" />
+                                    <line x1="15" y1="15" x2="25" y2="15" class="harp-stroke-secondary" stroke-width="2" stroke-linecap="round" />
+                                    <line x1="105" y1="15" x2="95" y2="15" class="harp-stroke-secondary" stroke-width="2" stroke-linecap="round" />
+                                </g>
+
+                                <g class="harp-wings" style="transform: scale(var(--wing-scale)); opacity: var(--extra-opacity); transform-origin: 60px 70px; transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);">
+                                    <path d="M 40 80 C 10 70 -5 30 15 15 C 20 30 30 40 40 45 C 25 25 30 5 45 0 C 40 20 45 35 50 45 C 50 45 45 65 40 80 Z" class="harp-fill-secondary" opacity="0.6"/>
+                                    <path d="M 80 80 C 110 70 125 30 105 15 C 100 30 90 40 80 45 C 95 25 90 5 75 0 C 80 20 75 35 70 45 C 70 45 75 65 80 80 Z" class="harp-fill-secondary" opacity="0.6"/>
+                                    <path d="M 45 70 C 25 60 15 35 25 25 C 30 35 35 40 42 45 C 35 30 38 15 48 10 Z" fill="#FFF" opacity="0.4"/>
+                                    <path d="M 75 70 C 95 60 105 35 95 25 C 90 35 85 40 78 45 C 85 30 82 15 72 10 Z" fill="#FFF" opacity="0.4"/>
+                                </g>
+
                                 <path class="harp-path harp-stroke-primary" d="M 25 45 C 25 100 15 130 40 140 L 80 140 C 105 130 95 100 95 45" fill="none" stroke-width="8" stroke-linecap="round" />
                                 <line class="harp-path harp-stroke-primary" x1="12" y1="45" x2="108" y2="45" stroke-width="8" stroke-linecap="round" />
                                 <line class="harp-path harp-stroke-secondary" x1="40" y1="45" x2="40" y2="135" stroke-width="2"/>
                                 <line class="harp-path harp-stroke-secondary" x1="60" y1="45" x2="60" y2="139" stroke-width="2"/>
                                 <line class="harp-path harp-stroke-secondary" x1="80" y1="45" x2="80" y2="135" stroke-width="2"/>
                                 
-                                <!-- Hiệu ứng lấp lánh (Sparkles) cho Rank cao -->
                                 <g id="harp-sparkles" class="opacity-0 transition-opacity duration-1000">
                                     <path d="M 0 -10 L 2 -2 L 10 0 L 2 2 L 0 10 L -2 2 L -10 0 L -2 -2 Z" class="harp-fill-secondary animate-pulse" transform="translate(15, 25) scale(0.6)" style="animation-duration: 1.5s" />
                                     <path d="M 0 -10 L 2 -2 L 10 0 L 2 2 L 0 10 L -2 2 L -10 0 L -2 -2 Z" class="harp-fill-secondary animate-bounce" transform="translate(105, 35) scale(0.8)" style="animation-duration: 2s" />
@@ -292,13 +357,14 @@
                 </div>
             </div>
 
-            <!-- CỤM 2 ỐNG NGHIỆM TỰ ĐỘNG XOAY CHIỀU -->
+            <!-- CỤM 2 ỐNG NGHIỆM ĐÃ THÊM CHỮ LEVEL VÀ XP -->
             <div class="flex flex-col md:flex-row gap-4 md:gap-5 shrink-0 border-t md:border-t-0 md:border-l border-slate-100 pt-6 md:pt-0 pl-0 md:pl-6 items-center md:items-end justify-center w-full md:w-auto mt-6 md:mt-0">
                 
                 <div class="flex flex-row md:flex-col items-center justify-center gap-3 w-full md:w-14">
-                    <div class="text-center bg-red-50/80 px-2 py-1.5 rounded-xl border border-red-100 w-16 md:w-full shrink-0 shadow-sm">
-                        <span class="text-[10px] font-bold text-red-500 uppercase block">Tổng</span>
-                        <span id="tube-red-text" class="text-xl font-black text-red-600">0</span>
+                    <div class="text-center bg-red-50/80 px-2 py-1.5 rounded-xl border border-red-100 w-16 md:w-full shrink-0 shadow-sm flex flex-col items-center justify-center">
+                        <span class="text-[10px] font-bold text-red-500 uppercase block leading-tight">Tổng</span>
+                        <span class="text-[8px] font-bold text-red-400 uppercase tracking-widest mt-0.5 mb-1">Level</span>
+                        <span id="tube-red-text" class="text-xl font-black text-red-600 leading-none">0</span>
                     </div>
                     <div class="w-full md:w-10 h-10 md:h-[380px] bg-slate-50 rounded-[24px] border-[4px] border-slate-200/80 glass-tube relative overflow-hidden flex items-center md:items-end justify-start md:justify-center">
                         <div id="tube-red-liquid" class="relative tube-liquid-red transition-all duration-1000 ease-in-out flex items-center md:items-start justify-end md:justify-center" style="--fill-level: 6%;">
@@ -312,9 +378,10 @@
                 </div>
 
                 <div class="flex flex-row md:flex-col items-center justify-center gap-3 w-full md:w-14">
-                    <div class="text-center bg-blue-50/80 px-2 py-1.5 rounded-xl border border-blue-100 w-16 md:w-full shrink-0 shadow-sm">
-                        <span class="text-[10px] font-bold text-blue-500 uppercase block">Chuỗi</span>
-                        <span id="tube-blue-text" class="text-xl font-black text-blue-600">0</span>
+                    <div class="text-center bg-blue-50/80 px-2 py-1.5 rounded-xl border border-blue-100 w-16 md:w-full shrink-0 shadow-sm flex flex-col items-center justify-center">
+                        <span class="text-[10px] font-bold text-blue-500 uppercase block leading-tight">Chuỗi</span>
+                        <span class="text-[8px] font-bold text-blue-400 uppercase tracking-widest mt-0.5 mb-1">XP</span>
+                        <span id="tube-blue-text" class="text-xl font-black text-blue-600 leading-none">0</span>
                     </div>
                     <div class="w-full md:w-10 h-10 md:h-[380px] bg-slate-50 rounded-[24px] border-[4px] border-slate-200/80 glass-tube relative overflow-hidden flex items-center md:items-end justify-start md:justify-center">
                         <div id="tube-blue-liquid" class="relative tube-liquid-blue transition-all duration-1000 ease-in-out flex items-center md:items-start justify-end md:justify-center" style="--fill-level: 6%;">
@@ -369,8 +436,22 @@
                         
                         <div class="relative w-12 h-12 flex justify-center items-center ${r.class}">
                             <svg viewBox="0 0 120 150" class="w-12 h-12 relative z-10">
+                                <g class="harp-halo" style="transform: scale(var(--halo-scale)); opacity: var(--extra-opacity); transform-origin: 60px 15px;">
+                                    <ellipse cx="60" cy="15" rx="35" ry="10" fill="none" class="harp-stroke-primary" stroke-width="3" />
+                                    <ellipse cx="60" cy="15" rx="42" ry="14" fill="none" class="harp-stroke-secondary" stroke-width="1.5" opacity="0.8" />
+                                    <line x1="60" y1="-5" x2="60" y2="5" class="harp-stroke-secondary" stroke-width="2" stroke-linecap="round" />
+                                    <line x1="15" y1="15" x2="25" y2="15" class="harp-stroke-secondary" stroke-width="2" stroke-linecap="round" />
+                                    <line x1="105" y1="15" x2="95" y2="15" class="harp-stroke-secondary" stroke-width="2" stroke-linecap="round" />
+                                </g>
+                                <g class="harp-wings" style="transform: scale(var(--wing-scale)); opacity: var(--extra-opacity); transform-origin: 60px 70px;">
+                                    <path d="M 40 80 C 10 70 -5 30 15 15 C 20 30 30 40 40 45 C 25 25 30 5 45 0 C 40 20 45 35 50 45 C 50 45 45 65 40 80 Z" class="harp-fill-secondary" opacity="0.6"/>
+                                    <path d="M 80 80 C 110 70 125 30 105 15 C 100 30 90 40 80 45 C 95 25 90 5 75 0 C 80 20 75 35 70 45 C 70 45 75 65 80 80 Z" class="harp-fill-secondary" opacity="0.6"/>
+                                    <path d="M 45 70 C 25 60 15 35 25 25 C 30 35 35 40 42 45 C 35 30 38 15 48 10 Z" fill="#FFF" opacity="0.4"/>
+                                    <path d="M 75 70 C 95 60 105 35 95 25 C 90 35 85 40 78 45 C 85 30 82 15 72 10 Z" fill="#FFF" opacity="0.4"/>
+                                </g>
+
                                 <path class="harp-path harp-stroke-primary" d="M 25 45 C 25 100 15 130 40 140 L 80 140 C 105 130 95 100 95 45" fill="none" stroke-width="8" stroke-linecap="round" />
-                                <line class="harp-path harp-stroke-primary" x1="12" y1="45" x2="108" y2="45" stroke-width="8" />
+                                <line class="harp-path harp-stroke-primary" x1="12" y1="45" x2="108" y2="45" stroke-width="8" stroke-linecap="round" />
                                 <line class="harp-path harp-stroke-secondary" x1="40" y1="45" x2="40" y2="135" stroke-width="2"/>
                                 <line class="harp-path harp-stroke-secondary" x1="60" y1="45" x2="60" y2="139" stroke-width="2"/>
                                 <line class="harp-path harp-stroke-secondary" x1="80" y1="45" x2="80" y2="135" stroke-width="2"/>
@@ -536,13 +617,32 @@
             if (!userData.hasCheckedInToday && !isProcessing) {
                 isProcessing = true;
                 
+                // PHÁT ÂM THANH NGAY LẬP TỨC TRƯỚC KHI GỌI SERVER
                 const sound = document.getElementById('blessing-sound');
-                sound.volume = 1.0; 
-                sound.play().catch(e => console.log("Trình duyệt chặn âm thanh"));
+                if (sound) {
+                    sound.pause();
+                    sound.currentTime = 0;
+                    sound.volume = 1.0; 
+                    sound.play().catch(e => console.log("Trình duyệt chặn âm thanh do chưa tương tác"));
+                }
 
+                // HIỆU ỨNG TỎA SÁNG
                 document.getElementById('celebration').classList.remove('hidden');
                 setTimeout(() => document.getElementById('celebration').classList.add('hidden'), 3000);
                 
+                // HIỆU ỨNG FLOATING +1 LV VÀ +1 XP
+                const floatXp = document.getElementById('float-xp');
+                const floatLv = document.getElementById('float-lv');
+                if (floatXp && floatLv) {
+                    // Reset animation để có thể bấm nhiều lần
+                    floatXp.classList.remove('float-up-anim');
+                    floatLv.classList.remove('float-up-anim');
+                    void floatXp.offsetWidth; // Trigger reflow
+                    
+                    floatXp.classList.add('float-up-anim');
+                    floatLv.classList.add('float-up-anim');
+                }
+
                 if (isTestMode) {
                     userData.currentStreak++;
                     userData.maxStreak = Math.max(userData.maxStreak, userData.currentStreak);
