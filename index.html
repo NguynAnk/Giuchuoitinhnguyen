@@ -215,12 +215,13 @@
                     </div>
 
                     <div class="flex flex-col items-center justify-center relative w-full">
-                        <div class="relative flex flex-col items-center justify-center h-56 w-56 mx-auto mb-2">
-                            <!-- Hào quang phát sáng có màu thay đổi -->
+                        <!-- CHUYỂN CLASS RANK VÀO THẺ WRAPPER (HỘP CHỨA) NÀY ĐỂ MÀU SẮC ĐƯỢC KẾ THỪA ĐỒNG BỘ -->
+                        <div id="harp-wrapper" class="relative flex flex-col items-center justify-center h-56 w-56 mx-auto mb-2 rank-wood">
+                            <!-- Hào quang phát sáng -->
                             <div id="harp-glow" class="absolute inset-0 rounded-full blur-3xl animate-pulse hidden"></div>
                             
-                            <!-- Đàn Hạc (SVG chính) thay đổi màu theo Class -->
-                            <svg id="harp-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 150" class="rank-wood w-44 h-44 relative z-10 transition-all duration-1000 scale-90 opacity-80">
+                            <!-- Đàn Hạc (SVG chính) -->
+                            <svg id="harp-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 150" class="w-44 h-44 relative z-10 transition-all duration-1000 scale-90 opacity-80">
                                 <path class="harp-path" d="M 25 45 C 25 100 15 130 40 140 L 80 140 C 105 130 95 100 95 45" fill="none" stroke="var(--harp-primary)" stroke-width="8" stroke-linecap="round" />
                                 <line class="harp-path" x1="12" y1="45" x2="108" y2="45" stroke="var(--harp-primary)" stroke-width="8" stroke-linecap="round" />
                                 <line class="harp-path" x1="40" y1="45" x2="40" y2="135" stroke="var(--harp-secondary)" stroke-width="2"/>
@@ -442,11 +443,14 @@
             
             // --- CẬP NHẬT GIAO DIỆN THEO RANK ---
             const currentRank = getCurrentRankInfo(userData.currentStreak);
+            const harpWrapper = document.getElementById('harp-wrapper');
             const harpSvg = document.getElementById('harp-svg');
             const sparkles = document.getElementById('harp-sparkles');
             
-            // Xóa tất cả class rank cũ, thêm class rank mới
-            harpSvg.className = `w-44 h-44 relative z-10 transition-all duration-1000 scale-90 opacity-80 ${currentRank.class}`;
+            // Xóa tất cả class rank cũ trên Wrapper, thêm class rank mới
+            harpWrapper.classList.remove('rank-wood', 'rank-bronze', 'rank-iron', 'rank-gold', 'rank-platinum', 'rank-diamond', 'rank-ruby');
+            harpWrapper.classList.add(currentRank.class);
+
             document.getElementById('rank-name-display').innerText = `Danh hiệu: ${currentRank.name}`;
 
             if (currentRank.hasSparkle) {
