@@ -9,7 +9,7 @@ const app = express();
 app.use(cors({ origin: '*' })); 
 app.use(express.json()); 
 
-const MONGO_URI = "mongodb+srv://nguyenanh:16102006@cluster0.../TinhNguyenApp?retryWrites=true&w=majority"; // Thay bằng link DB của bạn
+const MONGO_URI = "mongodb+srv://nguyenanh:16102006@cluster0.iwcowsc.mongodb.net/TinhNguyenApp?retryWrites=true&w=majority"; // Thay bằng link DB của bạn
 
 mongoose.connect(MONGO_URI)
   .then(() => console.log('Đã kết nối Database thành công!'))
