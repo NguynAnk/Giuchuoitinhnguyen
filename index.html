@@ -8,35 +8,21 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
-        .bg-pattern {
-            background-image: radial-gradient(rgba(251, 191, 36, 0.15) 2px, transparent 2px);
-            background-size: 40px 40px;
-        }
-        /* Custom scrollbar */
+        .bg-pattern { background-image: radial-gradient(rgba(251, 191, 36, 0.15) 2px, transparent 2px); background-size: 40px 40px; }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         
-        /* Hiệu ứng bóng kính ống nghiệm */
         .glass-tube { box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
         .glass-tube-overlay { box-shadow: inset 5px 0 15px rgba(255,255,255,0.8), inset -5px 0 15px rgba(0,0,0,0.1); }
-        
-        /* Cấu hình chất lỏng đa chiều */
-        .tube-liquid-red {
-            width: var(--fill-level, 6%); height: 100%;
-            background-image: linear-gradient(to right, #dc2626, #ef4444, #f87171);
-        }
-        .tube-liquid-blue {
-            width: var(--fill-level, 6%); height: 100%;
-            background-image: linear-gradient(to right, #2563eb, #3b82f6, #60a5fa);
-        }
+        .tube-liquid-red { width: var(--fill-level, 6%); height: 100%; background-image: linear-gradient(to right, #dc2626, #ef4444, #f87171); }
+        .tube-liquid-blue { width: var(--fill-level, 6%); height: 100%; background-image: linear-gradient(to right, #2563eb, #3b82f6, #60a5fa); }
         @media (min-width: 768px) {
             .tube-liquid-red { width: 100%; height: var(--fill-level, 6%); background-image: linear-gradient(to top, #dc2626, #ef4444, #f87171); }
             .tube-liquid-blue { width: 100%; height: var(--fill-level, 6%); background-image: linear-gradient(to top, #2563eb, #3b82f6, #60a5fa); }
         }
 
-        /* Sóng nước CSS */
         .wave-mask-v-1, .wave-mask-v-2 { position: absolute; width: 250px; height: 250px; left: -105px; pointer-events: none; }
         .wave-mask-v-1 { top: -243px; border-radius: 40%; background: rgba(248, 250, 252, 0.5); animation: spin 5s linear infinite; }
         .wave-mask-v-2 { top: -247px; border-radius: 45%; background: rgb(248, 250, 252); box-shadow: 0 5px 8px -2px rgba(0,0,0,0.15); animation: spin 7s linear infinite; }
@@ -47,20 +33,8 @@
         @media (min-width: 768px) { .wave-mask-h-1, .wave-mask-h-2 { display: none; } }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* --- HỆ THỐNG RANK: ĐÔI CÁNH THIÊN THẦN DANG RỘNG BỀ NGANG --- */
-        :root {
-            --harp-primary: #4E342E; 
-            --harp-secondary: #8D6E63;
-            --harp-glow: rgba(78, 52, 46, 0.2);
-            --harp-stroke: url(#wood-pattern);
-            --wing-scale: 0;
-            --wing-rot-l: -25deg;
-            --wing-rot-r: 25deg;
-            --wing-y: 15px;
-            --halo-scale: 0;
-            --extra-opacity: 0;
-        }
-        
+        /* --- HỆ THỐNG RANK --- */
+        :root { --harp-primary: #4E342E; --harp-secondary: #8D6E63; --harp-glow: rgba(78, 52, 46, 0.2); --harp-stroke: url(#wood-pattern); --wing-scale: 0; --wing-rot-l: -25deg; --wing-rot-r: 25deg; --wing-y: 15px; --halo-scale: 0; --extra-opacity: 0; }
         .harp-path { transition: stroke 1s ease-in-out, fill 1s ease-in-out; }
         #harp-glow { transition: background-color 1s ease-in-out; background-color: var(--harp-glow); }
         .harp-stroke-primary { stroke: var(--harp-stroke, var(--harp-primary)); }
@@ -75,44 +49,38 @@
         .rank-diamond { --harp-primary: #06B6D4; --harp-secondary: #0EA5E9; --harp-glow: rgba(6, 182, 212, 0.8); --harp-stroke: var(--harp-primary); --wing-scale: 1.3; --wing-rot-l: -15deg; --wing-rot-r: 15deg; --wing-y: 0px; --halo-scale: 1.0; --extra-opacity: 1; }
         .rank-ruby { --harp-primary: #E11D48; --harp-secondary: #F43F5E; --harp-glow: rgba(225, 29, 72, 0.8); --harp-stroke: var(--harp-primary); --wing-scale: 1.7; --wing-rot-l: -10deg; --wing-rot-r: 10deg; --wing-y: -5px; --halo-scale: 1.25; --extra-opacity: 1; }
 
-        #ranks-list-container .rank-platinum,
-        #ranks-list-container .rank-diamond,
-        #ranks-list-container .rank-ruby {
+        /* Fix modal wings */
+        #ranks-list-container .rank-platinum, #ranks-list-container .rank-diamond, #ranks-list-container .rank-ruby {
             --wing-scale: 0.65 !important; --wing-y: 10px !important; --wing-rot-l: -25deg !important; --wing-rot-r: 25deg !important; --halo-scale: 0.65 !important;
         }
 
-        /* --- HIỆU ỨNG LƠ LỬNG & VẪY CÁNH (HOVER & FLAP) --- */
         @keyframes float-harp { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
         .harp-floating { animation: float-harp 4s ease-in-out infinite; }
-
         @keyframes flap-left { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(4deg); } }
         @keyframes flap-right { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-4deg); } }
         .wing-flap-l { animation: flap-left 3s ease-in-out infinite; transform-origin: 50px 90px; }
         .wing-flap-r { animation: flap-right 3s ease-in-out infinite; transform-origin: 110px 90px; }
-
-        /* --- HIỆU ỨNG BAY LÊN (FLOATING) CHO +1 LV / +1 XP --- */
         @keyframes floatUp { 0% { opacity: 0; transform: translateY(15px) scale(0.8); } 20% { opacity: 1; transform: translateY(-10px) scale(1.2); } 70% { opacity: 1; transform: translateY(-35px) scale(1); } 100% { opacity: 0; transform: translateY(-60px) scale(0.9); } }
         .float-up-anim { animation: floatUp 2.5s cubic-bezier(0.2, 0, 0.2, 1) forwards; }
 
-        /* --- HIỆU ỨNG CHUYỂN MÀN HÌNH (TRANSITION) --- */
+        /* Animation chuyển cảnh */
         .fade-out-scale { opacity: 0 !important; transform: scale(0.95) !important; pointer-events: none; }
         .fade-in-scale { opacity: 1 !important; transform: scale(1) translateY(0) !important; pointer-events: auto; }
-        
         .transition-screen { transition: opacity 0.6s ease-out, transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); }
+
+        /* Cảm xúc Active */
+        .emotion-btn { filter: grayscale(100%); opacity: 0.5; transform: scale(0.9); transition: all 0.2s; cursor: pointer; user-select: none; }
+        .emotion-btn:hover { filter: grayscale(0%); opacity: 1; transform: scale(1.1); }
+        .emotion-active { filter: grayscale(0%); opacity: 1; transform: scale(1.2); drop-shadow: 0 4px 6px rgba(0,0,0,0.1); }
     </style>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-amber-50 bg-pattern flex items-center justify-center p-2 md:p-4 text-slate-800 relative overflow-x-hidden">
 
     <svg width="0" height="0" class="absolute pointer-events-none">
         <defs>
-            <!-- Hoa văn gỗ -->
             <linearGradient id="wood-pattern" x1="0" y1="0" x2="12" y2="20" gradientUnits="userSpaceOnUse" spreadMethod="repeat">
-                <stop offset="0%" stop-color="#4E342E"/>
-                <stop offset="40%" stop-color="#3E2723"/>
-                <stop offset="60%" stop-color="#5D4037"/>
-                <stop offset="100%" stop-color="#4E342E"/>
+                <stop offset="0%" stop-color="#4E342E"/><stop offset="40%" stop-color="#3E2723"/><stop offset="60%" stop-color="#5D4037"/><stop offset="100%" stop-color="#4E342E"/>
             </linearGradient>
-            
             <g id="angel-wing-detailed">
                 <path d="M 50 90 C 10 90 -40 70 -75 25 Q -40 40 -15 45 Q -55 10 -60 -25 Q -30 0 -5 20 Q -40 -20 -25 -50 Q -5 -15 15 5 Q -10 -40 10 -60 Q 20 -20 35 10 C 45 -10 50 20 50 90 Z" class="harp-fill-secondary" opacity="0.95"/>
                 <path d="M 45 80 C 15 80 -25 60 -55 25 Q -25 35 -5 40 Q -40 10 -45 -15 Q -20 5 5 15 Q -25 -15 -15 -35 Q 5 -10 20 5 Q 0 -25 15 -40 C 35 0 45 20 45 80 Z" fill="#FFF" opacity="0.75"/>
@@ -121,19 +89,11 @@
         </defs>
     </svg>
 
-    <div id="test-mode-badge" class="hidden fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-600 text-white text-[11px] font-bold px-4 py-1.5 rounded-full shadow-lg animate-pulse z-[100] border-2 border-white">
-        ĐANG Ở CHẾ ĐỘ TEST (KHÔNG LƯU DB)
-    </div>
+    <div id="test-mode-badge" class="hidden fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-600 text-white text-[11px] font-bold px-4 py-1.5 rounded-full shadow-lg animate-pulse z-[100] border-2 border-white">ĐANG Ở CHẾ ĐỘ TEST (KHÔNG LƯU DB)</div>
 
-    <!-- AUDIO -->
     <audio id="daily-sound" src="https://actions.google.com/sounds/v1/water/water_drop.ogg" preload="auto"></audio>
     <audio id="rankup-sound" src="https://actions.google.com/sounds/v1/magic/fairy_glissando_short.ogg" preload="auto"></audio>
     <audio id="fail-sound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" preload="auto"></audio>
-
-    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden flex items-center justify-center">
-        <div class="absolute top-[-10%] left-[-5%] w-[400px] h-[400px] bg-blue-300/20 rounded-full blur-[100px]"></div>
-        <div class="absolute bottom-[-10%] right-[-5%] w-[400px] h-[400px] bg-amber-400/20 rounded-full blur-[100px]"></div>
-    </div>
 
     <!-- MÀN HÌNH XEM DANH HIỆU -->
     <div id="rank-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
@@ -143,6 +103,42 @@
                 <button id="btn-close-rank" class="text-slate-400 hover:bg-slate-100 p-2 rounded-full transition-colors font-bold">✕</button>
             </div>
             <div id="ranks-list-container" class="flex flex-col gap-3 overflow-y-auto pr-2 flex-1"></div>
+        </div>
+    </div>
+
+    <!-- MÀN HÌNH NHẬT KÝ CÁ NHÂN -->
+    <div id="history-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
+        <div id="history-modal-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl p-6 transform scale-95 transition-transform duration-300 flex flex-col h-[85vh]">
+            <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3 shrink-0">
+                <h3 class="text-xl font-bold text-blue-600 flex items-center gap-2">📖 Nhật Ký Tĩnh Nguyện</h3>
+                <button id="btn-close-history" class="text-slate-400 hover:bg-slate-100 p-2 rounded-full transition-colors font-bold">✕</button>
+            </div>
+            
+            <div class="mb-4 bg-slate-50 p-3 rounded-xl flex items-center gap-2 overflow-x-auto shrink-0">
+                <span class="text-xs font-bold text-slate-500 uppercase whitespace-nowrap">Lọc bài học:</span>
+                <button class="filter-btn px-3 py-1 bg-blue-600 text-white rounded-full text-xs font-bold whitespace-nowrap" data-filter="all">Tất cả</button>
+                <button class="filter-btn px-3 py-1 bg-white border rounded-full text-xs hover:bg-slate-100" data-filter="😍">😍</button>
+                <button class="filter-btn px-3 py-1 bg-white border rounded-full text-xs hover:bg-slate-100" data-filter="😇">😇</button>
+                <button class="filter-btn px-3 py-1 bg-white border rounded-full text-xs hover:bg-slate-100" data-filter="😢">😢</button>
+                <button class="filter-btn px-3 py-1 bg-white border rounded-full text-xs hover:bg-slate-100" data-filter="🥱">🥱</button>
+                <button class="filter-btn px-3 py-1 bg-white border rounded-full text-xs hover:bg-slate-100" data-filter="🤩">🤩</button>
+                <button class="filter-btn px-3 py-1 bg-white border rounded-full text-xs hover:bg-slate-100" data-filter="😟">😟</button>
+                <button class="filter-btn px-3 py-1 bg-white border rounded-full text-xs hover:bg-slate-100" data-filter="😶">😶</button>
+                <button class="filter-btn px-3 py-1 bg-white border rounded-full text-xs hover:bg-slate-100" data-filter="😠">😠</button>
+            </div>
+
+            <div id="history-list-container" class="flex flex-col gap-4 overflow-y-auto pr-2 flex-1"></div>
+        </div>
+    </div>
+
+    <!-- MÀN HÌNH ADMIN XEM BÀI USER -->
+    <div id="admin-view-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
+        <div id="admin-view-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-lg p-6 transform scale-95 transition-transform duration-300 flex flex-col max-h-[80vh]">
+            <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3 shrink-0">
+                <h3 class="text-lg font-bold text-red-600 flex items-center gap-2" id="admin-view-title">Bài Tĩnh Nguyện</h3>
+                <button id="btn-close-admin-view" class="text-slate-400 hover:bg-slate-100 p-2 rounded-full transition-colors font-bold">✕</button>
+            </div>
+            <div id="admin-view-body" class="overflow-y-auto pr-2 flex-1 text-sm text-slate-700 flex flex-col gap-4"></div>
         </div>
     </div>
 
@@ -168,7 +164,6 @@
             
             <p id="auth-error" class="text-red-500 text-sm font-medium text-center hidden"></p>
             
-            <!-- CẢNH BÁO MẠNG CHẬM -->
             <div id="slow-network-warning" class="hidden mt-2 p-3 bg-amber-50 border border-amber-200 rounded-xl text-center flex flex-col items-center gap-1 animate-pulse">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
                 <p class="text-xs font-semibold text-amber-700">Mạng có thể có vấn đề, xin bạn vui lòng đợi một chút...</p>
@@ -180,7 +175,7 @@
 
     <!-- MÀN HÌNH QUẢN TRỊ -->
     <div id="admin-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
-        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden" id="admin-modal-content">
+        <div id="admin-modal-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden">
             <div class="p-4 border-b border-slate-100 flex justify-between bg-slate-50 items-center">
                 <h2 class="text-xl font-bold text-red-600">Bảng Quản Trị (Admin)</h2>
                 <button id="btn-close-admin" class="font-bold text-slate-400 hover:text-slate-600 px-2">✕</button>
@@ -191,12 +186,8 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
                     Công Cụ Test Giao Diện
                 </h3>
-                <p class="text-[11px] text-amber-600 font-medium">Chọn một mốc để hệ thống giả lập ngay trước khi thăng cấp.</p>
                 <div class="flex gap-2 flex-wrap mt-1 items-center">
-                    <button id="btn-test-next-day" class="text-[11px] bg-white border border-amber-300 text-amber-700 px-3 py-1.5 rounded-lg hover:bg-amber-200 font-bold shadow-sm transition-colors">
-                        🔓 Mở Khóa Ngày Hôm Nay
-                    </button>
-                    
+                    <button id="btn-test-next-day" class="text-[11px] bg-white border border-amber-300 text-amber-700 px-3 py-1.5 rounded-lg hover:bg-amber-200 font-bold shadow-sm transition-colors">🔓 Mở Khóa Ngày Hôm Nay</button>
                     <select id="test-rank-select" class="text-[11px] font-bold bg-white border border-amber-300 text-amber-700 px-2 py-1.5 rounded-lg outline-none">
                         <option value="14">Mộc ➞ Đồng (14 ngày)</option>
                         <option value="29">Đồng ➞ Sắt (29 ngày)</option>
@@ -205,20 +196,15 @@
                         <option value="74">Bạch Kim ➞ Kim Cương (74 ngày)</option>
                         <option value="89">Kim Cương ➞ Ruby (89 ngày)</option>
                     </select>
-                    <button id="btn-test-rank-go" class="text-[11px] bg-amber-500 text-white px-3 py-1.5 rounded-lg hover:bg-amber-600 font-bold shadow-sm transition-colors">
-                        ⭐ Test Rank
-                    </button>
-
-                    <button id="btn-test-reset" class="text-[11px] bg-slate-800 text-white px-3 py-1.5 rounded-lg hover:bg-slate-700 font-bold shadow-sm transition-colors ml-auto">
-                        Khôi Phục Dữ Liệu
-                    </button>
+                    <button id="btn-test-rank-go" class="text-[11px] bg-amber-500 text-white px-3 py-1.5 rounded-lg hover:bg-amber-600 font-bold shadow-sm transition-colors">⭐ Test Rank</button>
+                    <button id="btn-test-reset" class="text-[11px] bg-slate-800 text-white px-3 py-1.5 rounded-lg hover:bg-slate-700 font-bold shadow-sm transition-colors ml-auto">Khôi Phục Dữ Liệu</button>
                 </div>
             </div>
 
             <div class="p-0 overflow-y-auto flex-1 bg-white">
                 <table class="w-full text-left border-collapse text-sm">
                     <thead class="bg-slate-50 font-bold">
-                        <tr><th class="p-4">Người dùng</th><th class="p-4">Vai trò</th><th class="p-4">Điểm</th><th class="p-4 text-amber-500">Kỷ Lục</th><th class="p-4 text-blue-500">Chuỗi</th></tr>
+                        <tr><th class="p-4">Người dùng</th><th class="p-4 text-center">Bài Viết</th><th class="p-4 text-amber-500">Kỷ Lục</th><th class="p-4 text-blue-500">Chuỗi</th></tr>
                     </thead>
                     <tbody id="admin-table-body" class="divide-y divide-slate-100"></tbody>
                 </table>
@@ -250,13 +236,11 @@
             </div>
         </div>
 
-        <div class="bg-white/95 backdrop-blur-sm rounded-[2.5rem] shadow-2xl shadow-blue-100/50 w-full border border-white flex flex-col md:flex-row p-6 md:p-8 gap-8 items-stretch justify-between relative z-10">
+        <div class="bg-white/95 backdrop-blur-sm rounded-[2.5rem] shadow-2xl shadow-blue-100/50 w-full border border-white flex flex-col xl:flex-row p-6 md:p-8 gap-8 items-stretch justify-between relative z-10">
             
             <div class="flex-1 flex flex-col md:flex-row gap-8 items-center justify-center">
                 
                 <div class="w-full flex-1 flex flex-col items-center justify-center relative">
-                    
-                    <!-- THÔNG BÁO MẤT CHUỖI -->
                     <div id="lost-streak-alert" class="hidden absolute top-0 bg-red-100 text-red-700 px-4 py-2 rounded-xl text-sm font-bold animate-bounce z-50 border border-red-200 shadow-md flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
                         Bạn đã bỏ lỡ ngày hôm qua! Chuỗi đã bị đặt lại.
@@ -273,22 +257,16 @@
                     </div>
 
                     <div class="flex flex-col items-center justify-center relative w-full mt-4">
-                        
                         <div id="harp-wrapper" class="relative flex flex-col items-center justify-center h-56 w-56 mx-auto mb-2 rank-wood harp-floating">
-                            
                             <div id="harp-glow" class="absolute inset-0 rounded-full blur-3xl animate-pulse hidden"></div>
-
                             <div id="float-lv" class="absolute left-[-20px] top-[20%] text-red-500 font-black flex flex-col items-center opacity-0 pointer-events-none z-50 drop-shadow-md">
-                                <span class="text-xl leading-none">↑</span>
-                                <span class="text-2xl whitespace-nowrap">+1 LV</span>
+                                <span class="text-xl leading-none">↑</span><span class="text-2xl whitespace-nowrap">+1 LV</span>
                             </div>
                             <div id="float-xp" class="absolute right-[-20px] top-[20%] text-blue-500 font-black flex flex-col items-center opacity-0 pointer-events-none z-50 drop-shadow-md">
-                                <span class="text-xl leading-none">↑</span>
-                                <span class="text-2xl whitespace-nowrap">+1 XP</span>
+                                <span class="text-xl leading-none">↑</span><span class="text-2xl whitespace-nowrap">+1 XP</span>
                             </div>
                             
                             <svg id="harp-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 180" class="w-56 h-56 relative z-10 transition-all duration-1000 scale-90 opacity-80 overflow-visible">
-                                
                                 <g class="harp-halo" style="transform: scale(var(--halo-scale)); opacity: var(--extra-opacity); transform-origin: 80px 25px; transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);">
                                     <ellipse cx="80" cy="25" rx="35" ry="10" fill="none" class="harp-stroke-primary animate-pulse" stroke-width="3" />
                                     <ellipse cx="80" cy="25" rx="42" ry="14" fill="none" class="harp-stroke-secondary" stroke-width="1.5" opacity="0.8" />
@@ -296,20 +274,14 @@
                                     <line x1="35" y1="25" x2="45" y2="25" class="harp-stroke-secondary" stroke-width="2" stroke-linecap="round" />
                                     <line x1="125" y1="25" x2="115" y2="25" class="harp-stroke-secondary" stroke-width="2" stroke-linecap="round" />
                                 </g>
-
                                 <g class="harp-wings" style="opacity: var(--extra-opacity); transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);">
                                     <g style="transform: translate(0px, var(--wing-y)) scale(var(--wing-scale)) rotate(var(--wing-rot-l)); transform-origin: 50px 90px; transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);">
-                                        <g class="wing-flap-l">
-                                            <use href="#angel-wing-detailed" />
-                                        </g>
+                                        <g class="wing-flap-l"><use href="#angel-wing-detailed" /></g>
                                     </g>
                                     <g style="transform: translate(0px, var(--wing-y)) scale(var(--wing-scale)) rotate(var(--wing-rot-r)); transform-origin: 110px 90px; transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);">
-                                        <g class="wing-flap-r">
-                                            <use href="#angel-wing-detailed" transform="translate(160, 0) scale(-1, 1)" />
-                                        </g>
+                                        <g class="wing-flap-r"><use href="#angel-wing-detailed" transform="translate(160, 0) scale(-1, 1)" /></g>
                                     </g>
                                 </g>
-
                                 <g transform="translate(20, 10)">
                                     <path class="harp-path harp-stroke-primary" d="M 25 45 C 25 100 15 130 40 140 L 80 140 C 105 130 95 100 95 45" fill="none" stroke-width="8" stroke-linecap="round" />
                                     <line class="harp-path harp-stroke-primary" x1="12" y1="45" x2="108" y2="45" stroke-width="8" />
@@ -317,95 +289,116 @@
                                     <line class="harp-path harp-stroke-secondary" x1="60" y1="45" x2="60" y2="139" stroke-width="2"/>
                                     <line class="harp-path harp-stroke-secondary" x1="80" y1="45" x2="80" y2="135" stroke-width="2"/>
                                 </g>
-                                
                                 <g id="harp-sparkles" class="opacity-0 transition-opacity duration-1000">
                                     <path d="M 0 -10 L 2 -2 L 10 0 L 2 2 L 0 10 L -2 2 L -10 0 L -2 -2 Z" class="harp-fill-secondary animate-pulse" transform="translate(35, 35) scale(0.6)" style="animation-duration: 1.5s" />
                                     <path d="M 0 -10 L 2 -2 L 10 0 L 2 2 L 0 10 L -2 2 L -10 0 L -2 -2 Z" class="harp-fill-secondary animate-bounce" transform="translate(125, 45) scale(0.8)" style="animation-duration: 2s" />
                                     <path d="M 0 -10 L 2 -2 L 10 0 L 2 2 L 0 10 L -2 2 L -10 0 L -2 -2 Z" class="harp-fill-secondary animate-ping" transform="translate(80, 150) scale(0.7)" style="animation-duration: 2.5s" />
-                                    <path d="M 0 -10 L 2 -2 L 10 0 L 2 2 L 0 10 L -2 2 L -10 0 L -2 -2 Z" fill="#FFF" transform="translate(45, 120) scale(0.5)" class="animate-pulse" style="animation-duration: 1.2s" />
-                                    <path d="M 0 -10 L 2 -2 L 10 0 L 2 2 L 0 10 L -2 2 L -10 0 L -2 -2 Z" fill="#FFF" transform="translate(115, 120) scale(0.6)" class="animate-pulse" style="animation-duration: 1.8s" />
                                 </g>
                             </svg>
                         </div>
-                        <div class="text-center z-10">
+                        <div class="text-center z-10 flex flex-col items-center">
                             <h2 class="text-6xl font-black text-slate-800" id="streak-count">0</h2>
                             <p class="text-sm font-bold text-amber-600 uppercase tracking-widest mt-1">Ngày Liên Tiếp</p>
-                            <button id="btn-show-ranks" class="mt-3 text-[11px] bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-1 rounded-full font-bold transition-colors">🏆 Xem Danh Hiệu</button>
+                            <div class="flex gap-2 mt-3">
+                                <button id="btn-show-ranks" class="text-[11px] bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-1.5 rounded-full font-bold transition-colors">🏆 Xem Danh Hiệu</button>
+                                <button id="btn-show-history" class="text-[11px] bg-blue-50 border border-blue-100 hover:bg-blue-100 text-blue-600 px-3 py-1.5 rounded-full font-bold transition-colors">📖 Nhật Ký</button>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="hidden md:block w-px h-full bg-gradient-to-b from-transparent via-blue-100 to-transparent shrink-0"></div>
 
-                <div class="w-full flex-1 flex flex-col gap-4 relative z-10">
+                <div class="w-full flex-1 flex flex-col gap-4 relative z-10 max-w-xl">
                     
                     <!-- BẢNG LỊCH 7 NGÀY -->
                     <div class="bg-white/80 rounded-2xl p-4 border border-slate-100 shadow-sm">
                         <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 text-center">Lịch Tĩnh Nguyện Gần Đây</h3>
-                        <div class="flex justify-between items-center px-2" id="weekly-calendar">
-                            <!-- JS Sẽ đổ 7 ngày vào đây -->
-                        </div>
+                        <div class="flex justify-between items-center px-1 md:px-2" id="weekly-calendar"></div>
                     </div>
 
-                    <div id="verse-container" class="bg-blue-50/60 rounded-3xl p-5 border border-blue-100 relative shadow-sm">
-                        <p id="verse-text" class="italic text-slate-700 leading-relaxed font-medium">Đang tải Lời Chúa...</p>
-                        <p id="verse-ref" class="text-right text-sm font-semibold text-blue-600 mt-3">—</p>
+                    <div id="verse-container" class="bg-blue-50/60 rounded-2xl p-4 border border-blue-100 relative shadow-sm">
+                        <p id="verse-text" class="italic text-slate-700 leading-relaxed font-medium text-sm">Đang tải Lời Chúa...</p>
+                        <p id="verse-ref" class="text-right text-xs font-semibold text-blue-600 mt-2">—</p>
                     </div>
 
-                    <div class="bg-white/80 rounded-2xl p-4 border border-slate-100 shadow-sm flex flex-col gap-3">
-                        <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1 flex justify-between items-center">
-                            <span>Sổ Tĩnh Nguyện Hôm Nay</span>
-                            <span class="text-[9px] text-amber-500 normal-case bg-amber-50 px-2 py-0.5 rounded">* Không bắt buộc</span>
-                        </h3>
-                        <div class="flex flex-col gap-3">
+                    <div class="bg-white/80 rounded-2xl p-4 border border-slate-100 shadow-sm flex flex-col gap-4">
+                        <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1">Sổ Tĩnh Nguyện Hôm Nay</h3>
+                        
+                        <div class="flex flex-col gap-4">
                             <div>
                                 <label class="text-[12px] font-semibold text-slate-700 block mb-1">1. Phân đoạn Kinh Thánh mà bạn đã đọc hôm nay là gì?</label>
-                                <textarea rows="1" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-[13px] focus:ring-2 focus:ring-amber-400 focus:bg-white transition-all resize-none placeholder:text-slate-300 text-slate-700" placeholder="(Có thể ghi câu Kinh Thánh gợi ý phía trên...)"></textarea>
+                                <textarea id="q1" rows="1" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-[13px] focus:ring-2 focus:ring-amber-400 focus:bg-white transition-all resize-none text-slate-700"></textarea>
                             </div>
                             <div>
-                                <label class="text-[12px] font-semibold text-slate-700 block mb-1">2. Điều gì trong đoạn Kinh Thánh này đáng để suy ngẫm?</label>
-                                <textarea rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-[13px] focus:ring-2 focus:ring-amber-400 focus:bg-white transition-all resize-none placeholder:text-slate-300 text-slate-700" placeholder="Viết ra suy nghĩ của bạn..."></textarea>
+                                <label class="text-[12px] font-semibold text-slate-700 block mb-1">2. Điều gì trong đoạn này đáng để suy ngẫm?</label>
+                                <textarea id="q2" rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-[13px] focus:ring-2 focus:ring-amber-400 focus:bg-white transition-all resize-none text-slate-700"></textarea>
                             </div>
                             <div>
-                                <label class="text-[12px] font-semibold text-slate-700 block mb-1 leading-snug">3. Lời phán nào níu tâm trí bạn lâu nhất, và nó đang gỡ rối (động chạm) đến góc khuất nào trong lòng bạn?</label>
-                                <textarea rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-[13px] focus:ring-2 focus:ring-amber-400 focus:bg-white transition-all resize-none placeholder:text-slate-300 text-slate-700" placeholder="Chúa đang phán điều gì với bạn..."></textarea>
+                                <label class="text-[12px] font-semibold text-slate-700 block mb-1 leading-snug">3. Lời phán nào níu tâm trí bạn lâu nhất, và gỡ rối góc khuất nào?</label>
+                                <textarea id="q3" rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-[13px] focus:ring-2 focus:ring-amber-400 focus:bg-white transition-all resize-none text-slate-700"></textarea>
+                            </div>
+                            
+                            <!-- CÂU 4: NGUỒN HỌC -->
+                            <div>
+                                <label class="text-[12px] font-semibold text-slate-700 block mb-2">4. Bạn học Kinh Thánh từ nguồn nào?</label>
+                                <div class="flex flex-col gap-2 text-[13px] text-slate-700">
+                                    <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="source" value="Sách Kinh Thánh truyền thống" class="accent-amber-500 w-4 h-4"> Sách Kinh Thánh truyền thống</label>
+                                    <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="source" value="Tài liệu tĩnh nguyện cá nhân" class="accent-amber-500 w-4 h-4"> Tài liệu tĩnh nguyện cá nhân</label>
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <input type="radio" name="source" value="Khác" id="source-other-radio" class="accent-amber-500 w-4 h-4"> Khác 
+                                        <input type="text" id="source-other-text" disabled class="ml-2 bg-slate-50 border-b border-slate-300 px-2 py-0.5 focus:outline-none focus:border-amber-500 text-[12px] w-32 disabled:opacity-50" placeholder="Ghi rõ...">
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- CÂU 5: CẢM XÚC -->
+                            <div>
+                                <label class="text-[12px] font-semibold text-slate-700 block mb-2">5. Tâm trạng của bạn sau khi tĩnh nguyện hôm nay?</label>
+                                <div class="flex gap-3 text-3xl" id="emotion-picker">
+                                    <span class="emotion-btn" data-emotion="😍" title="Háo hức">😍</span>
+                                    <span class="emotion-btn" data-emotion="😇" title="Bình an">😇</span>
+                                    <span class="emotion-btn" data-emotion="🤩" title="Vui vẻ">🤩</span>
+                                    <span class="emotion-btn" data-emotion="😶" title="Trống rỗng">😶</span>
+                                    <span class="emotion-btn" data-emotion="😟" title="Lo lắng">😟</span>
+                                    <span class="emotion-btn" data-emotion="😢" title="Buồn bã">😢</span>
+                                    <span class="emotion-btn" data-emotion="🥱" title="Mệt mỏi">🥱</span>
+                                    <span class="emotion-btn" data-emotion="😠" title="Tức giận">😠</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                     
                     <div class="mt-1">
                         <button id="checkin-btn" class="w-full py-3.5 px-6 rounded-[1.25rem] font-bold text-lg flex items-center justify-center gap-2 transition-all duration-500 bg-gradient-to-r from-amber-400 to-yellow-500 text-white shadow-xl hover:-translate-y-1" disabled>Kết nối Server...</button>
-                        <div class="flex justify-between items-center mt-3 px-1">
-                            <span class="text-[11px] text-slate-400 font-medium">* Bấm nút trên để lưu kết quả điểm danh</span>
-                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- CỤM 2 ỐNG NGHIỆM -->
-            <div class="flex flex-col md:flex-row gap-4 md:gap-5 shrink-0 border-t md:border-t-0 md:border-l border-slate-100 pt-6 md:pt-0 pl-0 md:pl-6 items-center md:items-end justify-center w-full md:w-auto mt-6 md:mt-0">
-                <div class="flex flex-row md:flex-col items-center justify-center gap-3 w-full md:w-14">
-                    <div class="text-center bg-red-50/80 px-2 py-1.5 rounded-xl border border-red-100 w-16 md:w-full shrink-0 shadow-sm flex flex-col items-center justify-center">
+            <div class="flex flex-row xl:flex-col gap-4 md:gap-5 shrink-0 border-t xl:border-t-0 xl:border-l border-slate-100 pt-6 xl:pt-0 pl-0 xl:pl-6 items-end justify-center w-full xl:w-auto mt-6 xl:mt-0">
+                <div class="flex flex-col items-center justify-center gap-3 w-1/2 xl:w-14">
+                    <div class="text-center bg-red-50/80 px-2 py-1.5 rounded-xl border border-red-100 w-full shrink-0 shadow-sm">
                         <span class="text-[10px] font-bold text-red-500 uppercase block leading-tight">Tổng</span>
                         <span class="text-[8px] font-bold text-red-400 uppercase tracking-widest mt-0.5 mb-1">Level</span>
                         <span id="tube-red-text" class="text-xl font-black text-red-600 leading-none">0</span>
                     </div>
-                    <div class="w-full md:w-10 h-10 md:h-[380px] bg-slate-50 rounded-[24px] border-[4px] border-slate-200/80 glass-tube relative overflow-hidden flex items-center md:items-end justify-start md:justify-center">
-                        <div id="tube-red-liquid" class="relative tube-liquid-red transition-all duration-1000 ease-in-out flex items-center md:items-start justify-end md:justify-center" style="--fill-level: 6%;">
+                    <div class="w-full h-10 xl:h-[380px] bg-slate-50 rounded-[24px] border-[4px] border-slate-200/80 glass-tube relative overflow-hidden flex items-center xl:items-end justify-start xl:justify-center">
+                        <div id="tube-red-liquid" class="relative tube-liquid-red transition-all duration-1000 ease-in-out flex items-center xl:items-start justify-end xl:justify-center" style="--fill-level: 6%;">
                             <div class="wave-mask-v-1"></div><div class="wave-mask-v-2"></div><div class="wave-mask-h-1"></div><div class="wave-mask-h-2"></div>
                         </div>
                         <div class="absolute inset-0 rounded-[20px] pointer-events-none glass-tube-overlay"></div>
                     </div>
                 </div>
 
-                <div class="flex flex-row md:flex-col items-center justify-center gap-3 w-full md:w-14">
-                    <div class="text-center bg-blue-50/80 px-2 py-1.5 rounded-xl border border-blue-100 w-16 md:w-full shrink-0 shadow-sm flex flex-col items-center justify-center">
+                <div class="flex flex-col items-center justify-center gap-3 w-1/2 xl:w-14">
+                    <div class="text-center bg-blue-50/80 px-2 py-1.5 rounded-xl border border-blue-100 w-full shrink-0 shadow-sm">
                         <span class="text-[10px] font-bold text-blue-500 uppercase block leading-tight">Chuỗi</span>
                         <span class="text-[8px] font-bold text-blue-400 uppercase tracking-widest mt-0.5 mb-1">XP</span>
                         <span id="tube-blue-text" class="text-xl font-black text-blue-600 leading-none">0</span>
                     </div>
-                    <div class="w-full md:w-10 h-10 md:h-[380px] bg-slate-50 rounded-[24px] border-[4px] border-slate-200/80 glass-tube relative overflow-hidden flex items-center md:items-end justify-start md:justify-center">
-                        <div id="tube-blue-liquid" class="relative tube-liquid-blue transition-all duration-1000 ease-in-out flex items-center md:items-start justify-end md:justify-center" style="--fill-level: 6%;">
+                    <div class="w-full h-10 xl:h-[380px] bg-slate-50 rounded-[24px] border-[4px] border-slate-200/80 glass-tube relative overflow-hidden flex items-center xl:items-end justify-start xl:justify-center">
+                        <div id="tube-blue-liquid" class="relative tube-liquid-blue transition-all duration-1000 ease-in-out flex items-center xl:items-start justify-end xl:justify-center" style="--fill-level: 6%;">
                             <div class="wave-mask-v-1"></div><div class="wave-mask-v-2"></div><div class="wave-mask-h-1"></div><div class="wave-mask-h-2"></div>
                         </div>
                         <div class="absolute inset-0 rounded-[20px] pointer-events-none glass-tube-overlay"></div>
@@ -417,11 +410,7 @@
 
     <script>
         const API_URL = 'https://giuchuoitinhnguyen.onrender.com/api';
-        let userData = null;
-        let originalUserData = null; 
-        let authMode = 'login'; 
-        let isProcessing = false;
-        let isTestMode = false; 
+        let userData = null; let originalUserData = null; let authMode = 'login'; let isProcessing = false; let isTestMode = false; 
 
         const bibleVerses = [
             { text: "Lời Chúa là ngọn đèn cho chân tôi, ánh sáng cho đường lối tôi.", ref: "Thi Thiên 119:105" },
@@ -432,17 +421,11 @@
             { text: "Lòng vui mừng vốn một phương thuốc hay; Còn trí nao sờn làm khô xương cốt.", ref: "Châm-ngôn 17:22" },
             { text: "Hãy hết lòng tin cậy Đức Giê-hô-va, chớ nương cậy nơi sự thông sáng của mình.", ref: "Châm-ngôn 3:5" }
         ];
-
         function loadDailyVerse() {
-            const verseTextEl = document.getElementById('verse-text');
-            const verseRefEl = document.getElementById('verse-ref');
-            if (verseTextEl && verseRefEl) {
-                const randomVerse = bibleVerses[Math.floor(Math.random() * bibleVerses.length)];
-                verseTextEl.innerText = randomVerse.text;
-                verseRefEl.innerText = `— ${randomVerse.ref}`;
-            }
+            const el = document.getElementById('verse-text'); const ref = document.getElementById('verse-ref');
+            if (el && ref) { const r = bibleVerses[Math.floor(Math.random() * bibleVerses.length)]; el.innerText = r.text; ref.innerText = `— ${r.ref}`; }
         }
-        
+
         const rankData = [
             { id: 0, streak: 0, name: "Người Tìm Kiếm (Mộc)", class: "rank-wood", hasSparkle: false },
             { id: 1, streak: 15, name: "Đồng Kiên Tâm", class: "rank-bronze", hasSparkle: false },
@@ -452,124 +435,100 @@
             { id: 5, streak: 75, name: "Kim Cương Vĩnh Cửu", class: "rank-diamond", hasSparkle: true },
             { id: 6, streak: 90, name: "Hồng Ngọc Quý Giá", class: "rank-ruby", hasSparkle: true }
         ];
+        function getCurrentRankInfo(s) { let c = rankData[0]; for(let i=rankData.length-1; i>=0; i--) { if(s >= rankData[i].streak) return rankData[i]; } return c; }
 
-        function getCurrentRankInfo(streak) {
-            let current = rankData[0];
-            for (let i = rankData.length - 1; i >= 0; i--) {
-                if (streak >= rankData[i].streak) return rankData[i];
-            }
-            return current;
+        function getLocalTodayStr() {
+            const d = new Date();
+            return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, '0') + "-" + String(d.getDate()).padStart(2, '0');
         }
 
-        function renderRanksModal(currentStreak) {
-            const container = document.getElementById('ranks-list-container');
-            let html = '';
-            rankData.forEach((r) => {
-                const isUnlocked = currentStreak >= r.streak;
-                const isWinged = r.streak >= 45;
-                const mWingScale = isWinged ? 0.65 : 0;
-                const mWingRotL = isWinged ? -25 : 0;
-                const mWingRotR = isWinged ? 25 : 0;
-                const mWingY = isWinged ? 10 : 0;
-                const mHaloScale = isWinged ? 0.65 : 0;
-                const mOpacity = isWinged ? 1 : 0;
-
-                html += `
-                    <div class="flex items-center gap-4 p-4 rounded-2xl ${isUnlocked ? 'bg-slate-50 border-amber-200 shadow-sm' : 'bg-slate-50 border-slate-200 opacity-60'} border relative overflow-hidden shrink-0">
-                        ${!isUnlocked ? `<div class="absolute inset-0 bg-slate-900/5 z-10 flex items-center justify-center backdrop-blur-[1px]"><span class="bg-white/90 text-xs font-bold px-3 py-1 rounded-full text-slate-500 shadow-sm">🔒 Đạt ${r.streak} chuỗi</span></div>` : ''}
-                        <div class="relative w-16 h-16 flex justify-center items-center ${r.class}">
-                            <svg viewBox="0 0 160 180" class="w-16 h-16 relative z-10 overflow-visible">
-                                <g class="harp-halo" style="transform: scale(${mHaloScale}); opacity: ${mOpacity}; transform-origin: 80px 25px;">
-                                    <ellipse cx="80" cy="25" rx="35" ry="10" fill="none" class="harp-stroke-primary" stroke-width="3" />
-                                    <ellipse cx="80" cy="25" rx="42" ry="14" fill="none" class="harp-stroke-secondary" stroke-width="1.5" opacity="0.8" />
-                                </g>
-                                <g class="harp-wings" style="opacity: ${mOpacity};">
-                                    <g style="transform: translate(0px, ${mWingY}px) scale(${mWingScale}) rotate(${mWingRotL}deg); transform-origin: 50px 90px;">
-                                        <use href="#angel-wing-detailed" />
-                                    </g>
-                                    <g style="transform: translate(0px, ${mWingY}px) scale(${mWingScale}) rotate(${mWingRotR}deg); transform-origin: 110px 90px;">
-                                        <use href="#angel-wing-detailed" transform="translate(160, 0) scale(-1, 1)" />
-                                    </g>
-                                </g>
-                                <g transform="translate(20, 10)">
-                                    <path class="harp-path harp-stroke-primary" d="M 25 45 C 25 100 15 130 40 140 L 80 140 C 105 130 95 100 95 45" fill="none" stroke-width="8" stroke-linecap="round" />
-                                    <line class="harp-path harp-stroke-primary" x1="12" y1="45" x2="108" y2="45" stroke-width="8" />
-                                    <line class="harp-path harp-stroke-secondary" x1="40" y1="45" x2="40" y2="135" stroke-width="2"/>
-                                    <line class="harp-path harp-stroke-secondary" x1="60" y1="45" x2="60" y2="139" stroke-width="2"/>
-                                    <line class="harp-path harp-stroke-secondary" x1="80" y1="45" x2="80" y2="135" stroke-width="2"/>
-                                </g>
-                            </svg>
-                        </div>
-                        <div>
-                            <h4 class="font-bold ${isUnlocked ? 'text-slate-800' : 'text-slate-500'}">${r.name}</h4>
-                            <p class="text-[11px] text-slate-500">Mốc: ${r.streak} ngày</p>
-                        </div>
-                    </div>
-                `;
+        let selectedEmotion = "";
+        document.querySelectorAll('.emotion-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.emotion-btn').forEach(b => b.classList.remove('emotion-active'));
+                this.classList.add('emotion-active');
+                selectedEmotion = this.getAttribute('data-emotion');
             });
-            container.innerHTML = html;
-        }
+        });
 
-        // Tạo lịch 7 ngày
+        const otherRadio = document.getElementById('source-other-radio');
+        const otherText = document.getElementById('source-other-text');
+        document.querySelectorAll('input[name="source"]').forEach(radio => {
+            radio.addEventListener('change', () => { otherText.disabled = !otherRadio.checked; if(!otherRadio.checked) otherText.value = ''; });
+        });
+
         function renderWeeklyCalendar() {
-            if (!userData || !userData.history) return;
+            if (!userData) return;
             const container = document.getElementById('weekly-calendar');
             let html = '';
-            
-            // Xử lý 7 ngày gần nhất từ mảng history của Backend
-            const todayStr = new Date().toISOString().split('T')[0];
             const historySet = new Set(userData.history || []);
+            const todayStr = getLocalTodayStr();
             
             for (let i = 6; i >= 0; i--) {
-                const d = new Date();
-                d.setDate(d.getDate() - i);
-                const dateStr = d.toISOString().split('T')[0];
+                const d = new Date(); d.setDate(d.getDate() - i);
+                const dateStr = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, '0') + "-" + String(d.getDate()).padStart(2, '0');
                 const dayName = i === 0 ? "HN" : (d.getDay() === 0 ? "CN" : `T${d.getDay() + 1}`);
                 
                 let isChecked = historySet.has(dateStr);
-                // Nếu hôm nay đã checkin trên giao diện test
                 if (i === 0 && userData.hasCheckedInToday) isChecked = true;
 
-                let icon = isChecked 
-                    ? `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>` 
-                    : (i === 0 ? `<div class="w-2 h-2 rounded-full bg-slate-300"></div>` : `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>`);
-                
-                let styleClass = isChecked 
-                    ? 'bg-blue-100 text-blue-600 border-blue-200' 
-                    : (i === 0 ? 'bg-slate-50 border-slate-200 border-dashed' : 'bg-red-50 text-red-400 border-red-100 opacity-60');
+                let icon = isChecked ? `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>` : (i === 0 ? `<div class="w-2 h-2 rounded-full bg-slate-300"></div>` : `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>`);
+                let styleClass = isChecked ? 'bg-blue-100 text-blue-600 border-blue-200' : (i === 0 ? 'bg-slate-50 border-slate-200 border-dashed' : 'bg-red-50 text-red-400 border-red-100 opacity-60');
 
-                html += `
-                    <div class="flex flex-col items-center gap-1.5">
-                        <span class="text-[10px] font-bold ${i === 0 ? 'text-blue-600' : 'text-slate-400'}">${dayName}</span>
-                        <div class="w-8 h-8 rounded-full flex items-center justify-center border-2 ${styleClass}">
-                            ${icon}
-                        </div>
-                    </div>
-                `;
+                html += `<div class="flex flex-col items-center gap-1.5"><span class="text-[9px] md:text-[10px] font-bold ${i === 0 ? 'text-blue-600' : 'text-slate-400'}">${dayName}</span><div class="w-6 h-6 md:w-8 md:h-8 rounded-full flex items-center justify-center border-2 ${styleClass}">${icon}</div></div>`;
             }
             container.innerHTML = html;
         }
 
-        document.getElementById('btn-show-ranks').addEventListener('click', () => {
-            renderRanksModal(userData ? userData.currentStreak : 0);
-            document.getElementById('rank-modal').classList.remove('hidden');
-            setTimeout(() => {
-                document.getElementById('rank-modal').classList.add('opacity-100');
-                document.getElementById('rank-modal-content').classList.remove('scale-95');
-            }, 10);
+        document.getElementById('btn-show-history').addEventListener('click', () => {
+            renderHistory('all');
+            document.getElementById('history-modal').classList.remove('hidden');
+            setTimeout(() => { document.getElementById('history-modal').classList.add('opacity-100'); document.getElementById('history-modal-content').classList.remove('scale-95'); }, 10);
+        });
+        document.getElementById('btn-close-history').addEventListener('click', () => {
+            document.getElementById('history-modal').classList.remove('opacity-100'); document.getElementById('history-modal-content').classList.add('scale-95');
+            setTimeout(() => document.getElementById('history-modal').classList.add('hidden'), 300);
         });
 
-        document.getElementById('btn-close-rank').addEventListener('click', () => {
-            document.getElementById('rank-modal').classList.remove('opacity-100');
-            document.getElementById('rank-modal-content').classList.add('scale-95');
-            setTimeout(() => document.getElementById('rank-modal').classList.add('hidden'), 300);
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => { b.classList.remove('bg-blue-600', 'text-white'); b.classList.add('bg-white', 'text-slate-700'); });
+                this.classList.remove('bg-white', 'text-slate-700'); this.classList.add('bg-blue-600', 'text-white');
+                renderHistory(this.getAttribute('data-filter'));
+            });
         });
+
+        function renderHistory(filterEmo) {
+            const container = document.getElementById('history-list-container');
+            const logs = userData.dailyLogs || [];
+            if (logs.length === 0) { container.innerHTML = '<p class="text-center text-slate-400 mt-4">Chưa có bài tĩnh nguyện nào.</p>'; return; }
+            
+            let html = '';
+            logs.forEach(log => {
+                if (filterEmo !== 'all' && log.emotion !== filterEmo) return;
+                html += `
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded">${log.date || 'Không rõ'}</span>
+                            <span class="text-2xl">${log.emotion || ''}</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 font-bold uppercase mb-1">Kinh Thánh:</p>
+                        <p class="text-sm text-slate-800 mb-3 bg-white p-2 rounded border">${log.q1 || '...'}</p>
+                        <p class="text-[11px] text-slate-500 font-bold uppercase mb-1">Suy ngẫm:</p>
+                        <p class="text-sm text-slate-800 mb-3 bg-white p-2 rounded border">${log.q2 || '...'}</p>
+                        <p class="text-[11px] text-slate-500 font-bold uppercase mb-1">Bài học & Gỡ rối:</p>
+                        <p class="text-sm text-slate-800 bg-white p-2 rounded border">${log.q3 || '...'}</p>
+                    </div>
+                `;
+            });
+            if(html === '') html = '<p class="text-center text-slate-400 mt-4">Không tìm thấy bài viết với cảm xúc này.</p>';
+            container.innerHTML = html;
+        }
 
         document.getElementById('tab-login').addEventListener('click', () => { authMode = 'login'; document.getElementById('tab-login').className = "flex-1 pb-2 border-b-2 border-amber-500 text-amber-600 font-bold transition-all"; document.getElementById('tab-register').className = "flex-1 pb-2 border-b-2 border-transparent text-slate-400 font-bold"; document.getElementById('btn-auth-action').innerText = "Vào Ứng Dụng"; });
         document.getElementById('tab-register').addEventListener('click', () => { authMode = 'register'; document.getElementById('tab-register').className = "flex-1 pb-2 border-b-2 border-amber-500 text-amber-600 font-bold transition-all"; document.getElementById('tab-login').className = "flex-1 pb-2 border-b-2 border-transparent text-slate-400 font-bold"; document.getElementById('btn-auth-action').innerText = "Đăng Ký Tài Khoản"; });
         document.getElementById('btn-logout').addEventListener('click', () => location.reload());
 
-        // ĐĂNG NHẬP CÓ HIỆU ỨNG CẢNH BÁO MẠNG
         document.getElementById('btn-auth-action').addEventListener('click', async () => {
             const u = document.getElementById('auth-username').value.trim();
             const p = document.getElementById('auth-password').value.trim();
@@ -581,63 +540,44 @@
             btn.innerText = "Đang kết nối..."; btn.disabled = true;
             document.getElementById('auth-error').classList.add('hidden');
             
-            // Nếu 3 giây chưa xong thì hiện chữ mạng chậm
-            const slowNetworkTimer = setTimeout(() => {
-                slowWarning.classList.remove('hidden');
-            }, 3000);
+            const slowNetworkTimer = setTimeout(() => { slowWarning.classList.remove('hidden'); }, 3000);
 
             try {
                 const res = await fetch(`${API_URL}${authMode === 'register' ? '/register' : '/login'}`, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: u, password: p })
+                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: u, password: p, localDate: getLocalTodayStr() })
                 });
-                clearTimeout(slowNetworkTimer);
-                slowWarning.classList.add('hidden');
+                clearTimeout(slowNetworkTimer); slowWarning.classList.add('hidden');
 
                 const data = await res.json();
-                if (data.success) { 
-                    userData = data.user; 
-                    enterApp(); 
-                } else { 
-                    document.getElementById('auth-error').innerText = data.message; 
-                    document.getElementById('auth-error').classList.remove('hidden'); 
-                    btn.innerText = authMode === 'register' ? "Đăng Ký Tài Khoản" : "Vào Ứng Dụng"; btn.disabled = false;
-                }
+                if (data.success) { userData = data.user; enterApp(); } 
+                else { document.getElementById('auth-error').innerText = data.message; document.getElementById('auth-error').classList.remove('hidden'); btn.innerText = authMode === 'register' ? "Đăng Ký Tài Khoản" : "Vào Ứng Dụng"; btn.disabled = false; }
             } catch (err) { 
-                clearTimeout(slowNetworkTimer);
-                slowWarning.classList.add('hidden');
-                document.getElementById('auth-error').innerText = "Lỗi kết nối máy chủ!"; 
-                document.getElementById('auth-error').classList.remove('hidden');
+                clearTimeout(slowNetworkTimer); slowWarning.classList.add('hidden');
+                document.getElementById('auth-error').innerText = "Lỗi kết nối máy chủ!"; document.getElementById('auth-error').classList.remove('hidden');
                 btn.innerText = authMode === 'register' ? "Đăng Ký Tài Khoản" : "Vào Ứng Dụng"; btn.disabled = false;
             }
         });
 
-        // HIỆU ỨNG CHUYỂN MÀN HÌNH MƯỢT MÀ
         function enterApp() {
             const authScreen = document.getElementById('auth-screen');
             const mainApp = document.getElementById('main-app');
-            
             loadDailyVerse(); 
-
-            // Phai màu màn hình login
             authScreen.classList.add('fade-out-scale');
-            
             setTimeout(() => {
                 authScreen.classList.add('hidden');
                 mainApp.classList.remove('hidden');
                 updateUIFromData();
-                
-                // Mở dần màn hình chính
-                setTimeout(() => {
-                    mainApp.classList.add('fade-in-scale');
-                }, 50);
+                setTimeout(() => { mainApp.classList.add('fade-in-scale'); }, 50);
             }, 500);
         }
 
         function updateUIFromData() {
             if(!userData) return;
-            
-            if (isTestMode) document.getElementById('test-mode-badge').classList.remove('hidden');
-            else document.getElementById('test-mode-badge').classList.add('hidden');
+            if (isTestMode) document.getElementById('test-mode-badge').classList.remove('hidden'); else document.getElementById('test-mode-badge').classList.add('hidden');
+
+            if (userData.lastCheckinDateStr && userData.lastCheckinDateStr !== getLocalTodayStr()) {
+                userData.hasCheckedInToday = false;
+            }
 
             document.getElementById('ui-username').innerText = userData.username;
             document.getElementById('user-avatar-text').innerText = userData.username.charAt(0);
@@ -646,130 +586,102 @@
             document.getElementById('ui-total-points').innerText = userData.totalPoints;
             document.getElementById('streak-count').innerText = userData.currentStreak;
             
-            // Kiểm tra mất chuỗi để hiện thông báo đỏ
             const lostAlert = document.getElementById('lost-streak-alert');
-            if (userData.justLostStreak) {
-                lostAlert.classList.remove('hidden');
-                document.getElementById('fail-sound').play().catch(e=>{});
-                setTimeout(() => lostAlert.classList.add('hidden'), 5000);
-            } else {
-                lostAlert.classList.add('hidden');
-            }
+            if (userData.justLostStreak) { lostAlert.classList.remove('hidden'); document.getElementById('fail-sound').play().catch(e=>{}); setTimeout(() => lostAlert.classList.add('hidden'), 5000); userData.justLostStreak = false; }
 
             const currentRank = getCurrentRankInfo(userData.currentStreak);
             const harpWrapper = document.getElementById('harp-wrapper');
-            const harpSvg = document.getElementById('harp-svg');
-            const sparkles = document.getElementById('harp-sparkles');
-            
-            harpWrapper.classList.remove('rank-wood', 'rank-bronze', 'rank-iron', 'rank-gold', 'rank-platinum', 'rank-diamond', 'rank-ruby');
-            harpWrapper.classList.add(currentRank.class);
+            harpWrapper.className = `relative flex flex-col items-center justify-center h-56 w-56 mx-auto mb-2 harp-floating ${currentRank.class}`;
             document.getElementById('rank-name-display').innerText = `Danh hiệu: ${currentRank.name}`;
 
-            if (currentRank.hasSparkle) {
-                sparkles.classList.remove('opacity-0');
-                sparkles.classList.add('opacity-100');
-            } else {
-                sparkles.classList.remove('opacity-100');
-                sparkles.classList.add('opacity-0');
-            }
+            if (currentRank.hasSparkle) { document.getElementById('harp-sparkles').classList.remove('opacity-0'); document.getElementById('harp-sparkles').classList.add('opacity-100'); } 
+            else { document.getElementById('harp-sparkles').classList.add('opacity-0'); document.getElementById('harp-sparkles').classList.remove('opacity-100'); }
 
-            updateTubesUI();
-            renderWeeklyCalendar(); // Cập nhật lịch
-
+            updateTubesUI(); renderWeeklyCalendar();
             if (userData.role === 'admin') document.getElementById('btn-open-admin').classList.remove('hidden');
 
             const btn = document.getElementById('checkin-btn');
             btn.disabled = false;
             if (userData.hasCheckedInToday) {
-                document.getElementById('harp-glow').classList.remove('hidden');
-                harpSvg.classList.add('scale-100'); harpSvg.classList.remove('scale-90');
+                document.getElementById('harp-glow').classList.remove('hidden'); document.getElementById('harp-svg').classList.add('scale-100'); document.getElementById('harp-svg').classList.remove('scale-90');
                 btn.className = 'w-full py-3.5 px-6 rounded-[1.25rem] font-bold text-lg bg-slate-100 text-slate-500 cursor-default shadow-inner';
                 btn.innerHTML = `Đã Hoàn Thành Hôm Nay ✓`;
             } else {
-                document.getElementById('harp-glow').classList.add('hidden');
-                harpSvg.classList.remove('scale-100'); harpSvg.classList.add('scale-90');
+                document.getElementById('harp-glow').classList.add('hidden'); document.getElementById('harp-svg').classList.remove('scale-100'); document.getElementById('harp-svg').classList.add('scale-90');
                 btn.className = 'w-full py-3.5 px-6 rounded-[1.25rem] font-bold text-lg bg-gradient-to-r from-amber-400 to-yellow-500 text-white shadow-xl hover:-translate-y-1';
                 btn.innerHTML = `Hoàn Thành Tĩnh Nguyện →`;
             }
         }
 
         function updateTubesUI() {
-            const maxCap = 90;
-            document.getElementById('tube-red-text').innerText = userData.totalCheckins;
-            document.getElementById('tube-blue-text').innerText = userData.currentStreak;
+            const maxCap = 90; 
+            document.getElementById('tube-red-text').innerText = userData.totalCheckins; document.getElementById('tube-blue-text').innerText = userData.currentStreak;
             document.getElementById('tube-red-liquid').style.setProperty('--fill-level', `${Math.max(6, Math.min((userData.totalCheckins / maxCap) * 100, 100))}%`);
             document.getElementById('tube-blue-liquid').style.setProperty('--fill-level', `${Math.max(6, Math.min((userData.currentStreak / maxCap) * 100, 100))}%`);
         }
 
-        // ==========================================
-        // CÔNG CỤ TEST 
-        // ==========================================
-        function enableTestMode() {
-            if (!isTestMode) { originalUserData = JSON.parse(JSON.stringify(userData)); isTestMode = true; }
-        }
-
-        document.getElementById('btn-test-next-day').addEventListener('click', () => {
-            enableTestMode(); userData.hasCheckedInToday = false; updateUIFromData(); document.getElementById('btn-close-admin').click();
-        });
-
-        document.getElementById('btn-test-rank-go').addEventListener('click', () => {
-            enableTestMode();
-            userData.currentStreak = parseInt(document.getElementById('test-rank-select').value); 
-            userData.hasCheckedInToday = false; updateUIFromData(); document.getElementById('btn-close-admin').click();
-        });
-
-        document.getElementById('btn-test-reset').addEventListener('click', () => {
-            if (isTestMode && originalUserData) {
-                userData = JSON.parse(JSON.stringify(originalUserData)); isTestMode = false; updateUIFromData();
-                alert("Đã khôi phục dữ liệu thật!");
-            }
-        });
-
+        // ĐIỂM DANH
         document.getElementById('checkin-btn').addEventListener('click', async () => {
             if (!userData.hasCheckedInToday && !isProcessing) {
                 isProcessing = true;
                 const oldRank = getCurrentRankInfo(userData.currentStreak);
-                const expectedNewStreak = userData.currentStreak + 1;
-                const expectedNewRank = getCurrentRankInfo(expectedNewStreak);
+                const expectedNewRank = getCurrentRankInfo(userData.currentStreak + 1);
                 
                 try {
-                    if (expectedNewRank.id > oldRank.id) {
-                        const rankSound = document.getElementById('rankup-sound');
-                        if (rankSound) { rankSound.pause(); rankSound.currentTime = 0; rankSound.volume = 1.0; rankSound.play().catch(e=>{}); }
-                    } else {
-                        const dailySound = document.getElementById('daily-sound');
-                        if (dailySound) { dailySound.pause(); dailySound.currentTime = 0; dailySound.volume = 1.0; dailySound.play().catch(e=>{}); }
-                    }
+                    if (expectedNewRank.id > oldRank.id) { const s = document.getElementById('rankup-sound'); if(s){ s.pause(); s.currentTime=0; s.volume=1; s.play().catch(e=>{});} } 
+                    else { const s = document.getElementById('daily-sound'); if(s){ s.pause(); s.currentTime=0; s.volume=1; s.play().catch(e=>{});} }
                 } catch(e) {}
 
-                document.getElementById('celebration').classList.remove('hidden');
-                setTimeout(() => document.getElementById('celebration').classList.add('hidden'), 3000);
+                document.getElementById('celebration').classList.remove('hidden'); setTimeout(() => document.getElementById('celebration').classList.add('hidden'), 3000);
                 
                 const floatXp = document.getElementById('float-xp'); const floatLv = document.getElementById('float-lv');
-                if (floatXp && floatLv) {
-                    floatXp.classList.remove('float-up-anim'); floatLv.classList.remove('float-up-anim');
-                    void floatXp.offsetWidth; 
-                    floatXp.classList.add('float-up-anim'); floatLv.classList.add('float-up-anim');
-                }
+                if (floatXp && floatLv) { floatXp.classList.remove('float-up-anim'); floatLv.classList.remove('float-up-anim'); void floatXp.offsetWidth; floatXp.classList.add('float-up-anim'); floatLv.classList.add('float-up-anim'); }
+
+                let srcVal = '';
+                const checkedRadio = document.querySelector('input[name="source"]:checked');
+                if(checkedRadio) { srcVal = checkedRadio.value === 'Khác' ? document.getElementById('source-other-text').value : checkedRadio.value; }
+                const payload = {
+                    userId: userData._id, action: 'checkin', localDate: getLocalTodayStr(),
+                    logData: { q1: document.getElementById('q1').value, q2: document.getElementById('q2').value, q3: document.getElementById('q3').value, source: srcVal, emotion: selectedEmotion }
+                };
 
                 if (isTestMode) {
-                    userData.currentStreak++;
-                    userData.maxStreak = Math.max(userData.maxStreak, userData.currentStreak);
-                    userData.totalCheckins++;
-                    userData.totalPoints++;
-                    userData.hasCheckedInToday = true;
+                    userData.currentStreak++; userData.maxStreak = Math.max(userData.maxStreak, userData.currentStreak); userData.totalCheckins++; userData.totalPoints++; userData.hasCheckedInToday = true; userData.lastCheckinDateStr = getLocalTodayStr();
+                    if(!userData.history) userData.history=[]; userData.history.push(getLocalTodayStr());
+                    if(!userData.dailyLogs) userData.dailyLogs=[]; userData.dailyLogs.unshift({date: payload.localDate, ...payload.logData});
                 } else {
                     try {
-                        const res = await fetch(`${API_URL}/update-streak`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: userData._id, action: 'checkin' }) });
-                        const data = await res.json();
-                        if (data.success) userData = data.user;
+                        const res = await fetch(`${API_URL}/update-streak`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                        const data = await res.json(); if (data.success) userData = data.user;
                     } catch (error) { alert("Lỗi kết nối!") } 
                 }
+                
+                // Clear form
+                document.getElementById('q1').value = ''; document.getElementById('q2').value = ''; document.getElementById('q3').value = '';
+                document.querySelectorAll('input[name="source"]').forEach(r=>r.checked=false); document.getElementById('source-other-text').value=''; document.getElementById('source-other-text').disabled=true;
+                document.querySelectorAll('.emotion-btn').forEach(b => b.classList.remove('emotion-active')); selectedEmotion='';
 
-                isProcessing = false; 
-                updateUIFromData();
+                isProcessing = false; updateUIFromData();
             }
         });
+
+        // ADMIN PANEL
+        window.showUserLogs = function(logsJson) {
+            const logs = JSON.parse(decodeURIComponent(logsJson));
+            const body = document.getElementById('admin-view-body');
+            if(!logs || logs.length === 0) { body.innerHTML = '<p class="text-slate-500">Người này chưa viết bài nào.</p>'; } 
+            else {
+                const log = logs[0]; // Chỉ hiện bài mới nhất
+                body.innerHTML = `
+                    <div class="bg-blue-50 p-3 rounded-lg"><span class="font-bold text-blue-700">Ngày:</span> ${log.date || 'Không rõ'} ${log.emotion || ''}</div>
+                    <div class="bg-slate-50 border p-3 rounded-lg"><span class="font-bold text-slate-700">Q1. Kinh Thánh:</span><p class="mt-1">${log.q1 || '(Trống)'}</p></div>
+                    <div class="bg-slate-50 border p-3 rounded-lg"><span class="font-bold text-slate-700">Q2. Suy ngẫm:</span><p class="mt-1">${log.q2 || '(Trống)'}</p></div>
+                    <div class="bg-slate-50 border p-3 rounded-lg"><span class="font-bold text-slate-700">Nguồn:</span> ${log.source || '(Trống)'}</div>
+                `;
+            }
+            document.getElementById('admin-view-modal').classList.remove('hidden'); setTimeout(() => document.getElementById('admin-view-modal').classList.add('opacity-100'), 10);
+        }
+        document.getElementById('btn-close-admin-view').addEventListener('click', () => { document.getElementById('admin-view-modal').classList.remove('opacity-100'); setTimeout(() => document.getElementById('admin-view-modal').classList.add('hidden'), 300); });
 
         document.getElementById('btn-open-admin').addEventListener('click', async () => {
             document.getElementById('admin-modal').classList.remove('hidden'); setTimeout(() => document.getElementById('admin-modal').classList.add('opacity-100'), 10);
@@ -777,11 +689,49 @@
             const data = await res.json();
             if(data.success) {
                 let html = '';
-                data.users.forEach(u => { html += `<tr><td class="p-4">${u.username}</td><td class="p-4">${u.role}</td><td class="p-4 font-bold">${u.totalPoints}</td><td class="p-4 text-amber-500 font-bold">${u.maxStreak}</td><td class="p-4 text-blue-500 font-bold">${u.currentStreak}</td></tr>`; });
+                data.users.forEach(u => { 
+                    const safeLogs = encodeURIComponent(JSON.stringify(u.dailyLogs || []));
+                    html += `<tr>
+                        <td class="p-4">${u.username}</td>
+                        <td class="p-4 text-center"><button onclick="showUserLogs('${safeLogs}')" class="bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1 rounded font-bold text-xs">👁️ Xem</button></td>
+                        <td class="p-4 text-amber-500 font-bold">${u.maxStreak}</td><td class="p-4 text-blue-500 font-bold">${u.currentStreak}</td>
+                    </tr>`; 
+                });
                 document.getElementById('admin-table-body').innerHTML = html;
             }
         });
         document.getElementById('btn-close-admin').addEventListener('click', () => { document.getElementById('admin-modal').classList.remove('opacity-100'); setTimeout(() => document.getElementById('admin-modal').classList.add('hidden'), 300); });
+
+        function renderRanksModal(currentStreak) {
+            const container = document.getElementById('ranks-list-container');
+            let html = '';
+            rankData.forEach((r) => {
+                const isUnlocked = currentStreak >= r.streak;
+                const isWinged = r.streak >= 45;
+                const mWingScale = isWinged ? 0.65 : 0; const mWingRotL = isWinged ? -25 : 0; const mWingRotR = isWinged ? 25 : 0; const mWingY = isWinged ? 10 : 0; const mHaloScale = isWinged ? 0.65 : 0; const mOpacity = isWinged ? 1 : 0;
+
+                html += `
+                    <div class="flex items-center gap-4 p-4 rounded-2xl ${isUnlocked ? 'bg-slate-50 border-amber-200 shadow-sm' : 'bg-slate-50 border-slate-200 opacity-60'} border relative overflow-hidden shrink-0">
+                        ${!isUnlocked ? `<div class="absolute inset-0 bg-slate-900/5 z-10 flex items-center justify-center backdrop-blur-[1px]"><span class="bg-white/90 text-xs font-bold px-3 py-1 rounded-full text-slate-500 shadow-sm">🔒 Đạt ${r.streak} chuỗi</span></div>` : ''}
+                        <div class="relative w-16 h-16 flex justify-center items-center ${r.class}">
+                            <svg viewBox="0 0 160 180" class="w-16 h-16 relative z-10 overflow-visible">
+                                <g class="harp-halo" style="transform: scale(${mHaloScale}); opacity: ${mOpacity}; transform-origin: 80px 25px;"><ellipse cx="80" cy="25" rx="35" ry="10" fill="none" class="harp-stroke-primary" stroke-width="3" /><ellipse cx="80" cy="25" rx="42" ry="14" fill="none" class="harp-stroke-secondary" stroke-width="1.5" opacity="0.8" /></g>
+                                <g class="harp-wings" style="opacity: ${mOpacity};"><g style="transform: translate(0px, ${mWingY}px) scale(${mWingScale}) rotate(${mWingRotL}deg); transform-origin: 50px 90px;"><use href="#angel-wing-detailed" /></g><g style="transform: translate(0px, ${mWingY}px) scale(${mWingScale}) rotate(${mWingRotR}deg); transform-origin: 110px 90px;"><use href="#angel-wing-detailed" transform="translate(160, 0) scale(-1, 1)" /></g></g>
+                                <g transform="translate(20, 10)"><path class="harp-path harp-stroke-primary" d="M 25 45 C 25 100 15 130 40 140 L 80 140 C 105 130 95 100 95 45" fill="none" stroke-width="8" stroke-linecap="round" /><line class="harp-path harp-stroke-primary" x1="12" y1="45" x2="108" y2="45" stroke-width="8" /><line class="harp-path harp-stroke-secondary" x1="40" y1="45" x2="40" y2="135" stroke-width="2"/><line class="harp-path harp-stroke-secondary" x1="60" y1="45" x2="60" y2="139" stroke-width="2"/><line class="harp-path harp-stroke-secondary" x1="80" y1="45" x2="80" y2="135" stroke-width="2"/></g>
+                            </svg>
+                        </div>
+                        <div><h4 class="font-bold ${isUnlocked ? 'text-slate-800' : 'text-slate-500'}">${r.name}</h4><p class="text-[11px] text-slate-500">Mốc: ${r.streak} ngày</p></div>
+                    </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        // TOOL TEST MODAL
+        document.getElementById('btn-show-ranks').addEventListener('click', () => { renderRanksModal(userData ? userData.currentStreak : 0); document.getElementById('rank-modal').classList.remove('hidden'); setTimeout(() => { document.getElementById('rank-modal').classList.add('opacity-100'); document.getElementById('rank-modal-content').classList.remove('scale-95'); }, 10); });
+        document.getElementById('btn-close-rank').addEventListener('click', () => { document.getElementById('rank-modal').classList.remove('opacity-100'); document.getElementById('rank-modal-content').classList.add('scale-95'); setTimeout(() => document.getElementById('rank-modal').classList.add('hidden'), 300); });
+        document.getElementById('btn-test-next-day').addEventListener('click', () => { if (!isTestMode) { originalUserData = JSON.parse(JSON.stringify(userData)); isTestMode = true; } userData.hasCheckedInToday = false; updateUIFromData(); document.getElementById('btn-close-admin').click(); });
+        document.getElementById('btn-test-rank-go').addEventListener('click', () => { if (!isTestMode) { originalUserData = JSON.parse(JSON.stringify(userData)); isTestMode = true; } userData.currentStreak = parseInt(document.getElementById('test-rank-select').value); userData.hasCheckedInToday = false; updateUIFromData(); document.getElementById('btn-close-admin').click(); });
+        document.getElementById('btn-test-reset').addEventListener('click', () => { if (isTestMode && originalUserData) { userData = JSON.parse(JSON.stringify(originalUserData)); isTestMode = false; updateUIFromData(); alert("Đã khôi phục dữ liệu thật!"); } });
     </script>
 </body>
 </html>
