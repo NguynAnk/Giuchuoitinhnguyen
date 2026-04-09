@@ -164,24 +164,48 @@
         </div>
     </div>
 
-    <!-- MÀN HÌNH ĐĂNG NHẬP -->
+    <!-- MÀN HÌNH ĐĂNG NHẬP / ĐĂNG KÝ -->
     <div id="auth-screen" class="transition-screen bg-white/95 backdrop-blur-sm rounded-[2.5rem] shadow-2xl shadow-blue-100/50 w-full max-w-md border border-white relative z-20 p-8 flex flex-col gap-6 items-center">
         <div class="text-center w-full">
             <h1 class="text-2xl font-bold text-slate-800">Cổng Tĩnh Nguyện</h1>
-            <p class="text-slate-500 mt-1 text-sm">Chào mừng bạn quay trở lại</p>
+            <p class="text-slate-500 mt-1 text-sm">Chào mừng bạn</p>
         </div>
         <div class="w-full flex flex-col gap-4">
             <div class="flex gap-2 mb-2 border-b border-slate-200">
                 <button id="tab-login" class="flex-1 pb-2 border-b-2 border-amber-500 text-amber-600 font-bold transition-all">Đăng Nhập</button>
                 <button id="tab-register" class="flex-1 pb-2 border-b-2 border-transparent text-slate-400 font-bold hover:text-slate-600 transition-all">Đăng Ký</button>
             </div>
+            
             <div>
                 <label class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 block">Họ và Tên / Tài khoản</label>
                 <input type="text" id="auth-username" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-amber-400 outline-none">
             </div>
+            
             <div class="relative">
                 <label class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 block">Mật khẩu</label>
                 <input type="password" id="auth-password" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-amber-400 outline-none">
+            </div>
+
+            <!-- CHỌN NHÓM (Chỉ hiện khi Đăng Ký) -->
+            <div id="auth-group-container" class="relative hidden">
+                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 block">Thuộc Nhóm Nhỏ <span class="text-red-500">(Bắt buộc chọn 1 lần)</span></label>
+                <select id="auth-group" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-amber-400 outline-none cursor-pointer appearance-none">
+                    <option value="">-- Vui lòng chọn Nhóm --</option>
+                    <option value="Nhóm 1">Nhóm 1</option>
+                    <option value="Nhóm 2">Nhóm 2</option>
+                    <option value="Nhóm 3">Nhóm 3</option>
+                    <option value="Nhóm 4">Nhóm 4</option>
+                    <option value="Nhóm 5">Nhóm 5</option>
+                    <option value="Nhóm 6">Nhóm 6</option>
+                    <option value="Nhóm 7">Nhóm 7</option>
+                    <option value="Nhóm 8">Nhóm 8</option>
+                    <option value="Nhóm 9">Nhóm 9</option>
+                    <option value="Nhóm 10">Nhóm 10</option>
+                </select>
+                <!-- Icon mũi tên xuống -->
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 pt-5 text-slate-400">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
             </div>
             
             <p id="auth-error" class="text-red-500 text-sm font-medium text-center hidden"></p>
@@ -244,20 +268,23 @@
                     <p class="text-xs text-slate-400 font-semibold uppercase">Xin chào,</p>
                     <p class="text-sm font-bold text-slate-800" id="ui-username">Đang tải...</p>
                     
-                    <!-- MENU CHỌN NHÓM NHỎ -->
-                    <select id="user-group-select" class="mt-1 text-[11px] font-bold bg-purple-50 text-purple-600 border border-purple-200 rounded px-2 py-0.5 outline-none cursor-pointer hover:bg-purple-100 transition-colors w-28">
-                        <option value="">-- Chọn Nhóm --</option>
-                        <option value="Nhóm 1">Nhóm 1</option>
-                        <option value="Nhóm 2">Nhóm 2</option>
-                        <option value="Nhóm 3">Nhóm 3</option>
-                        <option value="Nhóm 4">Nhóm 4</option>
-                        <option value="Nhóm 5">Nhóm 5</option>
-                        <option value="Nhóm 6">Nhóm 6</option>
-                        <option value="Nhóm 7">Nhóm 7</option>
-                        <option value="Nhóm 8">Nhóm 8</option>
-                        <option value="Nhóm 9">Nhóm 9</option>
-                        <option value="Nhóm 10">Nhóm 10</option>
-                    </select>
+                    <!-- MENU CHỌN NHÓM NHỎ CỦA USER CHÍNH -->
+                    <div>
+                        <select id="user-group-select" class="mt-1 text-[11px] font-bold bg-purple-50 text-purple-600 border border-purple-200 rounded px-2 py-0.5 outline-none cursor-pointer hover:bg-purple-100 transition-colors w-28">
+                            <option value="">-- Chọn Nhóm --</option>
+                            <option value="Nhóm 1">Nhóm 1</option>
+                            <option value="Nhóm 2">Nhóm 2</option>
+                            <option value="Nhóm 3">Nhóm 3</option>
+                            <option value="Nhóm 4">Nhóm 4</option>
+                            <option value="Nhóm 5">Nhóm 5</option>
+                            <option value="Nhóm 6">Nhóm 6</option>
+                            <option value="Nhóm 7">Nhóm 7</option>
+                            <option value="Nhóm 8">Nhóm 8</option>
+                            <option value="Nhóm 9">Nhóm 9</option>
+                            <option value="Nhóm 10">Nhóm 10</option>
+                        </select>
+                        <p id="user-group-lock-text" class="text-[9px] text-red-500 mt-0.5 hidden">(Đã chốt nhóm)</p>
+                    </div>
 
                 </div>
                 <div class="flex items-center gap-2 bg-amber-50 px-4 py-1.5 rounded-xl border border-amber-200 ml-4">
@@ -651,10 +678,20 @@
             container.innerHTML = html;
         };
 
-        // ĐỔI NHÓM
+        // CHỨC NĂNG ĐỔI NHÓM CỦA USER CÁ NHÂN (CHỈ 1 LẦN)
         document.getElementById('user-group-select').addEventListener('change', async (e) => {
             const newGroup = e.target.value;
+            if(!newGroup) return; // Nếu chọn trống thì bỏ qua
+            
+            // Hỏi xác nhận vì chỉ được chọn 1 lần
+            if(!confirm(`Bạn đang chọn ${newGroup}. LƯU Ý: Bạn sẽ không thể tự đổi lại nhóm sau khi chọn. Bạn chắc chắn chứ?`)) {
+                e.target.value = userData.group || ""; // Reset lại như cũ
+                return;
+            }
+
             userData.group = newGroup;
+            updateUIFromData(); // Khóa thẻ select ngay lập tức
+
             if (!isTestMode) {
                 try {
                     await fetch(`${API_URL}/update-group`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: userData._id, group: newGroup }) });
@@ -662,14 +699,53 @@
             }
         });
 
-        document.getElementById('tab-login').addEventListener('click', () => { authMode = 'login'; document.getElementById('tab-login').className = "flex-1 pb-2 border-b-2 border-amber-500 text-amber-600 font-bold transition-all"; document.getElementById('tab-register').className = "flex-1 pb-2 border-b-2 border-transparent text-slate-400 font-bold"; document.getElementById('btn-auth-action').innerText = "Vào Ứng Dụng"; });
-        document.getElementById('tab-register').addEventListener('click', () => { authMode = 'register'; document.getElementById('tab-register').className = "flex-1 pb-2 border-b-2 border-amber-500 text-amber-600 font-bold transition-all"; document.getElementById('tab-login').className = "flex-1 pb-2 border-b-2 border-transparent text-slate-400 font-bold"; document.getElementById('btn-auth-action').innerText = "Đăng Ký Tài Khoản"; });
+        // ĐỔI TAB ĐĂNG NHẬP / ĐĂNG KÝ
+        document.getElementById('tab-login').addEventListener('click', () => { 
+            authMode = 'login'; 
+            document.getElementById('tab-login').className = "flex-1 pb-2 border-b-2 border-amber-500 text-amber-600 font-bold transition-all"; 
+            document.getElementById('tab-register').className = "flex-1 pb-2 border-b-2 border-transparent text-slate-400 font-bold hover:text-slate-600 transition-all"; 
+            document.getElementById('btn-auth-action').innerText = "Vào Ứng Dụng"; 
+            
+            // Xóa class hidden và ép ẩn khối nhóm
+            const groupContainer = document.getElementById('auth-group-container');
+            groupContainer.classList.remove('block');
+            groupContainer.classList.add('hidden');
+            document.getElementById('auth-error').classList.add('hidden');
+        });
+        
+        document.getElementById('tab-register').addEventListener('click', () => { 
+            authMode = 'register'; 
+            document.getElementById('tab-register').className = "flex-1 pb-2 border-b-2 border-amber-500 text-amber-600 font-bold transition-all"; 
+            document.getElementById('tab-login').className = "flex-1 pb-2 border-b-2 border-transparent text-slate-400 font-bold hover:text-slate-600 transition-all"; 
+            document.getElementById('btn-auth-action').innerText = "Đăng Ký Tài Khoản"; 
+            
+            // Xóa class hidden và ép hiện khối nhóm
+            const groupContainer = document.getElementById('auth-group-container');
+            groupContainer.classList.remove('hidden');
+            groupContainer.classList.add('block');
+            document.getElementById('auth-error').classList.add('hidden');
+        });
+
+        // Ẩn lỗi khi người dùng chọn nhóm
+        document.getElementById('auth-group').addEventListener('change', () => {
+            document.getElementById('auth-error').classList.add('hidden');
+        });
+        
         document.getElementById('btn-logout').addEventListener('click', () => location.reload());
 
         document.getElementById('btn-auth-action').addEventListener('click', async () => {
             const u = document.getElementById('auth-username').value.trim();
             const p = document.getElementById('auth-password').value.trim();
+            const g = document.getElementById('auth-group').value;
+
             if(!u || !p) return;
+            
+            // Chặn cứng: Phải chọn nhóm mới cho đăng ký
+            if (authMode === 'register' && !g) {
+                document.getElementById('auth-error').innerText = "Vui lòng chọn Nhóm của bạn để tiếp tục!";
+                document.getElementById('auth-error').classList.remove('hidden');
+                return;
+            }
             
             const btn = document.getElementById('btn-auth-action');
             const slowWarning = document.getElementById('slow-network-warning');
@@ -679,9 +755,12 @@
             
             const slowNetworkTimer = setTimeout(() => { slowWarning.classList.remove('hidden'); }, 3000);
 
+            const payload = { username: u, password: p, localDate: getLocalTodayStr() };
+            if (authMode === 'register') payload.group = g;
+
             try {
                 const res = await fetch(`${API_URL}${authMode === 'register' ? '/register' : '/login'}`, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: u, password: p, localDate: getLocalTodayStr() })
+                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
                 });
                 clearTimeout(slowNetworkTimer); slowWarning.classList.add('hidden');
 
@@ -720,7 +799,23 @@
 
             document.getElementById('ui-username').innerText = userData.username;
             document.getElementById('user-avatar-text').innerText = userData.username.charAt(0);
-            document.getElementById('user-group-select').value = userData.group || ""; 
+            
+            // XỬ LÝ KHÓA NÚT CHỌN NHÓM CỦA NGƯỜI DÙNG
+            const groupSelect = document.getElementById('user-group-select');
+            const lockText = document.getElementById('user-group-lock-text');
+            groupSelect.value = userData.group || ""; 
+            
+            if (userData.group) {
+                // Đã chọn nhóm -> Khóa cứng
+                groupSelect.disabled = true;
+                groupSelect.className = "mt-1 text-[11px] font-bold bg-slate-100 text-slate-500 border border-slate-200 rounded px-2 py-0.5 outline-none cursor-not-allowed w-28 appearance-none";
+                lockText.classList.remove('hidden');
+            } else {
+                // Chưa chọn nhóm (dành cho tk cũ) -> Mở khóa
+                groupSelect.disabled = false;
+                groupSelect.className = "mt-1 text-[11px] font-bold bg-purple-50 text-purple-600 border border-purple-200 rounded px-2 py-0.5 outline-none cursor-pointer hover:bg-purple-100 transition-colors w-28";
+                lockText.classList.add('hidden');
+            }
             
             document.getElementById('ui-max-streak').innerText = userData.maxStreak;
             document.getElementById('ui-lost-streaks').innerText = userData.lostStreaks;
@@ -824,17 +919,62 @@
         }
         document.getElementById('btn-close-admin-view').addEventListener('click', () => { document.getElementById('admin-view-modal').classList.remove('opacity-100'); setTimeout(() => document.getElementById('admin-view-modal').classList.add('hidden'), 300); });
 
+        // ADMIN ĐỔI NHÓM CHO USER
+        window.adminChangeGroup = async function(userId, newGroup, selectEl) {
+            if(!confirm(`Bạn muốn chuyển người này sang ${newGroup || 'Nhóm Trống'}?`)) {
+                // Revert lại select nếu admin hủy
+                const res = await fetch(`${API_URL}/users`);
+                const data = await res.json();
+                if(data.success) {
+                    const u = data.users.find(x => x._id === userId);
+                    if(u) selectEl.value = u.group || "";
+                }
+                return;
+            }
+            
+            selectEl.disabled = true;
+            try {
+                const res = await fetch(`${API_URL}/update-group`, { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify({ userId: userId, group: newGroup }) 
+                });
+                const data = await res.json();
+                if (data.success) {
+                    // Nếu admin tự đổi nhóm cho chính mình
+                    if (userData && userData._id === userId) {
+                        userData.group = newGroup;
+                        updateUIFromData();
+                    }
+                } else {
+                    alert("Lỗi đổi nhóm");
+                }
+            } catch(e) {
+                alert("Lỗi mạng!");
+            }
+            selectEl.disabled = false;
+        };
+
         document.getElementById('btn-open-admin').addEventListener('click', async () => {
             document.getElementById('admin-modal').classList.remove('hidden'); setTimeout(() => document.getElementById('admin-modal').classList.add('opacity-100'), 10);
             const res = await fetch(`${API_URL}/users`);
             const data = await res.json();
             if(data.success) {
                 let html = '';
+                const groupOptionsArr = ['', 'Nhóm 1', 'Nhóm 2', 'Nhóm 3', 'Nhóm 4', 'Nhóm 5', 'Nhóm 6', 'Nhóm 7', 'Nhóm 8', 'Nhóm 9', 'Nhóm 10'];
+                
                 data.users.forEach(u => { 
                     const safeLogs = encodeURIComponent(JSON.stringify(u.dailyLogs || []));
+                    
+                    let selectOptions = groupOptionsArr.map(g => `<option value="${g}" ${u.group === g ? 'selected' : ''}>${g || '-Trống-'}</option>`).join('');
+                    
                     html += `<tr>
-                        <td class="p-4">${u.username}</td>
-                        <td class="p-4 text-xs font-bold text-purple-600">${u.group || '-'}</td>
+                        <td class="p-4 font-medium">${u.username}</td>
+                        <td class="p-4">
+                            <select onchange="adminChangeGroup('${u._id}', this.value, this)" class="text-xs font-bold bg-purple-50 text-purple-600 border border-purple-200 rounded px-1 py-0.5 outline-none cursor-pointer">
+                                ${selectOptions}
+                            </select>
+                        </td>
                         <td class="p-4 text-center"><button onclick="showUserLogs('${safeLogs}')" class="bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1 rounded font-bold text-xs">👁️ Xem</button></td>
                         <td class="p-4 text-amber-500 font-bold">${u.maxStreak}</td><td class="p-4 text-blue-500 font-bold">${u.currentStreak}</td>
                     </tr>`; 
