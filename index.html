@@ -209,8 +209,8 @@
                     Công Cụ Test Giao Diện
                 </h3>
                 <div class="flex gap-2 flex-wrap mt-1 items-center">
-                    <button id="btn-test-next-day" class="text-[11px] bg-white border border-amber-300 text-amber-700 px-3 py-1.5 rounded-lg hover:bg-amber-200 font-bold shadow-sm transition-colors">🔓 Mở Khóa Ngày Hôm Nay</button>
-                    <select id="test-rank-select" class="text-[11px] font-bold bg-white border border-amber-300 text-amber-700 px-2 py-1.5 rounded-lg outline-none">
+                    <button id="btn-test-next-day" class="text-[11px] bg-white border border-amber-300 text-amber-700 px-3 py-1.5 rounded-lg hover:bg-amber-200 font-bold shadow-sm transition-transform active:scale-95">🔓 Mở Khóa Ngày Hôm Nay</button>
+                    <select id="test-rank-select" class="text-[11px] font-bold bg-white border border-amber-300 text-amber-700 px-2 py-1.5 rounded-lg outline-none cursor-pointer">
                         <option value="14">Mộc ➞ Đồng (14 ngày)</option>
                         <option value="29">Đồng ➞ Sắt (29 ngày)</option>
                         <option value="44">Sắt ➞ Vàng (44 ngày)</option>
@@ -218,8 +218,8 @@
                         <option value="74">Bạch Kim ➞ Kim Cương (74 ngày)</option>
                         <option value="89">Kim Cương ➞ Ruby (89 ngày)</option>
                     </select>
-                    <button id="btn-test-rank-go" class="text-[11px] bg-amber-500 text-white px-3 py-1.5 rounded-lg hover:bg-amber-600 font-bold shadow-sm transition-colors">⭐ Test Rank</button>
-                    <button id="btn-test-reset" class="text-[11px] bg-slate-800 text-white px-3 py-1.5 rounded-lg hover:bg-slate-700 font-bold shadow-sm transition-colors ml-auto">Khôi Phục Dữ Liệu</button>
+                    <button id="btn-test-rank-go" class="text-[11px] bg-amber-500 text-white px-3 py-1.5 rounded-lg hover:bg-amber-600 font-bold shadow-sm transition-transform active:scale-95">⭐ Test Rank</button>
+                    <button id="btn-test-reset" class="text-[11px] bg-slate-800 text-white px-3 py-1.5 rounded-lg hover:bg-slate-700 font-bold shadow-sm transition-transform active:scale-95 ml-auto">Khôi Phục Dữ Liệu</button>
                 </div>
             </div>
 
@@ -720,7 +720,7 @@
 
             document.getElementById('ui-username').innerText = userData.username;
             document.getElementById('user-avatar-text').innerText = userData.username.charAt(0);
-            document.getElementById('user-group-select').value = userData.group || ""; // Hiển thị nhóm đã chọn
+            document.getElementById('user-group-select').value = userData.group || ""; 
             
             document.getElementById('ui-max-streak').innerText = userData.maxStreak;
             document.getElementById('ui-lost-streaks').innerText = userData.lostStreaks;
@@ -842,7 +842,75 @@
                 document.getElementById('admin-table-body').innerHTML = html;
             }
         });
-        document.getElementById('btn-close-admin').addEventListener('click', () => { document.getElementById('admin-modal').classList.remove('opacity-100'); setTimeout(() => document.getElementById('admin-modal').classList.add('hidden'), 300); });
+        
+        const closeAdminPanel = () => {
+            const m = document.getElementById('admin-modal');
+            if(m) {
+                m.classList.remove('opacity-100');
+                setTimeout(() => m.classList.add('hidden'), 300);
+            }
+        };
+        document.getElementById('btn-close-admin').addEventListener('click', closeAdminPanel);
+
+        function renderRanksModal(currentStreak) {
+            const container = document.getElementById('ranks-list-container');
+            let html = '';
+            rankData.forEach((r) => {
+                const isUnlocked = currentStreak >= r.streak;
+                const isWinged = r.streak >= 45;
+                const mWingScale = isWinged ? 0.65 : 0; const mWingRotL = isWinged ? -25 : 0; const mWingRotR = isWinged ? 25 : 0; const mWingY = isWinged ? 10 : 0; const mHaloScale = isWinged ? 0.65 : 0; const mOpacity = isWinged ? 1 : 0;
+
+                html += `
+                    <div class="flex items-center gap-4 p-4 rounded-2xl ${isUnlocked ? 'bg-slate-50 border-amber-200 shadow-sm' : 'bg-slate-50 border-slate-200 opacity-60'} border relative overflow-hidden shrink-0">
+                        ${!isUnlocked ? `<div class="absolute inset-0 bg-slate-900/5 z-10 flex items-center justify-center backdrop-blur-[1px]"><span class="bg-white/90 text-xs font-bold px-3 py-1 rounded-full text-slate-500 shadow-sm">🔒 Đạt ${r.streak} chuỗi</span></div>` : ''}
+                        <div class="relative w-16 h-16 flex justify-center items-center ${r.class}">
+                            <svg viewBox="0 0 160 180" class="w-16 h-16 relative z-10 overflow-visible">
+                                <g class="harp-halo" style="transform: scale(${mHaloScale}); opacity: ${mOpacity}; transform-origin: 80px 25px;"><ellipse cx="80" cy="25" rx="35" ry="10" fill="none" class="harp-stroke-primary" stroke-width="3" /><ellipse cx="80" cy="25" rx="42" ry="14" fill="none" class="harp-stroke-secondary" stroke-width="1.5" opacity="0.8" /></g>
+                                <g class="harp-wings" style="opacity: ${mOpacity};"><g style="transform: translate(0px, ${mWingY}px) scale(${mWingScale}) rotate(${mWingRotL}deg); transform-origin: 50px 90px;"><use href="#angel-wing-detailed" /></g><g style="transform: translate(0px, ${mWingY}px) scale(${mWingScale}) rotate(${mWingRotR}deg); transform-origin: 110px 90px;"><use href="#angel-wing-detailed" transform="translate(160, 0) scale(-1, 1)" /></g></g>
+                                <g transform="translate(20, 10)"><path class="harp-path harp-stroke-primary" d="M 25 45 C 25 100 15 130 40 140 L 80 140 C 105 130 95 100 95 45" fill="none" stroke-width="8" stroke-linecap="round" /><line class="harp-path harp-stroke-primary" x1="12" y1="45" x2="108" y2="45" stroke-width="8" /><line class="harp-path harp-stroke-secondary" x1="40" y1="45" x2="40" y2="135" stroke-width="2"/><line class="harp-path harp-stroke-secondary" x1="60" y1="45" x2="60" y2="139" stroke-width="2"/><line class="harp-path harp-stroke-secondary" x1="80" y1="45" x2="80" y2="135" stroke-width="2"/></g>
+                            </svg>
+                        </div>
+                        <div><h4 class="font-bold ${isUnlocked ? 'text-slate-800' : 'text-slate-500'}">${r.name}</h4><p class="text-[11px] text-slate-500">Mốc: ${r.streak} ngày</p></div>
+                    </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        // TOOL TEST MODAL
+        document.getElementById('btn-show-ranks').addEventListener('click', () => { renderRanksModal(userData ? userData.currentStreak : 0); document.getElementById('rank-modal').classList.remove('hidden'); setTimeout(() => { document.getElementById('rank-modal').classList.add('opacity-100'); document.getElementById('rank-modal-content').classList.remove('scale-95'); }, 10); });
+        document.getElementById('btn-close-rank').addEventListener('click', () => { document.getElementById('rank-modal').classList.remove('opacity-100'); document.getElementById('rank-modal-content').classList.add('scale-95'); setTimeout(() => document.getElementById('rank-modal').classList.add('hidden'), 300); });
+        
+        document.getElementById('btn-test-next-day').addEventListener('click', () => { 
+            try {
+                if (!isTestMode) { originalUserData = JSON.parse(JSON.stringify(userData)); isTestMode = true; } 
+                userData.hasCheckedInToday = false; 
+                updateUIFromData(); 
+                closeAdminPanel();
+            } catch(e) { console.error(e); }
+        });
+        
+        document.getElementById('btn-test-rank-go').addEventListener('click', () => { 
+            try {
+                if (!isTestMode) { originalUserData = JSON.parse(JSON.stringify(userData)); isTestMode = true; } 
+                const selectedStreak = parseInt(document.getElementById('test-rank-select').value);
+                userData.currentStreak = selectedStreak; 
+                userData.maxStreak = Math.max(userData.maxStreak, selectedStreak);
+                userData.hasCheckedInToday = false; 
+                updateUIFromData(); 
+                closeAdminPanel();
+            } catch(e) { console.error(e); }
+        });
+        
+        document.getElementById('btn-test-reset').addEventListener('click', () => { 
+            try {
+                if (isTestMode && originalUserData) { 
+                    userData = JSON.parse(JSON.stringify(originalUserData)); 
+                    isTestMode = false; 
+                    updateUIFromData(); 
+                    alert("Đã khôi phục dữ liệu thật!"); 
+                } 
+            } catch(e) { console.error(e); }
+        });
 
         // TỰ ĐỘNG KIỂM TRA QUA NGÀY MỚI
         window.addEventListener('focus', () => {
