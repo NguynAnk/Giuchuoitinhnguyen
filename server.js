@@ -71,18 +71,33 @@ async function checkAndResetStreak(user, localDate) {
 
 app.get('/', (req, res) => res.status(200).send('Server Awake!'));
 
+// Thay thế đoạn app.post('/api/register'...) cũ bằng đoạn này:
+
 app.post('/api/register', async (req, res) => {
   try {
-    const { username, password } = req.body;
+    // 1. Nhận thêm thông tin 'group' từ Frontend gửi lên
+    const { username, password, group } = req.body; 
+
     const existingUser = await User.findOne({ username: username });
     if (existingUser) return res.status(400).json({ success: false, message: 'Tên tài khoản đã tồn tại' });
+
     const totalUsers = await User.countDocuments();
     const role = totalUsers === 0 ? 'admin' : 'user';
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({ username, password: hashedPassword, role });
+
+    // 2. Lưu trường group vào cơ sở dữ liệu khi tạo User mới
+    const newUser = new User({ 
+        username, 
+        password: hashedPassword, 
+        role, 
+        group: group || '' 
+    });
+    
     await newUser.save();
     res.json({ success: true, user: newUser });
-  } catch (error) { res.status(500).json({ success: false, message: 'Lỗi server' }); }
+  } catch (error) { 
+      res.status(500).json({ success: false, message: 'Lỗi server' }); 
+  }
 });
 
 app.post('/api/login', async (req, res) => {
