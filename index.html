@@ -131,6 +131,28 @@
         </div>
     </div>
 
+    <!-- MÀN HÌNH THỐNG KÊ NHÓM -->
+    <div id="group-stats-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[55] flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
+        <div id="group-stats-modal-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-4xl p-6 transform scale-95 transition-transform duration-300 flex flex-col h-[85vh]">
+            <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3 shrink-0">
+                <h3 class="text-xl font-bold text-purple-600 flex items-center gap-2">📊 Thống Kê Nhóm</h3>
+                <button id="btn-close-group-stats" class="text-slate-400 hover:bg-slate-100 p-2 rounded-full transition-colors font-bold">✕</button>
+            </div>
+            
+            <div class="flex flex-col md:flex-row gap-6 overflow-hidden flex-1">
+                <!-- Leaderboard các nhóm -->
+                <div class="w-full md:w-1/3 flex flex-col gap-2 overflow-y-auto border-r border-slate-100 pr-2" id="group-leaderboard-container">
+                    <div class="text-center text-slate-400 text-sm mt-4">Đang tải dữ liệu nhóm...</div>
+                </div>
+                
+                <!-- Chi tiết thành viên nhóm được chọn -->
+                <div class="w-full md:w-2/3 flex flex-col overflow-y-auto" id="group-members-container">
+                    <div class="flex items-center justify-center h-full text-slate-400 text-sm">Chọn một nhóm để xem chi tiết</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- MÀN HÌNH ADMIN XEM BÀI USER -->
     <div id="admin-view-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
         <div id="admin-view-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-lg p-6 transform scale-95 transition-transform duration-300 flex flex-col max-h-[80vh]">
@@ -204,7 +226,7 @@
             <div class="p-0 overflow-y-auto flex-1 bg-white">
                 <table class="w-full text-left border-collapse text-sm">
                     <thead class="bg-slate-50 font-bold">
-                        <tr><th class="p-4">Người dùng</th><th class="p-4 text-center">Bài Viết</th><th class="p-4 text-amber-500">Kỷ Lục</th><th class="p-4 text-blue-500">Chuỗi</th></tr>
+                        <tr><th class="p-4">Người dùng</th><th class="p-4">Nhóm</th><th class="p-4 text-center">Bài Viết</th><th class="p-4 text-amber-500">Kỷ Lục</th><th class="p-4 text-blue-500">Chuỗi</th></tr>
                     </thead>
                     <tbody id="admin-table-body" class="divide-y divide-slate-100"></tbody>
                 </table>
@@ -218,9 +240,25 @@
         <div class="bg-white/90 backdrop-blur-md rounded-2xl p-4 shadow-sm border border-white flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="flex items-center gap-4">
                 <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-lg shadow-inner" id="user-avatar-text">U</div>
-                <div>
+                <div class="flex flex-col">
                     <p class="text-xs text-slate-400 font-semibold uppercase">Xin chào,</p>
                     <p class="text-sm font-bold text-slate-800" id="ui-username">Đang tải...</p>
+                    
+                    <!-- MENU CHỌN NHÓM NHỎ -->
+                    <select id="user-group-select" class="mt-1 text-[11px] font-bold bg-purple-50 text-purple-600 border border-purple-200 rounded px-2 py-0.5 outline-none cursor-pointer hover:bg-purple-100 transition-colors w-28">
+                        <option value="">-- Chọn Nhóm --</option>
+                        <option value="Nhóm 1">Nhóm 1</option>
+                        <option value="Nhóm 2">Nhóm 2</option>
+                        <option value="Nhóm 3">Nhóm 3</option>
+                        <option value="Nhóm 4">Nhóm 4</option>
+                        <option value="Nhóm 5">Nhóm 5</option>
+                        <option value="Nhóm 6">Nhóm 6</option>
+                        <option value="Nhóm 7">Nhóm 7</option>
+                        <option value="Nhóm 8">Nhóm 8</option>
+                        <option value="Nhóm 9">Nhóm 9</option>
+                        <option value="Nhóm 10">Nhóm 10</option>
+                    </select>
+
                 </div>
                 <div class="flex items-center gap-2 bg-amber-50 px-4 py-1.5 rounded-xl border border-amber-200 ml-4">
                     <span class="font-bold text-amber-700">Điểm:</span>
@@ -299,9 +337,10 @@
                         <div class="text-center z-10 flex flex-col items-center">
                             <h2 class="text-6xl font-black text-slate-800" id="streak-count">0</h2>
                             <p class="text-sm font-bold text-amber-600 uppercase tracking-widest mt-1">Ngày Liên Tiếp</p>
-                            <div class="flex gap-2 mt-3">
-                                <button id="btn-show-ranks" class="text-[11px] bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-1.5 rounded-full font-bold transition-colors">🏆 Xem Danh Hiệu</button>
+                            <div class="flex gap-2 mt-3 flex-wrap justify-center">
+                                <button id="btn-show-ranks" class="text-[11px] bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-1.5 rounded-full font-bold transition-colors">🏆 Danh Hiệu</button>
                                 <button id="btn-show-history" class="text-[11px] bg-blue-50 border border-blue-100 hover:bg-blue-100 text-blue-600 px-3 py-1.5 rounded-full font-bold transition-colors">📖 Nhật Ký</button>
+                                <button id="btn-show-group-stats" class="text-[11px] bg-purple-50 border border-purple-100 hover:bg-purple-100 text-purple-600 px-3 py-1.5 rounded-full font-bold transition-colors">📊 Nhóm</button>
                             </div>
                         </div>
                     </div>
@@ -525,6 +564,104 @@
             container.innerHTML = html;
         }
 
+        // CHỨC NĂNG THỐNG KÊ NHÓM
+        let currentUsersData = [];
+        document.getElementById('btn-show-group-stats').addEventListener('click', async () => {
+            document.getElementById('group-stats-modal').classList.remove('hidden');
+            setTimeout(() => { document.getElementById('group-stats-modal').classList.add('opacity-100'); document.getElementById('group-stats-modal-content').classList.remove('scale-95'); }, 10);
+            
+            try {
+                const res = await fetch(`${API_URL}/users`);
+                const data = await res.json();
+                if(data.success) renderGroupStats(data.users);
+            } catch(e) {}
+        });
+
+        document.getElementById('btn-close-group-stats').addEventListener('click', () => {
+            document.getElementById('group-stats-modal').classList.remove('opacity-100'); 
+            document.getElementById('group-stats-modal-content').classList.add('scale-95'); 
+            setTimeout(() => document.getElementById('group-stats-modal').classList.add('hidden'), 300);
+        });
+
+        function renderGroupStats(users) {
+            currentUsersData = users;
+            const groups = {};
+            for(let i=1; i<=10; i++) groups[`Nhóm ${i}`] = { name: `Nhóm ${i}`, totalPoints: 0, maxStreak: 0, members: [] };
+            
+            users.forEach(u => {
+                if(u.group && groups[u.group]) {
+                    groups[u.group].members.push(u);
+                    groups[u.group].totalPoints += u.totalPoints;
+                    if(u.currentStreak > groups[u.group].maxStreak) groups[u.group].maxStreak = u.currentStreak;
+                }
+            });
+
+            const sortedGroups = Object.values(groups).sort((a,b) => b.totalPoints - a.totalPoints);
+
+            let html = '';
+            sortedGroups.forEach((g, index) => {
+                const rankColors = index === 0 ? 'bg-yellow-100 text-yellow-700 border-yellow-300' : (index === 1 ? 'bg-slate-200 text-slate-700 border-slate-300' : (index === 2 ? 'bg-orange-100 text-orange-700 border-orange-300' : 'bg-slate-50 text-slate-600 border-slate-200 hover:border-purple-200'));
+                html += `
+                    <div onclick="showGroupMembers('${g.name}')" class="cursor-pointer p-3 border rounded-xl hover:shadow-md transition-all flex justify-between items-center ${rankColors}">
+                        <div class="font-bold flex items-center gap-2"><span class="text-xs bg-white/80 px-2 py-0.5 rounded-full shadow-sm text-slate-700">#${index+1}</span> ${g.name}</div>
+                        <div class="text-right">
+                            <div class="text-sm font-black">${g.totalPoints} đ</div>
+                            <div class="text-[10px] opacity-80">🔥 Max: ${g.maxStreak}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('group-leaderboard-container').innerHTML = html;
+            
+            if(userData && userData.group) showGroupMembers(userData.group);
+            else showGroupMembers(sortedGroups[0].name);
+        }
+
+        window.showGroupMembers = function(groupName) {
+            const members = currentUsersData.filter(u => u.group === groupName).sort((a,b) => b.totalPoints - a.totalPoints);
+            const container = document.getElementById('group-members-container');
+            
+            let html = `<h4 class="font-bold text-lg text-slate-800 mb-4 pb-2 border-b border-slate-100 flex justify-between items-center">Thành viên ${groupName} <span class="text-xs font-bold bg-purple-100 text-purple-600 px-2 py-1 rounded-full">${members.length} người</span></h4>`;
+            
+            if(members.length === 0) {
+                html += `<div class="text-center text-slate-400 py-8">Chưa có thành viên nào tham gia nhóm này.</div>`;
+            } else {
+                html += `<div class="flex flex-col gap-2">`;
+                members.forEach((m, i) => {
+                    const isMe = userData && m._id === userData._id;
+                    html += `
+                        <div class="flex items-center justify-between p-3 border ${isMe ? 'bg-blue-50 border-blue-200' : 'bg-white border-slate-100'} rounded-xl">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-600 font-bold flex items-center justify-center text-xs shadow-sm">${m.username.charAt(0)}</div>
+                                <div>
+                                    <div class="font-bold text-slate-700 text-sm">${m.username} ${isMe ? '<span class="text-xs text-blue-500 font-normal">(Bạn)</span>' : ''}</div>
+                                    <div class="text-[10px] text-slate-400">Đã điểm danh: ${m.totalCheckins} ngày</div>
+                                </div>
+                            </div>
+                            <div class="flex gap-3 md:gap-4 text-right">
+                                <div class="flex flex-col items-center"><span class="text-[9px] md:text-[10px] text-amber-500 font-bold uppercase">Kỷ lục</span><span class="font-black text-sm text-slate-600">${m.maxStreak}</span></div>
+                                <div class="flex flex-col items-center"><span class="text-[9px] md:text-[10px] text-blue-500 font-bold uppercase">Chuỗi</span><span class="font-black text-sm text-slate-600">${m.currentStreak}</span></div>
+                                <div class="flex flex-col items-center"><span class="text-[9px] md:text-[10px] text-purple-500 font-bold uppercase">Điểm</span><span class="font-black text-sm md:text-base text-purple-700">${m.totalPoints}</span></div>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+            }
+            container.innerHTML = html;
+        };
+
+        // ĐỔI NHÓM
+        document.getElementById('user-group-select').addEventListener('change', async (e) => {
+            const newGroup = e.target.value;
+            userData.group = newGroup;
+            if (!isTestMode) {
+                try {
+                    await fetch(`${API_URL}/update-group`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: userData._id, group: newGroup }) });
+                } catch (error) { console.error("Lỗi cập nhật nhóm", error); }
+            }
+        });
+
         document.getElementById('tab-login').addEventListener('click', () => { authMode = 'login'; document.getElementById('tab-login').className = "flex-1 pb-2 border-b-2 border-amber-500 text-amber-600 font-bold transition-all"; document.getElementById('tab-register').className = "flex-1 pb-2 border-b-2 border-transparent text-slate-400 font-bold"; document.getElementById('btn-auth-action').innerText = "Vào Ứng Dụng"; });
         document.getElementById('tab-register').addEventListener('click', () => { authMode = 'register'; document.getElementById('tab-register').className = "flex-1 pb-2 border-b-2 border-amber-500 text-amber-600 font-bold transition-all"; document.getElementById('tab-login').className = "flex-1 pb-2 border-b-2 border-transparent text-slate-400 font-bold"; document.getElementById('btn-auth-action').innerText = "Đăng Ký Tài Khoản"; });
         document.getElementById('btn-logout').addEventListener('click', () => location.reload());
@@ -578,17 +715,13 @@
             const todayStr = getLocalTodayStr();
             const historySet = new Set(userData.history || []);
 
-            // FIX: Ép reset nút nếu hôm nay chưa có trong lịch sử (dù server chưa kịp báo)
-            if (!historySet.has(todayStr)) {
-                userData.hasCheckedInToday = false;
-            }
-
-            if (userData.lastCheckinDateStr && userData.lastCheckinDateStr !== todayStr) {
-                userData.hasCheckedInToday = false;
-            }
+            if (!historySet.has(todayStr)) { userData.hasCheckedInToday = false; }
+            if (userData.lastCheckinDateStr && userData.lastCheckinDateStr !== todayStr) { userData.hasCheckedInToday = false; }
 
             document.getElementById('ui-username').innerText = userData.username;
             document.getElementById('user-avatar-text').innerText = userData.username.charAt(0);
+            document.getElementById('user-group-select').value = userData.group || ""; // Hiển thị nhóm đã chọn
+            
             document.getElementById('ui-max-streak').innerText = userData.maxStreak;
             document.getElementById('ui-lost-streaks').innerText = userData.lostStreaks;
             document.getElementById('ui-total-points').innerText = userData.totalPoints;
@@ -701,6 +834,7 @@
                     const safeLogs = encodeURIComponent(JSON.stringify(u.dailyLogs || []));
                     html += `<tr>
                         <td class="p-4">${u.username}</td>
+                        <td class="p-4 text-xs font-bold text-purple-600">${u.group || '-'}</td>
                         <td class="p-4 text-center"><button onclick="showUserLogs('${safeLogs}')" class="bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1 rounded font-bold text-xs">👁️ Xem</button></td>
                         <td class="p-4 text-amber-500 font-bold">${u.maxStreak}</td><td class="p-4 text-blue-500 font-bold">${u.currentStreak}</td>
                     </tr>`; 
@@ -710,43 +844,11 @@
         });
         document.getElementById('btn-close-admin').addEventListener('click', () => { document.getElementById('admin-modal').classList.remove('opacity-100'); setTimeout(() => document.getElementById('admin-modal').classList.add('hidden'), 300); });
 
-        function renderRanksModal(currentStreak) {
-            const container = document.getElementById('ranks-list-container');
-            let html = '';
-            rankData.forEach((r) => {
-                const isUnlocked = currentStreak >= r.streak;
-                const isWinged = r.streak >= 45;
-                const mWingScale = isWinged ? 0.65 : 0; const mWingRotL = isWinged ? -25 : 0; const mWingRotR = isWinged ? 25 : 0; const mWingY = isWinged ? 10 : 0; const mHaloScale = isWinged ? 0.65 : 0; const mOpacity = isWinged ? 1 : 0;
-
-                html += `
-                    <div class="flex items-center gap-4 p-4 rounded-2xl ${isUnlocked ? 'bg-slate-50 border-amber-200 shadow-sm' : 'bg-slate-50 border-slate-200 opacity-60'} border relative overflow-hidden shrink-0">
-                        ${!isUnlocked ? `<div class="absolute inset-0 bg-slate-900/5 z-10 flex items-center justify-center backdrop-blur-[1px]"><span class="bg-white/90 text-xs font-bold px-3 py-1 rounded-full text-slate-500 shadow-sm">🔒 Đạt ${r.streak} chuỗi</span></div>` : ''}
-                        <div class="relative w-16 h-16 flex justify-center items-center ${r.class}">
-                            <svg viewBox="0 0 160 180" class="w-16 h-16 relative z-10 overflow-visible">
-                                <g class="harp-halo" style="transform: scale(${mHaloScale}); opacity: ${mOpacity}; transform-origin: 80px 25px;"><ellipse cx="80" cy="25" rx="35" ry="10" fill="none" class="harp-stroke-primary" stroke-width="3" /><ellipse cx="80" cy="25" rx="42" ry="14" fill="none" class="harp-stroke-secondary" stroke-width="1.5" opacity="0.8" /></g>
-                                <g class="harp-wings" style="opacity: ${mOpacity};"><g style="transform: translate(0px, ${mWingY}px) scale(${mWingScale}) rotate(${mWingRotL}deg); transform-origin: 50px 90px;"><use href="#angel-wing-detailed" /></g><g style="transform: translate(0px, ${mWingY}px) scale(${mWingScale}) rotate(${mWingRotR}deg); transform-origin: 110px 90px;"><use href="#angel-wing-detailed" transform="translate(160, 0) scale(-1, 1)" /></g></g>
-                                <g transform="translate(20, 10)"><path class="harp-path harp-stroke-primary" d="M 25 45 C 25 100 15 130 40 140 L 80 140 C 105 130 95 100 95 45" fill="none" stroke-width="8" stroke-linecap="round" /><line class="harp-path harp-stroke-primary" x1="12" y1="45" x2="108" y2="45" stroke-width="8" /><line class="harp-path harp-stroke-secondary" x1="40" y1="45" x2="40" y2="135" stroke-width="2"/><line class="harp-path harp-stroke-secondary" x1="60" y1="45" x2="60" y2="139" stroke-width="2"/><line class="harp-path harp-stroke-secondary" x1="80" y1="45" x2="80" y2="135" stroke-width="2"/></g>
-                            </svg>
-                        </div>
-                        <div><h4 class="font-bold ${isUnlocked ? 'text-slate-800' : 'text-slate-500'}">${r.name}</h4><p class="text-[11px] text-slate-500">Mốc: ${r.streak} ngày</p></div>
-                    </div>`;
-            });
-            container.innerHTML = html;
-        }
-
-        // TOOL TEST MODAL
-        document.getElementById('btn-show-ranks').addEventListener('click', () => { renderRanksModal(userData ? userData.currentStreak : 0); document.getElementById('rank-modal').classList.remove('hidden'); setTimeout(() => { document.getElementById('rank-modal').classList.add('opacity-100'); document.getElementById('rank-modal-content').classList.remove('scale-95'); }, 10); });
-        document.getElementById('btn-close-rank').addEventListener('click', () => { document.getElementById('rank-modal').classList.remove('opacity-100'); document.getElementById('rank-modal-content').classList.add('scale-95'); setTimeout(() => document.getElementById('rank-modal').classList.add('hidden'), 300); });
-        document.getElementById('btn-test-next-day').addEventListener('click', () => { if (!isTestMode) { originalUserData = JSON.parse(JSON.stringify(userData)); isTestMode = true; } userData.hasCheckedInToday = false; updateUIFromData(); document.getElementById('btn-close-admin').click(); });
-        document.getElementById('btn-test-rank-go').addEventListener('click', () => { if (!isTestMode) { originalUserData = JSON.parse(JSON.stringify(userData)); isTestMode = true; } userData.currentStreak = parseInt(document.getElementById('test-rank-select').value); userData.hasCheckedInToday = false; updateUIFromData(); document.getElementById('btn-close-admin').click(); });
-        document.getElementById('btn-test-reset').addEventListener('click', () => { if (isTestMode && originalUserData) { userData = JSON.parse(JSON.stringify(originalUserData)); isTestMode = false; updateUIFromData(); alert("Đã khôi phục dữ liệu thật!"); } });
-
-        // TỰ ĐỘNG KIỂM TRA QUA NGÀY MỚI NẾU TAB TRÌNH DUYỆT ĐỂ TREO QUA ĐÊM
+        // TỰ ĐỘNG KIỂM TRA QUA NGÀY MỚI
         window.addEventListener('focus', () => {
             if (userData && userData.hasCheckedInToday) {
                 const todayStr = getLocalTodayStr();
                 const historySet = new Set(userData.history || []);
-                // Nếu đổi ngày, lịch sử chưa có ngày hôm nay -> nhả nút lập tức
                 if (!historySet.has(todayStr)) {
                     userData.hasCheckedInToday = false;
                     updateUIFromData();
