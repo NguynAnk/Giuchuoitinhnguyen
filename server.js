@@ -7,17 +7,19 @@ const app = express();
 app.use(cors({ origin: '*' })); 
 app.use(express.json()); 
 
-// 🚨 ĐÃ ĐIỀN SẴN LINK MONGODB CỦA BẠN
+// 🚨 THAY LINK MONGODB THẬT CỦA BẠN VÀO ĐÂY
 const MONGO_URI = "mongodb+srv://nguyenanh:16102006@cluster0.iwcowsc.mongodb.net/TinhNguyenApp?retryWrites=true&w=majority"; 
 
 mongoose.connect(MONGO_URI)
   .then(() => console.log('Đã kết nối Database thành công!'))
   .catch(err => console.log('Lỗi kết nối DB:', err));
 
+// BỔ SUNG THÊM TRƯỜNG "group" VÀO SCHEMA
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   role: { type: String, default: 'user' },
+  group: { type: String, default: '' }, // <-- TRƯỜNG MỚI ĐỂ LƯU NHÓM
   currentStreak: { type: Number, default: 0 },
   maxStreak: { type: Number, default: 0 },
   lostStreaks: { type: Number, default: 0 },
@@ -45,16 +47,12 @@ function getDaysDiff(dateStr1, dateStr2) {
     return Math.round((d2 - d1) / (1000 * 60 * 60 * 24));
 }
 
-// 🛠️ HÀM MỚI: KIỂM TRA VÀ RESET CHUỖI (Khắc phục lỗi dữ liệu cũ)
 async function checkAndResetStreak(user, localDate) {
     let justLostStreak = false;
     let lastDateStr = user.lastCheckinDateStr;
-    
-    // Nếu user cũ không có lastCheckinDateStr, tự động lấy ngày cuối cùng trong Lịch sử
     if (!lastDateStr && user.history && user.history.length > 0) {
         lastDateStr = user.history[user.history.length - 1];
     }
-
     if (lastDateStr && localDate) {
         const daysPassed = getDaysDiff(lastDateStr, localDate);
         if (daysPassed > 1 && user.currentStreak > 0) {
@@ -63,10 +61,10 @@ async function checkAndResetStreak(user, localDate) {
             user.hasCheckedInToday = false;
             justLostStreak = true;
         } else if (daysPassed >= 1 && user.hasCheckedInToday) {
-            user.hasCheckedInToday = false; // Mở nút cho ngày mới
+            user.hasCheckedInToday = false;
         }
     } else if (!lastDateStr && user.hasCheckedInToday) {
-        user.hasCheckedInToday = false; // Fix lỗi kẹt vĩnh viễn
+        user.hasCheckedInToday = false;
     }
     return justLostStreak;
 }
@@ -78,7 +76,6 @@ app.post('/api/register', async (req, res) => {
     const { username, password } = req.body;
     const existingUser = await User.findOne({ username: username });
     if (existingUser) return res.status(400).json({ success: false, message: 'Tên tài khoản đã tồn tại' });
-
     const totalUsers = await User.countDocuments();
     const role = totalUsers === 0 ? 'admin' : 'user';
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -93,18 +90,28 @@ app.post('/api/login', async (req, res) => {
     const { username, password, localDate } = req.body; 
     const user = await User.findOne({ username: username });
     if (!user) return res.status(400).json({ success: false, message: 'Tài khoản không tồn tại' });
-
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ success: false, message: 'Sai mật khẩu' });
 
-    // GỌI HÀM KIỂM TRA RESET NGÀY MỚI KHI LOGIN
     const justLostStreak = await checkAndResetStreak(user, localDate);
     await user.save();
-
     const userResponse = user.toObject();
     userResponse.justLostStreak = justLostStreak;
     res.json({ success: true, user: userResponse });
   } catch (error) { res.status(500).json({ success: false, message: 'Lỗi server' }); }
+});
+
+// API MỚI: LƯU THÔNG TIN NHÓM NHỎ
+app.post('/api/update-group', async (req, res) => {
+    try {
+        const { userId, group } = req.body;
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ success: false, message: 'Không tìm thấy user' });
+        
+        user.group = group;
+        await user.save();
+        res.json({ success: true, user: user });
+    } catch (error) { res.status(500).json({ success: false, message: 'Lỗi cập nhật nhóm' }); }
 });
 
 app.post('/api/update-streak', async (req, res) => {
@@ -113,7 +120,6 @@ app.post('/api/update-streak', async (req, res) => {
         const user = await User.findById(userId);
         if (!user) return res.status(404).json({ success: false, message: 'Không tìm thấy user' });
 
-        // KIỂM TRA XEM ĐÃ BƯỚC QUA 0H ĐÊM CHƯA TRƯỚC KHI LƯU ĐIỂM DANH
         await checkAndResetStreak(user, localDate);
 
         if (action === 'checkin' && !user.hasCheckedInToday) {
@@ -139,7 +145,6 @@ app.post('/api/update-streak', async (req, res) => {
                 });
             }
         } 
-        
         await user.save();
         res.json({ success: true, user: user });
     } catch (error) { res.status(500).json({ success: false, message: 'Lỗi cập nhật' }); }
