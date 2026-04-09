@@ -575,7 +575,15 @@
             if(!userData) return;
             if (isTestMode) document.getElementById('test-mode-badge').classList.remove('hidden'); else document.getElementById('test-mode-badge').classList.add('hidden');
 
-            if (userData.lastCheckinDateStr && userData.lastCheckinDateStr !== getLocalTodayStr()) {
+            const todayStr = getLocalTodayStr();
+            const historySet = new Set(userData.history || []);
+
+            // FIX: Ép reset nút nếu hôm nay chưa có trong lịch sử (dù server chưa kịp báo)
+            if (!historySet.has(todayStr)) {
+                userData.hasCheckedInToday = false;
+            }
+
+            if (userData.lastCheckinDateStr && userData.lastCheckinDateStr !== todayStr) {
                 userData.hasCheckedInToday = false;
             }
 
@@ -732,6 +740,19 @@
         document.getElementById('btn-test-next-day').addEventListener('click', () => { if (!isTestMode) { originalUserData = JSON.parse(JSON.stringify(userData)); isTestMode = true; } userData.hasCheckedInToday = false; updateUIFromData(); document.getElementById('btn-close-admin').click(); });
         document.getElementById('btn-test-rank-go').addEventListener('click', () => { if (!isTestMode) { originalUserData = JSON.parse(JSON.stringify(userData)); isTestMode = true; } userData.currentStreak = parseInt(document.getElementById('test-rank-select').value); userData.hasCheckedInToday = false; updateUIFromData(); document.getElementById('btn-close-admin').click(); });
         document.getElementById('btn-test-reset').addEventListener('click', () => { if (isTestMode && originalUserData) { userData = JSON.parse(JSON.stringify(originalUserData)); isTestMode = false; updateUIFromData(); alert("Đã khôi phục dữ liệu thật!"); } });
+
+        // TỰ ĐỘNG KIỂM TRA QUA NGÀY MỚI NẾU TAB TRÌNH DUYỆT ĐỂ TREO QUA ĐÊM
+        window.addEventListener('focus', () => {
+            if (userData && userData.hasCheckedInToday) {
+                const todayStr = getLocalTodayStr();
+                const historySet = new Set(userData.history || []);
+                // Nếu đổi ngày, lịch sử chưa có ngày hôm nay -> nhả nút lập tức
+                if (!historySet.has(todayStr)) {
+                    userData.hasCheckedInToday = false;
+                    updateUIFromData();
+                }
+            }
+        });
     </script>
 </body>
 </html>
