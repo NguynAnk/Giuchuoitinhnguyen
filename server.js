@@ -15,12 +15,12 @@ mongoose.connect(MONGO_URI)
   .then(() => console.log('Đã kết nối Database thành công!'))
   .catch(err => console.log('Lỗi kết nối DB:', err));
 
-// CẤU HÌNH EMAIL GỬI MÃ KHÔI PHỤC
+// CẤU HÌNH EMAIL GỬI MÃ KHÔI PHỤC TỔNG ĐÀI
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: 'anklee206@gmail.com', // Email hệ thống của bạn
-        pass: 'neohvuwijoatsfrh' // Mật khẩu ứng dụng 16 chữ số
+        user: 'anklee206@gmail.com',
+        pass: 'neohvuwijoatsfrh' 
     }
 });
 
@@ -111,7 +111,7 @@ app.post('/api/update-profile', async (req, res) => {
     } catch (error) { res.status(500).json({ success: false, message: 'Lỗi cập nhật' }); }
 });
 
-// THAY ĐỔI: TÌM BẰNG EMAIL THAY VÌ TÊN ĐĂNG NHẬP
+// ĐÃ SỬA: CHUYỂN TỪ TÌM USERNAME SANG TÌM EMAIL
 app.post('/api/forgot-password', async (req, res) => {
     try {
         const { email } = req.body;
@@ -142,12 +142,12 @@ app.post('/api/forgot-password', async (req, res) => {
     } catch (error) { res.status(500).json({ success: false, message: 'Lỗi server' }); }
 });
 
-// THAY ĐỔI: ĐẶT LẠI MẬT KHẨU DỰA TRÊN EMAIL
+// ĐÃ SỬA: ĐẶT LẠI MẬT KHẨU DỰA TRÊN EMAIL
 app.post('/api/reset-password', async (req, res) => {
     try {
         const { email, otp, newPassword } = req.body;
         const user = await User.findOne({ email: email });
-        if (!user) return res.status(400).json({ success: false, message: 'Tài khoản không tồn tại!' });
+        if (!user) return res.status(400).json({ success: false, message: 'Không tìm thấy tài khoản!' });
         if (user.resetOtp !== otp || user.resetOtpExpiry < new Date()) {
             return res.status(400).json({ success: false, message: 'Mã xác nhận sai hoặc đã hết hạn!' });
         }
