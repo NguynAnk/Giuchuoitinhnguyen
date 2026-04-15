@@ -122,7 +122,7 @@
             </div>
             <div class="flex flex-col gap-4">
                 <div>
-                    <label class="text-xs font-bold text-slate-500 block mb-1">Email</label>
+                    <label class="text-xs font-bold text-slate-500 block mb-1">Email khôi phục</label>
                     <input type="email" id="setting-email" placeholder="Ví dụ: abc@gmail.com" class="w-full px-3 py-2 rounded-lg border bg-slate-50 focus:bg-white outline-none">
                 </div>
                 
@@ -214,7 +214,6 @@
                 <input type="text" id="auth-username" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-amber-400 outline-none">
             </div>
             
-            <!-- ĐÃ CẬP NHẬT PHẦN EMAIL ĐĂNG KÝ Ở ĐÂY -->
             <div id="auth-email-container" class="hidden">
                 <label class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 block">Email</label>
                 <input type="email" id="auth-email" placeholder="Ví dụ: abc@gmail.com" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-amber-400 outline-none">
@@ -254,15 +253,16 @@
             <button id="btn-auth-action" class="w-full py-3.5 px-6 rounded-xl font-bold text-lg text-white bg-blue-600 hover:bg-blue-700 transition-transform active:scale-95 mt-2">Vào Ứng Dụng</button>
         </div>
 
+        <!-- KHUNG QUÊN MẬT KHẨU ĐÃ ĐỔI SANG NHẬP EMAIL -->
         <div id="forgot-pw-container" class="w-full flex flex-col gap-4 hidden">
             <div class="text-center w-full mb-2">
                 <h1 class="text-2xl font-bold text-slate-800">Khôi phục Mật khẩu</h1>
-                <p class="text-slate-500 mt-1 text-sm">Nhập tài khoản để nhận mã qua Email</p>
+                <p class="text-slate-500 mt-1 text-sm">Nhập Email để nhận mã xác nhận</p>
             </div>
             
             <div id="forgot-step-1">
-                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 block">Tài khoản của bạn</label>
-                <input type="text" id="forgot-username" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-amber-400 outline-none mb-4">
+                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 block">Email của bạn</label>
+                <input type="email" id="forgot-email" placeholder="Nhập Email đã đăng ký..." class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-amber-400 outline-none mb-4">
                 <button id="btn-send-otp" class="w-full py-3.5 px-6 rounded-xl font-bold text-lg text-white bg-amber-500 hover:bg-amber-600 transition-transform active:scale-95">Gửi Mã Xác Nhận</button>
             </div>
 
@@ -427,7 +427,6 @@
                         </div>
                         <div class="text-center z-10 flex flex-col items-center">
                             <h2 class="text-6xl font-black text-slate-800" id="streak-count">0</h2>
-                            <!-- ĐÃ ĐỔI THÀNH TỔNG CHUỖI HIỆN TẠI -->
                             <p class="text-sm font-bold text-amber-600 uppercase tracking-widest mt-1">Tổng Chuỗi Hiện Tại</p>
                             
                             <div class="flex gap-2 mt-3 flex-wrap justify-center">
@@ -671,7 +670,6 @@
             btn.innerText = "Đang lưu..."; btn.disabled = true; msg.classList.add('hidden');
 
             try {
-                // Kiểm tra mật khẩu cũ thông qua API đăng nhập nếu người dùng muốn đổi mật khẩu mới
                 if (newPw) {
                     if (!oldPw) {
                         msg.innerText = "Vui lòng nhập mật khẩu hiện tại để xác nhận đổi mật khẩu!";
@@ -679,14 +677,12 @@
                         btn.innerText = "Lưu Thay Đổi"; btn.disabled = false;
                         return;
                     }
-                    
                     const verifyRes = await fetch(`${API_URL}/login`, { 
                         method: 'POST', 
                         headers: {'Content-Type':'application/json'}, 
                         body: JSON.stringify({ username: userData.username, password: oldPw, localDate: getLocalTodayStr() }) 
                     });
                     const verifyData = await verifyRes.json();
-                    
                     if (!verifyData.success) {
                         msg.innerText = "Mật khẩu cũ không chính xác!";
                         msg.className = "text-center text-sm font-bold text-red-600 block";
@@ -719,10 +715,11 @@
             document.getElementById('auth-screen').classList.remove('hidden');
             document.getElementById('auth-screen').classList.remove('fade-out-scale');
             document.getElementById('btn-forgot-mode').click();
-            document.getElementById('forgot-username').value = userData.username;
+            // ĐIỀN EMAIL NẾU USER ĐÃ LƯU
+            document.getElementById('forgot-email').value = userData.email || '';
         });
 
-        // --- QUÊN MẬT KHẨU ---
+        // --- QUÊN MẬT KHẨU BẰNG EMAIL ---
         document.getElementById('btn-forgot-mode').addEventListener('click', () => {
             document.getElementById('auth-main-container').classList.add('hidden'); document.getElementById('forgot-pw-container').classList.remove('hidden');
             document.getElementById('forgot-msg').classList.add('hidden'); document.getElementById('forgot-step-1').classList.remove('hidden'); document.getElementById('forgot-step-2').classList.add('hidden');
@@ -730,11 +727,12 @@
         document.getElementById('btn-back-login').addEventListener('click', () => { document.getElementById('auth-main-container').classList.remove('hidden'); document.getElementById('forgot-pw-container').classList.add('hidden'); });
 
         document.getElementById('btn-send-otp').addEventListener('click', async () => {
-            const u = document.getElementById('forgot-username').value.trim(); if(!u) return;
+            const e = document.getElementById('forgot-email').value.trim(); if(!e) return;
             const btn = document.getElementById('btn-send-otp'); const msg = document.getElementById('forgot-msg');
             btn.innerText = "Đang gửi mail..."; btn.disabled = true; msg.classList.add('hidden');
             try {
-                const res = await fetch(`${API_URL}/forgot-password`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({username: u}) });
+                // GỬI EMAIL LÊN SERVER
+                const res = await fetch(`${API_URL}/forgot-password`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({email: e}) });
                 const data = await res.json();
                 if(data.success) { msg.innerText = data.message; msg.className = "text-center text-sm font-bold text-green-600 block"; document.getElementById('forgot-step-1').classList.add('hidden'); document.getElementById('forgot-step-2').classList.remove('hidden'); document.getElementById('forgot-step-2').classList.add('flex'); } 
                 else { msg.innerText = data.message; msg.className = "text-center text-sm font-bold text-red-600 block"; }
@@ -743,12 +741,13 @@
         });
 
         document.getElementById('btn-reset-pw').addEventListener('click', async () => {
-            const u = document.getElementById('forgot-username').value.trim(); const otp = document.getElementById('forgot-otp').value.trim(); const npw = document.getElementById('forgot-newpw').value.trim();
+            const e = document.getElementById('forgot-email').value.trim(); const otp = document.getElementById('forgot-otp').value.trim(); const npw = document.getElementById('forgot-newpw').value.trim();
             if(!otp || !npw) return;
             const btn = document.getElementById('btn-reset-pw'); const msg = document.getElementById('forgot-msg');
             btn.innerText = "Đang xử lý..."; btn.disabled = true; msg.classList.add('hidden');
             try {
-                const res = await fetch(`${API_URL}/reset-password`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({username: u, otp: otp, newPassword: npw}) });
+                // GỬI OTP VÀ MẬT KHẨU MỚI BẰNG EMAIL
+                const res = await fetch(`${API_URL}/reset-password`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({email: e, otp: otp, newPassword: npw}) });
                 const data = await res.json();
                 if(data.success) { msg.innerText = "Khôi phục thành công! Hãy đăng nhập lại."; msg.className = "text-center text-sm font-bold text-green-600 block"; setTimeout(() => document.getElementById('btn-back-login').click(), 2000); } 
                 else { msg.innerText = data.message; msg.className = "text-center text-sm font-bold text-red-600 block"; }
@@ -894,10 +893,7 @@
             if (userData.justLostStreak) { lostAlert.classList.remove('hidden'); document.getElementById('fail-sound').play().catch(e=>{}); setTimeout(() => lostAlert.classList.add('hidden'), 5000); userData.justLostStreak = false; }
 
             const currentRank = getCurrentRankInfo(userData.totalCheckins);
-            
-            // XÓA bg-pattern mặc định VÀ THAY BẰNG bg-theme... CÓ SẴN PATTERN BÊN TRONG
-            document.getElementById('app-body').className = 'min-h-screen ' + currentRank.theme + ' flex items-center justify-center p-2 md:p-4 text-slate-800 relative overflow-x-hidden transition-all duration-1000';
-            
+            document.getElementById('app-body').className = 'min-h-screen ' + currentRank.theme + ' bg-pattern flex items-center justify-center p-2 md:p-4 text-slate-800 relative overflow-x-hidden transition-all duration-1000';
             const harpWrapper = document.getElementById('harp-wrapper'); harpWrapper.className = 'relative flex flex-col items-center justify-center h-56 w-56 mx-auto mb-2 harp-floating ' + currentRank.class;
             document.getElementById('rank-name-display').innerText = 'Danh hiệu: ' + currentRank.name;
 
