@@ -7,8 +7,18 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .bg-pattern { background-image: radial-gradient(rgba(251, 191, 36, 0.15) 2px, transparent 2px); background-size: 40px 40px; }
+        body { font-family: 'Inter', sans-serif; transition: background-image 1s ease-in-out; }
+        
+        /* HÌNH NỀN THEO RANK CÓ HOA VĂN */
+        .bg-pattern { background-size: 40px 40px; }
+        .bg-theme-wood { background-image: radial-gradient(rgba(100, 116, 139, 0.1) 2px, transparent 2px), linear-gradient(to bottom right, #f0fdf4, #ffffff, #fefce8); }
+        .bg-theme-bronze { background-image: radial-gradient(rgba(217, 119, 6, 0.1) 2px, transparent 2px), linear-gradient(to bottom right, #fef3c7, #ffffff, #ffedd5); }
+        .bg-theme-iron { background-image: radial-gradient(rgba(148, 163, 184, 0.1) 2px, transparent 2px), linear-gradient(to bottom right, #f8fafc, #ffffff, #f1f5f9); }
+        .bg-theme-gold { background-image: radial-gradient(rgba(234, 179, 8, 0.15) 2px, transparent 2px), linear-gradient(to bottom right, #fef08a, #ffffff, #fde68a); }
+        .bg-theme-platinum { background-image: radial-gradient(rgba(59, 130, 246, 0.1) 2px, transparent 2px), linear-gradient(to bottom right, #e0f2fe, #ffffff, #f8fafc); }
+        .bg-theme-diamond { background-image: radial-gradient(rgba(6, 182, 212, 0.1) 2px, transparent 2px), linear-gradient(to bottom right, #cffafe, #ffffff, #bfdbfe); }
+        .bg-theme-ruby { background-image: radial-gradient(rgba(225, 29, 72, 0.1) 2px, transparent 2px), linear-gradient(to bottom right, #ffe4e6, #ffffff, #fecdd3); }
+
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
@@ -50,9 +60,7 @@
         .rank-ruby { --harp-primary: #E11D48; --harp-secondary: #F43F5E; --harp-glow: rgba(225, 29, 72, 0.8); --harp-stroke: var(--harp-primary); --wing-scale: 1.7; --wing-rot-l: -10deg; --wing-rot-r: 10deg; --wing-y: -5px; --halo-scale: 1.25; --extra-opacity: 1; }
 
         /* Fix modal wings */
-        #ranks-list-container .rank-platinum, #ranks-list-container .rank-diamond, #ranks-list-container .rank-ruby {
-            --wing-scale: 0.65 !important; --wing-y: 10px !important; --wing-rot-l: -25deg !important; --wing-rot-r: 25deg !important; --halo-scale: 0.65 !important;
-        }
+        #ranks-list-container .rank-platinum, #ranks-list-container .rank-diamond, #ranks-list-container .rank-ruby { --wing-scale: 0.65 !important; --wing-y: 10px !important; --wing-rot-l: -25deg !important; --wing-rot-r: 25deg !important; --halo-scale: 0.65 !important; }
 
         @keyframes float-harp { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
         .harp-floating { animation: float-harp 4s ease-in-out infinite; }
@@ -74,7 +82,7 @@
         .emotion-active { filter: grayscale(0%); opacity: 1; transform: scale(1.2); drop-shadow: 0 4px 6px rgba(0,0,0,0.1); }
     </style>
 </head>
-<body class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-amber-50 bg-pattern flex items-center justify-center p-2 md:p-4 text-slate-800 relative overflow-x-hidden">
+<body id="app-body" class="min-h-screen bg-theme-wood bg-pattern flex items-center justify-center p-2 md:p-4 text-slate-800 relative overflow-x-hidden">
 
     <svg width="0" height="0" class="absolute pointer-events-none">
         <defs>
@@ -95,6 +103,7 @@
     <audio id="rankup-sound" src="https://actions.google.com/sounds/v1/magic/fairy_glissando_short.ogg" preload="auto"></audio>
     <audio id="fail-sound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" preload="auto"></audio>
 
+    <!-- MÀN HÌNH XEM DANH HIỆU -->
     <div id="rank-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
         <div id="rank-modal-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6 transform scale-95 transition-transform duration-300 flex flex-col max-h-[85vh]">
             <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3 shrink-0">
@@ -105,6 +114,30 @@
         </div>
     </div>
 
+    <!-- MÀN HÌNH CÀI ĐẶT USER (CẬP NHẬT EMAIL) -->
+    <div id="settings-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[70] flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
+        <div id="settings-modal-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-6 transform scale-95 transition-transform duration-300 flex flex-col">
+            <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3 shrink-0">
+                <h3 class="text-lg font-bold text-blue-600 flex items-center gap-2">⚙️ Cài đặt Tài khoản</h3>
+                <button id="btn-close-settings" class="text-slate-400 hover:bg-slate-100 p-2 rounded-full transition-colors font-bold">✕</button>
+            </div>
+            <div class="flex flex-col gap-4">
+                <div>
+                    <label class="text-xs font-bold text-slate-500 block mb-1">Email khôi phục</label>
+                    <input type="email" id="setting-email" placeholder="Ví dụ: abc@gmail.com" class="w-full px-3 py-2 rounded-lg border bg-slate-50 focus:bg-white outline-none">
+                    <p class="text-[10px] text-slate-400 mt-1">Dùng để lấy lại mật khẩu khi quên.</p>
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-500 block mb-1">Đổi Mật khẩu mới (Tùy chọn)</label>
+                    <input type="password" id="setting-pw" placeholder="Bỏ trống nếu không đổi" class="w-full px-3 py-2 rounded-lg border bg-slate-50 focus:bg-white outline-none">
+                </div>
+                <p id="setting-msg" class="text-center text-sm font-bold hidden"></p>
+                <button id="btn-save-settings" class="w-full py-2 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition-transform active:scale-95">Lưu Thay Đổi</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MÀN HÌNH NHẬT KÝ CÁ NHÂN -->
     <div id="history-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
         <div id="history-modal-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl p-6 transform scale-95 transition-transform duration-300 flex flex-col h-[85vh]">
             <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3 shrink-0">
@@ -129,6 +162,7 @@
         </div>
     </div>
 
+    <!-- MÀN HÌNH THỐNG KÊ NHÓM -->
     <div id="group-stats-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[55] flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
         <div id="group-stats-modal-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-4xl p-6 transform scale-95 transition-transform duration-300 flex flex-col h-[85vh]">
             <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3 shrink-0">
@@ -137,17 +171,13 @@
             </div>
             
             <div class="flex flex-col md:flex-row gap-6 overflow-hidden flex-1">
-                <div class="w-full md:w-1/3 flex flex-col gap-2 overflow-y-auto border-r border-slate-100 pr-2" id="group-leaderboard-container">
-                    <div class="text-center text-slate-400 text-sm mt-4">Đang tải dữ liệu nhóm...</div>
-                </div>
-                
-                <div class="w-full md:w-2/3 flex flex-col overflow-y-auto" id="group-members-container">
-                    <div class="flex items-center justify-center h-full text-slate-400 text-sm">Chọn một nhóm để xem chi tiết</div>
-                </div>
+                <div class="w-full md:w-1/3 flex flex-col gap-2 overflow-y-auto border-r border-slate-100 pr-2" id="group-leaderboard-container"></div>
+                <div class="w-full md:w-2/3 flex flex-col overflow-y-auto" id="group-members-container"></div>
             </div>
         </div>
     </div>
 
+    <!-- MÀN HÌNH ADMIN XEM BÀI USER -->
     <div id="admin-view-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
         <div id="admin-view-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-lg p-6 transform scale-95 transition-transform duration-300 flex flex-col max-h-[80vh]">
             <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3 shrink-0">
@@ -158,12 +188,14 @@
         </div>
     </div>
 
+    <!-- MÀN HÌNH ĐĂNG NHẬP / ĐĂNG KÝ -->
     <div id="auth-screen" class="transition-screen bg-white/95 backdrop-blur-sm rounded-[2.5rem] shadow-2xl shadow-blue-100/50 w-full max-w-md border border-white relative z-20 p-8 flex flex-col gap-6 items-center">
-        <div class="text-center w-full">
-            <h1 class="text-2xl font-bold text-slate-800">Cổng Tĩnh Nguyện</h1>
-            <p class="text-slate-500 mt-1 text-sm">Chào mừng bạn</p>
-        </div>
-        <div class="w-full flex flex-col gap-4">
+        
+        <div id="auth-main-container" class="w-full flex flex-col gap-4">
+            <div class="text-center w-full mb-2">
+                <h1 class="text-2xl font-bold text-slate-800">Cổng Tĩnh Nguyện</h1>
+                <p class="text-slate-500 mt-1 text-sm">Chào mừng bạn</p>
+            </div>
             <div class="flex gap-2 mb-2 border-b border-slate-200">
                 <button id="tab-login" class="flex-1 pb-2 border-b-2 border-amber-500 text-amber-600 font-bold transition-all">Đăng Nhập</button>
                 <button id="tab-register" class="flex-1 pb-2 border-b-2 border-transparent text-slate-400 font-bold hover:text-slate-600 transition-all">Đăng Ký</button>
@@ -174,8 +206,16 @@
                 <input type="text" id="auth-username" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-amber-400 outline-none">
             </div>
             
+            <div id="auth-email-container" class="hidden">
+                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 block">Email khôi phục <span class="text-amber-500 text-[10px]">(Khuyên dùng)</span></label>
+                <input type="email" id="auth-email" placeholder="Dùng để lấy lại mật khẩu" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-amber-400 outline-none">
+            </div>
+
             <div class="relative">
-                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 block">Mật khẩu</label>
+                <div class="flex justify-between items-center mb-1">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Mật khẩu</label>
+                    <button id="btn-forgot-mode" class="text-[10px] text-blue-500 font-bold hover:underline">Quên mật khẩu?</button>
+                </div>
                 <input type="password" id="auth-password" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-amber-400 outline-none">
             </div>
 
@@ -194,22 +234,47 @@
                     <option value="Nhóm 9">Nhóm 9</option>
                     <option value="Nhóm 10">Nhóm 10</option>
                 </select>
-                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 pt-5 text-slate-400">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </div>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 pt-5 text-slate-400"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></div>
             </div>
             
             <p id="auth-error" class="text-red-500 text-sm font-medium text-center hidden"></p>
-            
             <div id="slow-network-warning" class="hidden mt-2 p-3 bg-amber-50 border border-amber-200 rounded-xl text-center flex flex-col items-center gap-1 animate-pulse">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
                 <p class="text-xs font-semibold text-amber-700">Mạng có thể có vấn đề, xin bạn vui lòng đợi một chút...</p>
             </div>
+            <button id="btn-auth-action" class="w-full py-3.5 px-6 rounded-xl font-bold text-lg text-white bg-blue-600 hover:bg-blue-700 transition-transform active:scale-95 mt-2">Vào Ứng Dụng</button>
+        </div>
 
-            <button id="btn-auth-action" class="w-full py-3.5 px-6 rounded-xl font-bold text-lg text-white bg-blue-600 hover:bg-blue-700 transition-all mt-2">Vào Ứng Dụng</button>
+        <div id="forgot-pw-container" class="w-full flex flex-col gap-4 hidden">
+            <div class="text-center w-full mb-2">
+                <h1 class="text-2xl font-bold text-slate-800">Khôi phục Mật khẩu</h1>
+                <p class="text-slate-500 mt-1 text-sm">Nhập tài khoản để nhận mã qua Email</p>
+            </div>
+            
+            <div id="forgot-step-1">
+                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 block">Tài khoản của bạn</label>
+                <input type="text" id="forgot-username" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-amber-400 outline-none mb-4">
+                <button id="btn-send-otp" class="w-full py-3.5 px-6 rounded-xl font-bold text-lg text-white bg-amber-500 hover:bg-amber-600 transition-transform active:scale-95">Gửi Mã Xác Nhận</button>
+            </div>
+
+            <div id="forgot-step-2" class="hidden flex-col gap-4">
+                <div>
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 block">Mã xác nhận (OTP từ Email)</label>
+                    <input type="text" id="forgot-otp" placeholder="6 chữ số" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-amber-400 outline-none">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 block">Mật khẩu mới</label>
+                    <input type="password" id="forgot-newpw" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-amber-400 outline-none">
+                </div>
+                <button id="btn-reset-pw" class="w-full py-3.5 px-6 rounded-xl font-bold text-lg text-white bg-blue-600 hover:bg-blue-700 transition-transform active:scale-95">Đặt Lại Mật Khẩu</button>
+            </div>
+
+            <p id="forgot-msg" class="text-center text-sm font-bold hidden"></p>
+            <button id="btn-back-login" class="text-xs text-slate-500 font-bold hover:underline mt-2">← Quay lại Đăng nhập</button>
         </div>
     </div>
 
+    <!-- MÀN HÌNH QUẢN TRỊ -->
     <div id="admin-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
         <div id="admin-modal-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden">
             <div class="p-4 border-b border-slate-100 flex justify-between bg-slate-50 items-center">
@@ -248,6 +313,7 @@
         </div>
     </div>
 
+    <!-- ==================== ỨNG DỤNG CHÍNH ==================== -->
     <div id="main-app" class="transition-screen opacity-0 scale-95 translate-y-4 hidden w-full max-w-[80rem] flex-col gap-4 relative z-10">
         
         <div class="bg-white/90 backdrop-blur-md rounded-2xl p-4 shadow-sm border border-white flex flex-col md:flex-row justify-between items-center gap-4">
@@ -284,8 +350,9 @@
             <div class="flex items-center gap-3 text-sm font-medium flex-wrap">
                 <div class="text-amber-600 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-100">Kỷ lục: <span id="ui-max-streak" class="font-bold">0</span></div>
                 <div class="text-red-500 bg-red-50 px-3 py-1.5 rounded-lg border border-red-100">Lỡ chuỗi: <span id="ui-lost-streaks" class="font-bold">0</span></div>
-                <button id="btn-open-admin" class="hidden text-white bg-red-500 px-4 py-1.5 rounded-lg font-bold shadow-md hover:bg-red-600">Bảng Admin</button>
-                <button id="btn-logout" class="text-slate-500 hover:text-red-500 bg-slate-50 px-3 py-1.5 rounded-lg border font-bold hover:bg-red-50">Đăng xuất</button>
+                <button id="btn-open-admin" class="hidden text-white bg-red-500 px-4 py-1.5 rounded-lg font-bold shadow-md hover:bg-red-600 transition-transform active:scale-95">Bảng Admin</button>
+                <button id="btn-open-settings" class="text-slate-500 hover:text-blue-500 bg-slate-50 px-3 py-1.5 rounded-lg border font-bold hover:bg-blue-50 transition-transform active:scale-95">⚙️ Cài đặt</button>
+                <button id="btn-logout" class="text-slate-500 hover:text-red-500 bg-slate-50 px-3 py-1.5 rounded-lg border font-bold hover:bg-red-50 transition-transform active:scale-95">Đăng xuất</button>
             </div>
         </div>
 
@@ -351,11 +418,13 @@
                         </div>
                         <div class="text-center z-10 flex flex-col items-center">
                             <h2 class="text-6xl font-black text-slate-800" id="streak-count">0</h2>
-                            <p class="text-sm font-bold text-amber-600 uppercase tracking-widest mt-1">Ngày Liên Tiếp</p>
+                            <!-- Chữ được sửa đổi theo yêu cầu -->
+                            <p class="text-sm font-bold text-amber-600 uppercase tracking-widest mt-1">Tổng Chuỗi Hiện Tại</p>
+                            
                             <div class="flex gap-2 mt-3 flex-wrap justify-center">
-                                <button id="btn-show-ranks" class="text-[11px] bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-1.5 rounded-full font-bold transition-colors">🏆 Danh Hiệu</button>
-                                <button id="btn-show-history" class="text-[11px] bg-blue-50 border border-blue-100 hover:bg-blue-100 text-blue-600 px-3 py-1.5 rounded-full font-bold transition-colors">📖 Nhật Ký</button>
-                                <button id="btn-show-group-stats" class="text-[11px] bg-purple-50 border border-purple-100 hover:bg-purple-100 text-purple-600 px-3 py-1.5 rounded-full font-bold transition-colors">📊 Nhóm</button>
+                                <button id="btn-show-ranks" class="text-[11px] bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-1.5 rounded-full font-bold transition-transform active:scale-95">🏆 Danh Hiệu</button>
+                                <button id="btn-show-history" class="text-[11px] bg-blue-50 border border-blue-100 hover:bg-blue-100 text-blue-600 px-3 py-1.5 rounded-full font-bold transition-transform active:scale-95">📖 Nhật Ký</button>
+                                <button id="btn-show-group-stats" class="text-[11px] bg-purple-50 border border-purple-100 hover:bg-purple-100 text-purple-600 px-3 py-1.5 rounded-full font-bold transition-transform active:scale-95">📊 Nhóm</button>
                             </div>
                         </div>
                     </div>
@@ -421,7 +490,7 @@
                     </div>
                     
                     <div class="mt-1">
-                        <button id="checkin-btn" class="w-full py-3.5 px-6 rounded-[1.25rem] font-bold text-lg flex items-center justify-center gap-2 transition-all duration-500 bg-gradient-to-r from-amber-400 to-yellow-500 text-white shadow-xl hover:-translate-y-1" disabled>Kết nối Server...</button>
+                        <button id="checkin-btn" class="w-full py-3.5 px-6 rounded-[1.25rem] font-bold text-lg flex items-center justify-center gap-2 transition-transform active:scale-95 duration-300 bg-gradient-to-r from-amber-400 to-yellow-500 text-white shadow-xl" disabled>Kết nối Server...</button>
                     </div>
                 </div>
             </div>
@@ -471,22 +540,27 @@
             { text: "Lòng vui mừng vốn một phương thuốc hay; Còn trí nao sờn làm khô xương cốt.", ref: "Châm-ngôn 17:22" },
             { text: "Hãy hết lòng tin cậy Đức Giê-hô-va, chớ nương cậy nơi sự thông sáng của mình.", ref: "Châm-ngôn 3:5" }
         ];
+
         function loadDailyVerse() {
-            const el = document.getElementById('verse-text'); const ref = document.getElementById('verse-ref');
-            if (el && ref) { const r = bibleVerses[Math.floor(Math.random() * bibleVerses.length)]; el.innerText = r.text; ref.innerText = `— ${r.ref}`; }
+            const el = document.getElementById('verse-text'); 
+            const ref = document.getElementById('verse-ref');
+            if (el && ref) { 
+                const r = bibleVerses[Math.floor(Math.random() * bibleVerses.length)]; 
+                el.innerText = r.text; 
+                ref.innerText = `— ${r.ref}`; 
+            }
         }
 
         const rankData = [
-            { id: 0, streak: 0, name: "Người Tìm Kiếm (Mộc)", class: "rank-wood", hasSparkle: false },
-            { id: 1, streak: 15, name: "Đồng Kiên Tâm", class: "rank-bronze", hasSparkle: false },
-            { id: 2, streak: 30, name: "Sắt Bền Bỉ", class: "rank-iron", hasSparkle: false },
-            { id: 3, streak: 45, name: "Vàng Vinh Hiển", class: "rank-gold", hasSparkle: false },
-            { id: 4, streak: 60, name: "Bạch Kim Tỏa Sáng", class: "rank-platinum", hasSparkle: true },
-            { id: 5, streak: 75, name: "Kim Cương Vĩnh Cửu", class: "rank-diamond", hasSparkle: true },
-            { id: 6, streak: 90, name: "Hồng Ngọc Quý Giá", class: "rank-ruby", hasSparkle: true }
+            { id: 0, streak: 0, name: "Người Tìm Kiếm (Mộc)", class: "rank-wood", theme: "bg-theme-wood", hasSparkle: false },
+            { id: 1, streak: 15, name: "Đồng Kiên Tâm", class: "rank-bronze", theme: "bg-theme-bronze", hasSparkle: false },
+            { id: 2, streak: 30, name: "Sắt Bền Bỉ", class: "rank-iron", theme: "bg-theme-iron", hasSparkle: false },
+            { id: 3, streak: 45, name: "Vàng Vinh Hiển", class: "rank-gold", theme: "bg-theme-gold", hasSparkle: false },
+            { id: 4, streak: 60, name: "Bạch Kim Tỏa Sáng", class: "rank-platinum", theme: "bg-theme-platinum", hasSparkle: true },
+            { id: 5, streak: 75, name: "Kim Cương Vĩnh Cửu", class: "rank-diamond", theme: "bg-theme-diamond", hasSparkle: true },
+            { id: 6, streak: 90, name: "Hồng Ngọc Quý Giá", class: "rank-ruby", theme: "bg-theme-ruby", hasSparkle: true }
         ];
-        
-        // SỬA: Lấy Rank theo TỔNG SỐ LẦN điểm danh thay vì chuỗi
+
         function getCurrentRankInfo(totalCount) { 
             let c = rankData[0]; 
             for(let i = rankData.length - 1; i >= 0; i--) { 
@@ -496,7 +570,7 @@
         }
 
         function getLocalTodayStr() {
-            const d = new Date();
+            const d = new Date(); 
             return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, '0') + "-" + String(d.getDate()).padStart(2, '0');
         }
 
@@ -504,7 +578,7 @@
         document.querySelectorAll('.emotion-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('.emotion-btn').forEach(b => b.classList.remove('emotion-active'));
-                this.classList.add('emotion-active');
+                this.classList.add('emotion-active'); 
                 selectedEmotion = this.getAttribute('data-emotion');
             });
         });
@@ -512,7 +586,10 @@
         const otherRadio = document.getElementById('source-other-radio');
         const otherText = document.getElementById('source-other-text');
         document.querySelectorAll('input[name="source"]').forEach(radio => {
-            radio.addEventListener('change', () => { otherText.disabled = !otherRadio.checked; if(!otherRadio.checked) otherText.value = ''; });
+            radio.addEventListener('change', () => { 
+                otherText.disabled = !otherRadio.checked; 
+                if(!otherRadio.checked) otherText.value = ''; 
+            });
         });
 
         function renderWeeklyCalendar() {
@@ -530,29 +607,102 @@
                 let isChecked = historySet.has(dateStr);
                 if (i === 0 && userData.hasCheckedInToday) isChecked = true;
 
-                let icon = isChecked ? `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>` : (i === 0 ? `<div class="w-2 h-2 rounded-full bg-slate-300"></div>` : `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>`);
+                let icon = isChecked 
+                    ? '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>' 
+                    : (i === 0 ? '<div class="w-2 h-2 rounded-full bg-slate-300"></div>' : '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>');
                 let styleClass = isChecked ? 'bg-blue-100 text-blue-600 border-blue-200' : (i === 0 ? 'bg-slate-50 border-slate-200 border-dashed' : 'bg-red-50 text-red-400 border-red-100 opacity-60');
 
-                html += `<div class="flex flex-col items-center gap-1.5"><span class="text-[9px] md:text-[10px] font-bold ${i === 0 ? 'text-blue-600' : 'text-slate-400'}">${dayName}</span><div class="w-6 h-6 md:w-8 md:h-8 rounded-full flex items-center justify-center border-2 ${styleClass}">${icon}</div></div>`;
+                html += '<div class="flex flex-col items-center gap-1.5"><span class="text-[9px] md:text-[10px] font-bold ' + (i === 0 ? 'text-blue-600' : 'text-slate-400') + '">' + dayName + '</span><div class="w-6 h-6 md:w-8 md:h-8 rounded-full flex items-center justify-center border-2 ' + styleClass + '">' + icon + '</div></div>';
             }
             container.innerHTML = html;
         }
 
-        document.getElementById('btn-show-history').addEventListener('click', () => {
-            renderHistory('all');
-            document.getElementById('history-modal').classList.remove('hidden');
-            setTimeout(() => { document.getElementById('history-modal').classList.add('opacity-100'); document.getElementById('history-modal-content').classList.remove('scale-95'); }, 10);
+        // --- CÁC NÚT BẤM CỦA CÁC BẢNG ---
+        function toggleModal(id, show) {
+            const el = document.getElementById(id); 
+            const content = document.getElementById(id+'-content') || document.getElementById(id.replace('-modal','-content'));
+            if(show) { 
+                el.classList.remove('hidden'); 
+                setTimeout(()=>{ el.classList.add('opacity-100'); if(content) content.classList.remove('scale-95'); }, 10); 
+            } else { 
+                el.classList.remove('opacity-100'); 
+                if(content) content.classList.add('scale-95'); 
+                setTimeout(()=>{ el.classList.add('hidden'); }, 300); 
+            }
+        }
+
+        document.getElementById('btn-show-history').addEventListener('click', () => { renderHistory('all'); toggleModal('history-modal', true); });
+        document.getElementById('btn-close-history').addEventListener('click', () => toggleModal('history-modal', false));
+        document.getElementById('btn-show-group-stats').addEventListener('click', async () => { toggleModal('group-stats-modal', true); try { const res = await fetch(`${API_URL}/users`); const data = await res.json(); if(data.success) renderGroupStats(data.users); } catch(e) {} });
+        document.getElementById('btn-close-group-stats').addEventListener('click', () => toggleModal('group-stats-modal', false));
+        document.getElementById('btn-show-ranks').addEventListener('click', () => { renderRanksModal(userData ? userData.totalCheckins : 0); toggleModal('rank-modal', true); });
+        document.getElementById('btn-close-rank').addEventListener('click', () => toggleModal('rank-modal', false));
+        document.getElementById('btn-open-admin').addEventListener('click', async () => { toggleModal('admin-modal', true); try { const res = await fetch(`${API_URL}/users`); const data = await res.json(); if(data.success) renderAdminTable(data.users); } catch(e) { alert("Lỗi mạng"); } });
+        document.getElementById('btn-close-admin').addEventListener('click', () => toggleModal('admin-modal', false));
+        document.getElementById('btn-close-admin-view').addEventListener('click', () => toggleModal('admin-view-modal', false));
+
+        // --- CÀI ĐẶT EMAIL ---
+        document.getElementById('btn-open-settings').addEventListener('click', () => { 
+            document.getElementById('setting-email').value = userData.email || '';
+            document.getElementById('setting-pw').value = '';
+            document.getElementById('setting-msg').classList.add('hidden');
+            toggleModal('settings-modal', true); 
         });
-        document.getElementById('btn-close-history').addEventListener('click', () => {
-            document.getElementById('history-modal').classList.remove('opacity-100'); document.getElementById('history-modal-content').classList.add('scale-95');
-            setTimeout(() => document.getElementById('history-modal').classList.add('hidden'), 300);
+        document.getElementById('btn-close-settings').addEventListener('click', () => toggleModal('settings-modal', false));
+        document.getElementById('btn-save-settings').addEventListener('click', async () => {
+            const btn = document.getElementById('btn-save-settings');
+            const msg = document.getElementById('setting-msg');
+            btn.innerText = "Đang lưu..."; btn.disabled = true; msg.classList.add('hidden');
+            try {
+                const payload = { userId: userData._id, newEmail: document.getElementById('setting-email').value.trim() };
+                const pw = document.getElementById('setting-pw').value.trim();
+                if(pw) payload.newPassword = pw;
+                const res = await fetch(`${API_URL}/update-profile`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+                const data = await res.json();
+                if(data.success) { userData = data.user; msg.innerText = "Lưu thành công!"; msg.className = "text-center text-sm font-bold text-green-600 block"; } 
+                else { msg.innerText = "Lỗi: " + data.message; msg.className = "text-center text-sm font-bold text-red-600 block"; }
+            } catch(e) { msg.innerText = "Lỗi kết nối máy chủ!"; msg.className = "text-center text-sm font-bold text-red-600 block"; }
+            btn.innerText = "Lưu Thay Đổi"; btn.disabled = false;
+        });
+
+        // --- QUÊN MẬT KHẨU ---
+        document.getElementById('btn-forgot-mode').addEventListener('click', () => {
+            document.getElementById('auth-main-container').classList.add('hidden'); document.getElementById('forgot-pw-container').classList.remove('hidden');
+            document.getElementById('forgot-msg').classList.add('hidden'); document.getElementById('forgot-step-1').classList.remove('hidden'); document.getElementById('forgot-step-2').classList.add('hidden');
+        });
+        document.getElementById('btn-back-login').addEventListener('click', () => { document.getElementById('auth-main-container').classList.remove('hidden'); document.getElementById('forgot-pw-container').classList.add('hidden'); });
+
+        document.getElementById('btn-send-otp').addEventListener('click', async () => {
+            const u = document.getElementById('forgot-username').value.trim(); if(!u) return;
+            const btn = document.getElementById('btn-send-otp'); const msg = document.getElementById('forgot-msg');
+            btn.innerText = "Đang gửi mail..."; btn.disabled = true; msg.classList.add('hidden');
+            try {
+                const res = await fetch(`${API_URL}/forgot-password`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({username: u}) });
+                const data = await res.json();
+                if(data.success) { msg.innerText = data.message; msg.className = "text-center text-sm font-bold text-green-600 block"; document.getElementById('forgot-step-1').classList.add('hidden'); document.getElementById('forgot-step-2').classList.remove('hidden'); document.getElementById('forgot-step-2').classList.add('flex'); } 
+                else { msg.innerText = data.message; msg.className = "text-center text-sm font-bold text-red-600 block"; }
+            } catch(e) { msg.innerText = "Lỗi mạng!"; msg.className = "text-center text-sm font-bold text-red-600 block"; }
+            btn.innerText = "Gửi Mã Xác Nhận"; btn.disabled = false;
+        });
+
+        document.getElementById('btn-reset-pw').addEventListener('click', async () => {
+            const u = document.getElementById('forgot-username').value.trim(); const otp = document.getElementById('forgot-otp').value.trim(); const npw = document.getElementById('forgot-newpw').value.trim();
+            if(!otp || !npw) return;
+            const btn = document.getElementById('btn-reset-pw'); const msg = document.getElementById('forgot-msg');
+            btn.innerText = "Đang xử lý..."; btn.disabled = true; msg.classList.add('hidden');
+            try {
+                const res = await fetch(`${API_URL}/reset-password`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({username: u, otp: otp, newPassword: npw}) });
+                const data = await res.json();
+                if(data.success) { msg.innerText = "Khôi phục thành công! Hãy đăng nhập lại."; msg.className = "text-center text-sm font-bold text-green-600 block"; setTimeout(() => document.getElementById('btn-back-login').click(), 2000); } 
+                else { msg.innerText = data.message; msg.className = "text-center text-sm font-bold text-red-600 block"; }
+            } catch(e) { msg.innerText = "Lỗi mạng!"; msg.className = "text-center text-sm font-bold text-red-600 block"; }
+            btn.innerText = "Đặt Lại Mật Khẩu"; btn.disabled = false;
         });
 
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('.filter-btn').forEach(b => { b.classList.remove('bg-blue-600', 'text-white'); b.classList.add('bg-white', 'text-slate-700'); });
-                this.classList.remove('bg-white', 'text-slate-700'); this.classList.add('bg-blue-600', 'text-white');
-                renderHistory(this.getAttribute('data-filter'));
+                this.classList.remove('bg-white', 'text-slate-700'); this.classList.add('bg-blue-600', 'text-white'); renderHistory(this.getAttribute('data-filter'));
             });
         });
 
@@ -564,142 +714,59 @@
             let html = '';
             logs.forEach(log => {
                 if (filterEmo !== 'all' && log.emotion !== filterEmo) return;
-                html += `
-                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-xs font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded">${log.date || 'Không rõ'}</span>
-                            <span class="text-2xl">${log.emotion || ''}</span>
-                        </div>
-                        <p class="text-[11px] text-slate-500 font-bold uppercase mb-1">Kinh Thánh:</p>
-                        <p class="text-sm text-slate-800 mb-3 bg-white p-2 rounded border">${log.q1 || '...'}</p>
-                        <p class="text-[11px] text-slate-500 font-bold uppercase mb-1">Suy ngẫm:</p>
-                        <p class="text-sm text-slate-800 mb-3 bg-white p-2 rounded border">${log.q2 || '...'}</p>
-                        <p class="text-[11px] text-slate-500 font-bold uppercase mb-1">Bài học & Gỡ rối:</p>
-                        <p class="text-sm text-slate-800 bg-white p-2 rounded border">${log.q3 || '...'}</p>
-                    </div>
-                `;
+                html += '<div class="bg-slate-50 border border-slate-200 rounded-xl p-4"><div class="flex justify-between items-center mb-2"><span class="text-xs font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded">' + (log.date || 'Không rõ') + '</span><span class="text-2xl">' + (log.emotion || '') + '</span></div><p class="text-[11px] text-slate-500 font-bold uppercase mb-1">Kinh Thánh:</p><p class="text-sm text-slate-800 mb-3 bg-white p-2 rounded border">' + (log.q1 || '...') + '</p><p class="text-[11px] text-slate-500 font-bold uppercase mb-1">Suy ngẫm:</p><p class="text-sm text-slate-800 mb-3 bg-white p-2 rounded border">' + (log.q2 || '...') + '</p><p class="text-[11px] text-slate-500 font-bold uppercase mb-1">Bài học & Gỡ rối:</p><p class="text-sm text-slate-800 bg-white p-2 rounded border">' + (log.q3 || '...') + '</p></div>';
             });
             if(html === '') html = '<p class="text-center text-slate-400 mt-4">Không tìm thấy bài viết với cảm xúc này.</p>';
             container.innerHTML = html;
         }
 
-        // CHỨC NĂNG THỐNG KÊ NHÓM
-        let currentUsersData = [];
-        document.getElementById('btn-show-group-stats').addEventListener('click', async () => {
-            document.getElementById('group-stats-modal').classList.remove('hidden');
-            setTimeout(() => { document.getElementById('group-stats-modal').classList.add('opacity-100'); document.getElementById('group-stats-modal-content').classList.remove('scale-95'); }, 10);
-            
-            try {
-                const res = await fetch(`${API_URL}/users`);
-                const data = await res.json();
-                if(data.success) renderGroupStats(data.users);
-            } catch(e) {}
-        });
-
-        document.getElementById('btn-close-group-stats').addEventListener('click', () => {
-            document.getElementById('group-stats-modal').classList.remove('opacity-100'); 
-            document.getElementById('group-stats-modal-content').classList.add('scale-95'); 
-            setTimeout(() => document.getElementById('group-stats-modal').classList.add('hidden'), 300);
-        });
-
         function renderGroupStats(users) {
-            currentUsersData = users;
-            const groups = {};
+            currentUsersData = users; const groups = {};
             for(let i=1; i<=10; i++) groups[`Nhóm ${i}`] = { name: `Nhóm ${i}`, totalPoints: 0, maxStreak: 0, members: [] };
+            users.forEach(u => { if(u.group && groups[u.group]) { groups[u.group].members.push(u); groups[u.group].totalPoints += u.totalPoints; if(u.currentStreak > groups[u.group].maxStreak) groups[u.group].maxStreak = u.currentStreak; } });
             
-            users.forEach(u => {
-                if(u.group && groups[u.group]) {
-                    groups[u.group].members.push(u);
-                    groups[u.group].totalPoints += u.totalPoints;
-                    if(u.currentStreak > groups[u.group].maxStreak) groups[u.group].maxStreak = u.currentStreak;
-                }
-            });
-
             const sortedGroups = Object.values(groups).sort((a,b) => b.totalPoints - a.totalPoints);
-
             let html = '';
             sortedGroups.forEach((g, index) => {
                 const rankColors = index === 0 ? 'bg-yellow-100 text-yellow-700 border-yellow-300' : (index === 1 ? 'bg-slate-200 text-slate-700 border-slate-300' : (index === 2 ? 'bg-orange-100 text-orange-700 border-orange-300' : 'bg-slate-50 text-slate-600 border-slate-200 hover:border-purple-200'));
-                html += `
-                    <div onclick="showGroupMembers('${g.name}')" class="cursor-pointer p-3 border rounded-xl hover:shadow-md transition-all flex justify-between items-center ${rankColors}">
-                        <div class="font-bold flex items-center gap-2"><span class="text-xs bg-white/80 px-2 py-0.5 rounded-full shadow-sm text-slate-700">#${index+1}</span> ${g.name}</div>
-                        <div class="text-right">
-                            <div class="text-sm font-black">${g.totalPoints} đ</div>
-                            <div class="text-[10px] opacity-80">🔥 Max: ${g.maxStreak}</div>
-                        </div>
-                    </div>
-                `;
+                html += '<div onclick="showGroupMembers(\'' + g.name + '\')" class="cursor-pointer p-3 border rounded-xl hover:shadow-md transition-all flex justify-between items-center ' + rankColors + '"><div class="font-bold flex items-center gap-2"><span class="text-xs bg-white/80 px-2 py-0.5 rounded-full shadow-sm text-slate-700">#' + (index+1) + '</span> ' + g.name + '</div><div class="text-right"><div class="text-sm font-black">' + g.totalPoints + ' đ</div><div class="text-[10px] opacity-80">🔥 Max: ' + g.maxStreak + '</div></div></div>';
             });
             document.getElementById('group-leaderboard-container').innerHTML = html;
-            
-            if(userData && userData.group) showGroupMembers(userData.group);
-            else showGroupMembers(sortedGroups[0].name);
+            if(userData && userData.group) showGroupMembers(userData.group); else showGroupMembers(sortedGroups[0].name);
         }
 
         window.showGroupMembers = function(groupName) {
             const members = currentUsersData.filter(u => u.group === groupName).sort((a,b) => b.totalPoints - a.totalPoints);
             const container = document.getElementById('group-members-container');
-            
-            let html = `<h4 class="font-bold text-lg text-slate-800 mb-4 pb-2 border-b border-slate-100 flex justify-between items-center">Thành viên ${groupName} <span class="text-xs font-bold bg-purple-100 text-purple-600 px-2 py-1 rounded-full">${members.length} người</span></h4>`;
-            
-            if(members.length === 0) {
-                html += `<div class="text-center text-slate-400 py-8">Chưa có thành viên nào tham gia nhóm này.</div>`;
-            } else {
-                html += `<div class="flex flex-col gap-2">`;
+            let html = '<h4 class="font-bold text-lg text-slate-800 mb-4 pb-2 border-b border-slate-100 flex justify-between items-center">Thành viên ' + groupName + ' <span class="text-xs font-bold bg-purple-100 text-purple-600 px-2 py-1 rounded-full">' + members.length + ' người</span></h4>';
+            if(members.length === 0) { html += '<div class="text-center text-slate-400 py-8">Chưa có thành viên nào tham gia nhóm này.</div>'; } 
+            else {
+                html += '<div class="flex flex-col gap-2">';
                 members.forEach((m, i) => {
                     const isMe = userData && m._id === userData._id;
-                    html += `
-                        <div class="flex items-center justify-between p-3 border ${isMe ? 'bg-blue-50 border-blue-200' : 'bg-white border-slate-100'} rounded-xl">
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-600 font-bold flex items-center justify-center text-xs shadow-sm">${m.username.charAt(0)}</div>
-                                <div>
-                                    <div class="font-bold text-slate-700 text-sm">${m.username} ${isMe ? '<span class="text-xs text-blue-500 font-normal">(Bạn)</span>' : ''}</div>
-                                    <div class="text-[10px] text-slate-400">Đã điểm danh: ${m.totalCheckins} ngày</div>
-                                </div>
-                            </div>
-                            <div class="flex gap-3 md:gap-4 text-right">
-                                <div class="flex flex-col items-center"><span class="text-[9px] md:text-[10px] text-amber-500 font-bold uppercase">Kỷ lục</span><span class="font-black text-sm text-slate-600">${m.maxStreak}</span></div>
-                                <div class="flex flex-col items-center"><span class="text-[9px] md:text-[10px] text-blue-500 font-bold uppercase">Chuỗi</span><span class="font-black text-sm text-slate-600">${m.currentStreak}</span></div>
-                                <div class="flex flex-col items-center"><span class="text-[9px] md:text-[10px] text-purple-500 font-bold uppercase">Điểm</span><span class="font-black text-sm md:text-base text-purple-700">${m.totalPoints}</span></div>
-                            </div>
-                        </div>
-                    `;
+                    const meTag = isMe ? '<span class="text-xs text-blue-500 font-normal">(Bạn)</span>' : '';
+                    const bgClass = isMe ? 'bg-blue-50 border-blue-200' : 'bg-white border-slate-100';
+                    html += '<div class="flex items-center justify-between p-3 border ' + bgClass + ' rounded-xl"><div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-purple-100 text-purple-600 font-bold flex items-center justify-center text-xs shadow-sm">' + m.username.charAt(0) + '</div><div><div class="font-bold text-slate-700 text-sm">' + m.username + ' ' + meTag + '</div><div class="text-[10px] text-slate-400">Đã điểm danh: ' + m.totalCheckins + ' ngày</div></div></div><div class="flex gap-3 md:gap-4 text-right"><div class="flex flex-col items-center"><span class="text-[9px] md:text-[10px] text-amber-500 font-bold uppercase">Kỷ lục</span><span class="font-black text-sm text-slate-600">' + m.maxStreak + '</span></div><div class="flex flex-col items-center"><span class="text-[9px] md:text-[10px] text-blue-500 font-bold uppercase">Chuỗi</span><span class="font-black text-sm text-slate-600">' + m.currentStreak + '</span></div><div class="flex flex-col items-center"><span class="text-[9px] md:text-[10px] text-purple-500 font-bold uppercase">Điểm</span><span class="font-black text-sm md:text-base text-purple-700">' + m.totalPoints + '</span></div></div></div>';
                 });
-                html += `</div>`;
+                html += '</div>';
             }
             container.innerHTML = html;
         };
 
-        // CHỨC NĂNG ĐỔI NHÓM CỦA USER CÁ NHÂN (CHỈ 1 LẦN)
         document.getElementById('user-group-select').addEventListener('change', async (e) => {
-            const newGroup = e.target.value;
-            if(!newGroup) return; 
-            
-            if(!confirm(`Bạn đang chọn ${newGroup}. LƯU Ý: Bạn sẽ không thể tự đổi lại nhóm sau khi chọn. Bạn chắc chắn chứ?`)) {
-                e.target.value = userData.group || ""; 
-                return;
-            }
-
-            userData.group = newGroup;
-            updateUIFromData(); 
-
-            if (!isTestMode) {
-                try {
-                    await fetch(`${API_URL}/update-group`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: userData._id, group: newGroup }) });
-                } catch (error) { console.error("Lỗi cập nhật nhóm", error); }
-            }
+            const newGroup = e.target.value; if(!newGroup) return; 
+            if(!confirm("Bạn đang chọn " + newGroup + ". LƯU Ý: Không thể tự đổi nhóm sau khi chọn. Chắc chắn chứ?")) { e.target.value = userData.group || ""; return; }
+            userData.group = newGroup; updateUIFromData(); 
+            if (!isTestMode) { try { await fetch(`${API_URL}/update-group`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: userData._id, group: newGroup }) }); } catch(err) {} }
         });
 
-        // ĐỔI TAB ĐĂNG NHẬP / ĐĂNG KÝ
         document.getElementById('tab-login').addEventListener('click', () => { 
             authMode = 'login'; 
             document.getElementById('tab-login').className = "flex-1 pb-2 border-b-2 border-amber-500 text-amber-600 font-bold transition-all"; 
             document.getElementById('tab-register').className = "flex-1 pb-2 border-b-2 border-transparent text-slate-400 font-bold hover:text-slate-600 transition-all"; 
             document.getElementById('btn-auth-action').innerText = "Vào Ứng Dụng"; 
-            
-            const groupContainer = document.getElementById('auth-group-container');
-            groupContainer.classList.remove('block');
-            groupContainer.classList.add('hidden');
+            document.getElementById('auth-group-container').classList.add('hidden'); document.getElementById('auth-group-container').classList.remove('block');
+            document.getElementById('auth-email-container').classList.add('hidden'); document.getElementById('auth-email-container').classList.remove('block');
             document.getElementById('auth-error').classList.add('hidden');
         });
         
@@ -708,49 +775,31 @@
             document.getElementById('tab-register').className = "flex-1 pb-2 border-b-2 border-amber-500 text-amber-600 font-bold transition-all"; 
             document.getElementById('tab-login').className = "flex-1 pb-2 border-b-2 border-transparent text-slate-400 font-bold hover:text-slate-600 transition-all"; 
             document.getElementById('btn-auth-action').innerText = "Đăng Ký Tài Khoản"; 
-            
-            const groupContainer = document.getElementById('auth-group-container');
-            groupContainer.classList.remove('hidden');
-            groupContainer.classList.add('block');
+            document.getElementById('auth-group-container').classList.remove('hidden'); document.getElementById('auth-group-container').classList.add('block');
+            document.getElementById('auth-email-container').classList.remove('hidden'); document.getElementById('auth-email-container').classList.add('block');
             document.getElementById('auth-error').classList.add('hidden');
         });
 
-        document.getElementById('auth-group').addEventListener('change', () => {
-            document.getElementById('auth-error').classList.add('hidden');
-        });
-        
+        document.getElementById('auth-group').addEventListener('change', () => document.getElementById('auth-error').classList.add('hidden'));
         document.getElementById('btn-logout').addEventListener('click', () => location.reload());
 
         document.getElementById('btn-auth-action').addEventListener('click', async () => {
-            const u = document.getElementById('auth-username').value.trim();
-            const p = document.getElementById('auth-password').value.trim();
-            const g = document.getElementById('auth-group').value;
+            const u = document.getElementById('auth-username').value.trim(); const p = document.getElementById('auth-password').value.trim();
+            const g = document.getElementById('auth-group').value; const e = document.getElementById('auth-email').value.trim();
 
             if(!u || !p) return;
+            if (authMode === 'register' && !g) { document.getElementById('auth-error').innerText = "Vui lòng chọn Nhóm!"; document.getElementById('auth-error').classList.remove('hidden'); return; }
             
-            if (authMode === 'register' && !g) {
-                document.getElementById('auth-error').innerText = "Vui lòng chọn Nhóm của bạn để tiếp tục!";
-                document.getElementById('auth-error').classList.remove('hidden');
-                return;
-            }
-            
-            const btn = document.getElementById('btn-auth-action');
-            const slowWarning = document.getElementById('slow-network-warning');
-            
-            btn.innerText = "Đang kết nối..."; btn.disabled = true;
-            document.getElementById('auth-error').classList.add('hidden');
-            
+            const btn = document.getElementById('btn-auth-action'); const slowWarning = document.getElementById('slow-network-warning');
+            btn.innerText = "Đang kết nối..."; btn.disabled = true; document.getElementById('auth-error').classList.add('hidden');
             const slowNetworkTimer = setTimeout(() => { slowWarning.classList.remove('hidden'); }, 3000);
 
             const payload = { username: u, password: p, localDate: getLocalTodayStr() };
-            if (authMode === 'register') payload.group = g;
+            if (authMode === 'register') { payload.group = g; payload.email = e; }
 
             try {
-                const res = await fetch(`${API_URL}${authMode === 'register' ? '/register' : '/login'}`, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
-                });
+                const res = await fetch(`${API_URL}${authMode === 'register' ? '/register' : '/login'}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
                 clearTimeout(slowNetworkTimer); slowWarning.classList.add('hidden');
-
                 const data = await res.json();
                 if (data.success) { userData = data.user; enterApp(); } 
                 else { document.getElementById('auth-error').innerText = data.message; document.getElementById('auth-error').classList.remove('hidden'); btn.innerText = authMode === 'register' ? "Đăng Ký Tài Khoản" : "Vào Ứng Dụng"; btn.disabled = false; }
@@ -762,58 +811,35 @@
         });
 
         function enterApp() {
-            const authScreen = document.getElementById('auth-screen');
-            const mainApp = document.getElementById('main-app');
-            loadDailyVerse(); 
-            authScreen.classList.add('fade-out-scale');
-            setTimeout(() => {
-                authScreen.classList.add('hidden');
-                mainApp.classList.remove('hidden');
-                updateUIFromData();
-                setTimeout(() => { mainApp.classList.add('fade-in-scale'); }, 50);
-            }, 500);
+            const authScreen = document.getElementById('auth-screen'); const mainApp = document.getElementById('main-app');
+            loadDailyVerse(); authScreen.classList.add('fade-out-scale');
+            setTimeout(() => { authScreen.classList.add('hidden'); mainApp.classList.remove('hidden'); updateUIFromData(); setTimeout(() => { mainApp.classList.add('fade-in-scale'); }, 50); }, 500);
         }
 
         function updateUIFromData() {
             if(!userData) return;
             if (isTestMode) document.getElementById('test-mode-badge').classList.remove('hidden'); else document.getElementById('test-mode-badge').classList.add('hidden');
 
-            const todayStr = getLocalTodayStr();
-            const historySet = new Set(userData.history || []);
-
+            const todayStr = getLocalTodayStr(); const historySet = new Set(userData.history || []);
             if (!historySet.has(todayStr)) { userData.hasCheckedInToday = false; }
             if (userData.lastCheckinDateStr && userData.lastCheckinDateStr !== todayStr) { userData.hasCheckedInToday = false; }
 
-            document.getElementById('ui-username').innerText = userData.username;
-            document.getElementById('user-avatar-text').innerText = userData.username.charAt(0);
+            document.getElementById('ui-username').innerText = userData.username; document.getElementById('user-avatar-text').innerText = userData.username.charAt(0);
             
-            const groupSelect = document.getElementById('user-group-select');
-            const lockText = document.getElementById('user-group-lock-text');
+            const groupSelect = document.getElementById('user-group-select'); const lockText = document.getElementById('user-group-lock-text');
             groupSelect.value = userData.group || ""; 
+            if (userData.group) { groupSelect.disabled = true; groupSelect.className = "mt-1 text-[11px] font-bold bg-slate-100 text-slate-500 border border-slate-200 rounded px-2 py-0.5 outline-none cursor-not-allowed w-28 appearance-none"; lockText.classList.remove('hidden'); } 
+            else { groupSelect.disabled = false; groupSelect.className = "mt-1 text-[11px] font-bold bg-purple-50 text-purple-600 border border-purple-200 rounded px-2 py-0.5 outline-none cursor-pointer hover:bg-purple-100 transition-colors w-28"; lockText.classList.add('hidden'); }
             
-            if (userData.group) {
-                groupSelect.disabled = true;
-                groupSelect.className = "mt-1 text-[11px] font-bold bg-slate-100 text-slate-500 border border-slate-200 rounded px-2 py-0.5 outline-none cursor-not-allowed w-28 appearance-none";
-                lockText.classList.remove('hidden');
-            } else {
-                groupSelect.disabled = false;
-                groupSelect.className = "mt-1 text-[11px] font-bold bg-purple-50 text-purple-600 border border-purple-200 rounded px-2 py-0.5 outline-none cursor-pointer hover:bg-purple-100 transition-colors w-28";
-                lockText.classList.add('hidden');
-            }
-            
-            document.getElementById('ui-max-streak').innerText = userData.maxStreak;
-            document.getElementById('ui-lost-streaks').innerText = userData.lostStreaks;
-            document.getElementById('ui-total-points').innerText = userData.totalPoints;
-            document.getElementById('streak-count').innerText = userData.currentStreak; // Vẫn hiển thị số chuỗi ra màn hình
+            document.getElementById('ui-max-streak').innerText = userData.maxStreak; document.getElementById('ui-lost-streaks').innerText = userData.lostStreaks; document.getElementById('ui-total-points').innerText = userData.totalPoints; document.getElementById('streak-count').innerText = userData.totalCheckins; 
             
             const lostAlert = document.getElementById('lost-streak-alert');
             if (userData.justLostStreak) { lostAlert.classList.remove('hidden'); document.getElementById('fail-sound').play().catch(e=>{}); setTimeout(() => lostAlert.classList.add('hidden'), 5000); userData.justLostStreak = false; }
 
-            // SỬA ĐỔI: RANK TÍNH THEO TỔNG SỐ LẦN ĐIỂM DANH (totalCheckins) THAY VÌ CHUỖI LIÊN TIẾP
             const currentRank = getCurrentRankInfo(userData.totalCheckins);
-            const harpWrapper = document.getElementById('harp-wrapper');
-            harpWrapper.className = `relative flex flex-col items-center justify-center h-56 w-56 mx-auto mb-2 harp-floating ${currentRank.class}`;
-            document.getElementById('rank-name-display').innerText = `Danh hiệu: ${currentRank.name}`;
+            document.getElementById('app-body').className = 'min-h-screen ' + currentRank.theme + ' bg-pattern flex items-center justify-center p-2 md:p-4 text-slate-800 relative overflow-x-hidden transition-all duration-1000';
+            const harpWrapper = document.getElementById('harp-wrapper'); harpWrapper.className = 'relative flex flex-col items-center justify-center h-56 w-56 mx-auto mb-2 harp-floating ' + currentRank.class;
+            document.getElementById('rank-name-display').innerText = 'Danh hiệu: ' + currentRank.name;
 
             if (currentRank.hasSparkle) { document.getElementById('harp-sparkles').classList.remove('opacity-0'); document.getElementById('harp-sparkles').classList.add('opacity-100'); } 
             else { document.getElementById('harp-sparkles').classList.add('opacity-0'); document.getElementById('harp-sparkles').classList.remove('opacity-100'); }
@@ -821,38 +847,31 @@
             updateTubesUI(); renderWeeklyCalendar();
             if (userData.role === 'admin') document.getElementById('btn-open-admin').classList.remove('hidden');
 
-            const btn = document.getElementById('checkin-btn');
-            btn.disabled = false;
+            const btn = document.getElementById('checkin-btn'); btn.disabled = false;
             if (userData.hasCheckedInToday) {
                 document.getElementById('harp-glow').classList.remove('hidden'); document.getElementById('harp-svg').classList.add('scale-100'); document.getElementById('harp-svg').classList.remove('scale-90');
-                btn.className = 'w-full py-3.5 px-6 rounded-[1.25rem] font-bold text-lg bg-slate-100 text-slate-500 cursor-default shadow-inner';
-                btn.innerHTML = `Đã Hoàn Thành Hôm Nay ✓`;
+                btn.className = 'w-full py-3.5 px-6 rounded-[1.25rem] font-bold text-lg bg-slate-100 text-slate-500 cursor-default shadow-inner'; btn.innerHTML = 'Đã Hoàn Thành Hôm Nay ✓';
             } else {
                 document.getElementById('harp-glow').classList.add('hidden'); document.getElementById('harp-svg').classList.remove('scale-100'); document.getElementById('harp-svg').classList.add('scale-90');
-                btn.className = 'w-full py-3.5 px-6 rounded-[1.25rem] font-bold text-lg bg-gradient-to-r from-amber-400 to-yellow-500 text-white shadow-xl hover:-translate-y-1';
-                btn.innerHTML = `Hoàn Thành Tĩnh Nguyện →`;
+                btn.className = 'w-full py-3.5 px-6 rounded-[1.25rem] font-bold text-lg bg-gradient-to-r from-amber-400 to-yellow-500 text-white shadow-xl hover:-translate-y-1 transition-transform active:scale-95 duration-300'; btn.innerHTML = 'Hoàn Thành Tĩnh Nguyện →';
             }
         }
 
         function updateTubesUI() {
             const maxCap = 90; 
             document.getElementById('tube-red-text').innerText = userData.totalCheckins; document.getElementById('tube-blue-text').innerText = userData.currentStreak;
-            document.getElementById('tube-red-liquid').style.setProperty('--fill-level', `${Math.max(6, Math.min((userData.totalCheckins / maxCap) * 100, 100))}%`);
-            document.getElementById('tube-blue-liquid').style.setProperty('--fill-level', `${Math.max(6, Math.min((userData.currentStreak / maxCap) * 100, 100))}%`);
+            document.getElementById('tube-red-liquid').style.setProperty('--fill-level', Math.max(6, Math.min((userData.totalCheckins / maxCap) * 100, 100)) + '%');
+            document.getElementById('tube-blue-liquid').style.setProperty('--fill-level', Math.max(6, Math.min((userData.currentStreak / maxCap) * 100, 100)) + '%');
         }
 
-        // ĐIỂM DANH
         document.getElementById('checkin-btn').addEventListener('click', async () => {
             if (!userData.hasCheckedInToday && !isProcessing) {
                 isProcessing = true;
+                const oldRank = getCurrentRankInfo(userData.totalCheckins); const expectedNewRank = getCurrentRankInfo(userData.totalCheckins + 1);
                 
-                // SO SÁNH RANK DỰA TRÊN TỔNG LẦN ĐIỂM DANH
-                const oldRank = getCurrentRankInfo(userData.totalCheckins);
-                const expectedNewRank = getCurrentRankInfo(userData.totalCheckins + 1);
-                
-                try {
-                    if (expectedNewRank.id > oldRank.id) { const s = document.getElementById('rankup-sound'); if(s){ s.pause(); s.currentTime=0; s.volume=1; s.play().catch(e=>{});} } 
-                    else { const s = document.getElementById('daily-sound'); if(s){ s.pause(); s.currentTime=0; s.volume=1; s.play().catch(e=>{});} }
+                try { 
+                    if (expectedNewRank.id > oldRank.id) { const s = document.getElementById('rankup-sound'); if(s){ s.pause(); s.currentTime=0; s.volume=1; s.play().catch(e=>{}); } } 
+                    else { const s = document.getElementById('daily-sound'); if(s){ s.pause(); s.currentTime=0; s.volume=1; s.play().catch(e=>{}); } } 
                 } catch(e) {}
 
                 document.getElementById('celebration').classList.remove('hidden'); setTimeout(() => document.getElementById('celebration').classList.add('hidden'), 3000);
@@ -860,191 +879,75 @@
                 const floatXp = document.getElementById('float-xp'); const floatLv = document.getElementById('float-lv');
                 if (floatXp && floatLv) { floatXp.classList.remove('float-up-anim'); floatLv.classList.remove('float-up-anim'); void floatXp.offsetWidth; floatXp.classList.add('float-up-anim'); floatLv.classList.add('float-up-anim'); }
 
-                let srcVal = '';
-                const checkedRadio = document.querySelector('input[name="source"]:checked');
+                let srcVal = ''; const checkedRadio = document.querySelector('input[name="source"]:checked');
                 if(checkedRadio) { srcVal = checkedRadio.value === 'Khác' ? document.getElementById('source-other-text').value : checkedRadio.value; }
-                const payload = {
-                    userId: userData._id, action: 'checkin', localDate: getLocalTodayStr(),
-                    logData: { q1: document.getElementById('q1').value, q2: document.getElementById('q2').value, q3: document.getElementById('q3').value, source: srcVal, emotion: selectedEmotion }
-                };
+                
+                const payload = { userId: userData._id, action: 'checkin', localDate: getLocalTodayStr(), logData: { q1: document.getElementById('q1').value, q2: document.getElementById('q2').value, q3: document.getElementById('q3').value, source: srcVal, emotion: selectedEmotion } };
 
                 if (isTestMode) {
                     userData.currentStreak++; userData.maxStreak = Math.max(userData.maxStreak, userData.currentStreak); userData.totalCheckins++; userData.totalPoints++; userData.hasCheckedInToday = true; userData.lastCheckinDateStr = getLocalTodayStr();
                     if(!userData.history) userData.history=[]; userData.history.push(getLocalTodayStr());
                     if(!userData.dailyLogs) userData.dailyLogs=[]; userData.dailyLogs.unshift({date: payload.localDate, ...payload.logData});
                 } else {
-                    try {
-                        const res = await fetch(`${API_URL}/update-streak`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                        const data = await res.json(); if (data.success) userData = data.user;
-                    } catch (error) { alert("Lỗi kết nối!") } 
+                    try { const res = await fetch(`${API_URL}/update-streak`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); const data = await res.json(); if (data.success) userData = data.user; } catch (error) { alert("Lỗi kết nối!") } 
                 }
                 
-                // Clear form
                 document.getElementById('q1').value = ''; document.getElementById('q2').value = ''; document.getElementById('q3').value = '';
                 document.querySelectorAll('input[name="source"]').forEach(r=>r.checked=false); document.getElementById('source-other-text').value=''; document.getElementById('source-other-text').disabled=true;
                 document.querySelectorAll('.emotion-btn').forEach(b => b.classList.remove('emotion-active')); selectedEmotion='';
-
+                
                 isProcessing = false; updateUIFromData();
             }
         });
 
-        // ADMIN PANEL
         window.showUserLogs = function(logsJson) {
-            const logs = JSON.parse(decodeURIComponent(logsJson));
-            const body = document.getElementById('admin-view-body');
+            const logs = JSON.parse(decodeURIComponent(logsJson)); const body = document.getElementById('admin-view-body');
             if(!logs || logs.length === 0) { body.innerHTML = '<p class="text-slate-500">Người này chưa viết bài nào.</p>'; } 
-            else {
-                const log = logs[0]; 
-                body.innerHTML = `
-                    <div class="bg-blue-50 p-3 rounded-lg"><span class="font-bold text-blue-700">Ngày:</span> ${log.date || 'Không rõ'} ${log.emotion || ''}</div>
-                    <div class="bg-slate-50 border p-3 rounded-lg"><span class="font-bold text-slate-700">Q1. Kinh Thánh:</span><p class="mt-1">${log.q1 || '(Trống)'}</p></div>
-                    <div class="bg-slate-50 border p-3 rounded-lg"><span class="font-bold text-slate-700">Q2. Suy ngẫm:</span><p class="mt-1">${log.q2 || '(Trống)'}</p></div>
-                    <div class="bg-slate-50 border p-3 rounded-lg"><span class="font-bold text-slate-700">Nguồn:</span> ${log.source || '(Trống)'}</div>
-                `;
-            }
-            document.getElementById('admin-view-modal').classList.remove('hidden'); setTimeout(() => document.getElementById('admin-view-modal').classList.add('opacity-100'), 10);
+            else { const log = logs[0]; body.innerHTML = '<div class="bg-blue-50 p-3 rounded-lg"><span class="font-bold text-blue-700">Ngày:</span> ' + (log.date || 'Không rõ') + ' ' + (log.emotion || '') + '</div><div class="bg-slate-50 border p-3 rounded-lg"><span class="font-bold text-slate-700">Q1. Kinh Thánh:</span><p class="mt-1">' + (log.q1 || '(Trống)') + '</p></div><div class="bg-slate-50 border p-3 rounded-lg"><span class="font-bold text-slate-700">Q2. Suy ngẫm:</span><p class="mt-1">' + (log.q2 || '(Trống)') + '</p></div><div class="bg-slate-50 border p-3 rounded-lg"><span class="font-bold text-slate-700">Nguồn:</span> ' + (log.source || '(Trống)') + '</div>'; }
+            toggleModal('admin-view-modal', true);
         }
-        document.getElementById('btn-close-admin-view').addEventListener('click', () => { document.getElementById('admin-view-modal').classList.remove('opacity-100'); setTimeout(() => document.getElementById('admin-view-modal').classList.add('hidden'), 300); });
+        
+        function renderAdminTable(users) {
+            let html = ''; const groupOptionsArr = ['', 'Nhóm 1', 'Nhóm 2', 'Nhóm 3', 'Nhóm 4', 'Nhóm 5', 'Nhóm 6', 'Nhóm 7', 'Nhóm 8', 'Nhóm 9', 'Nhóm 10'];
+            users.forEach(u => { 
+                const safeLogs = encodeURIComponent(JSON.stringify(u.dailyLogs || []));
+                let selectOptions = '';
+                groupOptionsArr.forEach(g => { const isSelected = (u.group === g) ? 'selected' : ''; selectOptions += '<option value="' + g + '" ' + isSelected + '>' + (g || '-Trống-') + '</option>'; });
+                html += '<tr><td class="p-4 font-medium">' + u.username + '</td><td class="p-4"><select onchange="adminChangeGroup(\'' + u._id + '\', this.value, this)" class="text-xs font-bold bg-purple-50 text-purple-600 border border-purple-200 rounded px-1 py-0.5 outline-none cursor-pointer">' + selectOptions + '</select></td><td class="p-4 text-center"><button onclick="showUserLogs(\'' + safeLogs + '\')" class="bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1 rounded font-bold text-xs">👁️ Xem</button></td><td class="p-4 text-amber-500 font-bold">' + u.maxStreak + '</td><td class="p-4 text-blue-500 font-bold">' + u.currentStreak + '</td></tr>'; 
+            });
+            document.getElementById('admin-table-body').innerHTML = html;
+        }
 
-        // ADMIN ĐỔI NHÓM CHO USER
         window.adminChangeGroup = async function(userId, newGroup, selectEl) {
-            if(!confirm(`Bạn muốn chuyển người này sang ${newGroup || 'Nhóm Trống'}?`)) {
-                const res = await fetch(`${API_URL}/users`);
-                const data = await res.json();
-                if(data.success) {
-                    const u = data.users.find(x => x._id === userId);
-                    if(u) selectEl.value = u.group || "";
-                }
-                return;
+            if(!confirm("Bạn muốn chuyển người này sang " + (newGroup || 'Nhóm Trống') + "?")) {
+                try { const res = await fetch(`${API_URL}/users`); const data = await res.json(); if(data.success) { const u = data.users.find(x => x._id === userId); if(u) selectEl.value = u.group || ""; } } catch(e) {} return;
             }
-            
             selectEl.disabled = true;
             try {
-                const res = await fetch(`${API_URL}/update-group`, { 
-                    method: 'POST', 
-                    headers: { 'Content-Type': 'application/json' }, 
-                    body: JSON.stringify({ userId: userId, group: newGroup }) 
-                });
-                const data = await res.json();
-                if (data.success) {
-                    if (userData && userData._id === userId) {
-                        userData.group = newGroup;
-                        updateUIFromData();
-                    }
-                } else { alert("Lỗi đổi nhóm"); }
+                const res = await fetch(`${API_URL}/update-group`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: userId, group: newGroup }) });
+                const data = await res.json(); if (data.success && userData && userData._id === userId) { userData.group = newGroup; updateUIFromData(); }
             } catch(e) { alert("Lỗi mạng!"); }
             selectEl.disabled = false;
         };
 
-        document.getElementById('btn-open-admin').addEventListener('click', async () => {
-            document.getElementById('admin-modal').classList.remove('hidden'); setTimeout(() => document.getElementById('admin-modal').classList.add('opacity-100'), 10);
-            const res = await fetch(`${API_URL}/users`);
-            const data = await res.json();
-            if(data.success) {
-                let html = '';
-                const groupOptionsArr = ['', 'Nhóm 1', 'Nhóm 2', 'Nhóm 3', 'Nhóm 4', 'Nhóm 5', 'Nhóm 6', 'Nhóm 7', 'Nhóm 8', 'Nhóm 9', 'Nhóm 10'];
-                
-                data.users.forEach(u => { 
-                    const safeLogs = encodeURIComponent(JSON.stringify(u.dailyLogs || []));
-                    let selectOptions = groupOptionsArr.map(g => `<option value="${g}" ${u.group === g ? 'selected' : ''}>${g || '-Trống-'}</option>`).join('');
-                    
-                    html += `<tr>
-                        <td class="p-4 font-medium">${u.username}</td>
-                        <td class="p-4">
-                            <select onchange="adminChangeGroup('${u._id}', this.value, this)" class="text-xs font-bold bg-purple-50 text-purple-600 border border-purple-200 rounded px-1 py-0.5 outline-none cursor-pointer">
-                                ${selectOptions}
-                            </select>
-                        </td>
-                        <td class="p-4 text-center"><button onclick="showUserLogs('${safeLogs}')" class="bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1 rounded font-bold text-xs">👁️ Xem</button></td>
-                        <td class="p-4 text-amber-500 font-bold">${u.maxStreak}</td><td class="p-4 text-blue-500 font-bold">${u.currentStreak}</td>
-                    </tr>`; 
-                });
-                document.getElementById('admin-table-body').innerHTML = html;
-            }
-        });
-        
-        const closeAdminPanel = () => {
-            const m = document.getElementById('admin-modal');
-            if(m) { m.classList.remove('opacity-100'); setTimeout(() => m.classList.add('hidden'), 300); }
-        };
-        document.getElementById('btn-close-admin').addEventListener('click', closeAdminPanel);
-
         function renderRanksModal(totalCheckinsCount) {
-            const container = document.getElementById('ranks-list-container');
-            let html = '';
+            const container = document.getElementById('ranks-list-container'); let html = '';
             rankData.forEach((r) => {
-                const isUnlocked = totalCheckinsCount >= r.streak; // SỬA: Kiểm tra unlock bằng tổng điểm danh
-                const isWinged = r.streak >= 45;
+                const isUnlocked = totalCheckinsCount >= r.streak; const isWinged = r.streak >= 45;
                 const mWingScale = isWinged ? 0.65 : 0; const mWingRotL = isWinged ? -25 : 0; const mWingRotR = isWinged ? 25 : 0; const mWingY = isWinged ? 10 : 0; const mHaloScale = isWinged ? 0.65 : 0; const mOpacity = isWinged ? 1 : 0;
-
-                html += `
-                    <div class="flex items-center gap-4 p-4 rounded-2xl ${isUnlocked ? 'bg-slate-50 border-amber-200 shadow-sm' : 'bg-slate-50 border-slate-200 opacity-60'} border relative overflow-hidden shrink-0">
-                        ${!isUnlocked ? `<div class="absolute inset-0 bg-slate-900/5 z-10 flex items-center justify-center backdrop-blur-[1px]"><span class="bg-white/90 text-xs font-bold px-3 py-1 rounded-full text-slate-500 shadow-sm">🔒 Đạt ${r.streak} chuỗi</span></div>` : ''}
-                        <div class="relative w-16 h-16 flex justify-center items-center ${r.class}">
-                            <svg viewBox="0 0 160 180" class="w-16 h-16 relative z-10 overflow-visible">
-                                <g class="harp-halo" style="transform: scale(${mHaloScale}); opacity: ${mOpacity}; transform-origin: 80px 25px;"><ellipse cx="80" cy="25" rx="35" ry="10" fill="none" class="harp-stroke-primary" stroke-width="3" /><ellipse cx="80" cy="25" rx="42" ry="14" fill="none" class="harp-stroke-secondary" stroke-width="1.5" opacity="0.8" /></g>
-                                <g class="harp-wings" style="opacity: ${mOpacity};"><g style="transform: translate(0px, ${mWingY}px) scale(${mWingScale}) rotate(${mWingRotL}deg); transform-origin: 50px 90px;"><use href="#angel-wing-detailed" /></g><g style="transform: translate(0px, ${mWingY}px) scale(${mWingScale}) rotate(${mWingRotR}deg); transform-origin: 110px 90px;"><use href="#angel-wing-detailed" transform="translate(160, 0) scale(-1, 1)" /></g></g>
-                                <g transform="translate(20, 10)"><path class="harp-path harp-stroke-primary" d="M 25 45 C 25 100 15 130 40 140 L 80 140 C 105 130 95 100 95 45" fill="none" stroke-width="8" stroke-linecap="round" /><line class="harp-path harp-stroke-primary" x1="12" y1="45" x2="108" y2="45" stroke-width="8" /><line class="harp-path harp-stroke-secondary" x1="40" y1="45" x2="40" y2="135" stroke-width="2"/><line class="harp-path harp-stroke-secondary" x1="60" y1="45" x2="60" y2="139" stroke-width="2"/><line class="harp-path harp-stroke-secondary" x1="80" y1="45" x2="80" y2="135" stroke-width="2"/></g>
-                            </svg>
-                        </div>
-                        <div><h4 class="font-bold ${isUnlocked ? 'text-slate-800' : 'text-slate-500'}">${r.name}</h4><p class="text-[11px] text-slate-500">Mốc: ${r.streak} ngày</p></div>
-                    </div>`;
+                const lockHtml = !isUnlocked ? '<div class="absolute inset-0 bg-slate-900/5 z-10 flex items-center justify-center backdrop-blur-[1px]"><span class="bg-white/90 text-xs font-bold px-3 py-1 rounded-full text-slate-500 shadow-sm">🔒 Đạt ' + r.streak + ' chuỗi</span></div>' : '';
+                const bgClass = isUnlocked ? 'bg-slate-50 border-amber-200 shadow-sm' : 'bg-slate-50 border-slate-200 opacity-60';
+                
+                html += '<div class="flex items-center gap-4 p-4 rounded-2xl ' + bgClass + ' border relative overflow-hidden shrink-0">' + lockHtml + '<div class="relative w-16 h-16 flex justify-center items-center ' + r.class + '"><svg viewBox="0 0 160 180" class="w-16 h-16 relative z-10 overflow-visible"><g class="harp-halo" style="transform: scale(' + mHaloScale + '); opacity: ' + mOpacity + '; transform-origin: 80px 25px;"><ellipse cx="80" cy="25" rx="35" ry="10" fill="none" class="harp-stroke-primary" stroke-width="3" /><ellipse cx="80" cy="25" rx="42" ry="14" fill="none" class="harp-stroke-secondary" stroke-width="1.5" opacity="0.8" /></g><g class="harp-wings" style="opacity: ' + mOpacity + ';"><g style="transform: translate(0px, ' + mWingY + 'px) scale(' + mWingScale + ') rotate(' + mWingRotL + 'deg); transform-origin: 50px 90px;"><use href="#angel-wing-detailed" /></g><g style="transform: translate(0px, ' + mWingY + 'px) scale(' + mWingScale + ') rotate(' + mWingRotR + 'deg); transform-origin: 110px 90px;"><use href="#angel-wing-detailed" transform="translate(160, 0) scale(-1, 1)" /></g></g><g transform="translate(20, 10)"><path class="harp-path harp-stroke-primary" d="M 25 45 C 25 100 15 130 40 140 L 80 140 C 105 130 95 100 95 45" fill="none" stroke-width="8" stroke-linecap="round" /><line class="harp-path harp-stroke-primary" x1="12" y1="45" x2="108" y2="45" stroke-width="8" /><line class="harp-path harp-stroke-secondary" x1="40" y1="45" x2="40" y2="135" stroke-width="2"/><line class="harp-path harp-stroke-secondary" x1="60" y1="45" x2="60" y2="139" stroke-width="2"/><line class="harp-path harp-stroke-secondary" x1="80" y1="45" x2="80" y2="135" stroke-width="2"/></g></svg></div><div><h4 class="font-bold ' + (isUnlocked ? 'text-slate-800' : 'text-slate-500') + '">' + r.name + '</h4><p class="text-[11px] text-slate-500">Mốc: ' + r.streak + ' ngày</p></div></div>';
             });
             container.innerHTML = html;
         }
 
-        // TOOL TEST MODAL
-        document.getElementById('btn-show-ranks').addEventListener('click', () => { renderRanksModal(userData ? userData.totalCheckins : 0); document.getElementById('rank-modal').classList.remove('hidden'); setTimeout(() => { document.getElementById('rank-modal').classList.add('opacity-100'); document.getElementById('rank-modal-content').classList.remove('scale-95'); }, 10); });
-        document.getElementById('btn-close-rank').addEventListener('click', () => { document.getElementById('rank-modal').classList.remove('opacity-100'); document.getElementById('rank-modal-content').classList.add('scale-95'); setTimeout(() => document.getElementById('rank-modal').classList.add('hidden'), 300); });
-        
-        document.getElementById('btn-test-next-day').addEventListener('click', () => { 
-            try {
-                if (!isTestMode) { originalUserData = JSON.parse(JSON.stringify(userData)); isTestMode = true; } 
-                userData.hasCheckedInToday = false; 
-                updateUIFromData(); 
-                closeAdminPanel();
-            } catch(e) { console.error(e); }
-        });
-        
-        document.getElementById('btn-test-rank-go').addEventListener('click', () => { 
-            try {
-                if (!isTestMode) { originalUserData = JSON.parse(JSON.stringify(userData)); isTestMode = true; } 
-                const selectedStreak = parseInt(document.getElementById('test-rank-select').value);
-                
-                // CẬP NHẬT ĐỒNG THỜI CẢ CHUỖI LẪN TỔNG ĐIỂM KHI TEST
-                userData.currentStreak = selectedStreak; 
-                userData.totalCheckins = selectedStreak;
-                userData.totalPoints = selectedStreak;
-                userData.maxStreak = Math.max(userData.maxStreak, selectedStreak);
-                
-                userData.hasCheckedInToday = false; 
-                updateUIFromData(); 
-                closeAdminPanel();
-            } catch(e) { console.error(e); }
-        });
-        
-        document.getElementById('btn-test-reset').addEventListener('click', () => { 
-            try {
-                if (isTestMode && originalUserData) { 
-                    userData = JSON.parse(JSON.stringify(originalUserData)); 
-                    isTestMode = false; 
-                    updateUIFromData(); 
-                    alert("Đã khôi phục dữ liệu thật!"); 
-                } 
-            } catch(e) { console.error(e); }
-        });
+        document.getElementById('btn-test-next-day').addEventListener('click', async () => { try { if (!isTestMode) { originalUserData = JSON.parse(JSON.stringify(userData)); isTestMode = true; } userData.hasCheckedInToday = false; updateUIFromData(); toggleModal('admin-modal', false); } catch(e) { console.error(e); alert("Lỗi hệ thống hiển thị"); } });
+        document.getElementById('btn-test-rank-go').addEventListener('click', async () => { try { if (!isTestMode) { originalUserData = JSON.parse(JSON.stringify(userData)); isTestMode = true; } const s = parseInt(document.getElementById('test-rank-select').value); userData.currentStreak = s; userData.totalCheckins = s; userData.totalPoints = s; userData.maxStreak = Math.max(userData.maxStreak, s); userData.hasCheckedInToday = false; updateUIFromData(); toggleModal('admin-modal', false); } catch(e) { console.error(e); alert("Lỗi hệ thống hiển thị"); } });
+        document.getElementById('btn-test-reset').addEventListener('click', async () => { try { if (isTestMode && originalUserData) { userData = JSON.parse(JSON.stringify(originalUserData)); isTestMode = false; updateUIFromData(); alert("Đã khôi phục dữ liệu thật!"); } } catch(e) { console.error(e); alert("Lỗi hệ thống hiển thị"); } });
 
-        // TỰ ĐỘNG KIỂM TRA QUA NGÀY MỚI
-        window.addEventListener('focus', () => {
-            if (userData && userData.hasCheckedInToday) {
-                const todayStr = getLocalTodayStr();
-                const historySet = new Set(userData.history || []);
-                if (!historySet.has(todayStr)) {
-                    userData.hasCheckedInToday = false;
-                    updateUIFromData();
-                }
-            }
-        });
+        window.addEventListener('focus', () => { if (userData && userData.hasCheckedInToday) { const todayStr = getLocalTodayStr(); const historySet = new Set(userData.history || []); if (!historySet.has(todayStr)) { userData.hasCheckedInToday = false; updateUIFromData(); } } });
     </script>
 </body>
 </html>
