@@ -15,12 +15,12 @@ mongoose.connect(MONGO_URI)
   .then(() => console.log('Đã kết nối Database thành công!'))
   .catch(err => console.log('Lỗi kết nối DB:', err));
 
-// CẤU HÌNH EMAIL GỬI MÃ KHÔI PHỤC (ĐÓNG VAI TRÒ "TỔNG ĐÀI")
+// CẤU HÌNH EMAIL GỬI MÃ KHÔI PHỤC
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
         user: 'anklee206@gmail.com', // Email hệ thống của bạn
-        pass: 'neohvuwijoatsfrh' // ĐIỀN 16 CHỮ SỐ BẠN MỚI TẠO VÀO ĐÂY (Viết liền)
+        pass: 'neohvuwijoatsfrh' // Mật khẩu ứng dụng 16 chữ số
     }
 });
 
@@ -111,39 +111,42 @@ app.post('/api/update-profile', async (req, res) => {
     } catch (error) { res.status(500).json({ success: false, message: 'Lỗi cập nhật' }); }
 });
 
+// THAY ĐỔI: TÌM BẰNG EMAIL THAY VÌ TÊN ĐĂNG NHẬP
 app.post('/api/forgot-password', async (req, res) => {
     try {
-        const { username } = req.body;
-        const user = await User.findOne({ username });
-        if (!user) return res.status(400).json({ success: false, message: 'Tài khoản không tồn tại!' });
-        if (!user.email) return res.status(400).json({ success: false, message: 'Tài khoản này chưa đăng ký Email khôi phục!' });
+        const { email } = req.body;
+        if (!email) return res.status(400).json({ success: false, message: 'Vui lòng nhập Email!' });
+
+        const user = await User.findOne({ email: email });
+        if (!user) return res.status(400).json({ success: false, message: 'Không tìm thấy tài khoản nào liên kết với Email này!' });
 
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         user.resetOtp = otp;
-        user.resetOtpExpiry = new Date(Date.now() + 15 * 60000); // Mã có hiệu lực 15 phút
+        user.resetOtpExpiry = new Date(Date.now() + 15 * 60000); // 15 phút
         await user.save();
 
         const mailOptions = {
             from: '"Chuỗi Tĩnh Nguyện" <anklee206@gmail.com>',
             to: user.email,
             subject: 'Mã khôi phục mật khẩu - Chuỗi Tĩnh Nguyện',
-            text: `Xin chào ${username},\n\nMã xác nhận khôi phục mật khẩu của bạn là: ${otp}\nMã này có hiệu lực trong 15 phút.\n\nNếu bạn không yêu cầu, vui lòng bỏ qua email này.`
+            text: `Xin chào ${user.username},\n\nMã xác nhận khôi phục mật khẩu của bạn là: ${otp}\nMã này có hiệu lực trong 15 phút.\n\nNếu bạn không yêu cầu, vui lòng bỏ qua email này.`
         };
 
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
                 console.error("Lỗi gửi mail:", error);
-                return res.status(500).json({ success: false, message: 'Lỗi khi gửi email. Vui lòng thử lại sau.' });
+                return res.status(500).json({ success: false, message: 'Lỗi khi gửi email. Vui lòng kiểm tra lại cấu hình máy chủ.' });
             }
-            res.json({ success: true, message: `Mã đã được gửi đến email ${user.email.replace(/(.{2})(.*)(?=@)/, "$1***")}` });
+            res.json({ success: true, message: `Mã khôi phục đã được gửi đến email của bạn!` });
         });
     } catch (error) { res.status(500).json({ success: false, message: 'Lỗi server' }); }
 });
 
+// THAY ĐỔI: ĐẶT LẠI MẬT KHẨU DỰA TRÊN EMAIL
 app.post('/api/reset-password', async (req, res) => {
     try {
-        const { username, otp, newPassword } = req.body;
-        const user = await User.findOne({ username });
+        const { email, otp, newPassword } = req.body;
+        const user = await User.findOne({ email: email });
         if (!user) return res.status(400).json({ success: false, message: 'Tài khoản không tồn tại!' });
         if (user.resetOtp !== otp || user.resetOtpExpiry < new Date()) {
             return res.status(400).json({ success: false, message: 'Mã xác nhận sai hoặc đã hết hạn!' });
