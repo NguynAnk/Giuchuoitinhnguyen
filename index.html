@@ -7,17 +7,16 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; transition: background-image 1s ease-in-out; }
+        body { font-family: 'Inter', sans-serif; transition: background 1s ease-in-out; }
         
-        /* HÌNH NỀN THEO RANK CÓ HOA VĂN */
-        .bg-pattern { background-size: 40px 40px; }
-        .bg-theme-wood { background-image: radial-gradient(rgba(100, 116, 139, 0.1) 2px, transparent 2px), linear-gradient(to bottom right, #f0fdf4, #ffffff, #fefce8); }
-        .bg-theme-bronze { background-image: radial-gradient(rgba(217, 119, 6, 0.1) 2px, transparent 2px), linear-gradient(to bottom right, #fef3c7, #ffffff, #ffedd5); }
-        .bg-theme-iron { background-image: radial-gradient(rgba(148, 163, 184, 0.1) 2px, transparent 2px), linear-gradient(to bottom right, #f8fafc, #ffffff, #f1f5f9); }
-        .bg-theme-gold { background-image: radial-gradient(rgba(234, 179, 8, 0.15) 2px, transparent 2px), linear-gradient(to bottom right, #fef08a, #ffffff, #fde68a); }
-        .bg-theme-platinum { background-image: radial-gradient(rgba(59, 130, 246, 0.1) 2px, transparent 2px), linear-gradient(to bottom right, #e0f2fe, #ffffff, #f8fafc); }
-        .bg-theme-diamond { background-image: radial-gradient(rgba(6, 182, 212, 0.1) 2px, transparent 2px), linear-gradient(to bottom right, #cffafe, #ffffff, #bfdbfe); }
-        .bg-theme-ruby { background-image: radial-gradient(rgba(225, 29, 72, 0.1) 2px, transparent 2px), linear-gradient(to bottom right, #ffe4e6, #ffffff, #fecdd3); }
+        /* HÌNH NỀN THEO RANK CÓ HOA VĂN ĐẶC TRƯNG & MÀU ĐẬM ĐÀ HƠN */
+        .bg-theme-wood { background: repeating-linear-gradient(45deg, rgba(141,110,99,0.05) 0, rgba(141,110,99,0.05) 2px, transparent 2px, transparent 8px), linear-gradient(135deg, #e7e5e4, #d6d3d1); }
+        .bg-theme-bronze { background: repeating-radial-gradient(circle at 0 0, transparent 0, rgba(217,119,6,0.08) 10px, transparent 10px, transparent 20px), linear-gradient(135deg, #ffedd5, #fed7aa); }
+        .bg-theme-iron { background: linear-gradient(0deg, transparent 24%, rgba(100,116,139,0.08) 25%, rgba(100,116,139,0.08) 26%, transparent 27%, transparent 74%, rgba(100,116,139,0.08) 75%, rgba(100,116,139,0.08) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(100,116,139,0.08) 25%, rgba(100,116,139,0.08) 26%, transparent 27%, transparent 74%, rgba(100,116,139,0.08) 75%, rgba(100,116,139,0.08) 76%, transparent 77%, transparent), linear-gradient(135deg, #f1f5f9, #cbd5e1); background-size: 40px 40px, 40px 40px, 100% 100%; }
+        .bg-theme-gold { background: radial-gradient(rgba(234,179,8,0.15) 3px, transparent 3px), radial-gradient(rgba(234,179,8,0.15) 3px, transparent 3px), linear-gradient(135deg, #fef08a, #fcd34d); background-position: 0 0, 20px 20px, 0 0; background-size: 40px 40px, 40px 40px, 100% 100%; }
+        .bg-theme-platinum { background: repeating-linear-gradient(135deg, rgba(59,130,246,0.08) 0px, rgba(59,130,246,0.08) 2px, transparent 2px, transparent 15px), repeating-linear-gradient(45deg, rgba(59,130,246,0.08) 0px, rgba(59,130,246,0.08) 2px, transparent 2px, transparent 15px), linear-gradient(135deg, #e0f2fe, #bae6fd); }
+        .bg-theme-diamond { background: linear-gradient(45deg, rgba(6,182,212,0.1) 25%, transparent 25%, transparent 75%, rgba(6,182,212,0.1) 75%, rgba(6,182,212,0.1)), linear-gradient(45deg, rgba(6,182,212,0.1) 25%, transparent 25%, transparent 75%, rgba(6,182,212,0.1) 75%, rgba(6,182,212,0.1)), linear-gradient(135deg, #cffafe, #67e8f9); background-position: 0 0, 20px 20px, 0 0; background-size: 40px 40px, 40px 40px, 100% 100%; }
+        .bg-theme-ruby { background: radial-gradient(circle, rgba(225,29,72,0.08) 25%, transparent 25%), radial-gradient(circle, rgba(225,29,72,0.08) 25%, transparent 25%), linear-gradient(135deg, #ffe4e6, #fda4af); background-position: 0 0, 25px 25px, 0 0; background-size: 50px 50px, 50px 50px, 100% 100%; }
 
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
@@ -82,7 +81,7 @@
         .emotion-active { filter: grayscale(0%); opacity: 1; transform: scale(1.2); drop-shadow: 0 4px 6px rgba(0,0,0,0.1); }
     </style>
 </head>
-<body id="app-body" class="min-h-screen bg-theme-wood bg-pattern flex items-center justify-center p-2 md:p-4 text-slate-800 relative overflow-x-hidden">
+<body id="app-body" class="min-h-screen bg-theme-wood flex items-center justify-center p-2 md:p-4 text-slate-800 relative overflow-x-hidden">
 
     <svg width="0" height="0" class="absolute pointer-events-none">
         <defs>
@@ -114,7 +113,7 @@
         </div>
     </div>
 
-    <!-- MÀN HÌNH CÀI ĐẶT USER (CẬP NHẬT EMAIL) -->
+    <!-- MÀN HÌNH CÀI ĐẶT USER (CẬP NHẬT EMAIL / MẬT KHẨU) -->
     <div id="settings-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[70] flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
         <div id="settings-modal-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-6 transform scale-95 transition-transform duration-300 flex flex-col">
             <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3 shrink-0">
@@ -123,14 +122,23 @@
             </div>
             <div class="flex flex-col gap-4">
                 <div>
-                    <label class="text-xs font-bold text-slate-500 block mb-1">Email khôi phục</label>
+                    <label class="text-xs font-bold text-slate-500 block mb-1">Email</label>
                     <input type="email" id="setting-email" placeholder="Ví dụ: abc@gmail.com" class="w-full px-3 py-2 rounded-lg border bg-slate-50 focus:bg-white outline-none">
-                    <p class="text-[10px] text-slate-400 mt-1">Dùng để lấy lại mật khẩu khi quên.</p>
                 </div>
-                <div>
-                    <label class="text-xs font-bold text-slate-500 block mb-1">Đổi Mật khẩu mới (Tùy chọn)</label>
-                    <input type="password" id="setting-pw" placeholder="Bỏ trống nếu không đổi" class="w-full px-3 py-2 rounded-lg border bg-slate-50 focus:bg-white outline-none">
+                
+                <div class="border-t border-slate-100 pt-3">
+                    <label class="text-xs font-bold text-slate-800 block mb-2">Thay Đổi Mật Khẩu</label>
+                    <label class="text-[11px] font-bold text-slate-500 block mb-1">Mật khẩu hiện tại</label>
+                    <input type="password" id="setting-old-pw" placeholder="Nhập mật khẩu cũ để xác nhận" class="w-full px-3 py-2 rounded-lg border bg-slate-50 focus:bg-white outline-none mb-3">
+                    
+                    <label class="text-[11px] font-bold text-slate-500 block mb-1">Mật khẩu mới</label>
+                    <input type="password" id="setting-new-pw" placeholder="Mật khẩu mới..." class="w-full px-3 py-2 rounded-lg border bg-slate-50 focus:bg-white outline-none">
+                    
+                    <div class="mt-2 text-right">
+                        <button id="btn-settings-forgot-pw" class="text-[10px] text-blue-500 font-bold hover:underline">Quên mật khẩu cũ?</button>
+                    </div>
                 </div>
+
                 <p id="setting-msg" class="text-center text-sm font-bold hidden"></p>
                 <button id="btn-save-settings" class="w-full py-2 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition-transform active:scale-95">Lưu Thay Đổi</button>
             </div>
@@ -206,9 +214,10 @@
                 <input type="text" id="auth-username" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-amber-400 outline-none">
             </div>
             
+            <!-- ĐÃ CẬP NHẬT PHẦN EMAIL ĐĂNG KÝ Ở ĐÂY -->
             <div id="auth-email-container" class="hidden">
-                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 block">Email khôi phục <span class="text-amber-500 text-[10px]">(Khuyên dùng)</span></label>
-                <input type="email" id="auth-email" placeholder="Dùng để lấy lại mật khẩu" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-amber-400 outline-none">
+                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 block">Email</label>
+                <input type="email" id="auth-email" placeholder="Ví dụ: abc@gmail.com" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-amber-400 outline-none">
             </div>
 
             <div class="relative">
@@ -418,7 +427,7 @@
                         </div>
                         <div class="text-center z-10 flex flex-col items-center">
                             <h2 class="text-6xl font-black text-slate-800" id="streak-count">0</h2>
-                            <!-- Chữ được sửa đổi theo yêu cầu -->
+                            <!-- ĐÃ ĐỔI THÀNH TỔNG CHUỖI HIỆN TẠI -->
                             <p class="text-sm font-bold text-amber-600 uppercase tracking-widest mt-1">Tổng Chuỗi Hiện Tại</p>
                             
                             <div class="flex gap-2 mt-3 flex-wrap justify-center">
@@ -641,28 +650,76 @@
         document.getElementById('btn-close-admin').addEventListener('click', () => toggleModal('admin-modal', false));
         document.getElementById('btn-close-admin-view').addEventListener('click', () => toggleModal('admin-view-modal', false));
 
-        // --- CÀI ĐẶT EMAIL ---
+        // --- CÀI ĐẶT EMAIL VÀ ĐỔI MẬT KHẨU ---
         document.getElementById('btn-open-settings').addEventListener('click', () => { 
             document.getElementById('setting-email').value = userData.email || '';
-            document.getElementById('setting-pw').value = '';
+            document.getElementById('setting-old-pw').value = '';
+            document.getElementById('setting-new-pw').value = '';
             document.getElementById('setting-msg').classList.add('hidden');
             toggleModal('settings-modal', true); 
         });
+        
         document.getElementById('btn-close-settings').addEventListener('click', () => toggleModal('settings-modal', false));
+        
         document.getElementById('btn-save-settings').addEventListener('click', async () => {
             const btn = document.getElementById('btn-save-settings');
             const msg = document.getElementById('setting-msg');
+            const email = document.getElementById('setting-email').value.trim();
+            const oldPw = document.getElementById('setting-old-pw').value.trim();
+            const newPw = document.getElementById('setting-new-pw').value.trim();
+
             btn.innerText = "Đang lưu..."; btn.disabled = true; msg.classList.add('hidden');
+
             try {
-                const payload = { userId: userData._id, newEmail: document.getElementById('setting-email').value.trim() };
-                const pw = document.getElementById('setting-pw').value.trim();
-                if(pw) payload.newPassword = pw;
+                // Kiểm tra mật khẩu cũ thông qua API đăng nhập nếu người dùng muốn đổi mật khẩu mới
+                if (newPw) {
+                    if (!oldPw) {
+                        msg.innerText = "Vui lòng nhập mật khẩu hiện tại để xác nhận đổi mật khẩu!";
+                        msg.className = "text-center text-sm font-bold text-red-600 block";
+                        btn.innerText = "Lưu Thay Đổi"; btn.disabled = false;
+                        return;
+                    }
+                    
+                    const verifyRes = await fetch(`${API_URL}/login`, { 
+                        method: 'POST', 
+                        headers: {'Content-Type':'application/json'}, 
+                        body: JSON.stringify({ username: userData.username, password: oldPw, localDate: getLocalTodayStr() }) 
+                    });
+                    const verifyData = await verifyRes.json();
+                    
+                    if (!verifyData.success) {
+                        msg.innerText = "Mật khẩu cũ không chính xác!";
+                        msg.className = "text-center text-sm font-bold text-red-600 block";
+                        btn.innerText = "Lưu Thay Đổi"; btn.disabled = false;
+                        return;
+                    }
+                }
+
+                const payload = { userId: userData._id, newEmail: email };
+                if (newPw) payload.newPassword = newPw;
+
                 const res = await fetch(`${API_URL}/update-profile`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
                 const data = await res.json();
-                if(data.success) { userData = data.user; msg.innerText = "Lưu thành công!"; msg.className = "text-center text-sm font-bold text-green-600 block"; } 
+                if(data.success) { 
+                    userData = data.user; 
+                    msg.innerText = "Lưu thành công!"; 
+                    msg.className = "text-center text-sm font-bold text-green-600 block"; 
+                    document.getElementById('setting-old-pw').value = '';
+                    document.getElementById('setting-new-pw').value = '';
+                } 
                 else { msg.innerText = "Lỗi: " + data.message; msg.className = "text-center text-sm font-bold text-red-600 block"; }
             } catch(e) { msg.innerText = "Lỗi kết nối máy chủ!"; msg.className = "text-center text-sm font-bold text-red-600 block"; }
             btn.innerText = "Lưu Thay Đổi"; btn.disabled = false;
+        });
+
+        // Hướng người dùng qua Tab Quên mật khẩu từ màn hình Cài đặt
+        document.getElementById('btn-settings-forgot-pw').addEventListener('click', () => {
+            toggleModal('settings-modal', false);
+            document.getElementById('main-app').classList.add('hidden');
+            document.getElementById('auth-screen').classList.remove('hidden');
+            document.getElementById('auth-screen').classList.remove('fade-out-scale');
+            document.getElementById('btn-forgot-mode').click();
+            document.getElementById('forgot-username').value = userData.username;
         });
 
         // --- QUÊN MẬT KHẨU ---
@@ -837,7 +894,10 @@
             if (userData.justLostStreak) { lostAlert.classList.remove('hidden'); document.getElementById('fail-sound').play().catch(e=>{}); setTimeout(() => lostAlert.classList.add('hidden'), 5000); userData.justLostStreak = false; }
 
             const currentRank = getCurrentRankInfo(userData.totalCheckins);
-            document.getElementById('app-body').className = 'min-h-screen ' + currentRank.theme + ' bg-pattern flex items-center justify-center p-2 md:p-4 text-slate-800 relative overflow-x-hidden transition-all duration-1000';
+            
+            // XÓA bg-pattern mặc định VÀ THAY BẰNG bg-theme... CÓ SẴN PATTERN BÊN TRONG
+            document.getElementById('app-body').className = 'min-h-screen ' + currentRank.theme + ' flex items-center justify-center p-2 md:p-4 text-slate-800 relative overflow-x-hidden transition-all duration-1000';
+            
             const harpWrapper = document.getElementById('harp-wrapper'); harpWrapper.className = 'relative flex flex-col items-center justify-center h-56 w-56 mx-auto mb-2 harp-floating ' + currentRank.class;
             document.getElementById('rank-name-display').innerText = 'Danh hiệu: ' + currentRank.name;
 
