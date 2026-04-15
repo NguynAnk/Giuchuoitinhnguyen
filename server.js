@@ -4,6 +4,9 @@ const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
 
+// 👇 ĐÂY LÀ DÒNG CODE "THẦN THÁNH" ĐỂ FIX LỖI IPV6 TRÊN RENDER 👇
+require('dns').setDefaultResultOrder('ipv4first');
+
 const app = express();
 app.use(cors({ origin: '*' })); 
 app.use(express.json()); 
@@ -17,7 +20,9 @@ mongoose.connect(MONGO_URI)
 
 // CẤU HÌNH EMAIL GỬI MÃ KHÔI PHỤC TỔNG ĐÀI
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
     auth: {
         user: 'anklee206@gmail.com',
         pass: 'neohvuwijoatsfrh' 
@@ -111,7 +116,6 @@ app.post('/api/update-profile', async (req, res) => {
     } catch (error) { res.status(500).json({ success: false, message: 'Lỗi cập nhật' }); }
 });
 
-// ĐÃ SỬA: CHUYỂN TỪ TÌM USERNAME SANG TÌM EMAIL
 app.post('/api/forgot-password', async (req, res) => {
     try {
         const { email } = req.body;
@@ -126,23 +130,22 @@ app.post('/api/forgot-password', async (req, res) => {
         await user.save();
 
         const mailOptions = {
-            from: '"Chuỗi Tĩnh Nguyện" <anklee206@gmail.com>',
+            from: '"Cổng Tĩnh Nguyện" <anklee206@gmail.com>',
             to: user.email,
-            subject: 'Mã khôi phục mật khẩu - Chuỗi Tĩnh Nguyện',
+            subject: 'Mã khôi phục mật khẩu - Cổng Tĩnh Nguyện',
             text: `Xin chào ${user.username},\n\nMã xác nhận khôi phục mật khẩu của bạn là: ${otp}\nMã này có hiệu lực trong 15 phút.\n\nNếu bạn không yêu cầu, vui lòng bỏ qua email này.`
         };
 
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
                 console.error("Lỗi gửi mail:", error);
-                return res.status(500).json({ success: false, message: 'Lỗi khi gửi email. Vui lòng kiểm tra lại cấu hình máy chủ.' });
+                return res.status(500).json({ success: false, message: 'Lỗi khi gửi email. Vui lòng kiểm tra lại.' });
             }
             res.json({ success: true, message: `Mã khôi phục đã được gửi đến email của bạn!` });
         });
     } catch (error) { res.status(500).json({ success: false, message: 'Lỗi server' }); }
 });
 
-// ĐÃ SỬA: ĐẶT LẠI MẬT KHẨU DỰA TRÊN EMAIL
 app.post('/api/reset-password', async (req, res) => {
     try {
         const { email, otp, newPassword } = req.body;
