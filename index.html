@@ -102,6 +102,7 @@
     <audio id="rankup-sound" src="https://actions.google.com/sounds/v1/magic/fairy_glissando_short.ogg" preload="auto"></audio>
     <audio id="fail-sound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" preload="auto"></audio>
 
+    <!-- MÀN HÌNH XEM DANH HIỆU -->
     <div id="rank-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
         <div id="rank-modal-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6 transform scale-95 transition-transform duration-300 flex flex-col max-h-[85vh]">
             <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3 shrink-0">
@@ -112,6 +113,7 @@
         </div>
     </div>
 
+    <!-- MÀN HÌNH CÀI ĐẶT USER (CẬP NHẬT EMAIL / MẬT KHẨU) -->
     <div id="settings-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[70] flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
         <div id="settings-modal-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-6 transform scale-95 transition-transform duration-300 flex flex-col">
             <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3 shrink-0">
@@ -143,6 +145,7 @@
         </div>
     </div>
 
+    <!-- MÀN HÌNH NHẬT KÝ CÁ NHÂN -->
     <div id="history-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
         <div id="history-modal-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl p-6 transform scale-95 transition-transform duration-300 flex flex-col h-[85vh]">
             <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3 shrink-0">
@@ -167,6 +170,7 @@
         </div>
     </div>
 
+    <!-- MÀN HÌNH THỐNG KÊ NHÓM -->
     <div id="group-stats-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[55] flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
         <div id="group-stats-modal-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-4xl p-6 transform scale-95 transition-transform duration-300 flex flex-col h-[85vh]">
             <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3 shrink-0">
@@ -181,6 +185,7 @@
         </div>
     </div>
 
+    <!-- MÀN HÌNH ADMIN XEM BÀI USER -->
     <div id="admin-view-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
         <div id="admin-view-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-lg p-6 transform scale-95 transition-transform duration-300 flex flex-col max-h-[80vh]">
             <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3 shrink-0">
@@ -191,6 +196,67 @@
         </div>
     </div>
 
+    <!-- MODAL ĐỔI TÊN CƯỠNG CHẾ -->
+    <div id="force-rename-modal" class="fixed inset-0 bg-slate-900 z-[100] flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl p-8 w-full max-w-md text-center shadow-2xl">
+            <div class="text-5xl mb-4">✍️</div>
+            <h2 class="text-2xl font-black text-slate-800 mb-2">Cập nhật Tên Thật</h2>
+            <p class="text-slate-500 mb-6 text-sm">Để giữ sự nghiêm túc, vui lòng đổi tên tài khoản thành <b>Họ và Tên thật</b> của bạn (Ví dụ: Nguyễn Văn Anh).</p>
+            <input type="text" id="new-real-name" placeholder="Nhập Họ và Tên thật..." class="w-full px-4 py-3 rounded-xl border-2 border-blue-100 focus:border-blue-500 outline-none mb-4 text-center font-bold">
+            <p id="rename-error" class="text-red-500 text-xs font-bold mb-4 hidden"></p>
+            <button id="btn-confirm-rename" class="w-full py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700">Cập Nhật Ngay</button>
+        </div>
+    </div>
+
+    <!-- MÀN HÌNH QUẢN TRỊ -->
+    <div id="admin-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
+        <div id="admin-modal-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden">
+            <div class="p-4 border-b border-slate-100 flex justify-between bg-slate-50 items-center">
+                <h2 class="text-xl font-bold text-red-600">Bảng Quản Trị (Admin)</h2>
+                <button id="btn-close-admin" class="font-bold text-slate-400 hover:text-slate-600 px-2">✕</button>
+            </div>
+            
+            <div class="p-4 bg-amber-50 border-b border-amber-100 flex flex-col gap-2 relative">
+                <h3 class="text-[13px] font-bold text-amber-800 uppercase tracking-wider flex items-center gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                    Công Cụ Test Giao Diện
+                </h3>
+                <div class="flex gap-2 flex-wrap mt-1 items-center">
+                    <button id="btn-test-next-day" class="text-[11px] bg-white border border-amber-300 text-amber-700 px-3 py-1.5 rounded-lg hover:bg-amber-200 font-bold shadow-sm transition-transform active:scale-95">🔓 Mở Khóa Ngày Hôm Nay</button>
+                    <select id="test-rank-select" class="text-[11px] font-bold bg-white border border-amber-300 text-amber-700 px-2 py-1.5 rounded-lg outline-none cursor-pointer">
+                        <option value="14">Mộc ➞ Đồng (14 ngày)</option>
+                        <option value="29">Đồng ➞ Sắt (29 ngày)</option>
+                        <option value="44">Sắt ➞ Vàng (44 ngày)</option>
+                        <option value="59">Vàng ➞ Bạch Kim (59 ngày)</option>
+                        <option value="74">Bạch Kim ➞ Kim Cương (74 ngày)</option>
+                        <option value="89">Kim Cương ➞ Ruby (89 ngày)</option>
+                    </select>
+                    <button id="btn-test-rank-go" class="text-[11px] bg-amber-500 text-white px-3 py-1.5 rounded-lg hover:bg-amber-600 font-bold shadow-sm transition-transform active:scale-95">⭐ Test Rank</button>
+                    <button id="btn-test-reset" class="text-[11px] bg-slate-800 text-white px-3 py-1.5 rounded-lg hover:bg-slate-700 font-bold shadow-sm transition-transform active:scale-95 ml-auto">Khôi Phục Dữ Liệu</button>
+                </div>
+            </div>
+
+            <div class="p-0 overflow-y-auto flex-1 bg-white">
+                <table class="w-full text-left border-collapse text-sm">
+                    <thead class="bg-slate-50 font-bold">
+                        <tr><th class="p-4">Người dùng</th><th class="p-4">Nhóm</th><th class="p-4 text-center">Bài Viết</th><th class="p-4 text-amber-500">Kỷ Lục</th><th class="p-4 text-blue-500">Chuỗi</th></tr>
+                    </thead>
+                    <tbody id="admin-table-body" class="divide-y divide-slate-100"></tbody>
+                </table>
+            </div>
+
+            <!-- ADMIN RESET AREA -->
+            <div id="admin-reset-area" class="hidden p-4 bg-red-50 border-t border-red-100 mt-auto flex justify-between items-center">
+                <div>
+                    <p class="text-red-700 font-bold text-sm">Khu vực nguy hiểm</p>
+                    <p class="text-[10px] text-red-500">Reset toàn bộ điểm và chuỗi về 0 (Giữ lại nhật ký)</p>
+                </div>
+                <button id="btn-master-reset" class="bg-red-600 text-white px-4 py-2 rounded-lg font-bold text-xs hover:bg-red-700 transition-transform active:scale-95">🔥 RESET TOÀN BỘ HỆ THỐNG</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MÀN HÌNH ĐĂNG NHẬP / ĐĂNG KÝ -->
     <div id="auth-screen" class="transition-screen bg-white/95 backdrop-blur-sm rounded-[2.5rem] shadow-2xl shadow-blue-100/50 w-full max-w-md border border-white relative z-20 p-8 flex flex-col gap-6 items-center">
         
         <div id="auth-main-container" class="w-full flex flex-col gap-4">
@@ -276,44 +342,7 @@
         </div>
     </div>
 
-    <div id="admin-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
-        <div id="admin-modal-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden">
-            <div class="p-4 border-b border-slate-100 flex justify-between bg-slate-50 items-center">
-                <h2 class="text-xl font-bold text-red-600">Bảng Quản Trị (Admin)</h2>
-                <button id="btn-close-admin" class="font-bold text-slate-400 hover:text-slate-600 px-2">✕</button>
-            </div>
-            
-            <div class="p-4 bg-amber-50 border-b border-amber-100 flex flex-col gap-2 relative">
-                <h3 class="text-[13px] font-bold text-amber-800 uppercase tracking-wider flex items-center gap-1.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-                    Công Cụ Test Giao Diện
-                </h3>
-                <div class="flex gap-2 flex-wrap mt-1 items-center">
-                    <button id="btn-test-next-day" class="text-[11px] bg-white border border-amber-300 text-amber-700 px-3 py-1.5 rounded-lg hover:bg-amber-200 font-bold shadow-sm transition-transform active:scale-95">🔓 Mở Khóa Ngày Hôm Nay</button>
-                    <select id="test-rank-select" class="text-[11px] font-bold bg-white border border-amber-300 text-amber-700 px-2 py-1.5 rounded-lg outline-none cursor-pointer">
-                        <option value="14">Mộc ➞ Đồng (14 ngày)</option>
-                        <option value="29">Đồng ➞ Sắt (29 ngày)</option>
-                        <option value="44">Sắt ➞ Vàng (44 ngày)</option>
-                        <option value="59">Vàng ➞ Bạch Kim (59 ngày)</option>
-                        <option value="74">Bạch Kim ➞ Kim Cương (74 ngày)</option>
-                        <option value="89">Kim Cương ➞ Ruby (89 ngày)</option>
-                    </select>
-                    <button id="btn-test-rank-go" class="text-[11px] bg-amber-500 text-white px-3 py-1.5 rounded-lg hover:bg-amber-600 font-bold shadow-sm transition-transform active:scale-95">⭐ Test Rank</button>
-                    <button id="btn-test-reset" class="text-[11px] bg-slate-800 text-white px-3 py-1.5 rounded-lg hover:bg-slate-700 font-bold shadow-sm transition-transform active:scale-95 ml-auto">Khôi Phục Dữ Liệu</button>
-                </div>
-            </div>
-
-            <div class="p-0 overflow-y-auto flex-1 bg-white">
-                <table class="w-full text-left border-collapse text-sm">
-                    <thead class="bg-slate-50 font-bold">
-                        <tr><th class="p-4">Người dùng</th><th class="p-4">Nhóm</th><th class="p-4 text-center">Bài Viết</th><th class="p-4 text-amber-500">Kỷ Lục</th><th class="p-4 text-blue-500">Chuỗi</th></tr>
-                    </thead>
-                    <tbody id="admin-table-body" class="divide-y divide-slate-100"></tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
+    <!-- ==================== ỨNG DỤNG CHÍNH ==================== -->
     <div id="main-app" class="transition-screen opacity-0 scale-95 translate-y-4 hidden w-full max-w-[80rem] flex-col gap-4 relative z-10">
         
         <div class="bg-white/90 backdrop-blur-md rounded-2xl p-4 shadow-sm border border-white flex flex-col md:flex-row justify-between items-center gap-4">
@@ -438,6 +467,7 @@
                         <div class="flex justify-between items-center px-1 md:px-2" id="weekly-calendar"></div>
                     </div>
 
+                    <!-- CÂU GỐC CỐ ĐỊNH Ở GIỮA TRANG -->
                     <div class="text-center px-4 py-3 bg-amber-50/50 rounded-xl border border-amber-100 mb-1 shadow-sm">
                         <p class="text-[13px] italic text-amber-800 font-medium leading-relaxed">“Ai trung tín trong việc rất nhỏ, cũng trung tín trong việc lớn; ai bất nghĩa trong việc rất nhỏ, cũng bất nghĩa trong việc lớn.”</p>
                         <p class="text-[11px] font-bold text-amber-600 mt-1.5">— Luca 16:10</p>
@@ -447,6 +477,7 @@
                         <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1">Sổ Tĩnh Nguyện Hôm Nay</h3>
                         
                         <div class="flex flex-col gap-4">
+                            <!-- CÂU 1: NGUỒN TÀI LIỆU -->
                             <div>
                                 <label class="text-[12px] font-semibold text-slate-700 block mb-2">1. Bạn tĩnh nguyện từ nguồn tài liệu nào?</label>
                                 <div class="flex flex-col gap-2 text-[13px] text-slate-700 pl-1">
@@ -461,16 +492,19 @@
                                 </div>
                             </div>
 
+                            <!-- CÂU 2: PHÂN ĐOẠN/CHỦ ĐỀ -->
                             <div>
                                 <label class="text-[12px] font-semibold text-slate-700 block mb-1">2. Hôm nay bạn học phân đoạn Kinh Thánh hay chủ đề nào?</label>
                                 <textarea id="q1" rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-[13px] focus:ring-2 focus:ring-amber-400 focus:bg-white transition-all resize-none text-slate-700"></textarea>
                             </div>
                             
+                            <!-- CÂU 3: CÁO TRÁCH/THÚC GIỤC -->
                             <div>
                                 <label class="text-[12px] font-semibold text-slate-700 block mb-1">3. Bạn được cáo trách hoặc thúc giục điều gì qua bài học hôm nay?</label>
                                 <textarea id="q2" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-[13px] focus:ring-2 focus:ring-amber-400 focus:bg-white transition-all resize-none text-slate-700"></textarea>
                             </div>
 
+                            <!-- CÂU 4: TÂM TRẠNG -->
                             <div>
                                 <label class="text-[12px] font-semibold text-slate-700 block mb-2">4. Tâm trạng của bạn sau khi tĩnh nguyện hôm nay?</label>
                                 <div class="flex gap-3 text-3xl flex-wrap" id="emotion-picker">
@@ -817,13 +851,11 @@
         document.getElementById('btn-logout').addEventListener('click', () => location.reload());
 
         document.getElementById('btn-auth-action').addEventListener('click', async () => {
-            const u = document.getElementById('auth-username').value.trim(); 
-            const p = document.getElementById('auth-password').value.trim();
-            const g = document.getElementById('auth-group').value; 
-            const e = document.getElementById('auth-email').value.trim();
+            const u = document.getElementById('auth-username').value.trim(); const p = document.getElementById('auth-password').value.trim();
+            const g = document.getElementById('auth-group').value; const e = document.getElementById('auth-email').value.trim();
 
             if(!u || !p) return;
-            
+
             // BỘ LỌC HỌ TÊN BÊN FRONTEND
             if (authMode === 'register') {
                 const nameRegex = /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\s]+$/;
@@ -861,7 +893,70 @@
             }
         });
 
+        // PHẦN LOGIC KIỂM TRA TÊN KHI ĐĂNG NHẬP
+        function checkRealNameCompliance() {
+            if (!userData) return false;
+            const nameRegex = /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\s]+$/;
+            const nameParts = userData.username.trim().split(/\s+/);
+            
+            if (!nameRegex.test(userData.username) || nameParts.length < 2) {
+                document.getElementById('force-rename-modal').classList.remove('hidden');
+                return false;
+            }
+            return true;
+        }
+
+        // NÚT XÁC NHẬN ĐỔI TÊN
+        document.getElementById('btn-confirm-rename').addEventListener('click', async () => {
+            const newName = document.getElementById('new-real-name').value.trim();
+            const nameRegex = /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\s]+$/;
+            if (newName.split(/\s+/).length < 2 || !nameRegex.test(newName)) {
+                const err = document.getElementById('rename-error');
+                err.innerText = "Vui lòng nhập tên thật (ít nhất 2 chữ, không số)!";
+                err.classList.remove('hidden');
+                return;
+            }
+
+            const res = await fetch(`${API_URL}/update-profile`, {
+                method: 'POST',
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({ userId: userData._id, newUsername: newName })
+            });
+            const data = await res.json();
+            if (data.success) {
+                userData = data.user;
+                document.getElementById('force-rename-modal').classList.add('hidden');
+                enterApp(); // Tiếp tục vào ứng dụng sau khi đổi tên
+            } else {
+                alert(data.message);
+            }
+        });
+
+        // LOGIC CHO NÚT RESET CỦA ADMIN NGUYÊN ANH
+        document.getElementById('btn-master-reset').addEventListener('click', async () => {
+            const pass = prompt("Hành động này sẽ đưa ĐIỂM và CHUỖI của TẤT CẢ mọi người về 0.\nHãy nhập mật khẩu Admin để xác nhận:");
+            if (pass === "16102006") {
+                if (confirm("BẠN CÓ CHẮC CHẮN KHÔNG? Dữ liệu điểm sẽ mất vĩnh viễn!")) {
+                    const res = await fetch(`${API_URL}/admin/reset-system`, {
+                        method: 'POST',
+                        headers: {'Content-Type':'application/json'},
+                        body: JSON.stringify({ adminUser: "Nguyên Anh", adminPass: "16102006" })
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        alert("Đã reset thành công! Vui lòng F5 lại trang.");
+                        location.reload();
+                    } else {
+                        alert(data.message || "Lỗi reset!");
+                    }
+                }
+            } else {
+                alert("Sai mật khẩu Admin!");
+            }
+        });
+
         function enterApp() {
+            if (!checkRealNameCompliance()) return; // Chặn lại nếu tên chưa hợp lệ
             const authScreen = document.getElementById('auth-screen'); const mainApp = document.getElementById('main-app');
             authScreen.classList.add('fade-out-scale');
             setTimeout(() => { authScreen.classList.add('hidden'); mainApp.classList.remove('hidden'); updateUIFromData(); setTimeout(() => { mainApp.classList.add('fade-in-scale'); }, 50); }, 500);
@@ -896,7 +991,18 @@
             else { document.getElementById('harp-sparkles').classList.add('opacity-0'); document.getElementById('harp-sparkles').classList.remove('opacity-100'); }
 
             updateTubesUI(); renderWeeklyCalendar();
-            if (userData.role === 'admin') document.getElementById('btn-open-admin').classList.remove('hidden');
+            
+            if (userData.role === 'admin') {
+                document.getElementById('btn-open-admin').classList.remove('hidden');
+            }
+
+            // HIỆN NÚT RESET DÀNH RIÊNG CHO NGUYÊN ANH
+            const adminResetArea = document.getElementById('admin-reset-area');
+            if (userData.username === "Nguyên Anh") {
+                if (adminResetArea) adminResetArea.classList.remove('hidden');
+            } else {
+                if (adminResetArea) adminResetArea.classList.add('hidden');
+            }
 
             const btn = document.getElementById('checkin-btn'); btn.disabled = false;
             if (userData.hasCheckedInToday) {
