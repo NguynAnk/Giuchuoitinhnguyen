@@ -81,7 +81,7 @@
         .emotion-active { filter: grayscale(0%); opacity: 1; transform: scale(1.2); drop-shadow: 0 4px 6px rgba(0,0,0,0.1); }
     </style>
 </head>
-<body id="app-body" class="min-h-screen bg-theme-wood flex items-center justify-center p-2 md:p-4 text-slate-800 relative overflow-x-hidden">
+<body id="app-body" class="min-h-screen bg-theme-wood flex items-center justify-center p-3 sm:p-4 md:p-8 text-slate-800 relative overflow-x-hidden">
 
     <svg width="0" height="0" class="absolute pointer-events-none">
         <defs>
@@ -259,7 +259,7 @@
     </div>
 
     <!-- MÀN HÌNH ĐĂNG NHẬP / ĐĂNG KÝ -->
-    <div id="auth-screen" class="transition-screen bg-white/95 backdrop-blur-sm rounded-[2.5rem] shadow-2xl shadow-blue-100/50 w-full max-w-md border border-white relative z-20 p-8 flex flex-col gap-6 items-center">
+    <div id="auth-screen" class="transition-screen bg-white/90 md:bg-white/95 backdrop-blur-md rounded-3xl md:rounded-[2.5rem] shadow-2xl shadow-blue-100/50 w-full max-w-md border border-white relative z-20 p-6 md:p-8 flex flex-col gap-6 items-center">
         
         <div id="auth-main-container" class="w-full flex flex-col gap-4">
             <div class="text-center w-full mb-2">
@@ -345,9 +345,9 @@
     </div>
 
     <!-- ==================== ỨNG DỤNG CHÍNH ==================== -->
-    <div id="main-app" class="transition-screen opacity-0 scale-95 translate-y-4 hidden w-full max-w-[80rem] flex-col gap-4 relative z-10">
+    <div id="main-app" class="transition-screen opacity-0 scale-95 translate-y-4 hidden w-full max-w-[80rem] flex-col gap-3 md:gap-4 relative z-10">
         
-        <div class="bg-white/90 backdrop-blur-md rounded-2xl p-4 shadow-sm border border-white flex flex-col md:flex-row justify-between items-center gap-4">
+        <div class="bg-white/90 backdrop-blur-md rounded-2xl p-3 md:p-4 shadow-sm border border-white/50 flex flex-col md:flex-row justify-between items-center gap-3 md:gap-4">
             <div class="flex items-center gap-4">
                 <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-lg shadow-inner" id="user-avatar-text">U</div>
                 <div class="flex flex-col">
@@ -387,7 +387,7 @@
             </div>
         </div>
 
-        <div class="bg-white/95 backdrop-blur-sm rounded-[2.5rem] shadow-2xl shadow-blue-100/50 w-full border border-white flex flex-col xl:flex-row p-6 md:p-8 gap-8 items-stretch justify-between relative z-10">
+        <div class="bg-white/85 md:bg-white/95 backdrop-blur-md rounded-3xl md:rounded-[2.5rem] shadow-2xl shadow-blue-100/50 w-full border border-white/50 flex flex-col xl:flex-row p-4 sm:p-6 md:p-8 gap-6 md:gap-8 items-stretch justify-between relative z-10">
             
             <div class="flex-1 flex flex-col md:flex-row gap-8 items-center justify-center">
                 
@@ -408,7 +408,7 @@
                     </div>
 
                     <div class="flex flex-col items-center justify-center relative w-full mt-4">
-                        <div id="harp-wrapper" class="relative flex flex-col items-center justify-center h-56 w-56 mx-auto mb-2 rank-wood harp-floating">
+                        <div id="harp-wrapper" class="relative flex flex-col items-center justify-center h-48 w-48 md:h-56 md:w-56 mx-auto mb-2 rank-wood harp-floating">
                             <div id="harp-glow" class="absolute inset-0 rounded-full blur-3xl animate-pulse hidden"></div>
                             <div id="float-lv" class="absolute left-[-20px] top-[20%] text-red-500 font-black flex flex-col items-center opacity-0 pointer-events-none z-50 drop-shadow-md">
                                 <span class="text-xl leading-none">↑</span><span class="text-2xl whitespace-nowrap">+1 LV</span>
@@ -417,7 +417,7 @@
                                 <span class="text-xl leading-none">↑</span><span class="text-2xl whitespace-nowrap">+1 XP</span>
                             </div>
                             
-                            <svg id="harp-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 180" class="w-56 h-56 relative z-10 transition-all duration-1000 scale-90 opacity-80 overflow-visible">
+                            <svg id="harp-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 180" class="w-48 h-48 md:w-56 md:h-56 relative z-10 transition-all duration-1000 scale-90 opacity-80 overflow-visible">
                                 <g class="harp-halo" style="transform: scale(var(--halo-scale)); opacity: var(--extra-opacity); transform-origin: 80px 25px; transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);">
                                     <ellipse cx="80" cy="25" rx="35" ry="10" fill="none" class="harp-stroke-primary animate-pulse" stroke-width="3" />
                                     <ellipse cx="80" cy="25" rx="42" ry="14" fill="none" class="harp-stroke-secondary" stroke-width="1.5" opacity="0.8" />
@@ -448,7 +448,7 @@
                             </svg>
                         </div>
                         <div class="text-center z-10 flex flex-col items-center">
-                            <h2 class="text-6xl font-black text-slate-800" id="streak-count">0</h2>
+                            <h2 class="text-5xl md:text-6xl font-black text-slate-800" id="streak-count">0</h2>
                             <p class="text-sm font-bold text-amber-600 uppercase tracking-widest mt-1">Tổng Chuỗi Hiện Tại</p>
                             
                             <div class="flex gap-2 mt-3 flex-wrap justify-center">
@@ -464,25 +464,25 @@
 
                 <div class="w-full flex-1 flex flex-col gap-4 relative z-10 max-w-xl">
                     
-                    <div class="bg-white/80 rounded-2xl p-4 border border-slate-100 shadow-sm">
+                    <div class="bg-white/80 md:bg-white/90 rounded-2xl p-3 md:p-4 border border-slate-100 shadow-sm">
                         <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 text-center">Lịch Tĩnh Nguyện Gần Đây</h3>
                         <div class="flex justify-between items-center px-1 md:px-2" id="weekly-calendar"></div>
                     </div>
 
                     <!-- CÂU GỐC CỐ ĐỊNH Ở GIỮA TRANG -->
-                    <div class="text-center px-4 py-3 bg-amber-50/50 rounded-xl border border-amber-100 mb-1 shadow-sm">
+                    <div class="text-center px-3 py-3 md:px-4 md:py-3 bg-amber-50/50 rounded-xl border border-amber-100 mb-1 shadow-sm">
                         <p class="text-[13px] italic text-amber-800 font-medium leading-relaxed">“Ai trung tín trong việc rất nhỏ, cũng trung tín trong việc lớn; ai bất nghĩa trong việc rất nhỏ, cũng bất nghĩa trong việc lớn.”</p>
                         <p class="text-[11px] font-bold text-amber-600 mt-1.5">— Luca 16:10</p>
                     </div>
 
-                    <div class="bg-white/80 rounded-2xl p-4 border border-slate-100 shadow-sm flex flex-col gap-4">
+                    <div class="bg-white/80 md:bg-white/90 rounded-2xl p-3 md:p-4 border border-slate-100 shadow-sm flex flex-col gap-4">
                         <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1">Sổ Tĩnh Nguyện Hôm Nay</h3>
                         
                         <div class="flex flex-col gap-4">
                             <!-- CÂU 1: NGUỒN TÀI LIỆU -->
                             <div>
                                 <label class="text-[12px] font-semibold text-slate-700 block mb-2">1. Bạn tĩnh nguyện từ nguồn tài liệu nào?</label>
-                                <div class="flex flex-col gap-2 text-[13px] text-slate-700 pl-1">
+                                <div class="flex flex-col gap-2 text-[12px] md:text-[13px] text-slate-700 pl-1">
                                     <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="source" value="Kinh Thánh truyền thống" class="accent-amber-500 w-4 h-4"> Kinh Thánh truyền thống</label>
                                     <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="source" value="Bài học Kinh Thánh hằng ngày" class="accent-amber-500 w-4 h-4"> Bài học Kinh Thánh hằng ngày</label>
                                     <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="source" value="Tương tác Thánh Kinh" class="accent-amber-500 w-4 h-4"> Tương tác Thánh Kinh</label>
@@ -529,7 +529,7 @@
                 </div>
             </div>
 
-            <div class="flex flex-col md:flex-row gap-4 md:gap-5 shrink-0 border-t xl:border-t-0 xl:border-l border-slate-100 pt-6 xl:pt-20 pl-0 xl:pl-6 items-center xl:items-start justify-center w-full xl:w-auto mt-6 xl:mt-0">
+            <div class="flex flex-col md:flex-row gap-4 md:gap-5 shrink-0 border-t xl:border-t-0 xl:border-l border-slate-100/50 pt-5 xl:pt-20 pl-0 xl:pl-6 items-center xl:items-start justify-center w-full xl:w-auto mt-2 xl:mt-0">
                 <div class="flex flex-row md:flex-col items-center justify-center gap-3 w-full md:w-14">
                     <div class="text-center bg-red-50/80 px-2 py-1.5 rounded-xl border border-red-100 w-16 md:w-full shrink-0 shadow-sm flex flex-col items-center justify-center">
                         <span class="text-[10px] font-bold text-red-500 uppercase block leading-tight">Tổng</span>
@@ -985,8 +985,8 @@
             if (userData.justLostStreak) { lostAlert.classList.remove('hidden'); document.getElementById('fail-sound').play().catch(e=>{}); setTimeout(() => lostAlert.classList.add('hidden'), 5000); userData.justLostStreak = false; }
 
             const currentRank = getCurrentRankInfo(userData.totalCheckins);
-            document.getElementById('app-body').className = 'min-h-screen ' + currentRank.theme + ' flex items-center justify-center p-2 md:p-4 text-slate-800 relative overflow-x-hidden transition-all duration-1000';
-            const harpWrapper = document.getElementById('harp-wrapper'); harpWrapper.className = 'relative flex flex-col items-center justify-center h-56 w-56 mx-auto mb-2 harp-floating ' + currentRank.class;
+            document.getElementById('app-body').className = 'min-h-screen ' + currentRank.theme + ' flex items-center justify-center p-3 sm:p-4 md:p-8 text-slate-800 relative overflow-x-hidden transition-all duration-1000';
+            const harpWrapper = document.getElementById('harp-wrapper'); harpWrapper.className = 'relative flex flex-col items-center justify-center h-48 w-48 md:h-56 md:w-56 mx-auto mb-2 harp-floating ' + currentRank.class;
             document.getElementById('rank-name-display').innerText = 'Danh hiệu: ' + currentRank.name;
 
             if (currentRank.hasSparkle) { document.getElementById('harp-sparkles').classList.remove('opacity-0'); document.getElementById('harp-sparkles').classList.add('opacity-100'); } 
