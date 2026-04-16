@@ -4,7 +4,7 @@ const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
 
-// 👇 ĐÂY LÀ DÒNG CODE "THẦN THÁNH" ĐỂ FIX LỖI IPV6 TRÊN RENDER 👇
+// ÉP CHẠY MẠNG IPV4 ĐỂ TRÁNH LỖI MẠNG TRÊN RENDER
 require('dns').setDefaultResultOrder('ipv4first');
 
 const app = express();
@@ -18,11 +18,13 @@ mongoose.connect(MONGO_URI)
   .then(() => console.log('Đã kết nối Database thành công!'))
   .catch(err => console.log('Lỗi kết nối DB:', err));
 
-// CẤU HÌNH EMAIL GỬI MÃ KHÔI PHỤC TỔNG ĐÀI
+// CẤU HÌNH TỐI ƯU TỐC ĐỘ GỬI EMAIL
 const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 465,
     secure: true,
+    pool: true, // BẬT TÍNH NĂNG TÁI SỬ DỤNG KẾT NỐI (GIÚP GỬI SIÊU TỐC TỪ LẦN THỨ 2)
+    maxConnections: 1, // Tiết kiệm tài nguyên cho máy chủ Render miễn phí
     auth: {
         user: 'anklee206@gmail.com',
         pass: 'neohvuwijoatsfrh' 
@@ -116,6 +118,7 @@ app.post('/api/update-profile', async (req, res) => {
     } catch (error) { res.status(500).json({ success: false, message: 'Lỗi cập nhật' }); }
 });
 
+// API QUÊN MẬT KHẨU TỐI ƯU TỐC ĐỘ (CHẠY NGẦM)
 app.post('/api/forgot-password', async (req, res) => {
     try {
         const { email } = req.body;
@@ -136,13 +139,18 @@ app.post('/api/forgot-password', async (req, res) => {
             text: `Xin chào ${user.username},\n\nMã xác nhận khôi phục mật khẩu của bạn là: ${otp}\nMã này có hiệu lực trong 15 phút.\n\nNếu bạn không yêu cầu, vui lòng bỏ qua email này.`
         };
 
+        // BÁO THÀNH CÔNG NGAY LẬP TỨC CHO GIAO DIỆN KHỎI CHỜ ĐỢI
+        res.json({ success: true, message: `Mã khôi phục đang được gửi đến email của bạn! (Vui lòng chờ vài giây để nhận thư)` });
+
+        // CHO TIẾN TRÌNH GỬI MAIL CHẠY NGẦM
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
-                console.error("Lỗi gửi mail:", error);
-                return res.status(500).json({ success: false, message: 'Lỗi khi gửi email. Vui lòng kiểm tra lại.' });
+                console.error("Lỗi gửi mail chạy ngầm:", error);
+            } else {
+                console.log("Đã gửi mã khôi phục cho:", user.email);
             }
-            res.json({ success: true, message: `Mã khôi phục đã được gửi đến email của bạn!` });
         });
+
     } catch (error) { res.status(500).json({ success: false, message: 'Lỗi server' }); }
 });
 
