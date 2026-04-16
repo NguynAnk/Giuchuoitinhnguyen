@@ -817,11 +817,29 @@
         document.getElementById('btn-logout').addEventListener('click', () => location.reload());
 
         document.getElementById('btn-auth-action').addEventListener('click', async () => {
-            const u = document.getElementById('auth-username').value.trim(); const p = document.getElementById('auth-password').value.trim();
-            const g = document.getElementById('auth-group').value; const e = document.getElementById('auth-email').value.trim();
+            const u = document.getElementById('auth-username').value.trim(); 
+            const p = document.getElementById('auth-password').value.trim();
+            const g = document.getElementById('auth-group').value; 
+            const e = document.getElementById('auth-email').value.trim();
 
             if(!u || !p) return;
-            if (authMode === 'register' && !g) { document.getElementById('auth-error').innerText = "Vui lòng chọn Nhóm!"; document.getElementById('auth-error').classList.remove('hidden'); return; }
+            
+            // BỘ LỌC HỌ TÊN BÊN FRONTEND
+            if (authMode === 'register') {
+                const nameRegex = /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\s]+$/;
+                const nameParts = u.split(/\s+/);
+                if (!nameRegex.test(u) || nameParts.length < 2) {
+                    document.getElementById('auth-error').innerText = "Vui lòng nhập đúng Họ và Tên thật (ít nhất 2 chữ, không chứa số hay kí tự đặc biệt)!";
+                    document.getElementById('auth-error').classList.remove('hidden');
+                    return;
+                }
+                
+                if (!g) { 
+                    document.getElementById('auth-error').innerText = "Vui lòng chọn Nhóm!"; 
+                    document.getElementById('auth-error').classList.remove('hidden'); 
+                    return; 
+                }
+            }
             
             const btn = document.getElementById('btn-auth-action'); const slowWarning = document.getElementById('slow-network-warning');
             btn.innerText = "Đang kết nối..."; btn.disabled = true; document.getElementById('auth-error').classList.add('hidden');
