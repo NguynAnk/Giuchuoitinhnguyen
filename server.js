@@ -78,6 +78,15 @@ app.get('/', (req, res) => res.status(200).send('Server Awake!'));
 app.post('/api/register', async (req, res) => {
   try {
     const { username, password, email, group } = req.body;
+    
+    // BỘ LỌC HỌ TÊN TIẾNG VIỆT
+    const nameRegex = /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\s]+$/;
+    const nameParts = username.trim().split(/\s+/);
+    
+    if (!nameRegex.test(username) || nameParts.length < 2) {
+        return res.status(400).json({ success: false, message: 'Vui lòng nhập đúng Họ và Tên thật (ít nhất 2 chữ, không số, không kí tự đặc biệt)!' });
+    }
+
     const existingUser = await User.findOne({ username: username });
     if (existingUser) return res.status(400).json({ success: false, message: 'Tên tài khoản đã tồn tại' });
     const totalUsers = await User.countDocuments();
@@ -88,7 +97,6 @@ app.post('/api/register', async (req, res) => {
     res.json({ success: true, user: newUser });
   } catch (error) { res.status(500).json({ success: false, message: 'Lỗi server' }); }
 });
-
 app.post('/api/login', async (req, res) => {
   try {
     const { username, password, localDate } = req.body; 
