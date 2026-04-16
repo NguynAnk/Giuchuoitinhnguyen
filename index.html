@@ -197,14 +197,14 @@
     </div>
 
     <!-- MODAL ĐỔI TÊN CƯỠNG CHẾ -->
-    <div id="force-rename-modal" class="fixed inset-0 bg-slate-900 z-[100] flex items-center justify-center p-4 hidden">
+    <div id="force-rename-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-3xl p-8 w-full max-w-md text-center shadow-2xl">
             <div class="text-5xl mb-4">✍️</div>
             <h2 class="text-2xl font-black text-slate-800 mb-2">Cập nhật Tên Thật</h2>
             <p class="text-slate-500 mb-6 text-sm">Để giữ sự nghiêm túc, vui lòng đổi tên tài khoản thành <b>Họ và Tên thật</b> của bạn (Ví dụ: Nguyễn Văn Anh).</p>
             <input type="text" id="new-real-name" placeholder="Nhập Họ và Tên thật..." class="w-full px-4 py-3 rounded-xl border-2 border-blue-100 focus:border-blue-500 outline-none mb-4 text-center font-bold">
             <p id="rename-error" class="text-red-500 text-xs font-bold mb-4 hidden"></p>
-            <button id="btn-confirm-rename" class="w-full py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700">Cập Nhật Ngay</button>
+            <button id="btn-confirm-rename" class="w-full py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-transform active:scale-95">Cập Nhật Ngay</button>
         </div>
     </div>
 
@@ -245,13 +245,15 @@
                 </table>
             </div>
 
-            <!-- ADMIN RESET AREA -->
-            <div id="admin-reset-area" class="hidden p-4 bg-red-50 border-t border-red-100 mt-auto flex justify-between items-center">
-                <div>
-                    <p class="text-red-700 font-bold text-sm">Khu vực nguy hiểm</p>
-                    <p class="text-[10px] text-red-500">Reset toàn bộ điểm và chuỗi về 0 (Giữ lại nhật ký)</p>
+            <!-- ADMIN RESET AREA (ĐÃ FIX LỖI ẨN/HIỆN CSS) -->
+            <div id="admin-reset-area" class="hidden w-full mt-auto">
+                <div class="p-4 bg-red-50 border-t border-red-100 flex justify-between items-center">
+                    <div>
+                        <p class="text-red-700 font-bold text-sm">Khu vực nguy hiểm</p>
+                        <p class="text-[10px] text-red-500">Reset toàn bộ điểm và chuỗi về 0 (Giữ lại nhật ký)</p>
+                    </div>
+                    <button id="btn-master-reset" class="bg-red-600 text-white px-4 py-2 rounded-lg font-bold text-xs hover:bg-red-700 transition-transform active:scale-95">🔥 RESET TOÀN BỘ HỆ THỐNG</button>
                 </div>
-                <button id="btn-master-reset" class="bg-red-600 text-white px-4 py-2 rounded-lg font-bold text-xs hover:bg-red-700 transition-transform active:scale-95">🔥 RESET TOÀN BỘ HỆ THỐNG</button>
             </div>
         </div>
     </div>
@@ -996,9 +998,9 @@
                 document.getElementById('btn-open-admin').classList.remove('hidden');
             }
 
-            // HIỆN NÚT RESET DÀNH RIÊNG CHO NGUYÊN ANH
+            // HIỆN NÚT RESET DÀNH RIÊNG CHO NGUYÊN ANH (ĐÃ FIX LỖI ẨN HTML)
             const adminResetArea = document.getElementById('admin-reset-area');
-            if (userData.username === "Nguyên Anh") {
+            if (userData.username.trim() === "Nguyên Anh") {
                 if (adminResetArea) adminResetArea.classList.remove('hidden');
             } else {
                 if (adminResetArea) adminResetArea.classList.add('hidden');
