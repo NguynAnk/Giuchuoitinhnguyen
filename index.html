@@ -102,7 +102,6 @@
     <audio id="rankup-sound" src="https://actions.google.com/sounds/v1/magic/fairy_glissando_short.ogg" preload="auto"></audio>
     <audio id="fail-sound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" preload="auto"></audio>
 
-    <!-- MÀN HÌNH XEM DANH HIỆU -->
     <div id="rank-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
         <div id="rank-modal-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6 transform scale-95 transition-transform duration-300 flex flex-col max-h-[85vh]">
             <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3 shrink-0">
@@ -113,7 +112,6 @@
         </div>
     </div>
 
-    <!-- MÀN HÌNH CÀI ĐẶT USER (CẬP NHẬT EMAIL / MẬT KHẨU) -->
     <div id="settings-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[70] flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
         <div id="settings-modal-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-6 transform scale-95 transition-transform duration-300 flex flex-col">
             <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3 shrink-0">
@@ -145,7 +143,6 @@
         </div>
     </div>
 
-    <!-- MÀN HÌNH NHẬT KÝ CÁ NHÂN -->
     <div id="history-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
         <div id="history-modal-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl p-6 transform scale-95 transition-transform duration-300 flex flex-col h-[85vh]">
             <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3 shrink-0">
@@ -170,7 +167,6 @@
         </div>
     </div>
 
-    <!-- MÀN HÌNH THỐNG KÊ NHÓM -->
     <div id="group-stats-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[55] flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
         <div id="group-stats-modal-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-4xl p-6 transform scale-95 transition-transform duration-300 flex flex-col h-[85vh]">
             <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3 shrink-0">
@@ -185,7 +181,6 @@
         </div>
     </div>
 
-    <!-- MÀN HÌNH ADMIN XEM BÀI USER -->
     <div id="admin-view-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
         <div id="admin-view-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-lg p-6 transform scale-95 transition-transform duration-300 flex flex-col max-h-[80vh]">
             <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3 shrink-0">
@@ -196,7 +191,6 @@
         </div>
     </div>
 
-    <!-- MÀN HÌNH ĐĂNG NHẬP / ĐĂNG KÝ -->
     <div id="auth-screen" class="transition-screen bg-white/95 backdrop-blur-sm rounded-[2.5rem] shadow-2xl shadow-blue-100/50 w-full max-w-md border border-white relative z-20 p-8 flex flex-col gap-6 items-center">
         
         <div id="auth-main-container" class="w-full flex flex-col gap-4">
@@ -253,7 +247,6 @@
             <button id="btn-auth-action" class="w-full py-3.5 px-6 rounded-xl font-bold text-lg text-white bg-blue-600 hover:bg-blue-700 transition-transform active:scale-95 mt-2">Vào Ứng Dụng</button>
         </div>
 
-        <!-- KHUNG QUÊN MẬT KHẨU ĐÃ ĐỔI SANG NHẬP EMAIL -->
         <div id="forgot-pw-container" class="w-full flex flex-col gap-4 hidden">
             <div class="text-center w-full mb-2">
                 <h1 class="text-2xl font-bold text-slate-800">Khôi phục Mật khẩu</h1>
@@ -283,7 +276,6 @@
         </div>
     </div>
 
-    <!-- MÀN HÌNH QUẢN TRỊ -->
     <div id="admin-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
         <div id="admin-modal-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden">
             <div class="p-4 border-b border-slate-100 flex justify-between bg-slate-50 items-center">
@@ -322,7 +314,6 @@
         </div>
     </div>
 
-    <!-- ==================== ỨNG DỤNG CHÍNH ==================== -->
     <div id="main-app" class="transition-screen opacity-0 scale-95 translate-y-4 hidden w-full max-w-[80rem] flex-col gap-4 relative z-10">
         
         <div class="bg-white/90 backdrop-blur-md rounded-2xl p-4 shadow-sm border border-white flex flex-col md:flex-row justify-between items-center gap-4">
@@ -447,9 +438,9 @@
                         <div class="flex justify-between items-center px-1 md:px-2" id="weekly-calendar"></div>
                     </div>
 
-                    <div id="verse-container" class="bg-blue-50/60 rounded-2xl p-4 border border-blue-100 relative shadow-sm">
-                        <p id="verse-text" class="italic text-slate-700 leading-relaxed font-medium text-sm">Đang tải Lời Chúa...</p>
-                        <p id="verse-ref" class="text-right text-xs font-semibold text-blue-600 mt-2">—</p>
+                    <div class="text-center px-4 py-3 bg-amber-50/50 rounded-xl border border-amber-100 mb-1 shadow-sm">
+                        <p class="text-[13px] italic text-amber-800 font-medium leading-relaxed">“Ai trung tín trong việc rất nhỏ, cũng trung tín trong việc lớn; ai bất nghĩa trong việc rất nhỏ, cũng bất nghĩa trong việc lớn.”</p>
+                        <p class="text-[11px] font-bold text-amber-600 mt-1.5">— Luca 16:10</p>
                     </div>
 
                     <div class="bg-white/80 rounded-2xl p-4 border border-slate-100 shadow-sm flex flex-col gap-4">
@@ -457,33 +448,32 @@
                         
                         <div class="flex flex-col gap-4">
                             <div>
-                                <label class="text-[12px] font-semibold text-slate-700 block mb-1">1. Phân đoạn Kinh Thánh mà bạn đã đọc hôm nay là gì?</label>
-                                <textarea id="q1" rows="1" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-[13px] focus:ring-2 focus:ring-amber-400 focus:bg-white transition-all resize-none text-slate-700"></textarea>
-                            </div>
-                            <div>
-                                <label class="text-[12px] font-semibold text-slate-700 block mb-1">2. Điều gì trong đoạn này đáng để suy ngẫm?</label>
-                                <textarea id="q2" rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-[13px] focus:ring-2 focus:ring-amber-400 focus:bg-white transition-all resize-none text-slate-700"></textarea>
-                            </div>
-                            <div>
-                                <label class="text-[12px] font-semibold text-slate-700 block mb-1 leading-snug">3. Lời phán nào níu tâm trí bạn lâu nhất, và gỡ rối góc khuất nào?</label>
-                                <textarea id="q3" rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-[13px] focus:ring-2 focus:ring-amber-400 focus:bg-white transition-all resize-none text-slate-700"></textarea>
-                            </div>
-                            
-                            <div>
-                                <label class="text-[12px] font-semibold text-slate-700 block mb-2">4. Bạn học Kinh Thánh từ nguồn nào?</label>
-                                <div class="flex flex-col gap-2 text-[13px] text-slate-700">
-                                    <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="source" value="Sách Kinh Thánh truyền thống" class="accent-amber-500 w-4 h-4"> Sách Kinh Thánh truyền thống</label>
-                                    <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="source" value="Tài liệu tĩnh nguyện cá nhân" class="accent-amber-500 w-4 h-4"> Tài liệu tĩnh nguyện cá nhân</label>
+                                <label class="text-[12px] font-semibold text-slate-700 block mb-2">1. Bạn tĩnh nguyện từ nguồn tài liệu nào?</label>
+                                <div class="flex flex-col gap-2 text-[13px] text-slate-700 pl-1">
+                                    <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="source" value="Kinh Thánh truyền thống" class="accent-amber-500 w-4 h-4"> Kinh Thánh truyền thống</label>
+                                    <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="source" value="Bài học Kinh Thánh hằng ngày" class="accent-amber-500 w-4 h-4"> Bài học Kinh Thánh hằng ngày</label>
+                                    <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="source" value="Tương tác Thánh Kinh" class="accent-amber-500 w-4 h-4"> Tương tác Thánh Kinh</label>
+                                    <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="source" value="Oneway" class="accent-amber-500 w-4 h-4"> Oneway</label>
                                     <label class="flex items-center gap-2 cursor-pointer">
-                                        <input type="radio" name="source" value="Khác" id="source-other-radio" class="accent-amber-500 w-4 h-4"> Khác 
-                                        <input type="text" id="source-other-text" disabled class="ml-2 bg-slate-50 border-b border-slate-300 px-2 py-0.5 focus:outline-none focus:border-amber-500 text-[12px] w-32 disabled:opacity-50" placeholder="Ghi rõ...">
+                                        <input type="radio" name="source" value="Khác" id="source-other-radio" class="accent-amber-500 w-4 h-4"> Tài liệu tĩnh nguyện khác: 
+                                        <input type="text" id="source-other-text" disabled class="ml-2 bg-slate-50 border-b border-slate-300 px-2 py-0.5 focus:outline-none focus:border-amber-500 text-[12px] w-32 md:w-40 disabled:opacity-50" placeholder="...">
                                     </label>
                                 </div>
                             </div>
 
                             <div>
-                                <label class="text-[12px] font-semibold text-slate-700 block mb-2">5. Tâm trạng của bạn sau khi tĩnh nguyện hôm nay?</label>
-                                <div class="flex gap-3 text-3xl" id="emotion-picker">
+                                <label class="text-[12px] font-semibold text-slate-700 block mb-1">2. Hôm nay bạn học phân đoạn Kinh Thánh hay chủ đề nào?</label>
+                                <textarea id="q1" rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-[13px] focus:ring-2 focus:ring-amber-400 focus:bg-white transition-all resize-none text-slate-700"></textarea>
+                            </div>
+                            
+                            <div>
+                                <label class="text-[12px] font-semibold text-slate-700 block mb-1">3. Bạn được cáo trách hoặc thúc giục điều gì qua bài học hôm nay?</label>
+                                <textarea id="q2" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-[13px] focus:ring-2 focus:ring-amber-400 focus:bg-white transition-all resize-none text-slate-700"></textarea>
+                            </div>
+
+                            <div>
+                                <label class="text-[12px] font-semibold text-slate-700 block mb-2">4. Tâm trạng của bạn sau khi tĩnh nguyện hôm nay?</label>
+                                <div class="flex gap-3 text-3xl flex-wrap" id="emotion-picker">
                                     <span class="emotion-btn" data-emotion="😍" title="Háo hức">😍</span>
                                     <span class="emotion-btn" data-emotion="😇" title="Bình an">😇</span>
                                     <span class="emotion-btn" data-emotion="🤩" title="Vui vẻ">🤩</span>
@@ -538,26 +528,6 @@
     <script>
         const API_URL = 'https://giuchuoitinhnguyen.onrender.com/api';
         let userData = null; let originalUserData = null; let authMode = 'login'; let isProcessing = false; let isTestMode = false; 
-
-        const bibleVerses = [
-            { text: "Lời Chúa là ngọn đèn cho chân tôi, ánh sáng cho đường lối tôi.", ref: "Thi Thiên 119:105" },
-            { text: "Mọi sự hiệp lại làm ích cho kẻ yêu mến Đức Chúa Trời.", ref: "Rô-ma 8:28" },
-            { text: "Hãy phó thác đường lối mình cho Đức Giê-hô-va, và nhờ cậy nơi Ngài, thì Ngài sẽ làm thành việc đó.", ref: "Thi Thiên 37:5" },
-            { text: "Tôi làm được mọi sự nhờ Đấng ban thêm sức cho tôi.", ref: "Phi-líp 4:13" },
-            { text: "Đức Giê-hô-va là Đấng chăn giữ tôi: tôi sẽ chẳng thiếu thốn gì.", ref: "Thi Thiên 23:1" },
-            { text: "Lòng vui mừng vốn một phương thuốc hay; Còn trí nao sờn làm khô xương cốt.", ref: "Châm-ngôn 17:22" },
-            { text: "Hãy hết lòng tin cậy Đức Giê-hô-va, chớ nương cậy nơi sự thông sáng của mình.", ref: "Châm-ngôn 3:5" }
-        ];
-
-        function loadDailyVerse() {
-            const el = document.getElementById('verse-text'); 
-            const ref = document.getElementById('verse-ref');
-            if (el && ref) { 
-                const r = bibleVerses[Math.floor(Math.random() * bibleVerses.length)]; 
-                el.innerText = r.text; 
-                ref.innerText = `— ${r.ref}`; 
-            }
-        }
 
         const rankData = [
             { id: 0, streak: 0, name: "Người Tìm Kiếm (Mộc)", class: "rank-wood", theme: "bg-theme-wood", hasSparkle: false },
@@ -715,7 +685,6 @@
             document.getElementById('auth-screen').classList.remove('hidden');
             document.getElementById('auth-screen').classList.remove('fade-out-scale');
             document.getElementById('btn-forgot-mode').click();
-            // ĐIỀN EMAIL NẾU USER ĐÃ LƯU
             document.getElementById('forgot-email').value = userData.email || '';
         });
 
@@ -731,7 +700,6 @@
             const btn = document.getElementById('btn-send-otp'); const msg = document.getElementById('forgot-msg');
             btn.innerText = "Đang gửi mail..."; btn.disabled = true; msg.classList.add('hidden');
             try {
-                // GỬI EMAIL LÊN SERVER
                 const res = await fetch(`${API_URL}/forgot-password`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({email: e}) });
                 const data = await res.json();
                 if(data.success) { msg.innerText = data.message; msg.className = "text-center text-sm font-bold text-green-600 block"; document.getElementById('forgot-step-1').classList.add('hidden'); document.getElementById('forgot-step-2').classList.remove('hidden'); document.getElementById('forgot-step-2').classList.add('flex'); } 
@@ -746,7 +714,6 @@
             const btn = document.getElementById('btn-reset-pw'); const msg = document.getElementById('forgot-msg');
             btn.innerText = "Đang xử lý..."; btn.disabled = true; msg.classList.add('hidden');
             try {
-                // GỬI OTP VÀ MẬT KHẨU MỚI BẰNG EMAIL
                 const res = await fetch(`${API_URL}/reset-password`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({email: e, otp: otp, newPassword: npw}) });
                 const data = await res.json();
                 if(data.success) { msg.innerText = "Khôi phục thành công! Hãy đăng nhập lại."; msg.className = "text-center text-sm font-bold text-green-600 block"; setTimeout(() => document.getElementById('btn-back-login').click(), 2000); } 
@@ -770,7 +737,17 @@
             let html = '';
             logs.forEach(log => {
                 if (filterEmo !== 'all' && log.emotion !== filterEmo) return;
-                html += '<div class="bg-slate-50 border border-slate-200 rounded-xl p-4"><div class="flex justify-between items-center mb-2"><span class="text-xs font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded">' + (log.date || 'Không rõ') + '</span><span class="text-2xl">' + (log.emotion || '') + '</span></div><p class="text-[11px] text-slate-500 font-bold uppercase mb-1">Kinh Thánh:</p><p class="text-sm text-slate-800 mb-3 bg-white p-2 rounded border">' + (log.q1 || '...') + '</p><p class="text-[11px] text-slate-500 font-bold uppercase mb-1">Suy ngẫm:</p><p class="text-sm text-slate-800 mb-3 bg-white p-2 rounded border">' + (log.q2 || '...') + '</p><p class="text-[11px] text-slate-500 font-bold uppercase mb-1">Bài học & Gỡ rối:</p><p class="text-sm text-slate-800 bg-white p-2 rounded border">' + (log.q3 || '...') + '</p></div>';
+                html += '<div class="bg-slate-50 border border-slate-200 rounded-xl p-4"><div class="flex justify-between items-center mb-2"><span class="text-xs font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded">' + (log.date || 'Không rõ') + '</span><span class="text-2xl">' + (log.emotion || '') + '</span></div>';
+                
+                html += '<p class="text-[11px] text-slate-500 font-bold uppercase mb-1">1. Nguồn tài liệu:</p><p class="text-sm text-slate-800 mb-3 bg-white p-2 rounded border">' + (log.source || 'Không có') + '</p>';
+                html += '<p class="text-[11px] text-slate-500 font-bold uppercase mb-1">2. Phân đoạn/Chủ đề:</p><p class="text-sm text-slate-800 mb-3 bg-white p-2 rounded border">' + (log.q1 || '...') + '</p>';
+                html += '<p class="text-[11px] text-slate-500 font-bold uppercase mb-1">3. Cáo trách/Thúc giục:</p><p class="text-sm text-slate-800 mb-3 bg-white p-2 rounded border">' + (log.q2 || '...') + '</p>';
+                
+                if(log.q3) {
+                    html += '<p class="text-[11px] text-slate-500 font-bold uppercase mb-1">Cũ - Bài học & Gỡ rối:</p><p class="text-sm text-slate-800 mb-3 bg-white p-2 rounded border">' + log.q3 + '</p>';
+                }
+                
+                html += '</div>';
             });
             if(html === '') html = '<p class="text-center text-slate-400 mt-4">Không tìm thấy bài viết với cảm xúc này.</p>';
             container.innerHTML = html;
@@ -868,7 +845,7 @@
 
         function enterApp() {
             const authScreen = document.getElementById('auth-screen'); const mainApp = document.getElementById('main-app');
-            loadDailyVerse(); authScreen.classList.add('fade-out-scale');
+            authScreen.classList.add('fade-out-scale');
             setTimeout(() => { authScreen.classList.add('hidden'); mainApp.classList.remove('hidden'); updateUIFromData(); setTimeout(() => { mainApp.classList.add('fade-in-scale'); }, 50); }, 500);
         }
 
@@ -893,7 +870,7 @@
             if (userData.justLostStreak) { lostAlert.classList.remove('hidden'); document.getElementById('fail-sound').play().catch(e=>{}); setTimeout(() => lostAlert.classList.add('hidden'), 5000); userData.justLostStreak = false; }
 
             const currentRank = getCurrentRankInfo(userData.totalCheckins);
-            document.getElementById('app-body').className = 'min-h-screen ' + currentRank.theme + ' bg-pattern flex items-center justify-center p-2 md:p-4 text-slate-800 relative overflow-x-hidden transition-all duration-1000';
+            document.getElementById('app-body').className = 'min-h-screen ' + currentRank.theme + ' flex items-center justify-center p-2 md:p-4 text-slate-800 relative overflow-x-hidden transition-all duration-1000';
             const harpWrapper = document.getElementById('harp-wrapper'); harpWrapper.className = 'relative flex flex-col items-center justify-center h-56 w-56 mx-auto mb-2 harp-floating ' + currentRank.class;
             document.getElementById('rank-name-display').innerText = 'Danh hiệu: ' + currentRank.name;
 
@@ -938,7 +915,7 @@
                 let srcVal = ''; const checkedRadio = document.querySelector('input[name="source"]:checked');
                 if(checkedRadio) { srcVal = checkedRadio.value === 'Khác' ? document.getElementById('source-other-text').value : checkedRadio.value; }
                 
-                const payload = { userId: userData._id, action: 'checkin', localDate: getLocalTodayStr(), logData: { q1: document.getElementById('q1').value, q2: document.getElementById('q2').value, q3: document.getElementById('q3').value, source: srcVal, emotion: selectedEmotion } };
+                const payload = { userId: userData._id, action: 'checkin', localDate: getLocalTodayStr(), logData: { q1: document.getElementById('q1').value, q2: document.getElementById('q2').value, q3: '', source: srcVal, emotion: selectedEmotion } };
 
                 if (isTestMode) {
                     userData.currentStreak++; userData.maxStreak = Math.max(userData.maxStreak, userData.currentStreak); userData.totalCheckins++; userData.totalPoints++; userData.hasCheckedInToday = true; userData.lastCheckinDateStr = getLocalTodayStr();
@@ -948,7 +925,7 @@
                     try { const res = await fetch(`${API_URL}/update-streak`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); const data = await res.json(); if (data.success) userData = data.user; } catch (error) { alert("Lỗi kết nối!") } 
                 }
                 
-                document.getElementById('q1').value = ''; document.getElementById('q2').value = ''; document.getElementById('q3').value = '';
+                document.getElementById('q1').value = ''; document.getElementById('q2').value = '';
                 document.querySelectorAll('input[name="source"]').forEach(r=>r.checked=false); document.getElementById('source-other-text').value=''; document.getElementById('source-other-text').disabled=true;
                 document.querySelectorAll('.emotion-btn').forEach(b => b.classList.remove('emotion-active')); selectedEmotion='';
                 
@@ -959,7 +936,12 @@
         window.showUserLogs = function(logsJson) {
             const logs = JSON.parse(decodeURIComponent(logsJson)); const body = document.getElementById('admin-view-body');
             if(!logs || logs.length === 0) { body.innerHTML = '<p class="text-slate-500">Người này chưa viết bài nào.</p>'; } 
-            else { const log = logs[0]; body.innerHTML = '<div class="bg-blue-50 p-3 rounded-lg"><span class="font-bold text-blue-700">Ngày:</span> ' + (log.date || 'Không rõ') + ' ' + (log.emotion || '') + '</div><div class="bg-slate-50 border p-3 rounded-lg"><span class="font-bold text-slate-700">Q1. Kinh Thánh:</span><p class="mt-1">' + (log.q1 || '(Trống)') + '</p></div><div class="bg-slate-50 border p-3 rounded-lg"><span class="font-bold text-slate-700">Q2. Suy ngẫm:</span><p class="mt-1">' + (log.q2 || '(Trống)') + '</p></div><div class="bg-slate-50 border p-3 rounded-lg"><span class="font-bold text-slate-700">Nguồn:</span> ' + (log.source || '(Trống)') + '</div>'; }
+            else { 
+                const log = logs[0]; 
+                let inner = '<div class="bg-blue-50 p-3 rounded-lg"><span class="font-bold text-blue-700">Ngày:</span> ' + (log.date || 'Không rõ') + ' ' + (log.emotion || '') + '</div><div class="bg-slate-50 border p-3 rounded-lg"><span class="font-bold text-slate-700">1. Nguồn tài liệu:</span><p class="mt-1">' + (log.source || '(Trống)') + '</p></div><div class="bg-slate-50 border p-3 rounded-lg"><span class="font-bold text-slate-700">2. Phân đoạn/Chủ đề:</span><p class="mt-1">' + (log.q1 || '(Trống)') + '</p></div><div class="bg-slate-50 border p-3 rounded-lg"><span class="font-bold text-slate-700">3. Cáo trách/Thúc giục:</span><p class="mt-1">' + (log.q2 || '(Trống)') + '</p></div>'; 
+                if(log.q3) { inner += '<div class="bg-slate-50 border p-3 rounded-lg"><span class="font-bold text-slate-700">Cũ - Bài học & Gỡ rối:</span><p class="mt-1">' + log.q3 + '</p></div>'; }
+                body.innerHTML = inner;
+            }
             toggleModal('admin-view-modal', true);
         }
         
