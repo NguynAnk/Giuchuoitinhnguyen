@@ -9,7 +9,7 @@
     <style>
         body { font-family: 'Inter', sans-serif; transition: background 1s ease-in-out; }
         
-        /* HÌNH NỀN THEO RANK CÓ HOA VĂN ĐẶC TRƯNG & MÀU ĐẬM ĐÀ HƠN */
+        /* HÌNH NỀN THEO RANK CÓ HOA VĂN ĐẶC TRƯNG & MÀU ĐẬM ĐÀ HƠN (ĐÃ KHÔI PHỤC NỀN TĨNH NHƯ CŨ) */
         .bg-theme-wood { background: repeating-linear-gradient(45deg, rgba(141,110,99,0.05) 0, rgba(141,110,99,0.05) 2px, transparent 2px, transparent 8px), linear-gradient(135deg, #e7e5e4, #d6d3d1); }
         .bg-theme-bronze { background: repeating-radial-gradient(circle at 0 0, transparent 0, rgba(217,119,6,0.08) 10px, transparent 10px, transparent 20px), linear-gradient(135deg, #ffedd5, #fed7aa); }
         .bg-theme-iron { background: linear-gradient(0deg, transparent 24%, rgba(100,116,139,0.08) 25%, rgba(100,116,139,0.08) 26%, transparent 27%, transparent 74%, rgba(100,116,139,0.08) 75%, rgba(100,116,139,0.08) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(100,116,139,0.08) 25%, rgba(100,116,139,0.08) 26%, transparent 27%, transparent 74%, rgba(100,116,139,0.08) 75%, rgba(100,116,139,0.08) 76%, transparent 77%, transparent), linear-gradient(135deg, #f1f5f9, #cbd5e1); background-size: 40px 40px, 40px 40px, 100% 100%; }
@@ -25,24 +25,13 @@
         
         .glass-tube { box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
         .glass-tube-overlay { box-shadow: inset 5px 0 15px rgba(255,255,255,0.8), inset -5px 0 15px rgba(0,0,0,0.1); }
-        .tube-liquid-red { width: var(--fill-level, 6%); height: 100%; background-image: linear-gradient(to right, #dc2626, #ef4444, #f87171); }
-        .tube-liquid-blue { width: var(--fill-level, 6%); height: 100%; background-image: linear-gradient(to right, #2563eb, #3b82f6, #60a5fa); }
-        @media (min-width: 768px) {
-            .tube-liquid-red { width: 100%; height: var(--fill-level, 6%); background-image: linear-gradient(to top, #dc2626, #ef4444, #f87171); }
-            .tube-liquid-blue { width: 100%; height: var(--fill-level, 6%); background-image: linear-gradient(to top, #2563eb, #3b82f6, #60a5fa); }
-        }
-
+        
         .wave-mask-v-1, .wave-mask-v-2 { position: absolute; width: 250px; height: 250px; left: -105px; pointer-events: none; }
         .wave-mask-v-1 { top: -243px; border-radius: 40%; background: rgba(248, 250, 252, 0.5); animation: spin 5s linear infinite; }
         .wave-mask-v-2 { top: -247px; border-radius: 45%; background: rgb(248, 250, 252); box-shadow: 0 5px 8px -2px rgba(0,0,0,0.15); animation: spin 7s linear infinite; }
-        .wave-mask-h-1, .wave-mask-h-2 { position: absolute; width: 250px; height: 250px; top: -105px; pointer-events: none; }
-        .wave-mask-h-1 { right: -243px; border-radius: 40%; background: rgba(248, 250, 252, 0.5); animation: spin 5s linear infinite; }
-        .wave-mask-h-2 { right: -247px; border-radius: 45%; background: rgb(248, 250, 252); box-shadow: -5px 0 8px -2px rgba(0,0,0,0.15); animation: spin 7s linear infinite; }
-        @media (max-width: 767px) { .wave-mask-v-1, .wave-mask-v-2 { display: none; } }
-        @media (min-width: 768px) { .wave-mask-h-1, .wave-mask-h-2 { display: none; } }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* --- HỆ THỐNG RANK --- */
+        /* --- CẤU HÌNH ĐÀN HẠC --- */
         :root { --harp-primary: #4E342E; --harp-secondary: #8D6E63; --harp-glow: rgba(78, 52, 46, 0.2); --harp-stroke: url(#wood-pattern); --wing-scale: 0; --wing-rot-l: -25deg; --wing-rot-r: 25deg; --wing-y: 15px; --halo-scale: 0; --extra-opacity: 0; }
         .harp-path { transition: stroke 1s ease-in-out, fill 1s ease-in-out; }
         #harp-glow { transition: background-color 1s ease-in-out; background-color: var(--harp-glow); }
@@ -58,7 +47,6 @@
         .rank-diamond { --harp-primary: #06B6D4; --harp-secondary: #0EA5E9; --harp-glow: rgba(6, 182, 212, 0.8); --harp-stroke: var(--harp-primary); --wing-scale: 1.3; --wing-rot-l: -15deg; --wing-rot-r: 15deg; --wing-y: 0px; --halo-scale: 1.0; --extra-opacity: 1; }
         .rank-ruby { --harp-primary: #E11D48; --harp-secondary: #F43F5E; --harp-glow: rgba(225, 29, 72, 0.8); --harp-stroke: var(--harp-primary); --wing-scale: 1.7; --wing-rot-l: -10deg; --wing-rot-r: 10deg; --wing-y: -5px; --halo-scale: 1.25; --extra-opacity: 1; }
 
-        /* Fix modal wings */
         #ranks-list-container .rank-platinum, #ranks-list-container .rank-diamond, #ranks-list-container .rank-ruby { --wing-scale: 0.65 !important; --wing-y: 10px !important; --wing-rot-l: -25deg !important; --wing-rot-r: 25deg !important; --halo-scale: 0.65 !important; }
 
         @keyframes float-harp { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
@@ -70,12 +58,10 @@
         @keyframes floatUp { 0% { opacity: 0; transform: translateY(15px) scale(0.8); } 20% { opacity: 1; transform: translateY(-10px) scale(1.2); } 70% { opacity: 1; transform: translateY(-35px) scale(1); } 100% { opacity: 0; transform: translateY(-60px) scale(0.9); } }
         .float-up-anim { animation: floatUp 2.5s cubic-bezier(0.2, 0, 0.2, 1) forwards; }
 
-        /* Animation chuyển cảnh */
         .fade-out-scale { opacity: 0 !important; transform: scale(0.95) !important; pointer-events: none; }
         .fade-in-scale { opacity: 1 !important; transform: scale(1) translateY(0) !important; pointer-events: auto; }
         .transition-screen { transition: opacity 0.6s ease-out, transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); }
 
-        /* Cảm xúc Active */
         .emotion-btn { filter: grayscale(100%); opacity: 0.5; transform: scale(0.9); transition: all 0.2s; cursor: pointer; user-select: none; }
         .emotion-btn:hover { filter: grayscale(0%); opacity: 1; transform: scale(1.1); }
         .emotion-active { filter: grayscale(0%); opacity: 1; transform: scale(1.2); drop-shadow: 0 4px 6px rgba(0,0,0,0.1); }
@@ -113,7 +99,17 @@
         </div>
     </div>
 
-    <!-- MÀN HÌNH CÀI ĐẶT USER (CẬP NHẬT EMAIL / MẬT KHẨU) -->
+    <!-- MÀN HÌNH LỜI CHÚC (XUẤT HIỆN SAU KHI TĨNH NGUYỆN XONG) -->
+    <div id="blessing-modal" class="fixed inset-0 bg-white/80 backdrop-blur-sm z-[110] flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-500">
+        <div class="bg-gradient-to-br from-amber-50 to-orange-100 rounded-[2rem] shadow-2xl w-full max-w-sm p-8 text-center border-2 border-amber-200 transform scale-90 transition-transform duration-500" id="blessing-content">
+            <div class="text-6xl mb-4 animate-bounce">🕊️</div>
+            <h2 class="text-2xl font-black text-amber-600 mb-2">Hoàn Thành!</h2>
+            <p id="blessing-text" class="text-lg font-semibold text-slate-700 italic mt-4 mb-6 leading-relaxed">"Chúc bạn một ngày phước lành!"</p>
+            <button id="btn-close-blessing" class="w-full py-3 bg-amber-500 text-white rounded-xl font-bold hover:bg-amber-600 transition-transform active:scale-95 shadow-md">Đóng</button>
+        </div>
+    </div>
+
+    <!-- MÀN HÌNH CÀI ĐẶT USER -->
     <div id="settings-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[70] flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
         <div id="settings-modal-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-6 transform scale-95 transition-transform duration-300 flex flex-col">
             <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3 shrink-0">
@@ -232,7 +228,7 @@
                         <option value="89">Kim Cương ➞ Ruby (89 ngày)</option>
                     </select>
                     <button id="btn-test-rank-go" class="text-[11px] bg-amber-500 text-white px-3 py-1.5 rounded-lg hover:bg-amber-600 font-bold shadow-sm transition-transform active:scale-95">⭐ Test Rank</button>
-                    <button id="btn-test-reset" class="text-[11px] bg-slate-800 text-white px-3 py-1.5 rounded-lg hover:bg-slate-700 font-bold shadow-sm transition-transform active:scale-95 ml-auto">Khôi Phục Dữ Liệu</button>
+                    <button id="btn-test-reset" class="text-[11px] bg-slate-800 text-white px-3 py-1.5 rounded-lg hover:bg-slate-700 font-bold shadow-sm transition-transform active:scale-95 ml-auto">Khôi Phục Dữ liệu</button>
                 </div>
             </div>
 
@@ -245,7 +241,7 @@
                 </table>
             </div>
 
-            <!-- ADMIN RESET AREA (ĐÃ FIX LỖI ẨN/HIỆN CSS) -->
+            <!-- ADMIN RESET AREA -->
             <div id="admin-reset-area" class="hidden w-full mt-auto">
                 <div class="p-4 bg-red-50 border-t border-red-100 flex justify-between items-center">
                     <div>
@@ -259,7 +255,7 @@
     </div>
 
     <!-- MÀN HÌNH ĐĂNG NHẬP / ĐĂNG KÝ -->
-    <div id="auth-screen" class="transition-screen bg-white/90 md:bg-white/95 backdrop-blur-md rounded-3xl md:rounded-[2.5rem] shadow-2xl shadow-blue-100/50 w-full max-w-md border border-white relative z-20 p-6 md:p-8 flex flex-col gap-6 items-center">
+    <div id="auth-screen" class="transition-screen bg-white/90 lg:bg-white/95 backdrop-blur-md rounded-3xl lg:rounded-[2.5rem] shadow-2xl shadow-blue-100/50 w-full max-w-md border border-white relative z-20 p-6 lg:p-8 flex flex-col gap-6 items-center">
         
         <div id="auth-main-container" class="w-full flex flex-col gap-4">
             <div class="text-center w-full mb-2">
@@ -345,9 +341,10 @@
     </div>
 
     <!-- ==================== ỨNG DỤNG CHÍNH ==================== -->
-    <div id="main-app" class="transition-screen opacity-0 scale-95 translate-y-4 hidden w-full max-w-[80rem] flex-col gap-3 md:gap-4 relative z-10">
+    <div id="main-app" class="transition-screen opacity-0 scale-95 translate-y-4 hidden w-full max-w-[80rem] flex-col gap-8 lg:gap-14 relative z-10">
         
-        <div class="bg-white/90 backdrop-blur-md rounded-2xl p-3 md:p-4 shadow-sm border border-white/50 flex flex-col md:flex-row justify-between items-center gap-3 md:gap-4">
+        <!-- BẢNG THÔNG TIN USER -->
+        <div class="bg-white/90 backdrop-blur-md rounded-2xl p-3 lg:p-4 shadow-sm border border-white/50 flex flex-col md:flex-row justify-between items-center gap-3 lg:gap-4">
             <div class="flex items-center gap-4">
                 <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-lg shadow-inner" id="user-avatar-text">U</div>
                 <div class="flex flex-col">
@@ -378,7 +375,7 @@
                 </div>
             </div>
             
-            <div class="flex items-center gap-3 text-sm font-medium flex-wrap">
+            <div class="flex items-center gap-3 text-sm font-medium flex-wrap justify-center">
                 <div class="text-amber-600 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-100">Kỷ lục: <span id="ui-max-streak" class="font-bold">0</span></div>
                 <div class="text-red-500 bg-red-50 px-3 py-1.5 rounded-lg border border-red-100">Lỡ chuỗi: <span id="ui-lost-streaks" class="font-bold">0</span></div>
                 <button id="btn-open-admin" class="hidden text-white bg-red-500 px-4 py-1.5 rounded-lg font-bold shadow-md hover:bg-red-600 transition-transform active:scale-95">Bảng Admin</button>
@@ -387,183 +384,207 @@
             </div>
         </div>
 
-        <div class="bg-white/85 md:bg-white/95 backdrop-blur-md rounded-3xl md:rounded-[2.5rem] shadow-2xl shadow-blue-100/50 w-full border border-white/50 flex flex-col xl:flex-row p-4 sm:p-6 md:p-8 gap-6 md:gap-8 items-stretch justify-between relative z-10">
+        <!-- BẢNG NỘI DUNG CHÍNH (Đã thiết lập lại độ thưa gap) -->
+        <div class="bg-white/85 lg:bg-white/95 backdrop-blur-md rounded-3xl lg:rounded-[2.5rem] shadow-2xl shadow-blue-100/50 w-full border border-white/50 flex flex-col lg:flex-row p-4 sm:p-6 lg:p-10 gap-6 lg:gap-12 items-stretch justify-between relative z-10">
             
-            <div class="flex-1 flex flex-col md:flex-row gap-8 items-center justify-center">
-                
-                <div class="w-full flex-1 flex flex-col items-center justify-center relative">
-                    <div id="lost-streak-alert" class="hidden absolute top-0 bg-red-100 text-red-700 px-4 py-2 rounded-xl text-sm font-bold animate-bounce z-50 border border-red-200 shadow-md flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
-                        Bạn đã bỏ lỡ ngày hôm qua! Chuỗi đã bị đặt lại.
-                    </div>
-
-                    <div id="celebration" class="absolute inset-0 pointer-events-none z-50 flex items-center justify-center overflow-hidden hidden">
-                        <svg width="160" height="160" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-yellow-400 animate-ping opacity-30"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
-                    </div>
-
-                    <div class="text-center mb-6 mt-4">
-                        <span class="text-sm font-semibold tracking-wider uppercase text-amber-600">Một Ngày Phước Hạnh</span>
-                        <h1 class="text-2xl md:text-3xl font-bold text-slate-800">GIỮ CHUỖI TĨNH NGUYỆN</h1>
-                        <p class="text-slate-500 mt-2" id="rank-name-display">Gần gũi Chúa thêm mỗi ngày</p>
-                    </div>
-
-                    <div class="flex flex-col items-center justify-center relative w-full mt-4">
-                        <div id="harp-wrapper" class="relative flex flex-col items-center justify-center h-48 w-48 md:h-56 md:w-56 mx-auto mb-2 rank-wood harp-floating">
-                            <div id="harp-glow" class="absolute inset-0 rounded-full blur-3xl animate-pulse hidden"></div>
-                            <div id="float-lv" class="absolute left-[-20px] top-[20%] text-red-500 font-black flex flex-col items-center opacity-0 pointer-events-none z-50 drop-shadow-md">
-                                <span class="text-xl leading-none">↑</span><span class="text-2xl whitespace-nowrap">+1 LV</span>
-                            </div>
-                            <div id="float-xp" class="absolute right-[-20px] top-[20%] text-blue-500 font-black flex flex-col items-center opacity-0 pointer-events-none z-50 drop-shadow-md">
-                                <span class="text-xl leading-none">↑</span><span class="text-2xl whitespace-nowrap">+1 XP</span>
-                            </div>
-                            
-                            <svg id="harp-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 180" class="w-48 h-48 md:w-56 md:h-56 relative z-10 transition-all duration-1000 scale-90 opacity-80 overflow-visible">
-                                <g class="harp-halo" style="transform: scale(var(--halo-scale)); opacity: var(--extra-opacity); transform-origin: 80px 25px; transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);">
-                                    <ellipse cx="80" cy="25" rx="35" ry="10" fill="none" class="harp-stroke-primary animate-pulse" stroke-width="3" />
-                                    <ellipse cx="80" cy="25" rx="42" ry="14" fill="none" class="harp-stroke-secondary" stroke-width="1.5" opacity="0.8" />
-                                    <line x1="80" y1="5" x2="80" y2="15" class="harp-stroke-secondary" stroke-width="2" stroke-linecap="round" />
-                                    <line x1="35" y1="25" x2="45" y2="25" class="harp-stroke-secondary" stroke-width="2" stroke-linecap="round" />
-                                    <line x1="125" y1="25" x2="115" y2="25" class="harp-stroke-secondary" stroke-width="2" stroke-linecap="round" />
-                                </g>
-                                <g class="harp-wings" style="opacity: var(--extra-opacity); transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);">
-                                    <g style="transform: translate(0px, var(--wing-y)) scale(var(--wing-scale)) rotate(var(--wing-rot-l)); transform-origin: 50px 90px; transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);">
-                                        <g class="wing-flap-l"><use href="#angel-wing-detailed" /></g>
-                                    </g>
-                                    <g style="transform: translate(0px, var(--wing-y)) scale(var(--wing-scale)) rotate(var(--wing-rot-r)); transform-origin: 110px 90px; transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);">
-                                        <g class="wing-flap-r"><use href="#angel-wing-detailed" transform="translate(160, 0) scale(-1, 1)" /></g>
-                                    </g>
-                                </g>
-                                <g transform="translate(20, 10)">
-                                    <path class="harp-path harp-stroke-primary" d="M 25 45 C 25 100 15 130 40 140 L 80 140 C 105 130 95 100 95 45" fill="none" stroke-width="8" stroke-linecap="round" />
-                                    <line class="harp-path harp-stroke-primary" x1="12" y1="45" x2="108" y2="45" stroke-width="8" />
-                                    <line class="harp-path harp-stroke-secondary" x1="40" y1="45" x2="40" y2="135" stroke-width="2"/>
-                                    <line class="harp-path harp-stroke-secondary" x1="60" y1="45" x2="60" y2="139" stroke-width="2"/>
-                                    <line class="harp-path harp-stroke-secondary" x1="80" y1="45" x2="80" y2="135" stroke-width="2"/>
-                                </g>
-                                <g id="harp-sparkles" class="opacity-0 transition-opacity duration-1000">
-                                    <path d="M 0 -10 L 2 -2 L 10 0 L 2 2 L 0 10 L -2 2 L -10 0 L -2 -2 Z" class="harp-fill-secondary animate-pulse" transform="translate(35, 35) scale(0.6)" style="animation-duration: 1.5s" />
-                                    <path d="M 0 -10 L 2 -2 L 10 0 L 2 2 L 0 10 L -2 2 L -10 0 L -2 -2 Z" class="harp-fill-secondary animate-bounce" transform="translate(125, 45) scale(0.8)" style="animation-duration: 2s" />
-                                    <path d="M 0 -10 L 2 -2 L 10 0 L 2 2 L 0 10 L -2 2 L -10 0 L -2 -2 Z" class="harp-fill-secondary animate-ping" transform="translate(80, 150) scale(0.7)" style="animation-duration: 2.5s" />
-                                </g>
-                            </svg>
-                        </div>
-                        <div class="text-center z-10 flex flex-col items-center">
-                            <h2 class="text-5xl md:text-6xl font-black text-slate-800" id="streak-count">0</h2>
-                            <p class="text-sm font-bold text-amber-600 uppercase tracking-widest mt-1">Tổng Chuỗi Hiện Tại</p>
-                            
-                            <div class="flex gap-2 mt-3 flex-wrap justify-center">
-                                <button id="btn-show-ranks" class="text-[11px] bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-1.5 rounded-full font-bold transition-transform active:scale-95">🏆 Danh Hiệu</button>
-                                <button id="btn-show-history" class="text-[11px] bg-blue-50 border border-blue-100 hover:bg-blue-100 text-blue-600 px-3 py-1.5 rounded-full font-bold transition-transform active:scale-95">📖 Nhật Ký</button>
-                                <button id="btn-show-group-stats" class="text-[11px] bg-purple-50 border border-purple-100 hover:bg-purple-100 text-purple-600 px-3 py-1.5 rounded-full font-bold transition-transform active:scale-95">📊 Nhóm</button>
-                            </div>
-                        </div>
-                    </div>
+            <div class="w-full lg:w-1/3 flex flex-col items-center justify-center relative">
+                <div id="lost-streak-alert" class="hidden absolute top-0 bg-red-100 text-red-700 px-4 py-2 rounded-xl text-sm font-bold animate-bounce z-50 border border-red-200 shadow-md flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                    Bạn đã bỏ lỡ ngày hôm qua! Chuỗi đã bị đặt lại.
                 </div>
 
-                <div class="hidden md:block w-px h-full bg-gradient-to-b from-transparent via-blue-100 to-transparent shrink-0"></div>
+                <div id="celebration" class="absolute inset-0 pointer-events-none z-50 flex items-center justify-center overflow-hidden hidden">
+                    <svg width="160" height="160" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-yellow-400 animate-ping opacity-30"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+                </div>
 
-                <div class="w-full flex-1 flex flex-col gap-4 relative z-10 max-w-xl">
-                    
-                    <div class="bg-white/80 md:bg-white/90 rounded-2xl p-3 md:p-4 border border-slate-100 shadow-sm">
-                        <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 text-center">Lịch Tĩnh Nguyện Gần Đây</h3>
-                        <div class="flex justify-between items-center px-1 md:px-2" id="weekly-calendar"></div>
-                    </div>
+                <div class="text-center mb-6 mt-4">
+                    <span class="text-sm font-semibold tracking-wider uppercase text-amber-600">Một Ngày Phước Hạnh</span>
+                    <h1 class="text-2xl md:text-3xl font-bold text-slate-800">GIỮ CHUỖI TĨNH NGUYỆN</h1>
+                    <p class="text-slate-500 mt-2" id="rank-name-display">Gần gũi Chúa thêm mỗi ngày</p>
+                </div>
 
-                    <!-- CÂU GỐC CỐ ĐỊNH Ở GIỮA TRANG -->
-                    <div class="text-center px-3 py-3 md:px-4 md:py-3 bg-amber-50/50 rounded-xl border border-amber-100 mb-1 shadow-sm">
-                        <p class="text-[13px] italic text-amber-800 font-medium leading-relaxed">“Ai trung tín trong việc rất nhỏ, cũng trung tín trong việc lớn; ai bất nghĩa trong việc rất nhỏ, cũng bất nghĩa trong việc lớn.”</p>
-                        <p class="text-[11px] font-bold text-amber-600 mt-1.5">— Luca 16:10</p>
-                    </div>
-
-                    <div class="bg-white/80 md:bg-white/90 rounded-2xl p-3 md:p-4 border border-slate-100 shadow-sm flex flex-col gap-4">
-                        <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1">Sổ Tĩnh Nguyện Hôm Nay</h3>
-                        
-                        <div class="flex flex-col gap-4">
-                            <!-- CÂU 1: NGUỒN TÀI LIỆU -->
-                            <div>
-                                <label class="text-[12px] font-semibold text-slate-700 block mb-2">1. Bạn tĩnh nguyện từ nguồn tài liệu nào?</label>
-                                <div class="flex flex-col gap-2 text-[12px] md:text-[13px] text-slate-700 pl-1">
-                                    <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="source" value="Kinh Thánh truyền thống" class="accent-amber-500 w-4 h-4"> Kinh Thánh truyền thống</label>
-                                    <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="source" value="Bài học Kinh Thánh hằng ngày" class="accent-amber-500 w-4 h-4"> Bài học Kinh Thánh hằng ngày</label>
-                                    <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="source" value="Tương tác Thánh Kinh" class="accent-amber-500 w-4 h-4"> Tương tác Thánh Kinh</label>
-                                    <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="source" value="Oneway" class="accent-amber-500 w-4 h-4"> Oneway</label>
-                                    <label class="flex items-center gap-2 cursor-pointer">
-                                        <input type="radio" name="source" value="Khác" id="source-other-radio" class="accent-amber-500 w-4 h-4"> Tài liệu tĩnh nguyện khác: 
-                                        <input type="text" id="source-other-text" disabled class="ml-2 bg-slate-50 border-b border-slate-300 px-2 py-0.5 focus:outline-none focus:border-amber-500 text-[12px] w-32 md:w-40 disabled:opacity-50" placeholder="...">
-                                    </label>
-                                </div>
-                            </div>
-
-                            <!-- CÂU 2: PHÂN ĐOẠN/CHỦ ĐỀ -->
-                            <div>
-                                <label class="text-[12px] font-semibold text-slate-700 block mb-1">2. Hôm nay bạn học phân đoạn Kinh Thánh hay chủ đề nào?</label>
-                                <textarea id="q1" rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-[13px] focus:ring-2 focus:ring-amber-400 focus:bg-white transition-all resize-none text-slate-700"></textarea>
-                            </div>
-                            
-                            <!-- CÂU 3: CÁO TRÁCH/THÚC GIỤC -->
-                            <div>
-                                <label class="text-[12px] font-semibold text-slate-700 block mb-1">3. Bạn được cáo trách hoặc thúc giục điều gì qua bài học hôm nay?</label>
-                                <textarea id="q2" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-[13px] focus:ring-2 focus:ring-amber-400 focus:bg-white transition-all resize-none text-slate-700"></textarea>
-                            </div>
-
-                            <!-- CÂU 4: TÂM TRẠNG -->
-                            <div>
-                                <label class="text-[12px] font-semibold text-slate-700 block mb-2">4. Tâm trạng của bạn sau khi tĩnh nguyện hôm nay?</label>
-                                <div class="flex gap-3 text-3xl flex-wrap" id="emotion-picker">
-                                    <span class="emotion-btn" data-emotion="😍" title="Háo hức">😍</span>
-                                    <span class="emotion-btn" data-emotion="😇" title="Bình an">😇</span>
-                                    <span class="emotion-btn" data-emotion="🤩" title="Vui vẻ">🤩</span>
-                                    <span class="emotion-btn" data-emotion="😶" title="Trống rỗng">😶</span>
-                                    <span class="emotion-btn" data-emotion="😟" title="Lo lắng">😟</span>
-                                    <span class="emotion-btn" data-emotion="😢" title="Buồn bã">😢</span>
-                                    <span class="emotion-btn" data-emotion="🥱" title="Mệt mỏi">🥱</span>
-                                    <span class="emotion-btn" data-emotion="😠" title="Tức giận">😠</span>
-                                </div>
-                            </div>
+                <div class="flex flex-col items-center justify-center relative w-full mt-4">
+                    <div id="harp-wrapper" class="relative flex flex-col items-center justify-center h-48 w-48 lg:h-56 lg:w-56 mx-auto mb-2 rank-wood harp-floating">
+                        <div id="harp-glow" class="absolute inset-0 rounded-full blur-3xl animate-pulse hidden"></div>
+                        <div id="float-lv" class="absolute left-[-20px] top-[20%] text-red-500 font-black flex flex-col items-center opacity-0 pointer-events-none z-50 drop-shadow-md">
+                            <span class="text-xl leading-none">↑</span><span class="text-2xl whitespace-nowrap">+1 LV</span>
                         </div>
+                        <div id="float-xp" class="absolute right-[-20px] top-[20%] text-blue-500 font-black flex flex-col items-center opacity-0 pointer-events-none z-50 drop-shadow-md">
+                            <span class="text-xl leading-none">↑</span><span class="text-2xl whitespace-nowrap">+1 XP</span>
+                        </div>
+                        
+                        <svg id="harp-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 180" class="w-48 h-48 lg:w-56 lg:h-56 relative z-10 transition-all duration-1000 scale-90 opacity-80 overflow-visible">
+                            <g class="harp-halo" style="transform: scale(var(--halo-scale)); opacity: var(--extra-opacity); transform-origin: 80px 25px; transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);">
+                                <ellipse cx="80" cy="25" rx="35" ry="10" fill="none" class="harp-stroke-primary animate-pulse" stroke-width="3" />
+                                <ellipse cx="80" cy="25" rx="42" ry="14" fill="none" class="harp-stroke-secondary" stroke-width="1.5" opacity="0.8" />
+                                <line x1="80" y1="5" x2="80" y2="15" class="harp-stroke-secondary" stroke-width="2" stroke-linecap="round" />
+                                <line x1="35" y1="25" x2="45" y2="25" class="harp-stroke-secondary" stroke-width="2" stroke-linecap="round" />
+                                <line x1="125" y1="25" x2="115" y2="25" class="harp-stroke-secondary" stroke-width="2" stroke-linecap="round" />
+                            </g>
+                            <g class="harp-wings" style="opacity: var(--extra-opacity); transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);">
+                                <g style="transform: translate(0px, var(--wing-y)) scale(var(--wing-scale)) rotate(var(--wing-rot-l)); transform-origin: 50px 90px; transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);">
+                                    <g class="wing-flap-l"><use href="#angel-wing-detailed" /></g>
+                                </g>
+                                <g style="transform: translate(0px, var(--wing-y)) scale(var(--wing-scale)) rotate(var(--wing-rot-r)); transform-origin: 110px 90px; transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);">
+                                    <g class="wing-flap-r"><use href="#angel-wing-detailed" transform="translate(160, 0) scale(-1, 1)" /></g>
+                                </g>
+                            </g>
+                            <g transform="translate(20, 10)">
+                                <path class="harp-path harp-stroke-primary" d="M 25 45 C 25 100 15 130 40 140 L 80 140 C 105 130 95 100 95 45" fill="none" stroke-width="8" stroke-linecap="round" />
+                                <line class="harp-path harp-stroke-primary" x1="12" y1="45" x2="108" y2="45" stroke-width="8" />
+                                <line class="harp-path harp-stroke-secondary" x1="40" y1="45" x2="40" y2="135" stroke-width="2"/>
+                                <line class="harp-path harp-stroke-secondary" x1="60" y1="45" x2="60" y2="139" stroke-width="2"/>
+                                <line class="harp-path harp-stroke-secondary" x1="80" y1="45" x2="80" y2="135" stroke-width="2"/>
+                            </g>
+                            <g id="harp-sparkles" class="opacity-0 transition-opacity duration-1000">
+                                <path d="M 0 -10 L 2 -2 L 10 0 L 2 2 L 0 10 L -2 2 L -10 0 L -2 -2 Z" class="harp-fill-secondary animate-pulse" transform="translate(35, 35) scale(0.6)" style="animation-duration: 1.5s" />
+                                <path d="M 0 -10 L 2 -2 L 10 0 L 2 2 L 0 10 L -2 2 L -10 0 L -2 -2 Z" class="harp-fill-secondary animate-bounce" transform="translate(125, 45) scale(0.8)" style="animation-duration: 2s" />
+                                <path d="M 0 -10 L 2 -2 L 10 0 L 2 2 L 0 10 L -2 2 L -10 0 L -2 -2 Z" class="harp-fill-secondary animate-ping" transform="translate(80, 150) scale(0.7)" style="animation-duration: 2.5s" />
+                            </g>
+                        </svg>
                     </div>
-                    
-                    <div class="mt-1">
-                        <button id="checkin-btn" class="w-full py-3.5 px-6 rounded-[1.25rem] font-bold text-lg flex items-center justify-center gap-2 transition-transform active:scale-95 duration-300 bg-gradient-to-r from-amber-400 to-yellow-500 text-white shadow-xl" disabled>Kết nối Server...</button>
+                    <div class="text-center z-10 flex flex-col items-center">
+                        <h2 class="text-5xl lg:text-6xl font-black text-slate-800" id="streak-count">0</h2>
+                        <p class="text-sm font-bold text-amber-600 uppercase tracking-widest mt-1">Tổng Chuỗi Hiện Tại</p>
+                        
+                        <div class="flex gap-2 mt-3 flex-wrap justify-center">
+                            <button id="btn-show-ranks" class="text-[11px] bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-1.5 rounded-full font-bold transition-transform active:scale-95">🏆 Danh Hiệu</button>
+                            <button id="btn-show-history" class="text-[11px] bg-blue-50 border border-blue-100 hover:bg-blue-100 text-blue-600 px-3 py-1.5 rounded-full font-bold transition-transform active:scale-95">📖 Nhật Ký</button>
+                            <button id="btn-show-group-stats" class="text-[11px] bg-purple-50 border border-purple-100 hover:bg-purple-100 text-purple-600 px-3 py-1.5 rounded-full font-bold transition-transform active:scale-95">📊 Nhóm</button>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="flex flex-col md:flex-row gap-4 md:gap-5 shrink-0 border-t xl:border-t-0 xl:border-l border-slate-100/50 pt-5 xl:pt-20 pl-0 xl:pl-6 items-center xl:items-start justify-center w-full xl:w-auto mt-2 xl:mt-0">
-                <div class="flex flex-row md:flex-col items-center justify-center gap-3 w-full md:w-14">
-                    <div class="text-center bg-red-50/80 px-2 py-1.5 rounded-xl border border-red-100 w-16 md:w-full shrink-0 shadow-sm flex flex-col items-center justify-center">
+            <div class="hidden lg:block w-px h-auto bg-gradient-to-b from-transparent via-blue-100 to-transparent shrink-0"></div>
+
+            <div class="w-full lg:w-1/2 flex flex-col gap-4 relative z-10">
+                
+                <div class="bg-white/80 lg:bg-white/90 rounded-2xl p-3 lg:p-4 border border-slate-100 shadow-sm">
+                    <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 text-center">Lịch Tĩnh Nguyện Gần Đây</h3>
+                    <div class="flex justify-between items-center px-1 lg:px-2" id="weekly-calendar"></div>
+                </div>
+
+                <!-- CÂU GỐC CỐ ĐỊNH Ở GIỮA TRANG -->
+                <div class="text-center px-3 py-3 lg:px-4 lg:py-3 bg-amber-50/50 rounded-xl border border-amber-100 mb-1 shadow-sm">
+                    <p class="text-[13px] italic text-amber-800 font-medium leading-relaxed">“Ai trung tín trong việc rất nhỏ, cũng trung tín trong việc lớn; ai bất nghĩa trong việc rất nhỏ, cũng bất nghĩa trong việc lớn.”</p>
+                    <p class="text-[11px] font-bold text-amber-600 mt-1.5">— Luca 16:10</p>
+                </div>
+
+                <div class="bg-white/80 lg:bg-white/90 rounded-2xl p-3 lg:p-4 border border-slate-100 shadow-sm flex flex-col gap-4">
+                    <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1">Sổ Tĩnh Nguyện Hôm Nay</h3>
+                    
+                    <div class="flex flex-col gap-4">
+                        <!-- CÂU 1: NGUỒN TÀI LIỆU -->
+                        <div>
+                            <label class="text-[12px] font-semibold text-slate-700 block mb-2">1. Bạn tĩnh nguyện từ nguồn tài liệu nào?</label>
+                            <div class="flex flex-col gap-2 text-[12px] lg:text-[13px] text-slate-700 pl-1">
+                                <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="source" value="Kinh Thánh truyền thống" class="accent-amber-500 w-4 h-4"> Kinh Thánh truyền thống</label>
+                                <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="source" value="Bài học Kinh Thánh hằng ngày" class="accent-amber-500 w-4 h-4"> Bài học Kinh Thánh hằng ngày</label>
+                                <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="source" value="Tương tác Thánh Kinh" class="accent-amber-500 w-4 h-4"> Tương tác Thánh Kinh</label>
+                                <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="source" value="Oneway" class="accent-amber-500 w-4 h-4"> Oneway</label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="source" value="Khác" id="source-other-radio" class="accent-amber-500 w-4 h-4"> Tài liệu tĩnh nguyện khác: 
+                                    <input type="text" id="source-other-text" disabled class="ml-2 bg-slate-50 border-b border-slate-300 px-2 py-0.5 focus:outline-none focus:border-amber-500 text-[12px] w-32 lg:w-40 disabled:opacity-50" placeholder="...">
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- CÂU 2: PHÂN ĐOẠN/CHỦ ĐỀ -->
+                        <div>
+                            <label class="text-[12px] font-semibold text-slate-700 block mb-1">2. Hôm nay bạn học phân đoạn Kinh Thánh hay chủ đề nào?</label>
+                            <textarea id="q1" rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-[13px] focus:ring-2 focus:ring-amber-400 focus:bg-white transition-all resize-none text-slate-700" placeholder="Viết câu trả lời..."></textarea>
+                        </div>
+                        
+                        <!-- CÂU 3: CÁO TRÁCH/THÚC GIỤC -->
+                        <div>
+                            <label class="text-[12px] font-semibold text-slate-700 block mb-1">3. Bạn được cáo trách hoặc thúc giục điều gì qua bài học hôm nay?</label>
+                            <textarea id="q2" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-[13px] focus:ring-2 focus:ring-amber-400 focus:bg-white transition-all resize-none text-slate-700" placeholder="Viết câu trả lời..."></textarea>
+                        </div>
+
+                        <!-- CÂU 4: TÂM TRẠNG -->
+                        <div>
+                            <label class="text-[12px] font-semibold text-slate-700 block mb-2">4. Tâm trạng của bạn sau khi tĩnh nguyện hôm nay?</label>
+                            <div class="flex gap-3 text-3xl flex-wrap" id="emotion-picker">
+                                <span class="emotion-btn" data-emotion="😍" title="Háo hức">😍</span>
+                                <span class="emotion-btn" data-emotion="😇" title="Bình an">😇</span>
+                                <span class="emotion-btn" data-emotion="🤩" title="Vui vẻ">🤩</span>
+                                <span class="emotion-btn" data-emotion="😶" title="Trống rỗng">😶</span>
+                                <span class="emotion-btn" data-emotion="😟" title="Lo lắng">😟</span>
+                                <span class="emotion-btn" data-emotion="😢" title="Buồn bã">😢</span>
+                                <span class="emotion-btn" data-emotion="🥱" title="Mệt mỏi">🥱</span>
+                                <span class="emotion-btn" data-emotion="😠" title="Tức giận">😠</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-1">
+                    <button id="checkin-btn" class="w-full py-3.5 px-6 rounded-[1.25rem] font-bold text-lg flex items-center justify-center gap-2 transition-transform active:scale-95 duration-300 bg-gradient-to-r from-amber-400 to-yellow-500 text-white shadow-xl" disabled>Kết nối Server...</button>
+                </div>
+            </div>
+
+            <!-- CỘT ỐNG DUNG DỊCH ĐÃ ĐƯỢC CHUYỂN SANG BÊN PHẢI (Luôn luôn nằm dọc, song song) -->
+            <div class="flex flex-row gap-6 shrink-0 border-t lg:border-t-0 lg:border-l border-slate-100/50 pt-6 lg:pt-0 pl-0 lg:pl-10 items-end justify-center w-full lg:w-auto mt-4 lg:mt-0">
+                
+                <!-- ỐNG ĐỎ -->
+                <div class="flex flex-col items-center justify-end gap-3 w-14 sm:w-16">
+                    <div class="text-center bg-red-50/80 px-2 py-1.5 rounded-xl border border-red-100 w-full shadow-sm flex flex-col items-center justify-center">
                         <span class="text-[10px] font-bold text-red-500 uppercase block leading-tight">Tổng</span>
                         <span class="text-[8px] font-bold text-red-400 uppercase tracking-widest mt-0.5 mb-1">Level</span>
                         <span id="tube-red-text" class="text-xl font-black text-red-600 leading-none">0</span>
                     </div>
-                    <div class="w-full md:w-10 h-10 md:h-[380px] bg-slate-50 rounded-[24px] border-[4px] border-slate-200/80 glass-tube relative overflow-hidden flex items-center md:items-end justify-start md:justify-center">
-                        <div id="tube-red-liquid" class="relative tube-liquid-red transition-all duration-1000 ease-in-out flex items-center md:items-start justify-end md:justify-center" style="--fill-level: 6%;">
-                            <div class="wave-mask-v-1"></div><div class="wave-mask-v-2"></div><div class="wave-mask-h-1"></div><div class="wave-mask-h-2"></div>
+                    <!-- Ống luôn luôn cố định chiều cao và nằm dọc -->
+                    <div class="w-full h-48 sm:h-[380px] bg-slate-50 rounded-[24px] border-[4px] border-slate-200/80 glass-tube relative overflow-hidden flex items-end justify-center">
+                        <div id="tube-red-liquid" class="w-full relative transition-all duration-1000 ease-in-out bg-gradient-to-t from-red-600 via-red-500 to-red-400" style="height: var(--fill-level, 6%);">
+                            <div class="wave-mask-v-1"></div><div class="wave-mask-v-2"></div>
                         </div>
                         <div class="absolute inset-0 rounded-[20px] pointer-events-none glass-tube-overlay"></div>
                     </div>
                 </div>
 
-                <div class="flex flex-row md:flex-col items-center justify-center gap-3 w-full md:w-14">
-                    <div class="text-center bg-blue-50/80 px-2 py-1.5 rounded-xl border border-blue-100 w-16 md:w-full shrink-0 shadow-sm flex flex-col items-center justify-center">
+                <!-- ỐNG XANH -->
+                <div class="flex flex-col items-center justify-end gap-3 w-14 sm:w-16">
+                    <div class="text-center bg-blue-50/80 px-2 py-1.5 rounded-xl border border-blue-100 w-full shadow-sm flex flex-col items-center justify-center">
                         <span class="text-[10px] font-bold text-blue-500 uppercase block leading-tight">Chuỗi</span>
                         <span class="text-[8px] font-bold text-blue-400 uppercase tracking-widest mt-0.5 mb-1">XP</span>
                         <span id="tube-blue-text" class="text-xl font-black text-blue-600 leading-none">0</span>
                     </div>
-                    <div class="w-full md:w-10 h-10 md:h-[380px] bg-slate-50 rounded-[24px] border-[4px] border-slate-200/80 glass-tube relative overflow-hidden flex items-center md:items-end justify-start md:justify-center">
-                        <div id="tube-blue-liquid" class="relative tube-liquid-blue transition-all duration-1000 ease-in-out flex items-center md:items-start justify-end md:justify-center" style="--fill-level: 6%;">
-                            <div class="wave-mask-v-1"></div><div class="wave-mask-v-2"></div><div class="wave-mask-h-1"></div><div class="wave-mask-h-2"></div>
+                    <!-- Ống luôn luôn cố định chiều cao và nằm dọc -->
+                    <div class="w-full h-48 sm:h-[380px] bg-slate-50 rounded-[24px] border-[4px] border-slate-200/80 glass-tube relative overflow-hidden flex items-end justify-center">
+                        <div id="tube-blue-liquid" class="w-full relative transition-all duration-1000 ease-in-out bg-gradient-to-t from-blue-600 via-blue-500 to-blue-400" style="height: var(--fill-level, 6%);">
+                            <div class="wave-mask-v-1"></div><div class="wave-mask-v-2"></div>
                         </div>
                         <div class="absolute inset-0 rounded-[20px] pointer-events-none glass-tube-overlay"></div>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
 
     <script>
         const API_URL = 'https://giuchuoitinhnguyen.onrender.com/api';
-        let userData = null; let originalUserData = null; let authMode = 'login'; let isProcessing = false; let isTestMode = false; 
+        let userData = null; 
+        let originalUserData = null; 
+        let authMode = 'login'; 
+        let isProcessing = false; 
+        let isTestMode = false; 
+        let currentUsersData = [];
+
+        // MẢNG LỜI CHÚC PHƯỚC HẠNH (HIỂN THỊ NGẪU NHIÊN SAU KHI HOÀN THÀNH)
+        const blessings = [
+            "Chúc bạn một ngày phước hạnh và bình an!",
+            "Xin Chúa ban phước dư dật trên bạn hôm nay!",
+            "Nguyện tình yêu của Chúa tuôn tràn trong bạn!",
+            "Chúa ở cùng bạn trong mọi việc bạn làm!",
+            "Hãy vững lòng bền chí, vì Chúa luôn đồng hành cùng bạn!",
+            "Chúc bạn luôn tỏa sáng tình yêu của Đấng Christ!",
+            "Sự vui mừng của Chúa là sức mạnh của bạn!",
+            "Một ngày mới tràn đầy ân điển và hy vọng nhé!",
+            "Chúa là Đấng chăn giữ bạn, bạn sẽ chẳng thiếu thốn gì!",
+            "Nguyện xin bình an của Đức Chúa Trời gìn giữ lòng bạn!"
+        ];
 
         const rankData = [
             { id: 0, streak: 0, name: "Người Tìm Kiếm (Mộc)", class: "rank-wood", theme: "bg-theme-wood", hasSparkle: false },
@@ -644,6 +665,15 @@
                 setTimeout(()=>{ el.classList.add('hidden'); }, 300); 
             }
         }
+
+        // NÚT TẮT BẢNG LỜI CHÚC
+        document.getElementById('btn-close-blessing').addEventListener('click', () => {
+            const bModal = document.getElementById('blessing-modal');
+            const bContent = document.getElementById('blessing-content');
+            bModal.classList.remove('opacity-100');
+            bContent.classList.remove('scale-100'); bContent.classList.add('scale-90');
+            setTimeout(() => { bModal.classList.add('hidden'); }, 500);
+        });
 
         document.getElementById('btn-show-history').addEventListener('click', () => { renderHistory('all'); toggleModal('history-modal', true); });
         document.getElementById('btn-close-history').addEventListener('click', () => toggleModal('history-modal', false));
@@ -898,17 +928,19 @@
         // PHẦN LOGIC KIỂM TRA TÊN KHI ĐĂNG NHẬP
         function checkRealNameCompliance() {
             if (!userData) return false;
+            // Kiểm tra nếu tên hiện tại chứa số, kí tự đặc biệt hoặc ít hơn 2 chữ
             const nameRegex = /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\s]+$/;
             const nameParts = userData.username.trim().split(/\s+/);
             
             if (!nameRegex.test(userData.username) || nameParts.length < 2) {
+                // Hiện bảng yêu cầu đổi tên
                 document.getElementById('force-rename-modal').classList.remove('hidden');
                 return false;
             }
             return true;
         }
 
-        // NÚT XÁC NHẬN ĐỔI TÊN
+        // NÚT XÁC NHẬN ĐỔI TÊN TỪ BẢNG CƯỠNG CHẾ
         document.getElementById('btn-confirm-rename').addEventListener('click', async () => {
             const newName = document.getElementById('new-real-name').value.trim();
             const nameRegex = /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\s]+$/;
@@ -928,7 +960,7 @@
             if (data.success) {
                 userData = data.user;
                 document.getElementById('force-rename-modal').classList.add('hidden');
-                enterApp(); // Tiếp tục vào ứng dụng sau khi đổi tên
+                enterApp(); // Tiếp tục vào ứng dụng sau khi đổi tên thành công
             } else {
                 alert(data.message);
             }
@@ -984,9 +1016,10 @@
             const lostAlert = document.getElementById('lost-streak-alert');
             if (userData.justLostStreak) { lostAlert.classList.remove('hidden'); document.getElementById('fail-sound').play().catch(e=>{}); setTimeout(() => lostAlert.classList.add('hidden'), 5000); userData.justLostStreak = false; }
 
+            // Áp dụng chủ đề rank cho thẻ body
             const currentRank = getCurrentRankInfo(userData.totalCheckins);
-            document.getElementById('app-body').className = 'min-h-screen ' + currentRank.theme + ' flex items-center justify-center p-3 sm:p-4 md:p-8 text-slate-800 relative overflow-x-hidden transition-all duration-1000';
-            const harpWrapper = document.getElementById('harp-wrapper'); harpWrapper.className = 'relative flex flex-col items-center justify-center h-48 w-48 md:h-56 md:w-56 mx-auto mb-2 harp-floating ' + currentRank.class;
+            document.getElementById('app-body').className = 'min-h-screen ' + currentRank.theme + ' flex items-center justify-center p-3 sm:p-4 lg:p-8 text-slate-800 relative overflow-x-hidden transition-all duration-1000';
+            const harpWrapper = document.getElementById('harp-wrapper'); harpWrapper.className = 'relative flex flex-col items-center justify-center h-48 w-48 lg:h-56 lg:w-56 mx-auto mb-2 harp-floating ' + currentRank.class;
             document.getElementById('rank-name-display').innerText = 'Danh hiệu: ' + currentRank.name;
 
             if (currentRank.hasSparkle) { document.getElementById('harp-sparkles').classList.remove('opacity-0'); document.getElementById('harp-sparkles').classList.add('opacity-100'); } 
@@ -998,7 +1031,7 @@
                 document.getElementById('btn-open-admin').classList.remove('hidden');
             }
 
-            // HIỆN NÚT RESET DÀNH RIÊNG CHO NGUYÊN ANH (ĐÃ FIX LỖI ẨN HTML)
+            // HIỆN NÚT RESET DÀNH RIÊNG CHO NGUYÊN ANH
             const adminResetArea = document.getElementById('admin-reset-area');
             if (userData.username.trim() === "Nguyên Anh") {
                 if (adminResetArea) adminResetArea.classList.remove('hidden');
@@ -1019,45 +1052,121 @@
         function updateTubesUI() {
             const maxCap = 90; 
             document.getElementById('tube-red-text').innerText = userData.totalCheckins; document.getElementById('tube-blue-text').innerText = userData.currentStreak;
-            document.getElementById('tube-red-liquid').style.setProperty('--fill-level', Math.max(6, Math.min((userData.totalCheckins / maxCap) * 100, 100)) + '%');
-            document.getElementById('tube-blue-liquid').style.setProperty('--fill-level', Math.max(6, Math.min((userData.currentStreak / maxCap) * 100, 100)) + '%');
+            // Ống giờ luôn luôn nằm dọc bằng cách ép height chứ không phải width nữa
+            document.getElementById('tube-red-liquid').style.height = Math.max(6, Math.min((userData.totalCheckins / maxCap) * 100, 100)) + '%';
+            document.getElementById('tube-blue-liquid').style.height = Math.max(6, Math.min((userData.currentStreak / maxCap) * 100, 100)) + '%';
         }
 
         document.getElementById('checkin-btn').addEventListener('click', async () => {
-            if (!userData.hasCheckedInToday && !isProcessing) {
-                isProcessing = true;
-                const oldRank = getCurrentRankInfo(userData.totalCheckins); const expectedNewRank = getCurrentRankInfo(userData.totalCheckins + 1);
-                
+            if (!userData || userData.hasCheckedInToday || isProcessing) return;
+
+            // 1. KIỂM TRA ĐIỀN ĐẦY ĐỦ THÔNG TIN
+            const checkedRadio = document.querySelector('input[name="source"]:checked');
+            const q1Val = document.getElementById('q1').value.trim();
+            const q2Val = document.getElementById('q2').value.trim();
+            let srcVal = '';
+
+            let errorMsg = [];
+            if (!checkedRadio) { errorMsg.push("- Bạn chưa chọn Nguồn tài liệu (Câu 1)"); }
+            else if (checkedRadio.value === 'Khác') {
+                srcVal = document.getElementById('source-other-text').value.trim();
+                if (!srcVal) { errorMsg.push("- Bạn chưa ghi rõ tên tài liệu khác (Câu 1)"); }
+            } else {
+                srcVal = checkedRadio.value;
+            }
+
+            if (!q1Val) { errorMsg.push("- Bạn chưa nhập Phân đoạn / Chủ đề (Câu 2)"); }
+            if (!q2Val) { errorMsg.push("- Bạn chưa nhập Cáo trách / Thúc giục (Câu 3)"); }
+            if (!selectedEmotion) { errorMsg.push("- Bạn chưa chọn Tâm trạng (Câu 4)"); }
+
+            if (errorMsg.length > 0) {
+                alert("⚠️ BẠN CHƯA ĐIỀN ĐỦ THÔNG TIN:\n\n" + errorMsg.join("\n"));
+                return;
+            }
+
+            // 2. BẮT ĐẦU XỬ LÝ
+            isProcessing = true;
+            const btn = document.getElementById('checkin-btn');
+            // HIỆN SPINNER QUAY QUAY KHI ĐANG GỬI LÊN SERVER
+            btn.innerHTML = `<svg class="animate-spin -ml-1 mr-2 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Đang ghi nhận (Chờ xíu)...`;
+            
+            const oldRank = getCurrentRankInfo(userData.totalCheckins); 
+            const expectedNewRank = getCurrentRankInfo(userData.totalCheckins + 1);
+            
+            try { 
+                if (expectedNewRank.id > oldRank.id) { 
+                    const s = document.getElementById('rankup-sound'); 
+                    if(s){ s.pause(); s.currentTime=0; s.volume=1; s.play().catch(e=>{}); } 
+                } else { 
+                    const s = document.getElementById('daily-sound'); 
+                    if(s){ s.pause(); s.currentTime=0; s.volume=1; s.play().catch(e=>{}); } 
+                } 
+            } catch(e) {}
+
+            const payload = { 
+                userId: userData._id, 
+                action: 'checkin', 
+                localDate: getLocalTodayStr(), 
+                logData: { q1: q1Val, q2: q2Val, q3: '', source: srcVal, emotion: selectedEmotion } 
+            };
+
+            if (isTestMode) {
+                userData.currentStreak++; userData.maxStreak = Math.max(userData.maxStreak, userData.currentStreak); userData.totalCheckins++; userData.totalPoints++; userData.hasCheckedInToday = true; userData.lastCheckinDateStr = getLocalTodayStr();
+                if(!userData.history) userData.history=[]; userData.history.push(getLocalTodayStr());
+                if(!userData.dailyLogs) userData.dailyLogs=[]; userData.dailyLogs.unshift({date: payload.localDate, ...payload.logData});
+                finishCheckIn();
+            } else {
                 try { 
-                    if (expectedNewRank.id > oldRank.id) { const s = document.getElementById('rankup-sound'); if(s){ s.pause(); s.currentTime=0; s.volume=1; s.play().catch(e=>{}); } } 
-                    else { const s = document.getElementById('daily-sound'); if(s){ s.pause(); s.currentTime=0; s.volume=1; s.play().catch(e=>{}); } } 
-                } catch(e) {}
-
-                document.getElementById('celebration').classList.remove('hidden'); setTimeout(() => document.getElementById('celebration').classList.add('hidden'), 3000);
-                
-                const floatXp = document.getElementById('float-xp'); const floatLv = document.getElementById('float-lv');
-                if (floatXp && floatLv) { floatXp.classList.remove('float-up-anim'); floatLv.classList.remove('float-up-anim'); void floatXp.offsetWidth; floatXp.classList.add('float-up-anim'); floatLv.classList.add('float-up-anim'); }
-
-                let srcVal = ''; const checkedRadio = document.querySelector('input[name="source"]:checked');
-                if(checkedRadio) { srcVal = checkedRadio.value === 'Khác' ? document.getElementById('source-other-text').value : checkedRadio.value; }
-                
-                const payload = { userId: userData._id, action: 'checkin', localDate: getLocalTodayStr(), logData: { q1: document.getElementById('q1').value, q2: document.getElementById('q2').value, q3: '', source: srcVal, emotion: selectedEmotion } };
-
-                if (isTestMode) {
-                    userData.currentStreak++; userData.maxStreak = Math.max(userData.maxStreak, userData.currentStreak); userData.totalCheckins++; userData.totalPoints++; userData.hasCheckedInToday = true; userData.lastCheckinDateStr = getLocalTodayStr();
-                    if(!userData.history) userData.history=[]; userData.history.push(getLocalTodayStr());
-                    if(!userData.dailyLogs) userData.dailyLogs=[]; userData.dailyLogs.unshift({date: payload.localDate, ...payload.logData});
-                } else {
-                    try { const res = await fetch(`${API_URL}/update-streak`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); const data = await res.json(); if (data.success) userData = data.user; } catch (error) { alert("Lỗi kết nối!") } 
-                }
-                
-                document.getElementById('q1').value = ''; document.getElementById('q2').value = '';
-                document.querySelectorAll('input[name="source"]').forEach(r=>r.checked=false); document.getElementById('source-other-text').value=''; document.getElementById('source-other-text').disabled=true;
-                document.querySelectorAll('.emotion-btn').forEach(b => b.classList.remove('emotion-active')); selectedEmotion='';
-                
-                isProcessing = false; updateUIFromData();
+                    const res = await fetch(`${API_URL}/update-streak`, { 
+                        method: 'POST', 
+                        headers: { 'Content-Type': 'application/json' }, 
+                        body: JSON.stringify(payload) 
+                    }); 
+                    const data = await res.json(); 
+                    if (data.success) { 
+                        userData = data.user; 
+                        finishCheckIn();
+                    } else {
+                        alert("Lỗi từ máy chủ: " + data.message);
+                        isProcessing = false; updateUIFromData();
+                    }
+                } catch (error) { 
+                    alert("Lỗi mạng! Có thể máy chủ đang ngủ, vui lòng thử lại ngay bây giờ.");
+                    isProcessing = false; updateUIFromData();
+                } 
             }
         });
+
+        function finishCheckIn() {
+            document.getElementById('celebration').classList.remove('hidden'); 
+            setTimeout(() => document.getElementById('celebration').classList.add('hidden'), 3000);
+            
+            const floatXp = document.getElementById('float-xp'); const floatLv = document.getElementById('float-lv');
+            if (floatXp && floatLv) { floatXp.classList.remove('float-up-anim'); floatLv.classList.remove('float-up-anim'); void floatXp.offsetWidth; floatXp.classList.add('float-up-anim'); floatLv.classList.add('float-up-anim'); }
+            
+            // XÓA TRỐNG FORM SAU KHI GỬI THÀNH CÔNG
+            document.getElementById('q1').value = ''; document.getElementById('q2').value = '';
+            document.querySelectorAll('input[name="source"]').forEach(r=>r.checked=false); 
+            document.getElementById('source-other-text').value=''; document.getElementById('source-other-text').disabled=true;
+            document.querySelectorAll('.emotion-btn').forEach(b => b.classList.remove('emotion-active')); selectedEmotion='';
+            
+            // CHỌN NGẪU NHIÊN 1 LỜI CHÚC BẤT KỲ TỪ MẢNG
+            const randomBlessing = blessings[Math.floor(Math.random() * blessings.length)];
+            document.getElementById('blessing-text').innerText = `"${randomBlessing}"`;
+            
+            // HIỆN BẢNG LỜI CHÚC TỪ TỪ
+            const bModal = document.getElementById('blessing-modal');
+            const bContent = document.getElementById('blessing-content');
+            bModal.classList.remove('hidden');
+            setTimeout(() => { 
+                bModal.classList.add('opacity-100'); 
+                bContent.classList.remove('scale-90');
+                bContent.classList.add('scale-100');
+            }, 10);
+
+            isProcessing = false; 
+            updateUIFromData();
+        }
 
         window.showUserLogs = function(logsJson) {
             const logs = JSON.parse(decodeURIComponent(logsJson)); const body = document.getElementById('admin-view-body');
