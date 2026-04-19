@@ -7,12 +7,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; position: relative; min-height: 100vh; overflow-x: hidden; }
+        body { font-family: 'Inter', sans-serif; transition: background-color 1s ease-in-out; position: relative; }
         
         /* --- HIỆU ỨNG CHUYỂN ĐỘNG NỀN VĨNH VIỄN (SEAMLESS GIF-LIKE LOOP) --- */
-        #bg-layer {
-            position: fixed; top: -50px; left: -50px; right: -50px; bottom: -50px;
-            z-index: -1; pointer-events: none; transition: all 1s ease-in-out;
+        body::before {
+            content: ""; position: fixed; top: -100px; left: -100px; right: -100px; bottom: -100px; z-index: -1; pointer-events: none; transition: opacity 1s ease;
         }
 
         @keyframes slideBg {
@@ -217,26 +216,31 @@
             <div class="border-t border-slate-100 pt-6 mt-6 flex flex-col items-center justify-center relative pb-4">
                 <p class="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-4">Mã QR Chia Sẻ Ứng Dụng</p>
                 
-                <div class="relative bg-white p-3 rounded-2xl shadow-sm border border-indigo-200 hover:scale-105 transition-transform duration-300 z-10 mt-6">
+                <div class="relative bg-white p-3 rounded-2xl shadow-sm border border-amber-200 hover:scale-105 transition-transform duration-300 z-10 mt-6">
                     
-                    <!-- Thiên thần trái -->
-                    <svg class="absolute -top-8 -left-10 w-24 h-24 text-[#a5b4fc] animate-pulse" viewBox="0 0 100 100" fill="currentColor">
-                        <path d="M 65,25 A 8,8 0 1,0 65,24.9 Z M 60,35 C 45,35 25,45 5,55 C 20,60 40,70 55,75 C 65,70 70,60 75,45 Z M 55,35 C 35,25 15,10 5,5 C 20,15 40,25 50,45 Z" />
+                    <!-- Vầng Hào Quang (Halo) ở giữa trên cùng -->
+                    <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 w-12 h-3 border-[3px] border-yellow-400 rounded-[50%] animate-pulse shadow-[0_0_8px_rgba(250,204,21,0.8)] z-20"></div>
+
+                    <!-- Cánh thiên thần trái -->
+                    <svg class="absolute -top-8 -left-12 w-20 h-20 text-amber-400 animate-pulse drop-shadow-md z-0" style="transform: rotate(-15deg);" viewBox="-80 -80 160 180" fill="currentColor">
+                        <path d="M 50 90 C 10 90 -40 70 -75 25 Q -40 40 -15 45 Q -55 10 -60 -25 Q -30 0 -5 20 Q -40 -20 -25 -50 Q -5 -15 15 5 Q -10 -40 10 -60 Q 20 -20 35 10 C 45 -10 50 20 50 90 Z" opacity="0.95"/>
+                        <path d="M 45 80 C 15 80 -25 60 -55 25 Q -25 35 -5 40 Q -40 10 -45 -15 Q -20 5 5 15 Q -25 -15 -15 -35 Q 5 -10 20 5 Q 0 -25 15 -40 C 35 0 45 20 45 80 Z" fill="#FFF" opacity="0.75"/>
                     </svg>
 
-                    <!-- Thiên thần phải (Lật ngược) -->
-                    <svg class="absolute -top-8 -right-10 w-24 h-24 text-[#a5b4fc] animate-pulse" style="transform: scaleX(-1); animation-delay: 0.5s;" viewBox="0 0 100 100" fill="currentColor">
-                        <path d="M 65,25 A 8,8 0 1,0 65,24.9 Z M 60,35 C 45,35 25,45 5,55 C 20,60 40,70 55,75 C 65,70 70,60 75,45 Z M 55,35 C 35,25 15,10 5,5 C 20,15 40,25 50,45 Z" />
+                    <!-- Cánh thiên thần phải (Lật ngược) -->
+                    <svg class="absolute -top-8 -right-12 w-20 h-20 text-amber-400 animate-pulse drop-shadow-md z-0" style="transform: scaleX(-1) rotate(-15deg); animation-delay: 0.5s;" viewBox="-80 -80 160 180" fill="currentColor">
+                        <path d="M 50 90 C 10 90 -40 70 -75 25 Q -40 40 -15 45 Q -55 10 -60 -25 Q -30 0 -5 20 Q -40 -20 -25 -50 Q -5 -15 15 5 Q -10 -40 10 -60 Q 20 -20 35 10 C 45 -10 50 20 50 90 Z" opacity="0.95"/>
+                        <path d="M 45 80 C 15 80 -25 60 -55 25 Q -25 35 -5 40 Q -40 10 -45 -15 Q -20 5 5 15 Q -25 -15 -15 -35 Q 5 -10 20 5 Q 0 -25 15 -40 C 35 0 45 20 45 80 Z" fill="#FFF" opacity="0.75"/>
                     </svg>
 
-                    <!-- Các ngôi sao nhỏ -->
-                    <div class="absolute -top-6 left-1/2 text-[#fde047] text-xl animate-ping" style="animation-duration: 3s;">★</div>
-                    <div class="absolute top-0 -left-6 text-[#93c5fd] text-lg animate-bounce">★</div>
-                    <div class="absolute bottom-4 -right-8 text-[#fde047] text-2xl animate-pulse">★</div>
-                    <div class="absolute -bottom-8 left-4 text-[#93c5fd] text-xl animate-bounce" style="animation-delay: 1s;">★</div>
-                    <div class="absolute -bottom-6 right-10 text-[#fde047] text-sm animate-ping">★</div>
+                    <!-- Các ngôi sao nhỏ lấp lánh -->
+                    <div class="absolute -top-6 left-1/2 text-yellow-400 text-xl animate-ping" style="animation-duration: 3s;">★</div>
+                    <div class="absolute top-0 -left-6 text-blue-300 text-lg animate-bounce">★</div>
+                    <div class="absolute bottom-4 -right-8 text-yellow-400 text-2xl animate-pulse">★</div>
+                    <div class="absolute -bottom-8 left-4 text-amber-300 text-xl animate-bounce" style="animation-delay: 1s;">★</div>
+                    <div class="absolute -bottom-6 right-10 text-blue-400 text-sm animate-ping">★</div>
 
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://nguynank.github.io/Giuchuoitinhnguyen/&color=818cf8" alt="QR Code" class="w-32 h-32 rounded-lg relative z-10" />
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://nguynank.github.io/Giuchuoitinhnguyen/&color=d97706" alt="QR Code" class="w-32 h-32 rounded-lg relative z-10" />
                 </div>
             </div>
         </div>
@@ -282,7 +286,7 @@
         </div>
     </div>
 
-    <!-- MÀN HÌNH ADMIN XEM BÀI USER (CUỘN XEM TẤT CẢ VÀ ĐÃ ẨN CÂU 3) -->
+    <!-- MÀN HÌNH ADMIN XEM BÀI USER (ĐÃ LÀM GỌN VÀ ẨN HOÀN TOÀN CÂU 3) -->
     <div id="admin-view-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
         <div id="admin-view-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-lg p-6 transform scale-95 transition-transform duration-300 flex flex-col max-h-[85vh]">
             <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3 shrink-0">
@@ -486,8 +490,7 @@
             </div>
         </div>
 
-        <!-- BẢNG NỘI DUNG CHÍNH (Đã thiết lập cấu trúc 3 Cột: Đàn Hạc - Tĩnh Nguyện - Ống Nước) -->
-        <!-- Đã sửa thành items-start để tất cả các cột canh lề trên cùng bằng nhau -->
+        <!-- BẢNG NỘI DUNG CHÍNH Cấu trúc 3 Cột: Đàn Hạc (Trái) - Tĩnh Nguyện (Giữa) - Ống Nước (Phải) -->
         <div class="bg-white/85 lg:bg-white/95 backdrop-blur-md rounded-3xl lg:rounded-[2.5rem] shadow-2xl shadow-blue-100/50 w-full border border-white/50 flex flex-col lg:flex-row p-4 sm:p-6 lg:p-10 gap-6 lg:gap-12 items-center lg:items-start justify-between relative z-10">
             
             <!-- CỘT 1: ĐÀN HẠC VÀ ĐIỂM -->
@@ -558,36 +561,9 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Thẻ Mã QR Trang Trí Dành Cho Máy Tính / Màn Hình Rộng -->
-                <div class="hidden mt-8 lg:mt-auto pt-6 border-t border-slate-100/50 w-full lg:flex flex-col items-center justify-center relative pb-4">
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">Mã QR Chia Sẻ Ứng Dụng</p>
-                    
-                    <div class="relative bg-white p-3 rounded-2xl shadow-sm border border-indigo-200 hover:scale-105 transition-transform duration-300 z-10 mt-6">
-                        
-                        <!-- Thiên thần trái -->
-                        <svg class="absolute -top-10 -left-12 w-24 h-24 text-[#a5b4fc] animate-pulse" viewBox="0 0 100 100" fill="currentColor">
-                            <path d="M 65,25 A 8,8 0 1,0 65,24.9 Z M 60,35 C 45,35 25,45 5,55 C 20,60 40,70 55,75 C 65,70 70,60 75,45 Z M 55,35 C 35,25 15,10 5,5 C 20,15 40,25 50,45 Z" />
-                        </svg>
-
-                        <!-- Thiên thần phải (Lật ngược) -->
-                        <svg class="absolute -top-10 -right-12 w-24 h-24 text-[#a5b4fc] animate-pulse" style="transform: scaleX(-1); animation-delay: 0.5s;" viewBox="0 0 100 100" fill="currentColor">
-                            <path d="M 65,25 A 8,8 0 1,0 65,24.9 Z M 60,35 C 45,35 25,45 5,55 C 20,60 40,70 55,75 C 65,70 70,60 75,45 Z M 55,35 C 35,25 15,10 5,5 C 20,15 40,25 50,45 Z" />
-                        </svg>
-
-                        <!-- Các ngôi sao nhỏ -->
-                        <div class="absolute -top-6 left-1/2 text-[#fde047] text-xl animate-ping" style="animation-duration: 3s;">★</div>
-                        <div class="absolute top-0 -left-6 text-[#93c5fd] text-lg animate-bounce">★</div>
-                        <div class="absolute bottom-4 -right-8 text-[#fde047] text-2xl animate-pulse">★</div>
-                        <div class="absolute -bottom-8 left-4 text-[#93c5fd] text-xl animate-bounce" style="animation-delay: 1s;">★</div>
-                        <div class="absolute -bottom-6 right-10 text-[#fde047] text-sm animate-ping">★</div>
-
-                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://nguynank.github.io/Giuchuoitinhnguyen/&color=818cf8" alt="QR Code" class="w-32 h-32 rounded-lg relative z-10" />
-                    </div>
-                </div>
             </div>
 
-            <!-- ĐƯỜNG KẺ GIỮA (Chỉ hiện trên máy tính) -->
+            <!-- ĐƯỜNG KẺ GIỮA -->
             <div class="hidden lg:block w-px h-auto bg-gradient-to-b from-transparent via-blue-100 to-transparent shrink-0"></div>
 
             <!-- CỘT 2: KHUNG ĐIỀN THÔNG TIN TĨNH NGUYỆN -->
@@ -1298,8 +1274,7 @@
                     inner += `<div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm ${idx !== logs.length - 1 ? 'mb-4' : ''}">`;
                     inner += '<div class="bg-blue-50 p-2 rounded-lg mb-3 text-sm"><span class="font-bold text-blue-700">Ngày:</span> ' + (log.date || 'Không rõ') + ' ' + (log.emotion || '') + '</div>';
                     inner += '<div class="bg-slate-50 border p-2 rounded-lg mb-2 text-sm"><span class="font-bold text-slate-700">1. Nguồn tài liệu:</span><p class="mt-1">' + (log.source || '(Trống)') + '</p></div>';
-                    inner += '<div class="bg-slate-50 border p-2 rounded-lg mb-2 text-sm"><span class="font-bold text-slate-700">2. Phân đoạn/Chủ đề:</span><p class="mt-1">' + (log.q1 || '(Trống)') + '</p></div>';
-                    // Đã loại bỏ hoàn toàn câu 3 và bảng cảnh báo khóa đỏ
+                    inner += '<div class="bg-slate-50 border p-2 rounded-lg text-sm"><span class="font-bold text-slate-700">2. Phân đoạn/Chủ đề:</span><p class="mt-1">' + (log.q1 || '(Trống)') + '</p></div>';
                     inner += '</div>';
                 });
                 body.innerHTML = inner;
