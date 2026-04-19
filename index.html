@@ -7,60 +7,35 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        body { font-family: 'Inter', sans-serif; transition: background-color 1s ease-in-out; position: relative; }
         
-        /* --- HÌNH NỀN THEO RANK CÓ CHUYỂN ĐỘNG (SEAMLESS GIF-LIKE LOOP) --- */
-        @keyframes slide-bg-1 {
-            0% { background-position: 0px 0px, 0px 0px; }
-            100% { background-position: 100px 100px, 0px 0px; }
-        }
-        @keyframes slide-bg-3 {
-            0% { background-position: 0px 0px, 0px 0px, 0px 0px; }
-            100% { background-position: 100px 100px, 100px 100px, 0px 0px; }
-        }
-        @keyframes slide-bg-offset {
-            0% { background-position: 0px 0px, 25px 25px, 0px 0px; }
-            100% { background-position: 100px 100px, 125px 125px, 0px 0px; }
+        /* --- HIỆU ỨNG CHUYỂN ĐỘNG NỀN VĨNH VIỄN (SEAMLESS GIF-LIKE LOOP) --- */
+        body::before {
+            content: ""; position: fixed; top: -100px; left: -100px; right: -100px; bottom: -100px; z-index: -1; pointer-events: none; transition: opacity 1s ease;
         }
 
-        .bg-theme-wood { 
-            background: repeating-linear-gradient(45deg, rgba(141,110,99,0.06) 0px, rgba(141,110,99,0.06) 2px, transparent 2px, transparent 10px), linear-gradient(135deg, #e7e5e4, #d6d3d1); 
-            background-size: 100px 100px, 100% 100%;
-            animation: slide-bg-1 6s linear infinite;
-        }
-        .bg-theme-bronze { 
-            background: repeating-radial-gradient(circle at 0 0, transparent 0, rgba(217,119,6,0.08) 10px, transparent 10px, transparent 20px), linear-gradient(135deg, #ffedd5, #fed7aa); 
-            background-size: 100px 100px, 100% 100%;
-            animation: slide-bg-1 8s linear infinite;
-        }
-        .bg-theme-iron { 
-            background: linear-gradient(0deg, transparent 24%, rgba(100,116,139,0.08) 25%, rgba(100,116,139,0.08) 26%, transparent 27%, transparent 74%, rgba(100,116,139,0.08) 75%, rgba(100,116,139,0.08) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(100,116,139,0.08) 25%, rgba(100,116,139,0.08) 26%, transparent 27%, transparent 74%, rgba(100,116,139,0.08) 75%, rgba(100,116,139,0.08) 76%, transparent 77%, transparent), linear-gradient(135deg, #f1f5f9, #cbd5e1); 
-            background-size: 50px 50px, 50px 50px, 100% 100%; 
-            animation: slide-bg-3 10s linear infinite;
-        }
-        .bg-theme-gold { 
-            background: radial-gradient(rgba(234,179,8,0.2) 4px, transparent 4px), radial-gradient(rgba(234,179,8,0.2) 4px, transparent 4px), linear-gradient(135deg, #fef08a, #fcd34d); 
-            background-position: 0 0, 25px 25px, 0 0; 
-            background-size: 50px 50px, 50px 50px, 100% 100%; 
-            animation: slide-bg-offset 8s linear infinite;
-        }
-        .bg-theme-platinum { 
-            background: repeating-linear-gradient(135deg, rgba(59,130,246,0.1) 0px, rgba(59,130,246,0.1) 2px, transparent 2px, transparent 20px), repeating-linear-gradient(45deg, rgba(59,130,246,0.1) 0px, rgba(59,130,246,0.1) 2px, transparent 2px, transparent 20px), linear-gradient(135deg, #e0f2fe, #bae6fd); 
-            background-size: 100px 100px, 100px 100px, 100% 100%;
-            animation: slide-bg-3 12s linear infinite;
-        }
-        .bg-theme-diamond { 
-            background: linear-gradient(45deg, rgba(6,182,212,0.15) 25%, transparent 25%, transparent 75%, rgba(6,182,212,0.15) 75%, rgba(6,182,212,0.15)), linear-gradient(45deg, rgba(6,182,212,0.15) 25%, transparent 25%, transparent 75%, rgba(6,182,212,0.15) 75%, rgba(6,182,212,0.15)), linear-gradient(135deg, #cffafe, #67e8f9); 
-            background-position: 0 0, 25px 25px, 0 0; 
-            background-size: 50px 50px, 50px 50px, 100% 100%; 
-            animation: slide-bg-offset 10s linear infinite;
-        }
-        .bg-theme-ruby { 
-            background: radial-gradient(circle, rgba(225,29,72,0.1) 25%, transparent 25%), radial-gradient(circle, rgba(225,29,72,0.1) 25%, transparent 25%), linear-gradient(135deg, #ffe4e6, #fda4af); 
-            background-position: 0 0, 25px 25px, 0 0; 
-            background-size: 50px 50px, 50px 50px, 100% 100%; 
-            animation: slide-bg-offset 8s linear infinite;
-        }
+        @keyframes slidePattern { 0% { transform: translate(0, 0); } 100% { transform: translate(60px, 60px); } }
+
+        .bg-theme-wood { background-color: #e7e5e4; background-image: linear-gradient(135deg, #e7e5e4, #d6d3d1); }
+        .bg-theme-wood::before { background: repeating-linear-gradient(45deg, rgba(141,110,99,0.06) 0px, rgba(141,110,99,0.06) 2px, transparent 2px, transparent 15px); background-size: 60px 60px; animation: slidePattern 5s linear infinite; }
+
+        .bg-theme-bronze { background-color: #ffedd5; background-image: linear-gradient(135deg, #ffedd5, #fed7aa); }
+        .bg-theme-bronze::before { background: repeating-radial-gradient(circle at 0 0, transparent 0, rgba(217,119,6,0.1) 10px, transparent 10px, transparent 20px); background-size: 60px 60px; animation: slidePattern 7s linear infinite; }
+
+        .bg-theme-iron { background-color: #f1f5f9; background-image: linear-gradient(135deg, #f1f5f9, #cbd5e1); }
+        .bg-theme-iron::before { background: linear-gradient(0deg, transparent 24%, rgba(100,116,139,0.08) 25%, rgba(100,116,139,0.08) 26%, transparent 27%, transparent 74%, rgba(100,116,139,0.08) 75%, rgba(100,116,139,0.08) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(100,116,139,0.08) 25%, rgba(100,116,139,0.08) 26%, transparent 27%, transparent 74%, rgba(100,116,139,0.08) 75%, rgba(100,116,139,0.08) 76%, transparent 77%, transparent); background-size: 60px 60px; animation: slidePattern 9s linear infinite; }
+
+        .bg-theme-gold { background-color: #fef08a; background-image: linear-gradient(135deg, #fef08a, #fcd34d); }
+        .bg-theme-gold::before { background: radial-gradient(rgba(234,179,8,0.2) 4px, transparent 4px); background-size: 30px 30px; animation: slidePattern 7s linear infinite; }
+
+        .bg-theme-platinum { background-color: #e0f2fe; background-image: linear-gradient(135deg, #e0f2fe, #bae6fd); }
+        .bg-theme-platinum::before { background: repeating-linear-gradient(135deg, rgba(59,130,246,0.1) 0px, rgba(59,130,246,0.1) 2px, transparent 2px, transparent 20px), repeating-linear-gradient(45deg, rgba(59,130,246,0.1) 0px, rgba(59,130,246,0.1) 2px, transparent 2px, transparent 20px); background-size: 60px 60px; animation: slidePattern 11s linear infinite; }
+
+        .bg-theme-diamond { background-color: #cffafe; background-image: linear-gradient(135deg, #cffafe, #67e8f9); }
+        .bg-theme-diamond::before { background: linear-gradient(45deg, rgba(6,182,212,0.15) 25%, transparent 25%, transparent 75%, rgba(6,182,212,0.15) 75%, rgba(6,182,212,0.15)), linear-gradient(45deg, rgba(6,182,212,0.15) 25%, transparent 25%, transparent 75%, rgba(6,182,212,0.15) 75%, rgba(6,182,212,0.15)); background-position: 0 0, 30px 30px; background-size: 60px 60px; animation: slidePattern 8s linear infinite; }
+
+        .bg-theme-ruby { background-color: #ffe4e6; background-image: linear-gradient(135deg, #ffe4e6, #fda4af); }
+        .bg-theme-ruby::before { background: radial-gradient(circle, rgba(225,29,72,0.1) 25%, transparent 25%); background-size: 60px 60px; animation: slidePattern 9s linear infinite; }
 
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
@@ -70,13 +45,28 @@
         .glass-tube { box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
         .glass-tube-overlay { box-shadow: inset 5px 0 15px rgba(255,255,255,0.8), inset -5px 0 15px rgba(0,0,0,0.1); }
         
-        /* CỐ ĐỊNH ỐNG DUNG DỊCH LUÔN LUÔN NẰM DỌC TRÊN MỌI THIẾT BỊ */
-        .tube-liquid-red { width: 100%; height: var(--fill-level, 6%); background-image: linear-gradient(to top, #dc2626, #ef4444, #f87171); }
-        .tube-liquid-blue { width: 100%; height: var(--fill-level, 6%); background-image: linear-gradient(to top, #2563eb, #3b82f6, #60a5fa); }
+        /* ĐIỀU CHỈNH ỐNG DUNG DỊCH (Mobile: Ngang / Desktop: Dọc) */
+        .tube-liquid-red { width: var(--fill-level, 6%); height: 100%; background-image: linear-gradient(to right, #dc2626, #ef4444, #f87171); }
+        .tube-liquid-blue { width: var(--fill-level, 6%); height: 100%; background-image: linear-gradient(to right, #2563eb, #3b82f6, #60a5fa); }
+        
+        @media (min-width: 1024px) {
+            .tube-liquid-red { width: 100% !important; height: var(--fill-level, 6%) !important; background-image: linear-gradient(to top, #dc2626, #ef4444, #f87171); }
+            .tube-liquid-blue { width: 100% !important; height: var(--fill-level, 6%) !important; background-image: linear-gradient(to top, #2563eb, #3b82f6, #60a5fa); }
+        }
 
+        /* GỢN SÓNG DUNG DỊCH */
         .wave-mask-v-1, .wave-mask-v-2 { position: absolute; width: 250px; height: 250px; left: -105px; pointer-events: none; }
         .wave-mask-v-1 { top: -243px; border-radius: 40%; background: rgba(248, 250, 252, 0.5); animation: spin 5s linear infinite; }
         .wave-mask-v-2 { top: -247px; border-radius: 45%; background: rgb(248, 250, 252); box-shadow: 0 5px 8px -2px rgba(0,0,0,0.15); animation: spin 7s linear infinite; }
+        
+        .wave-mask-h-1, .wave-mask-h-2 { position: absolute; width: 250px; height: 250px; top: -105px; pointer-events: none; }
+        .wave-mask-h-1 { right: -243px; border-radius: 40%; background: rgba(248, 250, 252, 0.5); animation: spin 5s linear infinite; }
+        .wave-mask-h-2 { right: -247px; border-radius: 45%; background: rgb(248, 250, 252); box-shadow: -5px 0 8px -2px rgba(0,0,0,0.15); animation: spin 7s linear infinite; }
+        
+        /* Ẩn hiện mặt cắt nước tùy thiết bị */
+        @media (max-width: 1023px) { .wave-mask-v-1, .wave-mask-v-2 { display: none; } }
+        @media (min-width: 1024px) { .wave-mask-h-1, .wave-mask-h-2 { display: none; } }
+
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
         /* --- CẤU HÌNH ĐÀN HẠC --- */
@@ -147,7 +137,7 @@
         </div>
     </div>
 
-    <!-- MÀN HÌNH LỜI CHÚC (XUẤT HIỆN SAU KHI TĨNH NGUYỆN XONG) -->
+    <!-- MÀN HÌNH LỜI CHÚC PHƯỚC HẠNH -->
     <div id="blessing-modal" class="fixed inset-0 bg-white/80 backdrop-blur-sm z-[110] flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-500">
         <div class="bg-gradient-to-br from-amber-50 to-orange-100 rounded-[2rem] shadow-2xl w-full max-w-sm p-8 text-center border-2 border-amber-200 transform scale-90 transition-transform duration-500" id="blessing-content">
             <div class="text-6xl mb-4 animate-bounce">🕊️</div>
@@ -432,11 +422,11 @@
             </div>
         </div>
 
-        <!-- BẢNG NỘI DUNG CHÍNH (Đã thiết lập lại cấu trúc 3 Cột: Đàn Hạc - Tĩnh Nguyện - Ống Nước) -->
+        <!-- BẢNG NỘI DUNG CHÍNH (Đã thiết lập cấu trúc 3 Cột: Đàn Hạc - Tĩnh Nguyện - Ống Nước) -->
         <div class="bg-white/85 lg:bg-white/95 backdrop-blur-md rounded-3xl lg:rounded-[2.5rem] shadow-2xl shadow-blue-100/50 w-full border border-white/50 flex flex-col lg:flex-row p-4 sm:p-6 lg:p-10 gap-6 lg:gap-12 items-center lg:items-stretch justify-between relative z-10">
             
-            <!-- CỘT 1: ĐÀN HẠC VÀ ĐIỂM CHUỖI -->
-            <div class="w-full lg:w-[280px] shrink-0 flex flex-col items-center justify-center relative">
+            <!-- CỘT 1: ĐÀN HẠC VÀ MÃ QR -->
+            <div class="w-full lg:w-[280px] shrink-0 flex flex-col items-center justify-start pt-8 relative">
                 <div id="lost-streak-alert" class="hidden absolute top-0 bg-red-100 text-red-700 px-4 py-2 rounded-xl text-sm font-bold animate-bounce z-50 border border-red-200 shadow-md flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
                     Bạn đã bỏ lỡ ngày hôm qua! Chuỗi đã bị đặt lại.
@@ -446,7 +436,7 @@
                     <svg width="160" height="160" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-yellow-400 animate-ping opacity-30"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
                 </div>
 
-                <div class="text-center mb-6 mt-4 lg:mt-0">
+                <div class="text-center mb-6">
                     <span class="text-sm font-semibold tracking-wider uppercase text-amber-600">Một Ngày Phước Hạnh</span>
                     <h1 class="text-2xl md:text-3xl font-bold text-slate-800">GIỮ CHUỖI TĨNH NGUYỆN</h1>
                     <p class="text-slate-500 mt-2" id="rank-name-display">Gần gũi Chúa thêm mỗi ngày</p>
@@ -503,6 +493,15 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Thẻ Mã QR Trang Trí Dành Cho Máy Tính / Màn Hình Rộng -->
+                <div class="mt-8 lg:mt-auto pt-6 border-t border-slate-100/50 w-full flex flex-col items-center justify-center">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Mã QR Tham Gia</p>
+                    <div class="bg-white p-2.5 rounded-[1.25rem] shadow-sm border border-slate-100 hover:scale-105 transition-transform duration-300">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://nguynank.github.io/Giuchuoitinhnguyen/" alt="QR Code" class="w-24 h-24 rounded-lg opacity-90 hover:opacity-100 transition-opacity" />
+                    </div>
+                    <p class="text-[9px] text-blue-500 font-medium mt-3 bg-blue-50 px-3 py-1 rounded-full border border-blue-100">Quét để chia sẻ ứng dụng</p>
+                </div>
             </div>
 
             <!-- ĐƯỜNG KẺ GIỮA -->
@@ -547,7 +546,7 @@
                             <textarea id="q1" rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-[13px] focus:ring-2 focus:ring-amber-400 focus:bg-white transition-all resize-none text-slate-700" placeholder="Viết câu trả lời..."></textarea>
                         </div>
                         
-                        <!-- CÂU 3: CÁO TRÁCH/THÚC GIỤC (Đã sửa chữ Đụng chạm) -->
+                        <!-- CÂU 3: CÁO TRÁCH/THÚC GIỤC -->
                         <div>
                             <label class="text-[12px] font-semibold text-slate-700 block mb-1">3. Bạn được đụng chạm hoặc thúc giục điều gì qua bài học hôm nay?</label>
                             <textarea id="q2" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-[13px] focus:ring-2 focus:ring-amber-400 focus:bg-white transition-all resize-none text-slate-700" placeholder="Viết câu trả lời..."></textarea>
@@ -575,38 +574,39 @@
                 </div>
             </div>
 
-            <!-- CỘT 3: ỐNG DUNG DỊCH (LUÔN NẰM DỌC VÀ SONG SONG TRÊN MỌI THIẾT BỊ) -->
-            <div class="flex flex-row gap-6 shrink-0 border-t lg:border-t-0 lg:border-l border-slate-100/50 pt-6 lg:pt-0 pl-0 lg:pl-10 items-end justify-center w-full lg:w-auto mt-4 lg:mt-0">
+            <!-- CỘT 3: ỐNG DUNG DỊCH CỐ ĐỊNH -->
+            <!-- Chú ý: pt-8 giúp cột này canh ngang chính xác với pt-8 của cột Đàn Hạc (cột 1) -->
+            <div class="flex flex-col lg:flex-row gap-4 lg:gap-6 shrink-0 border-t lg:border-t-0 lg:border-l border-slate-100/50 pt-6 lg:pt-8 pl-0 lg:pl-10 items-center lg:items-start justify-center lg:justify-start w-full lg:w-auto mt-4 lg:mt-0">
                 
                 <!-- ỐNG ĐỎ -->
-                <div class="flex flex-col items-center justify-end gap-3 w-14 sm:w-16">
-                    <div class="text-center bg-red-50/80 px-2 py-1.5 rounded-xl border border-red-100 w-full shadow-sm flex flex-col items-center justify-center">
+                <div class="flex flex-row lg:flex-col items-center justify-center gap-3 w-full lg:w-16">
+                    <div class="text-center bg-red-50/80 px-2 py-1.5 rounded-xl border border-red-100 w-16 lg:w-full shrink-0 shadow-sm flex flex-col items-center justify-center">
                         <span class="text-[10px] font-bold text-red-500 uppercase block leading-tight">Tổng</span>
                         <span class="text-[8px] font-bold text-red-400 uppercase tracking-widest mt-0.5 mb-1">Level</span>
                         <span id="tube-red-text" class="text-xl font-black text-red-600 leading-none">0</span>
                     </div>
-                    <!-- Ống luôn luôn cố định chiều cao và nằm dọc -->
-                    <div class="w-full h-48 sm:h-[380px] bg-slate-50 rounded-[24px] border-[4px] border-slate-200/80 glass-tube relative overflow-hidden flex items-end justify-center">
-                        <div id="tube-red-liquid" class="w-full relative transition-all duration-1000 ease-in-out bg-gradient-to-t from-red-600 via-red-500 to-red-400" style="height: var(--fill-level, 6%);">
+                    <div class="flex-1 lg:flex-none w-full lg:w-12 h-10 lg:h-[380px] bg-slate-50 rounded-full lg:rounded-[24px] border-[3px] lg:border-[4px] border-slate-200/80 glass-tube relative overflow-hidden flex justify-start lg:items-end lg:justify-center">
+                        <div id="tube-red-liquid" class="relative tube-liquid-red transition-all duration-1000 ease-in-out flex justify-end lg:justify-center lg:items-start" style="--fill-level: 6%;">
+                            <div class="wave-mask-h-1"></div><div class="wave-mask-h-2"></div>
                             <div class="wave-mask-v-1"></div><div class="wave-mask-v-2"></div>
                         </div>
-                        <div class="absolute inset-0 rounded-[20px] pointer-events-none glass-tube-overlay"></div>
+                        <div class="absolute inset-0 rounded-full lg:rounded-[20px] pointer-events-none glass-tube-overlay"></div>
                     </div>
                 </div>
 
                 <!-- ỐNG XANH -->
-                <div class="flex flex-col items-center justify-end gap-3 w-14 sm:w-16">
-                    <div class="text-center bg-blue-50/80 px-2 py-1.5 rounded-xl border border-blue-100 w-full shadow-sm flex flex-col items-center justify-center">
+                <div class="flex flex-row lg:flex-col items-center justify-center gap-3 w-full lg:w-16">
+                    <div class="text-center bg-blue-50/80 px-2 py-1.5 rounded-xl border border-blue-100 w-16 lg:w-full shrink-0 shadow-sm flex flex-col items-center justify-center">
                         <span class="text-[10px] font-bold text-blue-500 uppercase block leading-tight">Chuỗi</span>
                         <span class="text-[8px] font-bold text-blue-400 uppercase tracking-widest mt-0.5 mb-1">XP</span>
                         <span id="tube-blue-text" class="text-xl font-black text-blue-600 leading-none">0</span>
                     </div>
-                    <!-- Ống luôn luôn cố định chiều cao và nằm dọc -->
-                    <div class="w-full h-48 sm:h-[380px] bg-slate-50 rounded-[24px] border-[4px] border-slate-200/80 glass-tube relative overflow-hidden flex items-end justify-center">
-                        <div id="tube-blue-liquid" class="w-full relative transition-all duration-1000 ease-in-out bg-gradient-to-t from-blue-600 via-blue-500 to-blue-400" style="height: var(--fill-level, 6%);">
+                    <div class="flex-1 lg:flex-none w-full lg:w-12 h-10 lg:h-[380px] bg-slate-50 rounded-full lg:rounded-[24px] border-[3px] lg:border-[4px] border-slate-200/80 glass-tube relative overflow-hidden flex justify-start lg:items-end lg:justify-center">
+                        <div id="tube-blue-liquid" class="relative tube-liquid-blue transition-all duration-1000 ease-in-out flex justify-end lg:justify-center lg:items-start" style="--fill-level: 6%;">
+                            <div class="wave-mask-h-1"></div><div class="wave-mask-h-2"></div>
                             <div class="wave-mask-v-1"></div><div class="wave-mask-v-2"></div>
                         </div>
-                        <div class="absolute inset-0 rounded-[20px] pointer-events-none glass-tube-overlay"></div>
+                        <div class="absolute inset-0 rounded-full lg:rounded-[20px] pointer-events-none glass-tube-overlay"></div>
                     </div>
                 </div>
 
@@ -1083,7 +1083,7 @@
                 document.getElementById('btn-open-admin').classList.remove('hidden');
             }
 
-            // HIỆN NÚT RESET DÀNH RIÊNG CHO NGUYÊN ANH
+            // HIỆN NÚT RESET DÀNH RIÊNG CHO NGUYÊN ANH (ĐÃ FIX LỖI ẨN HTML)
             const adminResetArea = document.getElementById('admin-reset-area');
             if (userData.username.trim() === "Nguyên Anh") {
                 if (adminResetArea) adminResetArea.classList.remove('hidden');
@@ -1105,8 +1105,8 @@
             const maxCap = 90; 
             document.getElementById('tube-red-text').innerText = userData.totalCheckins; document.getElementById('tube-blue-text').innerText = userData.currentStreak;
             // Ống giờ luôn luôn nằm dọc bằng cách ép height chứ không phải width nữa
-            document.getElementById('tube-red-liquid').style.height = Math.max(6, Math.min((userData.totalCheckins / maxCap) * 100, 100)) + '%';
-            document.getElementById('tube-blue-liquid').style.height = Math.max(6, Math.min((userData.currentStreak / maxCap) * 100, 100)) + '%';
+            document.getElementById('tube-red-liquid').style.setProperty('--fill-level', Math.max(6, Math.min((userData.totalCheckins / maxCap) * 100, 100)) + '%');
+            document.getElementById('tube-blue-liquid').style.setProperty('--fill-level', Math.max(6, Math.min((userData.currentStreak / maxCap) * 100, 100)) + '%');
         }
 
         document.getElementById('checkin-btn').addEventListener('click', async () => {
