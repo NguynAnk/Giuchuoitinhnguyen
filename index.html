@@ -7,35 +7,60 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; transition: background-color 1s ease-in-out; position: relative; }
+        body { font-family: 'Inter', sans-serif; transition: background-color 1s ease-in-out; }
         
         /* --- HIỆU ỨNG CHUYỂN ĐỘNG NỀN VĨNH VIỄN (SEAMLESS GIF-LIKE LOOP) --- */
-        body::before {
-            content: ""; position: fixed; top: -100px; left: -100px; right: -100px; bottom: -100px; z-index: -1; pointer-events: none; transition: opacity 1s ease;
+        @keyframes slideBg {
+            0% { background-position: 0px 0px, 0px 0px; }
+            100% { background-position: 100px 100px, 0px 0px; }
+        }
+        @keyframes slideBgOffset {
+            0% { background-position: 0px 0px, 25px 25px; }
+            100% { background-position: 100px 100px, 125px 125px; }
         }
 
-        @keyframes slidePattern { 0% { transform: translate(0, 0); } 100% { transform: translate(60px, 60px); } }
-
-        .bg-theme-wood { background-color: #e7e5e4; background-image: linear-gradient(135deg, #e7e5e4, #d6d3d1); }
-        .bg-theme-wood::before { background: repeating-linear-gradient(45deg, rgba(141,110,99,0.06) 0px, rgba(141,110,99,0.06) 2px, transparent 2px, transparent 15px); background-size: 60px 60px; animation: slidePattern 5s linear infinite; }
-
-        .bg-theme-bronze { background-color: #ffedd5; background-image: linear-gradient(135deg, #ffedd5, #fed7aa); }
-        .bg-theme-bronze::before { background: repeating-radial-gradient(circle at 0 0, transparent 0, rgba(217,119,6,0.1) 10px, transparent 10px, transparent 20px); background-size: 60px 60px; animation: slidePattern 7s linear infinite; }
-
-        .bg-theme-iron { background-color: #f1f5f9; background-image: linear-gradient(135deg, #f1f5f9, #cbd5e1); }
-        .bg-theme-iron::before { background: linear-gradient(0deg, transparent 24%, rgba(100,116,139,0.08) 25%, rgba(100,116,139,0.08) 26%, transparent 27%, transparent 74%, rgba(100,116,139,0.08) 75%, rgba(100,116,139,0.08) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(100,116,139,0.08) 25%, rgba(100,116,139,0.08) 26%, transparent 27%, transparent 74%, rgba(100,116,139,0.08) 75%, rgba(100,116,139,0.08) 76%, transparent 77%, transparent); background-size: 60px 60px; animation: slidePattern 9s linear infinite; }
-
-        .bg-theme-gold { background-color: #fef08a; background-image: linear-gradient(135deg, #fef08a, #fcd34d); }
-        .bg-theme-gold::before { background: radial-gradient(rgba(234,179,8,0.2) 4px, transparent 4px); background-size: 30px 30px; animation: slidePattern 7s linear infinite; }
-
-        .bg-theme-platinum { background-color: #e0f2fe; background-image: linear-gradient(135deg, #e0f2fe, #bae6fd); }
-        .bg-theme-platinum::before { background: repeating-linear-gradient(135deg, rgba(59,130,246,0.1) 0px, rgba(59,130,246,0.1) 2px, transparent 2px, transparent 20px), repeating-linear-gradient(45deg, rgba(59,130,246,0.1) 0px, rgba(59,130,246,0.1) 2px, transparent 2px, transparent 20px); background-size: 60px 60px; animation: slidePattern 11s linear infinite; }
-
-        .bg-theme-diamond { background-color: #cffafe; background-image: linear-gradient(135deg, #cffafe, #67e8f9); }
-        .bg-theme-diamond::before { background: linear-gradient(45deg, rgba(6,182,212,0.15) 25%, transparent 25%, transparent 75%, rgba(6,182,212,0.15) 75%, rgba(6,182,212,0.15)), linear-gradient(45deg, rgba(6,182,212,0.15) 25%, transparent 25%, transparent 75%, rgba(6,182,212,0.15) 75%, rgba(6,182,212,0.15)); background-position: 0 0, 30px 30px; background-size: 60px 60px; animation: slidePattern 8s linear infinite; }
-
-        .bg-theme-ruby { background-color: #ffe4e6; background-image: linear-gradient(135deg, #ffe4e6, #fda4af); }
-        .bg-theme-ruby::before { background: radial-gradient(circle, rgba(225,29,72,0.1) 25%, transparent 25%); background-size: 60px 60px; animation: slidePattern 9s linear infinite; }
+        .bg-theme-wood { 
+            background-color: #e7e5e4; 
+            background-image: repeating-linear-gradient(45deg, rgba(141,110,99,0.06) 0px, rgba(141,110,99,0.06) 2px, transparent 2px, transparent 20px), linear-gradient(135deg, #e7e5e4, #d6d3d1);
+            background-size: 100px 100px, 100% 100%;
+            animation: slideBg 6s linear infinite;
+        }
+        .bg-theme-bronze { 
+            background-color: #ffedd5; 
+            background-image: repeating-radial-gradient(circle at 0 0, transparent 0, rgba(217,119,6,0.08) 10px, transparent 10px, transparent 20px), linear-gradient(135deg, #ffedd5, #fed7aa);
+            background-size: 100px 100px, 100% 100%;
+            animation: slideBg 8s linear infinite;
+        }
+        .bg-theme-iron { 
+            background-color: #f1f5f9; 
+            background-image: linear-gradient(45deg, rgba(100,116,139,0.08) 25%, transparent 25%, transparent 75%, rgba(100,116,139,0.08) 75%, rgba(100,116,139,0.08)), linear-gradient(45deg, rgba(100,116,139,0.08) 25%, transparent 25%, transparent 75%, rgba(100,116,139,0.08) 75%, rgba(100,116,139,0.08));
+            background-size: 50px 50px, 50px 50px;
+            animation: slideBgOffset 10s linear infinite;
+        }
+        .bg-theme-gold { 
+            background-color: #fef08a; 
+            background-image: radial-gradient(rgba(234,179,8,0.2) 4px, transparent 4px), radial-gradient(rgba(234,179,8,0.2) 4px, transparent 4px);
+            background-size: 50px 50px, 50px 50px;
+            animation: slideBgOffset 8s linear infinite;
+        }
+        .bg-theme-platinum { 
+            background-color: #e0f2fe; 
+            background-image: repeating-linear-gradient(135deg, rgba(59,130,246,0.1) 0px, rgba(59,130,246,0.1) 2px, transparent 2px, transparent 20px), repeating-linear-gradient(45deg, rgba(59,130,246,0.1) 0px, rgba(59,130,246,0.1) 2px, transparent 2px, transparent 20px);
+            background-size: 100px 100px, 100px 100px;
+            animation: slideBg 12s linear infinite;
+        }
+        .bg-theme-diamond { 
+            background-color: #cffafe; 
+            background-image: linear-gradient(135deg, rgba(6,182,212,0.15) 25%, transparent 25%, transparent 50%, rgba(6,182,212,0.15) 50%, rgba(6,182,212,0.15) 75%, transparent 75%, transparent);
+            background-size: 50px 50px;
+            animation: slideBg 6s linear infinite;
+        }
+        .bg-theme-ruby { 
+            background-color: #ffe4e6; 
+            background-image: radial-gradient(circle, rgba(225,29,72,0.1) 20%, transparent 20%), radial-gradient(circle, rgba(225,29,72,0.1) 20%, transparent 20%);
+            background-size: 50px 50px, 50px 50px;
+            animation: slideBgOffset 8s linear infinite;
+        }
 
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
@@ -105,7 +130,7 @@
         .emotion-active { filter: grayscale(0%); opacity: 1; transform: scale(1.2); drop-shadow: 0 4px 6px rgba(0,0,0,0.1); }
     </style>
 </head>
-<body id="app-body" class="min-h-screen bg-theme-wood flex items-center justify-center p-3 sm:p-4 md:p-8 text-slate-800 relative overflow-x-hidden">
+<body id="app-body" class="min-h-screen bg-theme-wood flex items-center justify-center p-3 sm:p-4 md:p-8 text-slate-800 overflow-x-hidden">
 
     <svg width="0" height="0" class="absolute pointer-events-none">
         <defs>
@@ -422,11 +447,11 @@
             </div>
         </div>
 
-        <!-- BẢNG NỘI DUNG CHÍNH (Đã thiết lập cấu trúc 3 Cột: Đàn Hạc - Tĩnh Nguyện - Ống Nước) -->
-        <div class="bg-white/85 lg:bg-white/95 backdrop-blur-md rounded-3xl lg:rounded-[2.5rem] shadow-2xl shadow-blue-100/50 w-full border border-white/50 flex flex-col lg:flex-row p-4 sm:p-6 lg:p-10 gap-6 lg:gap-12 items-center lg:items-stretch justify-between relative z-10">
+        <!-- BẢNG NỘI DUNG CHÍNH Cấu trúc 3 Cột: Đàn Hạc (Trái) - Tĩnh Nguyện (Giữa) - Ống Nước (Phải) -->
+        <div class="bg-white/85 lg:bg-white/95 backdrop-blur-md rounded-3xl lg:rounded-[2.5rem] shadow-2xl shadow-blue-100/50 w-full border border-white/50 flex flex-col lg:flex-row p-4 sm:p-6 lg:p-10 gap-6 lg:gap-12 items-center lg:items-start justify-between relative z-10">
             
             <!-- CỘT 1: ĐÀN HẠC VÀ MÃ QR -->
-            <div class="w-full lg:w-[280px] shrink-0 flex flex-col items-center justify-start pt-8 relative">
+            <div class="w-full lg:w-[280px] shrink-0 flex flex-col items-center justify-start pt-0 lg:pt-8 relative">
                 <div id="lost-streak-alert" class="hidden absolute top-0 bg-red-100 text-red-700 px-4 py-2 rounded-xl text-sm font-bold animate-bounce z-50 border border-red-200 shadow-md flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
                     Bạn đã bỏ lỡ ngày hôm qua! Chuỗi đã bị đặt lại.
@@ -436,7 +461,7 @@
                     <svg width="160" height="160" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-yellow-400 animate-ping opacity-30"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
                 </div>
 
-                <div class="text-center mb-6">
+                <div class="text-center mb-6 mt-4 lg:mt-0">
                     <span class="text-sm font-semibold tracking-wider uppercase text-amber-600">Một Ngày Phước Hạnh</span>
                     <h1 class="text-2xl md:text-3xl font-bold text-slate-800">GIỮ CHUỖI TĨNH NGUYỆN</h1>
                     <p class="text-slate-500 mt-2" id="rank-name-display">Gần gũi Chúa thêm mỗi ngày</p>
@@ -495,20 +520,38 @@
                 </div>
 
                 <!-- Thẻ Mã QR Trang Trí Dành Cho Máy Tính / Màn Hình Rộng -->
-                <div class="mt-8 lg:mt-auto pt-6 border-t border-slate-100/50 w-full flex flex-col items-center justify-center">
+                <div class="mt-8 pt-6 border-t border-slate-100/50 w-full flex flex-col items-center justify-center relative">
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Mã QR Tham Gia</p>
-                    <div class="bg-white p-2.5 rounded-[1.25rem] shadow-sm border border-slate-100 hover:scale-105 transition-transform duration-300">
-                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://nguynank.github.io/Giuchuoitinhnguyen/" alt="QR Code" class="w-24 h-24 rounded-lg opacity-90 hover:opacity-100 transition-opacity" />
+                    <div class="relative bg-white p-3 rounded-[1.25rem] shadow-sm border border-blue-100 hover:scale-105 transition-transform duration-300 z-10">
+                        
+                        <!-- Thiên thần góc trái -->
+                        <svg class="absolute -top-7 -left-7 w-14 h-14 text-blue-200 animate-pulse" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12,2 C10.9,2 10,2.9 10,4 C10,5.1 10.9,6 12,6 C13.1,6 14,5.1 14,4 C14,2.9 13.1,2 12,2 Z M21,10 C21,10 18,9 15,10 C15,10 14,14 12,14 C10,14 9,10 9,10 C6,9 3,10 3,10 L3,12 C3,12 6,12 8,15 L6,22 L9,22 L11,16 L13,16 L15,22 L18,22 L16,15 C18,12 21,12 21,12 L21,10 Z"/>
+                        </svg>
+                        
+                        <!-- Thiên thần góc phải -->
+                        <svg class="absolute -top-7 -right-7 w-14 h-14 text-blue-200 animate-pulse transform scale-x-[-1]" style="animation-delay: 0.5s;" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12,2 C10.9,2 10,2.9 10,4 C10,5.1 10.9,6 12,6 C13.1,6 14,5.1 14,4 C14,2.9 13.1,2 12,2 Z M21,10 C21,10 18,9 15,10 C15,10 14,14 12,14 C10,14 9,10 9,10 C6,9 3,10 3,10 L3,12 C3,12 6,12 8,15 L6,22 L9,22 L11,16 L13,16 L15,22 L18,22 L16,15 C18,12 21,12 21,12 L21,10 Z"/>
+                        </svg>
+
+                        <!-- Các ngôi sao nhỏ lấp lánh quanh mã QR -->
+                        <div class="absolute -top-3 left-1/2 w-3 h-3 text-yellow-400 animate-ping">★</div>
+                        <div class="absolute top-4 -left-5 w-4 h-4 text-blue-300 animate-bounce">★</div>
+                        <div class="absolute bottom-2 -right-5 w-5 h-5 text-yellow-300 animate-pulse">★</div>
+                        <div class="absolute -bottom-5 left-4 w-4 h-4 text-blue-300 animate-bounce" style="animation-delay: 1s;">★</div>
+
+                        <!-- Chèn link web của bạn vào đây (data=...) -->
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://nguynank.github.io/Giuchuoitinhnguyen/&color=3b82f6" alt="QR Code" class="w-24 h-24 rounded-lg opacity-90 hover:opacity-100 transition-opacity relative z-10" />
                     </div>
-                    <p class="text-[9px] text-blue-500 font-medium mt-3 bg-blue-50 px-3 py-1 rounded-full border border-blue-100">Quét để chia sẻ ứng dụng</p>
+                    <p class="text-[9px] text-blue-500 font-medium mt-4 bg-blue-50 px-3 py-1 rounded-full border border-blue-100">Quét để chia sẻ ứng dụng</p>
                 </div>
             </div>
 
-            <!-- ĐƯỜNG KẺ GIỮA -->
+            <!-- ĐƯỜNG KẺ GIỮA (Chỉ hiện trên máy tính) -->
             <div class="hidden lg:block w-px h-auto bg-gradient-to-b from-transparent via-blue-100 to-transparent shrink-0"></div>
 
             <!-- CỘT 2: KHUNG ĐIỀN THÔNG TIN TĨNH NGUYỆN -->
-            <div class="w-full flex-1 flex flex-col gap-4 relative z-10 max-w-2xl">
+            <div class="w-full flex-1 flex flex-col gap-4 relative z-10 max-w-2xl pt-0 lg:pt-8">
                 
                 <div class="bg-white/80 lg:bg-white/90 rounded-2xl p-3 lg:p-4 border border-slate-100 shadow-sm">
                     <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 text-center">Lịch Tĩnh Nguyện Gần Đây</h3>
@@ -546,7 +589,7 @@
                             <textarea id="q1" rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-[13px] focus:ring-2 focus:ring-amber-400 focus:bg-white transition-all resize-none text-slate-700" placeholder="Viết câu trả lời..."></textarea>
                         </div>
                         
-                        <!-- CÂU 3: CÁO TRÁCH/THÚC GIỤC -->
+                        <!-- CÂU 3: ĐỤNG CHẠM/THÚC GIỤC -->
                         <div>
                             <label class="text-[12px] font-semibold text-slate-700 block mb-1">3. Bạn được đụng chạm hoặc thúc giục điều gì qua bài học hôm nay?</label>
                             <textarea id="q2" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-[13px] focus:ring-2 focus:ring-amber-400 focus:bg-white transition-all resize-none text-slate-700" placeholder="Viết câu trả lời..."></textarea>
@@ -574,8 +617,8 @@
                 </div>
             </div>
 
-            <!-- CỘT 3: ỐNG DUNG DỊCH CỐ ĐỊNH -->
-            <!-- Chú ý: pt-8 giúp cột này canh ngang chính xác với pt-8 của cột Đàn Hạc (cột 1) -->
+            <!-- CỘT 3: ỐNG DUNG DỊCH (Canh top bằng pt-8 y chang cột Đàn Hạc) -->
+            <!-- Mobile: Nằm ngang (w-full). Desktop: Nằm dọc bên phải (lg:w-auto, lg:flex-row) -->
             <div class="flex flex-col lg:flex-row gap-4 lg:gap-6 shrink-0 border-t lg:border-t-0 lg:border-l border-slate-100/50 pt-6 lg:pt-8 pl-0 lg:pl-10 items-center lg:items-start justify-center lg:justify-start w-full lg:w-auto mt-4 lg:mt-0">
                 
                 <!-- ỐNG ĐỎ -->
@@ -585,6 +628,7 @@
                         <span class="text-[8px] font-bold text-red-400 uppercase tracking-widest mt-0.5 mb-1">Level</span>
                         <span id="tube-red-text" class="text-xl font-black text-red-600 leading-none">0</span>
                     </div>
+                    <!-- Trên mobile: Nằm ngang (h-10). Trên desktop: Nằm dọc (lg:h-[380px]) -->
                     <div class="flex-1 lg:flex-none w-full lg:w-12 h-10 lg:h-[380px] bg-slate-50 rounded-full lg:rounded-[24px] border-[3px] lg:border-[4px] border-slate-200/80 glass-tube relative overflow-hidden flex justify-start lg:items-end lg:justify-center">
                         <div id="tube-red-liquid" class="relative tube-liquid-red transition-all duration-1000 ease-in-out flex justify-end lg:justify-center lg:items-start" style="--fill-level: 6%;">
                             <div class="wave-mask-h-1"></div><div class="wave-mask-h-2"></div>
@@ -624,7 +668,7 @@
         let isTestMode = false; 
         let currentUsersData = [];
 
-        // MẢNG LỜI CHÚC PHƯỚC HẠNH (HIỂN THỊ NGẪU NHIÊN SAU KHI HOÀN THÀNH)
+        // MẢNG LỜI CHÚC PHƯỚC HẠNH
         const blessings = [
             "Chúc bạn một ngày phước hạnh và bình an!",
             "Xin Chúa ban phước dư dật trên bạn hôm nay!",
@@ -704,7 +748,6 @@
             container.innerHTML = html;
         }
 
-        // --- CÁC NÚT BẤM CỦA CÁC BẢNG ---
         function toggleModal(id, show) {
             const el = document.getElementById(id); 
             const content = document.getElementById(id+'-content') || document.getElementById(id.replace('-modal','-content'));
@@ -718,7 +761,6 @@
             }
         }
 
-        // NÚT TẮT BẢNG LỜI CHÚC
         document.getElementById('btn-close-blessing').addEventListener('click', () => {
             const bModal = document.getElementById('blessing-modal');
             const bContent = document.getElementById('blessing-content');
@@ -737,7 +779,6 @@
         document.getElementById('btn-close-admin').addEventListener('click', () => toggleModal('admin-modal', false));
         document.getElementById('btn-close-admin-view').addEventListener('click', () => toggleModal('admin-view-modal', false));
 
-        // --- CÀI ĐẶT EMAIL VÀ ĐỔI MẬT KHẨU ---
         document.getElementById('btn-open-settings').addEventListener('click', () => { 
             document.getElementById('setting-email').value = userData.email || '';
             document.getElementById('setting-old-pw').value = '';
@@ -796,7 +837,6 @@
             btn.innerText = "Lưu Thay Đổi"; btn.disabled = false;
         });
 
-        // Hướng người dùng qua Tab Quên mật khẩu từ màn hình Cài đặt
         document.getElementById('btn-settings-forgot-pw').addEventListener('click', () => {
             toggleModal('settings-modal', false);
             document.getElementById('main-app').classList.add('hidden');
@@ -806,7 +846,6 @@
             document.getElementById('forgot-email').value = userData.email || '';
         });
 
-        // --- QUÊN MẬT KHẨU BẰNG EMAIL ---
         document.getElementById('btn-forgot-mode').addEventListener('click', () => {
             document.getElementById('auth-main-container').classList.add('hidden'); document.getElementById('forgot-pw-container').classList.remove('hidden');
             document.getElementById('forgot-msg').classList.add('hidden'); document.getElementById('forgot-step-1').classList.remove('hidden'); document.getElementById('forgot-step-2').classList.add('hidden');
@@ -940,7 +979,6 @@
 
             if(!u || !p) return;
 
-            // BỘ LỌC HỌ TÊN BÊN FRONTEND
             if (authMode === 'register') {
                 const nameRegex = /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\s]+$/;
                 const nameParts = u.split(/\s+/);
@@ -977,22 +1015,18 @@
             }
         });
 
-        // PHẦN LOGIC KIỂM TRA TÊN KHI ĐĂNG NHẬP
         function checkRealNameCompliance() {
             if (!userData) return false;
-            // Kiểm tra nếu tên hiện tại chứa số, kí tự đặc biệt hoặc ít hơn 2 chữ
             const nameRegex = /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\s]+$/;
             const nameParts = userData.username.trim().split(/\s+/);
             
             if (!nameRegex.test(userData.username) || nameParts.length < 2) {
-                // Hiện bảng yêu cầu đổi tên
                 document.getElementById('force-rename-modal').classList.remove('hidden');
                 return false;
             }
             return true;
         }
 
-        // NÚT XÁC NHẬN ĐỔI TÊN TỪ BẢNG CƯỠNG CHẾ
         document.getElementById('btn-confirm-rename').addEventListener('click', async () => {
             const newName = document.getElementById('new-real-name').value.trim();
             const nameRegex = /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\s]+$/;
@@ -1012,13 +1046,12 @@
             if (data.success) {
                 userData = data.user;
                 document.getElementById('force-rename-modal').classList.add('hidden');
-                enterApp(); // Tiếp tục vào ứng dụng sau khi đổi tên thành công
+                enterApp();
             } else {
                 alert(data.message);
             }
         });
 
-        // LOGIC CHO NÚT RESET CỦA ADMIN NGUYÊN ANH
         document.getElementById('btn-master-reset').addEventListener('click', async () => {
             const pass = prompt("Hành động này sẽ đưa ĐIỂM và CHUỖI của TẤT CẢ mọi người về 0.\nHãy nhập mật khẩu Admin để xác nhận:");
             if (pass === "16102006") {
@@ -1042,7 +1075,7 @@
         });
 
         function enterApp() {
-            if (!checkRealNameCompliance()) return; // Chặn lại nếu tên chưa hợp lệ
+            if (!checkRealNameCompliance()) return; 
             const authScreen = document.getElementById('auth-screen'); const mainApp = document.getElementById('main-app');
             authScreen.classList.add('fade-out-scale');
             setTimeout(() => { authScreen.classList.add('hidden'); mainApp.classList.remove('hidden'); updateUIFromData(); setTimeout(() => { mainApp.classList.add('fade-in-scale'); }, 50); }, 500);
@@ -1068,7 +1101,6 @@
             const lostAlert = document.getElementById('lost-streak-alert');
             if (userData.justLostStreak) { lostAlert.classList.remove('hidden'); document.getElementById('fail-sound').play().catch(e=>{}); setTimeout(() => lostAlert.classList.add('hidden'), 5000); userData.justLostStreak = false; }
 
-            // Áp dụng chủ đề rank cho thẻ body
             const currentRank = getCurrentRankInfo(userData.totalCheckins);
             document.getElementById('app-body').className = 'min-h-screen ' + currentRank.theme + ' flex items-center justify-center p-3 sm:p-4 lg:p-8 text-slate-800 relative overflow-x-hidden transition-all duration-1000';
             const harpWrapper = document.getElementById('harp-wrapper'); harpWrapper.className = 'relative flex flex-col items-center justify-center h-48 w-48 lg:h-56 lg:w-56 mx-auto mb-2 harp-floating ' + currentRank.class;
@@ -1083,7 +1115,6 @@
                 document.getElementById('btn-open-admin').classList.remove('hidden');
             }
 
-            // HIỆN NÚT RESET DÀNH RIÊNG CHO NGUYÊN ANH (ĐÃ FIX LỖI ẨN HTML)
             const adminResetArea = document.getElementById('admin-reset-area');
             if (userData.username.trim() === "Nguyên Anh") {
                 if (adminResetArea) adminResetArea.classList.remove('hidden');
@@ -1104,7 +1135,7 @@
         function updateTubesUI() {
             const maxCap = 90; 
             document.getElementById('tube-red-text').innerText = userData.totalCheckins; document.getElementById('tube-blue-text').innerText = userData.currentStreak;
-            // Ống giờ luôn luôn nằm dọc bằng cách ép height chứ không phải width nữa
+            
             document.getElementById('tube-red-liquid').style.setProperty('--fill-level', Math.max(6, Math.min((userData.totalCheckins / maxCap) * 100, 100)) + '%');
             document.getElementById('tube-blue-liquid').style.setProperty('--fill-level', Math.max(6, Math.min((userData.currentStreak / maxCap) * 100, 100)) + '%');
         }
@@ -1112,7 +1143,6 @@
         document.getElementById('checkin-btn').addEventListener('click', async () => {
             if (!userData || userData.hasCheckedInToday || isProcessing) return;
 
-            // 1. KIỂM TRA ĐIỀN ĐẦY ĐỦ THÔNG TIN
             const checkedRadio = document.querySelector('input[name="source"]:checked');
             const q1Val = document.getElementById('q1').value.trim();
             const q2Val = document.getElementById('q2').value.trim();
@@ -1136,10 +1166,8 @@
                 return;
             }
 
-            // 2. BẮT ĐẦU XỬ LÝ
             isProcessing = true;
             const btn = document.getElementById('checkin-btn');
-            // HIỆN SPINNER QUAY QUAY KHI ĐANG GỬI LÊN SERVER
             btn.innerHTML = `<svg class="animate-spin -ml-1 mr-2 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Đang ghi nhận (Chờ xíu)...`;
             
             const oldRank = getCurrentRankInfo(userData.totalCheckins); 
@@ -1196,17 +1224,14 @@
             const floatXp = document.getElementById('float-xp'); const floatLv = document.getElementById('float-lv');
             if (floatXp && floatLv) { floatXp.classList.remove('float-up-anim'); floatLv.classList.remove('float-up-anim'); void floatXp.offsetWidth; floatXp.classList.add('float-up-anim'); floatLv.classList.add('float-up-anim'); }
             
-            // XÓA TRỐNG FORM SAU KHI GỬI THÀNH CÔNG
             document.getElementById('q1').value = ''; document.getElementById('q2').value = '';
             document.querySelectorAll('input[name="source"]').forEach(r=>r.checked=false); 
             document.getElementById('source-other-text').value=''; document.getElementById('source-other-text').disabled=true;
             document.querySelectorAll('.emotion-btn').forEach(b => b.classList.remove('emotion-active')); selectedEmotion='';
             
-            // CHỌN NGẪU NHIÊN 1 LỜI CHÚC BẤT KỲ TỪ MẢNG
             const randomBlessing = blessings[Math.floor(Math.random() * blessings.length)];
             document.getElementById('blessing-text').innerText = `"${randomBlessing}"`;
             
-            // HIỆN BẢNG LỜI CHÚC TỪ TỪ
             const bModal = document.getElementById('blessing-modal');
             const bContent = document.getElementById('blessing-content');
             bModal.classList.remove('hidden');
@@ -1225,8 +1250,11 @@
             if(!logs || logs.length === 0) { body.innerHTML = '<p class="text-slate-500">Người này chưa viết bài nào.</p>'; } 
             else { 
                 const log = logs[0]; 
-                let inner = '<div class="bg-blue-50 p-3 rounded-lg"><span class="font-bold text-blue-700">Ngày:</span> ' + (log.date || 'Không rõ') + ' ' + (log.emotion || '') + '</div><div class="bg-slate-50 border p-3 rounded-lg"><span class="font-bold text-slate-700">1. Nguồn tài liệu:</span><p class="mt-1">' + (log.source || '(Trống)') + '</p></div><div class="bg-slate-50 border p-3 rounded-lg"><span class="font-bold text-slate-700">2. Phân đoạn/Chủ đề:</span><p class="mt-1">' + (log.q1 || '(Trống)') + '</p></div><div class="bg-slate-50 border p-3 rounded-lg"><span class="font-bold text-slate-700">3. Đụng chạm/Thúc giục:</span><p class="mt-1">' + (log.q2 || '(Trống)') + '</p></div>'; 
-                if(log.q3) { inner += '<div class="bg-slate-50 border p-3 rounded-lg"><span class="font-bold text-slate-700">Cũ - Bài học & Gỡ rối:</span><p class="mt-1">' + log.q3 + '</p></div>'; }
+                let inner = '<div class="bg-blue-50 p-3 rounded-lg"><span class="font-bold text-blue-700">Ngày:</span> ' + (log.date || 'Không rõ') + ' ' + (log.emotion || '') + '</div><div class="bg-slate-50 border p-3 rounded-lg"><span class="font-bold text-slate-700">1. Nguồn tài liệu:</span><p class="mt-1">' + (log.source || '(Trống)') + '</p></div><div class="bg-slate-50 border p-3 rounded-lg"><span class="font-bold text-slate-700">2. Phân đoạn/Chủ đề:</span><p class="mt-1">' + (log.q1 || '(Trống)') + '</p></div>'; 
+                
+                // NỘI DUNG CÂU 3 BỊ KHÓA TRONG GÓC NHÌN ADMIN
+                inner += '<div class="mt-4 p-3 bg-red-50 border border-red-100 rounded-lg text-center"><p class="text-[11px] font-bold text-red-500 uppercase">🔒 NỘI DUNG CÂU 3 ĐÃ ĐƯỢC BẢO MẬT</p><p class="text-[10px] text-red-400 mt-1">Admin chỉ có quyền xem Câu 1 và Câu 2.</p></div>';
+                
                 body.innerHTML = inner;
             }
             toggleModal('admin-view-modal', true);
