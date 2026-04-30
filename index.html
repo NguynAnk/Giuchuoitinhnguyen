@@ -172,13 +172,13 @@
         </div>
     </div>
 
-    <!-- MÀN HÌNH LỜI CHÚC PHƯỚC HẠNH VÀ CÂU KINH THÁNH -->
-    <div id="blessing-modal" class="fixed inset-0 bg-white/80 backdrop-blur-sm z-[110] flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-500">
-        <div class="bg-gradient-to-br from-amber-50 to-orange-100 rounded-[2rem] shadow-2xl w-full max-w-sm p-6 text-center border-2 border-amber-200 transform scale-90 transition-transform duration-500" id="blessing-content">
+    <!-- MÀN HÌNH LỜI CHÚC PHƯỚC HẠNH (ĐÃ FIX LỖI KHÔNG ĐÓNG ĐƯỢC) -->
+    <div id="blessing-modal" class="fixed inset-0 bg-white/80 backdrop-blur-sm z-[110] flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
+        <div id="blessing-modal-content" class="bg-gradient-to-br from-amber-50 to-orange-100 rounded-[2rem] shadow-2xl w-full max-w-sm p-6 text-center border-2 border-amber-200 transform scale-95 transition-transform duration-300">
             <div class="text-6xl mb-4 animate-bounce">🕊️</div>
             <h2 class="text-2xl font-black text-amber-600 mb-2">Hoàn Thành!</h2>
             
-            <p id="blessing-text" class="text-lg font-semibold text-slate-700 italic mt-4 mb-3 leading-relaxed">"Chúc bạn một ngày phước lành!"</p>
+            <p id="blessing-text" class="text-lg font-semibold text-slate-700 italic mt-4 mb-3 leading-relaxed"></p>
             
             <!-- Khung Câu Kinh Thánh -->
             <div class="bg-white/60 p-3 rounded-xl mb-6 border border-amber-200/50">
@@ -294,7 +294,7 @@
         </div>
     </div>
 
-    <!-- MÀN HÌNH ADMIN XEM BÀI USER (ĐÃ ẨN HOÀN TOÀN CÂU 3) -->
+    <!-- MÀN HÌNH ADMIN XEM BÀI USER (ĐÃ LÀM GỌN VÀ ẨN HOÀN TOÀN CÂU 3) -->
     <div id="admin-view-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
         <div id="admin-view-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-lg p-6 transform scale-95 transition-transform duration-300 flex flex-col max-h-[85vh]">
             <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3 shrink-0">
@@ -668,7 +668,6 @@
                         <span class="text-[8px] font-bold text-blue-400 uppercase tracking-widest mt-0.5 mb-1">XP</span>
                         <span id="tube-blue-text" class="text-xl font-black text-blue-600 leading-none">0</span>
                     </div>
-                    <!-- Ống luôn luôn cố định chiều cao và nằm dọc -->
                     <div class="w-full lg:w-12 h-10 lg:h-[380px] bg-slate-50 rounded-full lg:rounded-[24px] border-[3px] lg:border-[4px] border-slate-200/80 glass-tube relative overflow-hidden flex justify-start lg:items-end lg:justify-center">
                         <div id="tube-blue-liquid" class="relative tube-liquid-blue transition-all duration-1000 ease-in-out flex justify-end lg:justify-center lg:items-start" style="--fill-level: 6%;">
                             <div class="wave-mask-h-1"></div><div class="wave-mask-h-2"></div>
@@ -772,6 +771,7 @@
             container.innerHTML = html;
         }
 
+        // HÀM TOGGLE MODAL ĐƯỢC DÙNG CHUNG CHO TẤT CẢ CÁC BẢNG (KỂ CẢ LỜI CHÚC)
         function toggleModal(id, show) {
             const el = document.getElementById(id); 
             const content = document.getElementById(id+'-content') || document.getElementById(id.replace('-modal','-content'));
@@ -785,6 +785,12 @@
             }
         }
 
+        // NÚT TẮT BẢNG LỜI CHÚC (ĐÃ SỬA LẠI ĐỂ HOẠT ĐỘNG CHÍNH XÁC 100%)
+        document.getElementById('btn-close-blessing').addEventListener('click', () => {
+            toggleModal('blessing-modal', false);
+        });
+
+        document.getElementById('btn-show-history').addEventListener('click', () => { renderHistory('all'); toggleModal('history-modal', true); });
         document.getElementById('btn-close-history').addEventListener('click', () => toggleModal('history-modal', false));
         document.getElementById('btn-show-group-stats').addEventListener('click', async () => { toggleModal('group-stats-modal', true); try { const res = await fetch(`${API_URL}/users`); const data = await res.json(); if(data.success) renderGroupStats(data.users); } catch(e) {} });
         document.getElementById('btn-close-group-stats').addEventListener('click', () => toggleModal('group-stats-modal', false));
@@ -920,8 +926,6 @@
             if(html === '') html = '<p class="text-center text-slate-400 mt-4">Không tìm thấy bài viết với cảm xúc này.</p>';
             container.innerHTML = html;
         }
-
-        document.getElementById('btn-show-history').addEventListener('click', () => { renderHistory('all'); toggleModal('history-modal', true); });
 
         function renderGroupStats(users) {
             currentUsersData = users; const groups = {};
@@ -1253,14 +1257,8 @@
             document.getElementById('blessing-text').innerText = `"${randomItem.text}"`;
             document.getElementById('blessing-verse').innerText = randomItem.verse;
             
-            const bModal = document.getElementById('blessing-modal');
-            const bContent = document.getElementById('blessing-content');
-            bModal.classList.remove('hidden');
-            setTimeout(() => { 
-                bModal.classList.add('opacity-100'); 
-                bContent.classList.remove('scale-90');
-                bContent.classList.add('scale-100');
-            }, 10);
+            // Dùng toggleModal chung để đảm bảo cơ chế đóng/mở mượt mà 100%
+            toggleModal('blessing-modal', true);
 
             isProcessing = false; 
             updateUIFromData();
