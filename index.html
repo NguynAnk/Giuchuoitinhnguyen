@@ -172,7 +172,7 @@
         </div>
     </div>
 
-    <!-- MÀN HÌNH LỜI CHÚC PHƯỚC HẠNH (ĐÃ FIX LỖI KHÔNG ĐÓNG ĐƯỢC) -->
+    <!-- MÀN HÌNH LỜI CHÚC PHƯỚC HẠNH -->
     <div id="blessing-modal" class="fixed inset-0 bg-white/80 backdrop-blur-sm z-[110] flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
         <div id="blessing-modal-content" class="bg-gradient-to-br from-amber-50 to-orange-100 rounded-[2rem] shadow-2xl w-full max-w-sm p-6 text-center border-2 border-amber-200 transform scale-95 transition-transform duration-300">
             <div class="text-6xl mb-4 animate-bounce">🕊️</div>
@@ -230,13 +230,13 @@
                     <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 w-12 h-3 border-[3px] border-yellow-400 rounded-[50%] animate-pulse shadow-[0_0_8px_rgba(250,204,21,0.8)] z-20"></div>
 
                     <!-- Cánh thiên thần trái -->
-                    <svg class="absolute -top-8 -left-12 w-20 h-20 text-amber-400 animate-pulse drop-shadow-md z-0" style="transform: rotate(-15deg);" viewBox="-80 -80 160 180" fill="currentColor">
+                    <svg class="absolute -top-8 -left-12 w-20 h-20 text-amber-400 animate-pulse drop-shadow-md z-0 pointer-events-none" style="transform: rotate(-15deg);" viewBox="-80 -80 160 180" fill="currentColor">
                         <path d="M 50 90 C 10 90 -40 70 -75 25 Q -40 40 -15 45 Q -55 10 -60 -25 Q -30 0 -5 20 Q -40 -20 -25 -50 Q -5 -15 15 5 Q -10 -40 10 -60 Q 20 -20 35 10 C 45 -10 50 20 50 90 Z" opacity="0.95"/>
                         <path d="M 45 80 C 15 80 -25 60 -55 25 Q -25 35 -5 40 Q -40 10 -45 -15 Q -20 5 5 15 Q -25 -15 -15 -35 Q 5 -10 20 5 Q 0 -25 15 -40 C 35 0 45 20 45 80 Z" fill="#FFF" opacity="0.75"/>
                     </svg>
 
                     <!-- Cánh thiên thần phải (Lật ngược) -->
-                    <svg class="absolute -top-8 -right-12 w-20 h-20 text-amber-400 animate-pulse drop-shadow-md z-0" style="transform: scaleX(-1) rotate(-15deg); animation-delay: 0.5s;" viewBox="-80 -80 160 180" fill="currentColor">
+                    <svg class="absolute -top-8 -right-12 w-20 h-20 text-amber-400 animate-pulse drop-shadow-md z-0 pointer-events-none" style="transform: scaleX(-1) rotate(-15deg); animation-delay: 0.5s;" viewBox="-80 -80 160 180" fill="currentColor">
                         <path d="M 50 90 C 10 90 -40 70 -75 25 Q -40 40 -15 45 Q -55 10 -60 -25 Q -30 0 -5 20 Q -40 -20 -25 -50 Q -5 -15 15 5 Q -10 -40 10 -60 Q 20 -20 35 10 C 45 -10 50 20 50 90 Z" opacity="0.95"/>
                         <path d="M 45 80 C 15 80 -25 60 -55 25 Q -25 35 -5 40 Q -40 10 -45 -15 Q -20 5 5 15 Q -25 -15 -15 -35 Q 5 -10 20 5 Q 0 -25 15 -40 C 35 0 45 20 45 80 Z" fill="#FFF" opacity="0.75"/>
                     </svg>
@@ -294,14 +294,13 @@
         </div>
     </div>
 
-    <!-- MÀN HÌNH ADMIN XEM BÀI USER (ĐÃ LÀM GỌN VÀ ẨN HOÀN TOÀN CÂU 3) -->
+    <!-- MÀN HÌNH ADMIN XEM BÀI USER -->
     <div id="admin-view-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
         <div id="admin-view-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-lg p-6 transform scale-95 transition-transform duration-300 flex flex-col max-h-[85vh]">
             <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3 shrink-0">
                 <h3 class="text-lg font-bold text-red-600 flex items-center gap-2" id="admin-view-title">Lịch Sử Bài Viết</h3>
                 <button id="btn-close-admin-view" class="text-slate-400 hover:bg-slate-100 p-2 rounded-full transition-colors font-bold">✕</button>
             </div>
-            <!-- Container để chứa tất cả các bài viết, cuộn dọc -->
             <div id="admin-view-body" class="overflow-y-auto pr-2 flex-1 text-sm text-slate-700 flex flex-col"></div>
         </div>
     </div>
@@ -318,7 +317,7 @@
         </div>
     </div>
 
-    <!-- MÀN HÌNH QUẢN TRỊ -->
+    <!-- MÀN HÌNH QUẢN TRỊ (ĐÃ FIX LỖI CĂN LỀ NÚT XEM TRONG BẢNG) -->
     <div id="admin-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
         <div id="admin-modal-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden">
             <div class="p-4 border-b border-slate-100 flex justify-between bg-slate-50 items-center">
@@ -346,16 +345,22 @@
                 </div>
             </div>
 
-            <div class="p-0 overflow-y-auto flex-1 bg-white">
-                <table class="w-full text-left border-collapse text-sm">
-                    <thead class="bg-slate-50 font-bold">
-                        <tr><th class="p-4">Người dùng</th><th class="p-4">Nhóm</th><th class="p-4 text-center">Bài Viết</th><th class="p-4 text-amber-500">Kỷ Lục</th><th class="p-4 text-blue-500">Chuỗi</th></tr>
+            <!-- BẢNG ADMIN FIX CĂN LỀ -->
+            <div class="p-0 overflow-x-auto flex-1 bg-white">
+                <table class="w-full text-left border-collapse text-sm min-w-max">
+                    <thead class="bg-slate-50 font-bold border-b border-slate-200">
+                        <tr>
+                            <th class="p-4 text-slate-500 uppercase tracking-wider text-xs whitespace-nowrap">Người dùng</th>
+                            <th class="p-4 text-slate-500 uppercase tracking-wider text-xs whitespace-nowrap">Nhóm</th>
+                            <th class="p-4 text-center text-slate-500 uppercase tracking-wider text-xs whitespace-nowrap">Bài Viết</th>
+                            <th class="p-4 text-center text-amber-500 uppercase tracking-wider text-xs whitespace-nowrap">Kỷ Lục</th>
+                            <th class="p-4 text-center text-blue-500 uppercase tracking-wider text-xs whitespace-nowrap">Chuỗi</th>
+                        </tr>
                     </thead>
                     <tbody id="admin-table-body" class="divide-y divide-slate-100"></tbody>
                 </table>
             </div>
 
-            <!-- ADMIN RESET AREA -->
             <div id="admin-reset-area" class="hidden w-full mt-auto">
                 <div class="p-4 bg-red-50 border-t border-red-100 flex justify-between items-center">
                     <div>
@@ -457,7 +462,7 @@
     <!-- ==================== ỨNG DỤNG CHÍNH ==================== -->
     <div id="main-app" class="transition-screen opacity-0 scale-95 translate-y-4 hidden w-full max-w-[80rem] flex-col gap-8 lg:gap-14 relative z-10">
         
-        <!-- BẢNG THÔNG TIN USER (Thanh ngang phía trên) -->
+        <!-- BẢNG THÔNG TIN USER -->
         <div class="bg-white/90 backdrop-blur-md rounded-2xl p-3 lg:p-4 shadow-sm border border-white/50 flex flex-col md:flex-row justify-between items-center gap-3 lg:gap-4">
             <div class="flex items-center gap-4">
                 <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-lg shadow-inner" id="user-avatar-text">U</div>
@@ -501,7 +506,7 @@
         <!-- BẢNG NỘI DUNG CHÍNH -->
         <div class="bg-white/85 lg:bg-white/95 backdrop-blur-md rounded-3xl lg:rounded-[2.5rem] shadow-2xl shadow-blue-100/50 w-full border border-white/50 flex flex-col lg:flex-row p-4 sm:p-6 lg:p-10 gap-6 lg:gap-12 items-center lg:items-start justify-between relative z-10">
             
-            <!-- CỘT 1: ĐÀN HẠC VÀ ĐIỂM -->
+            <!-- CỘT 1: ĐÀN HẠC -->
             <div class="w-full lg:w-[280px] shrink-0 flex flex-col items-center justify-start lg:pt-8 relative">
                 <div id="lost-streak-alert" class="hidden absolute top-0 bg-red-100 text-red-700 px-4 py-2 rounded-xl text-sm font-bold animate-bounce z-50 border border-red-200 shadow-md flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
@@ -641,39 +646,39 @@
                 </div>
             </div>
 
-            <!-- CỘT 3: ỐNG DUNG DỊCH (Canh top bằng pt-8 y chang cột Đàn Hạc) -->
-            <div class="flex flex-col lg:flex-row gap-4 lg:gap-6 shrink-0 border-t lg:border-t-0 lg:border-l border-slate-100/50 pt-6 lg:pt-8 pl-0 lg:pl-10 items-center justify-center w-full lg:w-auto mt-4 lg:mt-0">
+            <!-- CỘT 3: ỐNG DUNG DỊCH (Canh ngang hàng bằng Đàn Hạc với lg:pt-8) -->
+            <!-- Chú ý: Đã tối ưu Flexbox ngang cho Mobile và Dọc cho Máy tính -->
+            <div class="flex flex-row lg:flex-col gap-6 shrink-0 border-t lg:border-t-0 lg:border-l border-slate-100/50 pt-6 lg:pt-8 pl-0 lg:pl-10 items-end justify-center w-full lg:w-auto mt-4 lg:mt-0">
                 
                 <!-- ỐNG ĐỎ -->
-                <div class="flex flex-col items-center justify-start gap-3 w-full lg:w-16">
-                    <div class="text-center bg-red-50/80 px-2 py-1.5 rounded-xl border border-red-100 w-full shrink-0 shadow-sm flex flex-col items-center justify-center">
+                <div class="flex flex-col items-center justify-end gap-3 w-14 sm:w-16">
+                    <div class="text-center bg-red-50/80 px-2 py-1.5 rounded-xl border border-red-100 w-full shadow-sm flex flex-col items-center justify-center">
                         <span class="text-[10px] font-bold text-red-500 uppercase block leading-tight">Tổng</span>
                         <span class="text-[8px] font-bold text-red-400 uppercase tracking-widest mt-0.5 mb-1">Level</span>
                         <span id="tube-red-text" class="text-xl font-black text-red-600 leading-none">0</span>
                     </div>
-                    <!-- Ống luôn luôn cố định chiều cao và nằm dọc -->
-                    <div class="w-full lg:w-12 h-10 lg:h-[380px] bg-slate-50 rounded-full lg:rounded-[24px] border-[3px] lg:border-[4px] border-slate-200/80 glass-tube relative overflow-hidden flex justify-start lg:items-end lg:justify-center">
-                        <div id="tube-red-liquid" class="relative tube-liquid-red transition-all duration-1000 ease-in-out flex justify-end lg:justify-center lg:items-start" style="--fill-level: 6%;">
-                            <div class="wave-mask-h-1"></div><div class="wave-mask-h-2"></div>
+                    <!-- Trên Mobile: Ống nằm dọc cố định h-48 sm:h-[380px] thay đổi thành h-full theo flex. Đã code chuẩn ở trên -->
+                    <div class="w-full h-48 sm:h-[380px] bg-slate-50 rounded-[24px] border-[4px] border-slate-200/80 glass-tube relative overflow-hidden flex items-end justify-center">
+                        <div id="tube-red-liquid" class="w-full relative transition-all duration-1000 ease-in-out bg-gradient-to-t from-red-600 via-red-500 to-red-400" style="height: var(--fill-level, 6%);">
                             <div class="wave-mask-v-1"></div><div class="wave-mask-v-2"></div>
                         </div>
-                        <div class="absolute inset-0 rounded-full lg:rounded-[20px] pointer-events-none glass-tube-overlay"></div>
+                        <div class="absolute inset-0 rounded-[20px] pointer-events-none glass-tube-overlay"></div>
                     </div>
                 </div>
 
                 <!-- ỐNG XANH -->
-                <div class="flex flex-col items-center justify-start gap-3 w-full lg:w-16">
-                    <div class="text-center bg-blue-50/80 px-2 py-1.5 rounded-xl border border-blue-100 w-full shrink-0 shadow-sm flex flex-col items-center justify-center">
+                <div class="flex flex-col items-center justify-end gap-3 w-14 sm:w-16">
+                    <div class="text-center bg-blue-50/80 px-2 py-1.5 rounded-xl border border-blue-100 w-full shadow-sm flex flex-col items-center justify-center">
                         <span class="text-[10px] font-bold text-blue-500 uppercase block leading-tight">Chuỗi</span>
                         <span class="text-[8px] font-bold text-blue-400 uppercase tracking-widest mt-0.5 mb-1">XP</span>
                         <span id="tube-blue-text" class="text-xl font-black text-blue-600 leading-none">0</span>
                     </div>
-                    <div class="w-full lg:w-12 h-10 lg:h-[380px] bg-slate-50 rounded-full lg:rounded-[24px] border-[3px] lg:border-[4px] border-slate-200/80 glass-tube relative overflow-hidden flex justify-start lg:items-end lg:justify-center">
-                        <div id="tube-blue-liquid" class="relative tube-liquid-blue transition-all duration-1000 ease-in-out flex justify-end lg:justify-center lg:items-start" style="--fill-level: 6%;">
-                            <div class="wave-mask-h-1"></div><div class="wave-mask-h-2"></div>
+                    <!-- Ống xanh cũng nằm dọc song song ống đỏ -->
+                    <div class="w-full h-48 sm:h-[380px] bg-slate-50 rounded-[24px] border-[4px] border-slate-200/80 glass-tube relative overflow-hidden flex items-end justify-center">
+                        <div id="tube-blue-liquid" class="w-full relative transition-all duration-1000 ease-in-out bg-gradient-to-t from-blue-600 via-blue-500 to-blue-400" style="height: var(--fill-level, 6%);">
                             <div class="wave-mask-v-1"></div><div class="wave-mask-v-2"></div>
                         </div>
-                        <div class="absolute inset-0 rounded-full lg:rounded-[20px] pointer-events-none glass-tube-overlay"></div>
+                        <div class="absolute inset-0 rounded-[20px] pointer-events-none glass-tube-overlay"></div>
                     </div>
                 </div>
 
@@ -704,6 +709,7 @@
             { text: "Ngài luôn bảo vệ và gìn giữ bạn trong mọi lúc.", verse: "Đức Giê-hô-va sẽ gìn giữ ngươi khi ra khi vào, Từ nay cho đến đời đời. — Thi Thiên 121:8" },
             { text: "Đừng lo lắng, hãy trao mọi gánh nặng cho Ngài!", verse: "lại hãy trao mọi điều lo lắng mình cho Ngài, vì Ngài hay săn sóc anh em. — 1 Phi-e-rơ 5:7" }
         ];
+
         const rankData = [
             { id: 0, streak: 0, name: "Người Tìm Kiếm (Mộc)", class: "rank-wood", theme: "bg-theme-wood", hasSparkle: false },
             { id: 1, streak: 15, name: "Đồng Kiên Tâm", class: "rank-bronze", theme: "bg-theme-bronze", hasSparkle: false },
@@ -770,7 +776,6 @@
             container.innerHTML = html;
         }
 
-        // HÀM TOGGLE MODAL ĐƯỢC DÙNG CHUNG CHO TẤT CẢ CÁC BẢNG (KỂ CẢ LỜI CHÚC)
         function toggleModal(id, show) {
             const el = document.getElementById(id); 
             const content = document.getElementById(id+'-content') || document.getElementById(id.replace('-modal','-content'));
@@ -784,7 +789,6 @@
             }
         }
 
-        // NÚT TẮT BẢNG LỜI CHÚC (ĐÃ SỬA LẠI ĐỂ HOẠT ĐỘNG CHÍNH XÁC 100%)
         document.getElementById('btn-close-blessing').addEventListener('click', () => {
             toggleModal('blessing-modal', false);
         });
@@ -1256,7 +1260,6 @@
             document.getElementById('blessing-text').innerText = `"${randomItem.text}"`;
             document.getElementById('blessing-verse').innerText = randomItem.verse;
             
-            // Dùng toggleModal chung để đảm bảo cơ chế đóng/mở mượt mà 100%
             toggleModal('blessing-modal', true);
 
             isProcessing = false; 
@@ -1267,7 +1270,7 @@
             const logs = JSON.parse(decodeURIComponent(logsJson)); 
             const body = document.getElementById('admin-view-body');
             if(!logs || logs.length === 0) { 
-                body.innerHTML = '<p class="text-slate-500">Người này chưa viết bài nào.</p>'; 
+                body.innerHTML = '<p class="text-slate-500 text-center py-4">Người này chưa viết bài nào.</p>'; 
             } else { 
                 let inner = '';
                 logs.forEach((log, idx) => {
@@ -1284,11 +1287,34 @@
         
         function renderAdminTable(users) {
             let html = ''; const groupOptionsArr = ['', 'Nhóm 1', 'Nhóm 2', 'Nhóm 3', 'Nhóm 4', 'Nhóm 5', 'Nhóm 6', 'Nhóm 7', 'Nhóm 8', 'Nhóm 9', 'Nhóm 10'];
+            
             users.forEach(u => { 
                 const safeLogs = encodeURIComponent(JSON.stringify(u.dailyLogs || []));
                 let selectOptions = '';
-                groupOptionsArr.forEach(g => { const isSelected = (u.group === g) ? 'selected' : ''; selectOptions += '<option value="' + g + '" ' + isSelected + '>' + (g || '-Trống-') + '</option>'; });
-                html += '<tr><td class="p-4 font-medium">' + u.username + '</td><td class="p-4"><select onchange="adminChangeGroup(\'' + u._id + '\', this.value, this)" class="text-xs font-bold bg-purple-50 text-purple-600 border border-purple-200 rounded px-1 py-0.5 outline-none cursor-pointer">' + selectOptions + '</select></td><td class="p-4 text-center"><button onclick="showUserLogs(\'' + safeLogs + '\')" class="bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1 rounded font-bold text-xs">👁️ Xem</button></td><td class="p-4 text-amber-500 font-bold">' + u.maxStreak + '</td><td class="p-4 text-blue-500 font-bold">' + u.currentStreak + '</td></tr>'; 
+                groupOptionsArr.forEach(g => { 
+                    const isSelected = (u.group === g) ? 'selected' : ''; 
+                    selectOptions += `<option value="${g}" ${isSelected}>${g || '-Trống-'}</option>`; 
+                });
+                
+                // MÃ SỬA LỖI: Đóng gói nút "Xem" vào thẻ div flex justify-center và buộc các cột không được tự ý co giãn phá vỡ cấu trúc (whitespace-nowrap)
+                html += `
+                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="p-3 md:p-4 font-medium text-slate-800 whitespace-nowrap">${u.username}</td>
+                    <td class="p-3 md:p-4 whitespace-nowrap">
+                        <select onchange="adminChangeGroup('${u._id}', this.value, this)" class="text-xs font-bold bg-purple-50 text-purple-600 border border-purple-200 rounded px-2 py-1.5 outline-none cursor-pointer">
+                            ${selectOptions}
+                        </select>
+                    </td>
+                    <td class="p-3 md:p-4 whitespace-nowrap">
+                        <div class="flex justify-center">
+                            <button onclick="showUserLogs('${safeLogs}')" class="bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1.5 rounded-lg font-bold text-xs shadow-sm transition-transform active:scale-95 flex items-center gap-1">
+                                👁️ Xem
+                            </button>
+                        </div>
+                    </td>
+                    <td class="p-3 md:p-4 text-center text-amber-500 font-black text-base whitespace-nowrap">${u.maxStreak}</td>
+                    <td class="p-3 md:p-4 text-center text-blue-500 font-black text-base whitespace-nowrap">${u.currentStreak}</td>
+                </tr>`; 
             });
             document.getElementById('admin-table-body').innerHTML = html;
         }
