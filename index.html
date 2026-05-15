@@ -75,27 +75,14 @@
         .glass-tube { box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
         .glass-tube-overlay { box-shadow: inset 5px 0 15px rgba(255,255,255,0.8), inset -5px 0 15px rgba(0,0,0,0.1); }
         
-        /* ĐIỀU CHỈNH ỐNG DUNG DỊCH (Mobile: Ngang / Desktop: Dọc) */
-        .tube-liquid-red { width: var(--fill-level, 6%); height: 100%; background-image: linear-gradient(to right, #dc2626, #ef4444, #f87171); }
-        .tube-liquid-blue { width: var(--fill-level, 6%); height: 100%; background-image: linear-gradient(to right, #2563eb, #3b82f6, #60a5fa); }
-        
-        @media (min-width: 1024px) {
-            .tube-liquid-red { width: 100% !important; height: var(--fill-level, 6%) !important; background-image: linear-gradient(to top, #dc2626, #ef4444, #f87171); }
-            .tube-liquid-blue { width: 100% !important; height: var(--fill-level, 6%) !important; background-image: linear-gradient(to top, #2563eb, #3b82f6, #60a5fa); }
-        }
+        /* ĐIỀU CHỈNH ỐNG DUNG DỊCH (Luôn Dọc Song Song Trên Mọi Thiết Bị) */
+        .tube-liquid-red { width: 100% !important; height: var(--fill-level, 6%) !important; background-image: linear-gradient(to top, #dc2626, #ef4444, #f87171); }
+        .tube-liquid-blue { width: 100% !important; height: var(--fill-level, 6%) !important; background-image: linear-gradient(to top, #2563eb, #3b82f6, #60a5fa); }
 
         /* GỢN SÓNG DUNG DỊCH */
         .wave-mask-v-1, .wave-mask-v-2 { position: absolute; width: 250px; height: 250px; left: -105px; pointer-events: none; }
         .wave-mask-v-1 { top: -243px; border-radius: 40%; background: rgba(248, 250, 252, 0.5); animation: spin 5s linear infinite; }
         .wave-mask-v-2 { top: -247px; border-radius: 45%; background: rgb(248, 250, 252); box-shadow: 0 5px 8px -2px rgba(0,0,0,0.15); animation: spin 7s linear infinite; }
-        
-        .wave-mask-h-1, .wave-mask-h-2 { position: absolute; width: 250px; height: 250px; top: -105px; pointer-events: none; }
-        .wave-mask-h-1 { right: -243px; border-radius: 40%; background: rgba(248, 250, 252, 0.5); animation: spin 5s linear infinite; }
-        .wave-mask-h-2 { right: -247px; border-radius: 45%; background: rgb(248, 250, 252); box-shadow: -5px 0 8px -2px rgba(0,0,0,0.15); animation: spin 7s linear infinite; }
-        
-        /* Ẩn hiện mặt cắt nước tùy thiết bị */
-        @media (max-width: 1023px) { .wave-mask-v-1, .wave-mask-v-2 { display: none; } }
-        @media (min-width: 1024px) { .wave-mask-h-1, .wave-mask-h-2 { display: none; } }
 
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
@@ -646,20 +633,19 @@
                 </div>
             </div>
 
-            <!-- CỘT 3: ỐNG DUNG DỊCH (Canh ngang hàng bằng Đàn Hạc với lg:pt-8) -->
-            <!-- Chú ý: Đã tối ưu Flexbox ngang cho Mobile và Dọc cho Máy tính -->
-            <div class="flex flex-row lg:flex-col gap-6 shrink-0 border-t lg:border-t-0 lg:border-l border-slate-100/50 pt-6 lg:pt-8 pl-0 lg:pl-10 items-end justify-center w-full lg:w-auto mt-4 lg:mt-0">
+            <!-- CỘT 3: ỐNG DUNG DỊCH (Luôn song song và nằm dọc) -->
+            <div class="flex flex-row gap-5 lg:gap-6 shrink-0 border-t lg:border-t-0 lg:border-l border-slate-100/50 pt-6 lg:pt-8 pl-0 lg:pl-10 items-end lg:items-start justify-center lg:justify-start w-full lg:w-auto mt-4 lg:mt-0">
                 
                 <!-- ỐNG ĐỎ -->
-                <div class="flex flex-col items-center justify-end gap-3 w-14 sm:w-16">
-                    <div class="text-center bg-red-50/80 px-2 py-1.5 rounded-xl border border-red-100 w-full shadow-sm flex flex-col items-center justify-center">
+                <div class="flex flex-col items-center justify-end lg:justify-start gap-3 w-14 sm:w-16 lg:w-16">
+                    <div class="text-center bg-red-50/80 px-2 py-1.5 rounded-xl border border-red-100 w-full shrink-0 shadow-sm flex flex-col items-center justify-center">
                         <span class="text-[10px] font-bold text-red-500 uppercase block leading-tight">Tổng</span>
                         <span class="text-[8px] font-bold text-red-400 uppercase tracking-widest mt-0.5 mb-1">Level</span>
                         <span id="tube-red-text" class="text-xl font-black text-red-600 leading-none">0</span>
                     </div>
-                    <!-- Trên Mobile: Ống nằm dọc cố định h-48 sm:h-[380px] thay đổi thành h-full theo flex. Đã code chuẩn ở trên -->
-                    <div class="w-full h-48 sm:h-[380px] bg-slate-50 rounded-[24px] border-[4px] border-slate-200/80 glass-tube relative overflow-hidden flex items-end justify-center">
-                        <div id="tube-red-liquid" class="w-full relative transition-all duration-1000 ease-in-out bg-gradient-to-t from-red-600 via-red-500 to-red-400" style="height: var(--fill-level, 6%);">
+                    <!-- Ống luôn luôn cố định chiều cao và nằm dọc -->
+                    <div class="w-10 sm:w-12 h-48 sm:h-56 lg:h-[380px] bg-slate-50 rounded-[24px] border-[3px] lg:border-[4px] border-slate-200/80 glass-tube relative overflow-hidden flex items-end justify-center">
+                        <div id="tube-red-liquid" class="relative tube-liquid-red transition-all duration-1000 ease-in-out flex items-start justify-center w-full" style="--fill-level: 6%;">
                             <div class="wave-mask-v-1"></div><div class="wave-mask-v-2"></div>
                         </div>
                         <div class="absolute inset-0 rounded-[20px] pointer-events-none glass-tube-overlay"></div>
@@ -667,15 +653,15 @@
                 </div>
 
                 <!-- ỐNG XANH -->
-                <div class="flex flex-col items-center justify-end gap-3 w-14 sm:w-16">
-                    <div class="text-center bg-blue-50/80 px-2 py-1.5 rounded-xl border border-blue-100 w-full shadow-sm flex flex-col items-center justify-center">
+                <div class="flex flex-col items-center justify-end lg:justify-start gap-3 w-14 sm:w-16 lg:w-16">
+                    <div class="text-center bg-blue-50/80 px-2 py-1.5 rounded-xl border border-blue-100 w-full shrink-0 shadow-sm flex flex-col items-center justify-center">
                         <span class="text-[10px] font-bold text-blue-500 uppercase block leading-tight">Chuỗi</span>
                         <span class="text-[8px] font-bold text-blue-400 uppercase tracking-widest mt-0.5 mb-1">XP</span>
                         <span id="tube-blue-text" class="text-xl font-black text-blue-600 leading-none">0</span>
                     </div>
-                    <!-- Ống xanh cũng nằm dọc song song ống đỏ -->
-                    <div class="w-full h-48 sm:h-[380px] bg-slate-50 rounded-[24px] border-[4px] border-slate-200/80 glass-tube relative overflow-hidden flex items-end justify-center">
-                        <div id="tube-blue-liquid" class="w-full relative transition-all duration-1000 ease-in-out bg-gradient-to-t from-blue-600 via-blue-500 to-blue-400" style="height: var(--fill-level, 6%);">
+                    <!-- Ống luôn luôn cố định chiều cao và nằm dọc -->
+                    <div class="w-10 sm:w-12 h-48 sm:h-56 lg:h-[380px] bg-slate-50 rounded-[24px] border-[3px] lg:border-[4px] border-slate-200/80 glass-tube relative overflow-hidden flex items-end justify-center">
+                        <div id="tube-blue-liquid" class="relative tube-liquid-blue transition-all duration-1000 ease-in-out flex items-start justify-center w-full" style="--fill-level: 6%;">
                             <div class="wave-mask-v-1"></div><div class="wave-mask-v-2"></div>
                         </div>
                         <div class="absolute inset-0 rounded-[20px] pointer-events-none glass-tube-overlay"></div>
