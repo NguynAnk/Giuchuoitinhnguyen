@@ -40,7 +40,7 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', userSchema);
 
-// HÀM KIỂM TRA VÀ RESET TRẠNG THÁI NGÀY MỚI (QUAN TRỌNG: SỬA LỖI KHÔNG CỘNG ĐIỂM)
+// HÀM KIỂM TRA VÀ RESET TRẠNG THÁI NGÀY MỚI
 function getDaysDiff(dateStr1, dateStr2) {
     if (!dateStr1 || !dateStr2) return 0;
     const d1 = new Date(dateStr1); const d2 = new Date(dateStr2);
@@ -87,11 +87,15 @@ app.post('/api/register', async (req, res) => {
   } catch (error) { res.status(500).json({ success: false }); }
 });
 
+// NÂNG CẤP LỚN: CHO PHÉP ĐĂNG NHẬP BẰNG EMAIL HOẶC USERNAME
 app.post('/api/login', async (req, res) => {
   try {
     const { username, password, localDate } = req.body; 
-    const user = await User.findOne({ username });
-    if (!user) return res.status(400).json({ success: false, message: 'Tài khoản không tồn tại' });
+    // Tìm kiếm bằng Tên hoặc Email
+    const user = await User.findOne({ 
+        $or: [{ username: username }, { email: username }] 
+    });
+    if (!user) return res.status(400).json({ success: false, message: 'Tài khoản hoặc Email không tồn tại' });
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ success: false, message: 'Sai mật khẩu' });
     
@@ -101,6 +105,39 @@ app.post('/api/login', async (req, res) => {
     const userObj = user.toObject(); userObj.justLostStreak = justLostStreak;
     res.json({ success: true, user: userObj });
   } catch (error) { res.status(500).json({ success: false }); }
+});
+
+// API TỰ ĐỘNG ĐĂNG NHẬP (DUY TRÌ 7 NGÀY)
+app.post('/api/auto-login', async (req, res) => {
+    try {
+        const { userId, localDate } = req.body;
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ success: false });
+
+        let justLostStreak = false;
+        if (localDate) { justLostStreak = await checkAndResetStreak(user, localDate); await user.save(); }
+        const userObj = user.toObject(); userObj.justLostStreak = justLostStreak;
+        res.json({ success: true, user: userObj });
+    } catch (error) { res.status(500).json({ success: false }); }
+});
+
+// API GÓP Ý (GỬI EMAIL CHO TEAM LINH VỤ)
+app.post('/api/feedback', async (req, res) => {
+    try {
+        const { userId, content } = req.body;
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ success: false });
+
+        const mailOptions = {
+            from: '"Góp ý Chuỗi Tĩnh Nguyện" <anklee206@gmail.com>',
+            to: 'anklee206@gmail.com', // Email của team linh vụ
+            subject: `💡 Góp ý ứng dụng từ: ${user.username}`,
+            text: `Người dùng: ${user.username}\nNhóm: ${user.group || 'Chưa chọn'}\nEmail liên hệ: ${user.email || 'Không có'}\n\nNỘI DUNG GÓP Ý:\n${content}`
+        };
+
+        await transporter.sendMail(mailOptions);
+        res.json({ success: true, message: "Cảm ơn bạn đã đóng góp ý kiến!" });
+    } catch (error) { res.status(500).json({ success: false, message: "Lỗi gửi góp ý." }); }
 });
 
 app.post('/api/update-profile', async (req, res) => {
@@ -145,7 +182,6 @@ app.post('/api/update-streak', async (req, res) => {
         const user = await User.findById(userId);
         if (!user) return res.status(404).json({ success: false, message: 'Không tìm thấy user' });
         
-        // VÁ LỖI NGÀY MỚI TRƯỚC KHI CỘNG ĐIỂM
         await checkAndResetStreak(user, localDate);
 
         if (!user.hasCheckedInToday) {
