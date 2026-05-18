@@ -159,15 +159,29 @@
         </div>
     </div>
 
-    <!-- MÀN HÌNH LỜI CHÚC PHƯỚC HẠNH -->
-    <div id="blessing-modal" class="fixed inset-0 bg-white/80 backdrop-blur-sm z-[110] flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
-        <div id="blessing-modal-content" class="bg-gradient-to-br from-amber-50 to-orange-100 rounded-[2rem] shadow-2xl w-full max-w-sm p-6 text-center border-2 border-amber-200 transform scale-95 transition-transform duration-300">
+    <!-- MÀN HÌNH GÓP Ý LINH VỤ -->
+    <div id="feedback-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
+        <div id="feedback-modal-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6 transform scale-95 transition-transform duration-300 flex flex-col">
+            <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3 shrink-0">
+                <h3 class="text-lg font-bold text-amber-600 flex items-center gap-2">💡 Góp Ý Cho Team Linh Vụ</h3>
+                <button id="btn-close-feedback" class="text-slate-400 hover:bg-slate-100 p-2 rounded-full transition-colors font-bold">✕</button>
+            </div>
+            <p class="text-[13px] text-slate-500 mb-4">Mọi ý kiến đóng góp của bạn sẽ giúp Team Linh Vụ cải thiện ứng dụng tốt hơn mỗi ngày. Xin chân thành cảm ơn!</p>
+            <textarea id="feedback-content" rows="5" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-[13px] focus:ring-2 focus:ring-amber-400 focus:bg-white transition-all resize-none text-slate-700" placeholder="Viết góp ý, đề xuất tính năng mới hoặc báo lỗi tại đây..."></textarea>
+            <p id="feedback-msg" class="text-center text-sm font-bold hidden mt-3"></p>
+            <button id="btn-send-feedback" class="w-full py-3 bg-amber-500 text-white rounded-xl font-bold hover:bg-amber-600 transition-transform active:scale-95 shadow-md mt-4">Gửi Góp Ý Báo Cáo</button>
+        </div>
+    </div>
+
+    <!-- MÀN HÌNH LỜI CHÚC PHƯỚC HẠNH VÀ CÂU KINH THÁNH -->
+    <div id="blessing-modal" class="fixed inset-0 bg-white/80 backdrop-blur-sm z-[110] flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-500">
+        <div class="bg-gradient-to-br from-amber-50 to-orange-100 rounded-[2rem] shadow-2xl w-full max-w-sm p-6 text-center border-2 border-amber-200 transform scale-90 transition-transform duration-500" id="blessing-content">
             <div class="text-6xl mb-4 animate-bounce">🕊️</div>
             <h2 class="text-2xl font-black text-amber-600 mb-2">Hoàn Thành!</h2>
             
-            <p id="blessing-text" class="text-lg font-semibold text-slate-700 italic mt-4 mb-3 leading-relaxed"></p>
+            <p id="blessing-text" class="text-lg font-semibold text-slate-700 italic mt-4 mb-3 leading-relaxed">"Chúc bạn một ngày phước lành!"</p>
             
-            <!-- Khung Câu Kinh Thánh -->
+            <!-- Khung Câu Kinh Thánh (BTT 1925) -->
             <div class="bg-white/60 p-3 rounded-xl mb-6 border border-amber-200/50">
                 <p id="blessing-verse" class="text-[13px] font-medium text-amber-800 leading-relaxed"></p>
             </div>
@@ -281,13 +295,14 @@
         </div>
     </div>
 
-    <!-- MÀN HÌNH ADMIN XEM BÀI USER -->
+    <!-- MÀN HÌNH ADMIN XEM BÀI USER (ĐÃ LÀM GỌN VÀ ẨN HOÀN TOÀN CÂU 3) -->
     <div id="admin-view-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
         <div id="admin-view-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-lg p-6 transform scale-95 transition-transform duration-300 flex flex-col max-h-[85vh]">
             <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3 shrink-0">
                 <h3 class="text-lg font-bold text-red-600 flex items-center gap-2" id="admin-view-title">Lịch Sử Bài Viết</h3>
                 <button id="btn-close-admin-view" class="text-slate-400 hover:bg-slate-100 p-2 rounded-full transition-colors font-bold">✕</button>
             </div>
+            <!-- Container để chứa tất cả các bài viết, cuộn dọc -->
             <div id="admin-view-body" class="overflow-y-auto pr-2 flex-1 text-sm text-slate-700 flex flex-col"></div>
         </div>
     </div>
@@ -304,7 +319,7 @@
         </div>
     </div>
 
-    <!-- MÀN HÌNH QUẢN TRỊ (ĐÃ FIX LỖI CĂN LỀ NÚT XEM TRONG BẢNG) -->
+    <!-- MÀN HÌNH QUẢN TRỊ -->
     <div id="admin-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
         <div id="admin-modal-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden">
             <div class="p-4 border-b border-slate-100 flex justify-between bg-slate-50 items-center">
@@ -348,6 +363,7 @@
                 </table>
             </div>
 
+            <!-- ADMIN RESET AREA -->
             <div id="admin-reset-area" class="hidden w-full mt-auto">
                 <div class="p-4 bg-red-50 border-t border-red-100 flex justify-between items-center">
                     <div>
@@ -374,12 +390,12 @@
             </div>
             
             <div>
-                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 block">Họ và Tên / Tài khoản</label>
-                <input type="text" id="auth-username" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-amber-400 outline-none">
+                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 block">Email hoặc Tên đăng nhập</label>
+                <input type="text" id="auth-username" placeholder="Nhập email hoặc tên đăng nhập..." class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-amber-400 outline-none">
             </div>
             
             <div id="auth-email-container" class="hidden">
-                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 block">Email</label>
+                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 block">Email (Bắt buộc để khôi phục MK)</label>
                 <input type="email" id="auth-email" placeholder="Ví dụ: abc@gmail.com" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-amber-400 outline-none">
             </div>
 
@@ -388,7 +404,7 @@
                     <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Mật khẩu</label>
                     <button id="btn-forgot-mode" class="text-[10px] text-blue-500 font-bold hover:underline">Quên mật khẩu?</button>
                 </div>
-                <input type="password" id="auth-password" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-amber-400 outline-none">
+                <input type="password" id="auth-password" placeholder="Nhập mật khẩu..." class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-amber-400 outline-none">
             </div>
 
             <div id="auth-group-container" class="relative hidden">
@@ -449,7 +465,7 @@
     <!-- ==================== ỨNG DỤNG CHÍNH ==================== -->
     <div id="main-app" class="transition-screen opacity-0 scale-95 translate-y-4 hidden w-full max-w-[80rem] flex-col gap-8 lg:gap-14 relative z-10">
         
-        <!-- BẢNG THÔNG TIN USER -->
+        <!-- BẢNG THÔNG TIN USER (Thanh ngang phía trên) -->
         <div class="bg-white/90 backdrop-blur-md rounded-2xl p-3 lg:p-4 shadow-sm border border-white/50 flex flex-col md:flex-row justify-between items-center gap-3 lg:gap-4">
             <div class="flex items-center gap-4">
                 <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-lg shadow-inner" id="user-avatar-text">U</div>
@@ -482,18 +498,19 @@
             </div>
             
             <div class="flex items-center gap-3 text-sm font-medium flex-wrap justify-center">
-                <div class="text-amber-600 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-100">Kỷ lục: <span id="ui-max-streak" class="font-bold">0</span></div>
-                <div class="text-red-500 bg-red-50 px-3 py-1.5 rounded-lg border border-red-100">Lỡ chuỗi: <span id="ui-lost-streaks" class="font-bold">0</span></div>
+                <button id="btn-open-feedback" class="text-amber-600 hover:text-amber-700 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200 font-bold hover:bg-amber-100 transition-transform active:scale-95 flex items-center gap-1 shadow-sm">💡 Góp ý</button>
+                <div class="text-amber-600 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-100 hidden md:block">Kỷ lục: <span id="ui-max-streak" class="font-bold">0</span></div>
+                <div class="text-red-500 bg-red-50 px-3 py-1.5 rounded-lg border border-red-100 hidden md:block">Lỡ chuỗi: <span id="ui-lost-streaks" class="font-bold">0</span></div>
                 <button id="btn-open-admin" class="hidden text-white bg-red-500 px-4 py-1.5 rounded-lg font-bold shadow-md hover:bg-red-600 transition-transform active:scale-95">Bảng Admin</button>
                 <button id="btn-open-settings" class="text-slate-500 hover:text-blue-500 bg-slate-50 px-3 py-1.5 rounded-lg border font-bold hover:bg-blue-50 transition-transform active:scale-95">⚙️ Cài đặt</button>
                 <button id="btn-logout" class="text-slate-500 hover:text-red-500 bg-slate-50 px-3 py-1.5 rounded-lg border font-bold hover:bg-red-50 transition-transform active:scale-95">Đăng xuất</button>
             </div>
         </div>
 
-        <!-- BẢNG NỘI DUNG CHÍNH -->
+        <!-- BẢNG NỘI DUNG CHÍNH Cấu trúc 3 Cột: Đàn Hạc (Trái) - Tĩnh Nguyện (Giữa) - Ống Nước (Phải) -->
         <div class="bg-white/85 lg:bg-white/95 backdrop-blur-md rounded-3xl lg:rounded-[2.5rem] shadow-2xl shadow-blue-100/50 w-full border border-white/50 flex flex-col lg:flex-row p-4 sm:p-6 lg:p-10 gap-6 lg:gap-12 items-center lg:items-start justify-between relative z-10">
             
-            <!-- CỘT 1: ĐÀN HẠC -->
+            <!-- CỘT 1: ĐÀN HẠC VÀ ĐIỂM -->
             <div class="w-full lg:w-[280px] shrink-0 flex flex-col items-center justify-start lg:pt-8 relative">
                 <div id="lost-streak-alert" class="hidden absolute top-0 bg-red-100 text-red-700 px-4 py-2 rounded-xl text-sm font-bold animate-bounce z-50 border border-red-200 shadow-md flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
@@ -633,7 +650,7 @@
                 </div>
             </div>
 
-            <!-- CỘT 3: ỐNG DUNG DỊCH (Luôn song song và nằm dọc) -->
+            <!-- CỘT 3: ỐNG DUNG DỊCH (Đã được Ép luôn đứng thẳng cạnh nhau trên mọi thiết bị) -->
             <div class="flex flex-row gap-5 lg:gap-6 shrink-0 border-t lg:border-t-0 lg:border-l border-slate-100/50 pt-6 lg:pt-8 pl-0 lg:pl-10 items-end lg:items-start justify-center lg:justify-start w-full lg:w-auto mt-4 lg:mt-0">
                 
                 <!-- ỐNG ĐỎ -->
@@ -682,6 +699,37 @@
         let isTestMode = false; 
         let currentUsersData = [];
 
+        // HỆ THỐNG AUTO LOGIN (DUY TRÌ 7 NGÀY)
+        async function checkAutoLogin() {
+            const savedSession = localStorage.getItem('tinhnguyen_session');
+            if (savedSession) {
+                try {
+                    const { userId, expiry } = JSON.parse(savedSession);
+                    if (Date.now() < expiry) {
+                        document.getElementById('auth-main-container').classList.add('hidden');
+                        document.getElementById('slow-network-warning').classList.remove('hidden');
+                        document.getElementById('slow-network-warning').innerHTML = '<p class="text-xs font-semibold text-blue-700 animate-pulse">Đang tự động đăng nhập...</p>';
+                        
+                        const res = await fetch(`${API_URL}/auto-login`, {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({ userId: userId, localDate: getLocalTodayStr() })
+                        });
+                        const data = await res.json();
+                        if (data.success) {
+                            userData = data.user;
+                            enterApp();
+                            return;
+                        }
+                    }
+                } catch (e) { console.error("Lỗi phiên đăng nhập", e); }
+            }
+            // Nếu hết hạn hoặc lỗi thì bắt đăng nhập lại bình thường
+            localStorage.removeItem('tinhnguyen_session');
+            document.getElementById('auth-main-container').classList.remove('hidden');
+            document.getElementById('slow-network-warning').classList.add('hidden');
+        }
+
         // MẢNG LỜI CHÚC CÙNG CÂU KINH THÁNH PHƯỚC HẠNH (BTT 1925)
         const blessingsAndVerses = [
             { text: "Chúc bạn một ngày phước hạnh và bình an!", verse: "Nguyện Đức Giê-hô-va ban phước cho ngươi và phù hộ ngươi! — Dân-số Ký 6:24" },
@@ -691,7 +739,7 @@
             { text: "Hãy vững lòng bền chí, vì Chúa luôn đồng hành cùng bạn!", verse: "Hãy vững lòng bền chí, chớ run sợ, chớ kinh khủng; vì Giê-hô-va Đức Chúa Trời ngươi vẫn ở cùng ngươi trong mọi nơi ngươi đi. — Giô-suê 1:9" },
             { text: "Nguyện tình yêu của Chúa ban cho bạn thêm năng lực!", verse: "Tôi làm được mọi sự nhờ Đấng ban thêm sức cho tôi. — Phi-líp 4:13" },
             { text: "Xin Chúa ban phước dư dật trên bạn hôm nay!", verse: "Đức Chúa Trời có quyền ban cho anh em đủ mọi thứ ơn đầy dẫy, hầu cho anh em hằng đủ điều cần dùng trong mọi sự, lại còn có rời rộng nữa để làm các thứ việc lành. — 2 Cô-rinh-tô 9:8" },
-            { text: "Hãy tin cậy Chúa, Ngài sẽ dẫn dắt bước đi của bạn.", verse: "Hãy phó thác đường lối mình cho Đức Giê-hô-va, Và nhờ cậy nơi Ngài, thì Ngài sẽ làm thành việc ấy. — Thi Thiên 37:5" },
+            { text: "Hãy tin cậy Chúa, Ngài sẽ dẫn dắt bước đi của bạn.", verse: "Hãy phó thác đường lối mình cho Đức Giê-hô-va, Và nhờ cậy nơi Ngài, thì Ngài sẽ làm thành việc đó. — Thi Thiên 37:5" },
             { text: "Ngài luôn bảo vệ và gìn giữ bạn trong mọi lúc.", verse: "Đức Giê-hô-va sẽ gìn giữ ngươi khi ra khi vào, Từ nay cho đến đời đời. — Thi Thiên 121:8" },
             { text: "Đừng lo lắng, hãy trao mọi gánh nặng cho Ngài!", verse: "lại hãy trao mọi điều lo lắng mình cho Ngài, vì Ngài hay săn sóc anh em. — 1 Phi-e-rơ 5:7" }
         ];
@@ -775,8 +823,44 @@
             }
         }
 
-        document.getElementById('btn-close-blessing').addEventListener('click', () => {
-            toggleModal('blessing-modal', false);
+        document.getElementById('btn-close-blessing').addEventListener('click', () => toggleModal('blessing-modal', false));
+
+        // NÚT MỞ GÓP Ý
+        document.getElementById('btn-open-feedback').addEventListener('click', () => { 
+            document.getElementById('feedback-content').value = '';
+            document.getElementById('feedback-msg').classList.add('hidden');
+            toggleModal('feedback-modal', true); 
+        });
+        document.getElementById('btn-close-feedback').addEventListener('click', () => toggleModal('feedback-modal', false));
+
+        document.getElementById('btn-send-feedback').addEventListener('click', async () => {
+            const content = document.getElementById('feedback-content').value.trim();
+            if (!content) return alert("Vui lòng viết nội dung góp ý!");
+            
+            const btn = document.getElementById('btn-send-feedback');
+            const msg = document.getElementById('feedback-msg');
+            btn.innerText = "Đang gửi..."; btn.disabled = true; msg.classList.add('hidden');
+
+            try {
+                const res = await fetch(`${API_URL}/feedback`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ userId: userData._id, content: content })
+                });
+                const data = await res.json();
+                if(data.success) {
+                    msg.innerText = "Đã gửi thành công! Cảm ơn bạn.";
+                    msg.className = "text-center text-sm font-bold text-green-600 block mt-3";
+                    setTimeout(() => toggleModal('feedback-modal', false), 2000);
+                } else {
+                    msg.innerText = "Lỗi gửi, vui lòng thử lại sau.";
+                    msg.className = "text-center text-sm font-bold text-red-600 block mt-3";
+                }
+            } catch (e) {
+                msg.innerText = "Lỗi mạng.";
+                msg.className = "text-center text-sm font-bold text-red-600 block mt-3";
+            }
+            btn.innerText = "Gửi Góp Ý Báo Cáo"; btn.disabled = false;
         });
 
         document.getElementById('btn-show-history').addEventListener('click', () => { renderHistory('all'); toggleModal('history-modal', true); });
@@ -977,7 +1061,11 @@
         });
 
         document.getElementById('auth-group').addEventListener('change', () => document.getElementById('auth-error').classList.add('hidden'));
-        document.getElementById('btn-logout').addEventListener('click', () => location.reload());
+        
+        document.getElementById('btn-logout').addEventListener('click', () => {
+            localStorage.removeItem('tinhnguyen_session'); // Xóa nhớ phiên khi đăng xuất
+            location.reload();
+        });
 
         document.getElementById('btn-auth-action').addEventListener('click', async () => {
             const u = document.getElementById('auth-username').value.trim(); const p = document.getElementById('auth-password').value.trim();
@@ -999,6 +1087,11 @@
                     document.getElementById('auth-error').classList.remove('hidden'); 
                     return; 
                 }
+                if (!e) {
+                    document.getElementById('auth-error').innerText = "Vui lòng điền Email!"; 
+                    document.getElementById('auth-error').classList.remove('hidden'); 
+                    return; 
+                }
             }
             
             const btn = document.getElementById('btn-auth-action'); const slowWarning = document.getElementById('slow-network-warning');
@@ -1012,7 +1105,15 @@
                 const res = await fetch(`${API_URL}${authMode === 'register' ? '/register' : '/login'}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
                 clearTimeout(slowNetworkTimer); slowWarning.classList.add('hidden');
                 const data = await res.json();
-                if (data.success) { userData = data.user; enterApp(); } 
+                if (data.success) { 
+                    userData = data.user; 
+                    
+                    // LƯU TRẠNG THÁI ĐĂNG NHẬP TRONG 7 NGÀY
+                    const expiry = Date.now() + 7 * 24 * 60 * 60 * 1000; 
+                    localStorage.setItem('tinhnguyen_session', JSON.stringify({ userId: data.user._id, expiry: expiry }));
+                    
+                    enterApp(); 
+                } 
                 else { document.getElementById('auth-error').innerText = data.message; document.getElementById('auth-error').classList.remove('hidden'); btn.innerText = authMode === 'register' ? "Đăng Ký Tài Khoản" : "Vào Ứng Dụng"; btn.disabled = false; }
             } catch (err) { 
                 clearTimeout(slowNetworkTimer); slowWarning.classList.add('hidden');
@@ -1282,7 +1383,6 @@
                     selectOptions += `<option value="${g}" ${isSelected}>${g || '-Trống-'}</option>`; 
                 });
                 
-                // MÃ SỬA LỖI: Đóng gói nút "Xem" vào thẻ div flex justify-center và buộc các cột không được tự ý co giãn phá vỡ cấu trúc (whitespace-nowrap)
                 html += `
                 <tr class="hover:bg-slate-50 transition-colors">
                     <td class="p-3 md:p-4 font-medium text-slate-800 whitespace-nowrap">${u.username}</td>
@@ -1335,6 +1435,9 @@
         document.getElementById('btn-test-reset').addEventListener('click', async () => { try { if (isTestMode && originalUserData) { userData = JSON.parse(JSON.stringify(originalUserData)); isTestMode = false; updateUIFromData(); alert("Đã khôi phục dữ liệu thật!"); } } catch(e) { console.error(e); alert("Lỗi hệ thống hiển thị"); } });
 
         window.addEventListener('focus', () => { if (userData && userData.hasCheckedInToday) { const todayStr = getLocalTodayStr(); const historySet = new Set(userData.history || []); if (!historySet.has(todayStr)) { userData.hasCheckedInToday = false; updateUIFromData(); } } });
+
+        // KHỞI ĐỘNG AUTO LOGIN NGAY KHI VÀO TRANG
+        checkAutoLogin();
     </script>
 </body>
 </html>
