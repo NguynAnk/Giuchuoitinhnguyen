@@ -80,6 +80,13 @@ app.post('/api/register', async (req, res) => {
     const { username, password, email, group } = req.body;
     const existingUser = await User.findOne({ username });
     if (existingUser) return res.status(400).json({ success: false, message: 'Tên tài khoản đã tồn tại' });
+
+    // Khóa bảo mật 2: Chặn 1 Email lập nhiều nick
+    if (email) {
+        const existingEmail = await User.findOne({ email });
+        if (existingEmail) return res.status(400).json({ success: false, message: 'Email này đã được sử dụng cho một tài khoản khác!' });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({ username, password: hashedPassword, email, role: (username === "Nguyên Anh" ? 'admin' : 'user'), group });
     await newUser.save();
@@ -87,7 +94,6 @@ app.post('/api/register', async (req, res) => {
   } catch (error) { res.status(500).json({ success: false }); }
 });
 
-// NÂNG CẤP LỚN: CHO PHÉP ĐĂNG NHẬP BẰNG EMAIL HOẶC USERNAME
 app.post('/api/login', async (req, res) => {
   try {
     const { username, password, localDate } = req.body; 
