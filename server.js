@@ -3,7 +3,10 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
-require('dns').setDefaultResultOrder('ipv4first');
+
+// ÉP BUỘC NODE.JS CHỈ SỬ DỤNG IPv4 CHO MỌI KẾT NỐI MẠNG
+const dns = require('dns');
+dns.setDefaultResultOrder('ipv4first');
 
 const app = express();
 app.use(cors({ origin: '*' })); 
@@ -14,13 +17,15 @@ const MONGO_URI = "mongodb+srv://nguyenanh:16102006@cluster0.iwcowsc.mongodb.net
 
 mongoose.connect(MONGO_URI).then(() => console.log('DB Connected'));
 
-// CẤU HÌNH GMAIL ÉP DÙNG IPv4 (Khắc phục triệt để lỗi ETIMEDOUT trên Render)
+// CẤU HÌNH GMAIL KHẮC PHỤC LỖI MẠNG TRÊN RENDER
 const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 465,
     secure: true,
     auth: { user: 'anklee206@gmail.com', pass: 'neohvuwijoatsfrh' },
-    family: 4 // <--- QUAN TRỌNG: Ép buộc hệ thống sử dụng mạng IPv4, bỏ qua IPv6 bị lỗi của Render
+    // Sử dụng tùy chọn dgram hoặc net socket để ép buộc IPv4 nếu cần thiết
+    socketTimeout: 10000,
+    connectionTimeout: 10000
 });
 
 const userSchema = new mongoose.Schema({
@@ -85,7 +90,6 @@ app.post('/api/register', async (req, res) => {
     const existingUser = await User.findOne({ username });
     if (existingUser) return res.status(400).json({ success: false, message: 'Tên tài khoản đã tồn tại' });
 
-    // Khóa bảo mật 2: Chặn 1 Email lập nhiều nick
     if (email) {
         const existingEmail = await User.findOne({ email });
         if (existingEmail) return res.status(400).json({ success: false, message: 'Email này đã được sử dụng cho một tài khoản khác!' });
@@ -101,7 +105,6 @@ app.post('/api/register', async (req, res) => {
 app.post('/api/login', async (req, res) => {
   try {
     const { username, password, localDate } = req.body; 
-    // Tìm kiếm bằng Tên hoặc Email
     const user = await User.findOne({ 
         $or: [{ username: username }, { email: username }] 
     });
@@ -109,7 +112,6 @@ app.post('/api/login', async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ success: false, message: 'Sai mật khẩu' });
     
-    // Check reset qua ngày
     let justLostStreak = false;
     if (localDate) { justLostStreak = await checkAndResetStreak(user, localDate); await user.save(); }
     const userObj = user.toObject(); userObj.justLostStreak = justLostStreak;
@@ -117,7 +119,6 @@ app.post('/api/login', async (req, res) => {
   } catch (error) { res.status(500).json({ success: false }); }
 });
 
-// API TỰ ĐỘNG ĐĂNG NHẬP (DUY TRÌ 7 NGÀY)
 app.post('/api/auto-login', async (req, res) => {
     try {
         const { userId, localDate } = req.body;
@@ -131,7 +132,6 @@ app.post('/api/auto-login', async (req, res) => {
     } catch (error) { res.status(500).json({ success: false }); }
 });
 
-// API GÓP Ý (GỬI EMAIL CHO TEAM LINH VỤ)
 app.post('/api/feedback', async (req, res) => {
     try {
         const { userId, content } = req.body;
@@ -140,7 +140,7 @@ app.post('/api/feedback', async (req, res) => {
 
         const mailOptions = {
             from: '"Góp ý Chuỗi Tĩnh Nguyện" <anklee206@gmail.com>',
-            to: 'anklee206@gmail.com', // Email của team linh vụ
+            to: 'anklee206@gmail.com',
             subject: `💡 Góp ý ứng dụng từ: ${user.username}`,
             text: `Người dùng: ${user.username}\nNhóm: ${user.group || 'Chưa chọn'}\nEmail liên hệ: ${user.email || 'Không có'}\n\nNỘI DUNG GÓP Ý:\n${content}`
         };
@@ -176,7 +176,6 @@ app.post('/api/forgot-password', async (req, res) => {
         user.resetOtpExpiry = new Date(Date.now() + 15 * 60000); 
         await user.save();
         
-        // Gửi mail và đợi kết quả
         try {
             await transporter.sendMail({ 
                 from: '"Cổng Tĩnh Nguyện" <anklee206@gmail.com>', 
