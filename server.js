@@ -7,14 +7,18 @@ const app = express();
 app.use(cors({ origin: '*' })); 
 app.use(express.json()); 
 
-// LẤY API KEY TỪ BIẾN MÔI TRƯỜNG CỦA RENDER (Tuyệt đối không dán trực tiếp key vào code để tránh GitHub chặn)
+// LẤY API KEY TỪ BIẾN MÔI TRƯỜNG CỦA RENDER
 const BREVO_API_KEY = process.env.BREVO_API_KEY; 
 
 // LINK MONGODB
 const MONGO_URI = "mongodb+srv://nguyenanh:16102006@cluster0.iwcowsc.mongodb.net/TinhNguyenApp?retryWrites=true&w=majority"; 
 
-mongoose.connect(MONGO_URI).then(() => console.log('DB Connected'));
+mongoose.connect(MONGO_URI).then(() => {
+    console.log('DB Connected');
+    initSystem(); // Khởi tạo dữ liệu hệ thống (Đố Kinh Thánh) khi chạy server
+});
 
+// ================= SCHEMA =================
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
@@ -33,10 +37,26 @@ const userSchema = new mongoose.Schema({
   history: [{ type: String }],
   dailyLogs: [{ date: String, q1: String, q2: String, q3: String, source: String, emotion: String }]
 });
-
 const User = mongoose.model('User', userSchema);
 
-// HÀM GỬI EMAIL CHUNG SỬ DỤNG BREVO API
+// Schema mới lưu trữ Cấu hình hệ thống (Đố Kinh Thánh)
+const systemSchema = new mongoose.Schema({
+    configId: { type: String, default: 'main' },
+    quizPassage: { type: String, default: 'Ê-sai 26-40' },
+    quizQuestion: { type: String, default: 'Nội dung câu đố Kinh Thánh: ___' }
+});
+const System = mongoose.model('System', systemSchema);
+
+// Hàm tạo dữ liệu mặc định nếu Database chưa có
+async function initSystem() {
+    let sys = await System.findOne({ configId: 'main' });
+    if (!sys) {
+        sys = new System({ configId: 'main' });
+        await sys.save();
+    }
+}
+
+// ================= HÀM HỖ TRỢ =================
 async function sendEmailViaBrevo(toEmail, subject, htmlContent) {
     if (!BREVO_API_KEY) {
         console.error("Thiếu BREVO_API_KEY trong biến môi trường!");
@@ -44,7 +64,7 @@ async function sendEmailViaBrevo(toEmail, subject, htmlContent) {
     }
 
     const emailData = {
-        sender: { name: "Cổng Tĩnh Nguyện", email: "anklee206@gmail.com" }, // Có thể để email Brevo của bạn
+        sender: { name: "Cổng Tĩnh Nguyện", email: "anklee206@gmail.com" },
         to: [{ email: toEmail }],
         subject: subject,
         htmlContent: htmlContent
@@ -68,8 +88,6 @@ async function sendEmailViaBrevo(toEmail, subject, htmlContent) {
     return true;
 }
 
-
-// HÀM KIỂM TRA VÀ RESET TRẠNG THÁI NGÀY MỚI
 function getDaysDiff(dateStr1, dateStr2) {
     if (!dateStr1 || !dateStr2) return 0;
     const d1 = new Date(dateStr1); const d2 = new Date(dateStr2);
@@ -86,7 +104,7 @@ async function checkAndResetStreak(user, localDate) {
         if (daysPassed > 1 && user.currentStreak > 0) {
             user.currentStreak = 0; user.lostStreaks += 1; user.hasCheckedInToday = false; justLostStreak = true;
         } else if (daysPassed >= 1 && user.hasCheckedInToday) { 
-            user.hasCheckedInToday = false; // Mở khóa cho ngày mới
+            user.hasCheckedInToday = false;
         }
     } else if (!lastDateStr && user.hasCheckedInToday) { 
         user.hasCheckedInToday = false; 
@@ -94,7 +112,33 @@ async function checkAndResetStreak(user, localDate) {
     return justLostStreak;
 }
 
-// API QUẢN TRỊ
+// ================= API CHÍNH =================
+
+// API Lấy thông tin hệ thống (Đố Kinh Thánh)
+app.get('/api/system', async (req, res) => {
+    try {
+        const sys = await System.findOne({ configId: 'main' });
+        res.json({ success: true, system: sys });
+    } catch (error) { res.status(500).json({ success: false }); }
+});
+
+// API Quản trị cập nhật Đố Kinh Thánh
+app.post('/api/admin/update-quiz', async (req, res) => {
+    try {
+        const { adminUser, passage, question } = req.body;
+        if (adminUser !== "Nguyên Anh") return res.status(403).json({ success: false, message: "Không có quyền!" });
+        
+        let sys = await System.findOne({ configId: 'main' });
+        if (!sys) sys = new System({ configId: 'main' });
+        
+        sys.quizPassage = passage;
+        sys.quizQuestion = question;
+        await sys.save();
+        
+        res.json({ success: true, system: sys });
+    } catch (error) { res.status(500).json({ success: false }); }
+});
+
 app.post('/api/admin/reset-system', async (req, res) => {
     try {
         const { adminUser, adminPass } = req.body;
@@ -152,7 +196,6 @@ app.post('/api/auto-login', async (req, res) => {
     } catch (error) { res.status(500).json({ success: false }); }
 });
 
-// GÓP Ý DÙNG BREVO API
 app.post('/api/feedback', async (req, res) => {
     try {
         const { userId, content } = req.body;
@@ -192,7 +235,6 @@ app.post('/api/update-profile', async (req, res) => {
     } catch (error) { res.status(500).json({ success: false }); }
 });
 
-// GỬI OTP QUÊN MẬT KHẨU DÙNG BREVO API
 app.post('/api/forgot-password', async (req, res) => {
     try {
         const { email } = req.body;
