@@ -161,16 +161,36 @@ app.post('/api/update-profile', async (req, res) => {
     } catch (error) { res.status(500).json({ success: false }); }
 });
 
+// ĐÃ SỬA LẠI ĐỂ KIỂM TRA CHẮC CHẮN MAIL GỬI ĐƯỢC HAY KHÔNG
 app.post('/api/forgot-password', async (req, res) => {
     try {
         const { email } = req.body;
         const user = await User.findOne({ email });
-        if (!user) return res.status(400).json({ success: false, message: 'Email không tồn tại!' });
+        if (!user) return res.status(400).json({ success: false, message: 'Email này không tồn tại trong hệ thống!' });
+        
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
-        user.resetOtp = otp; user.resetOtpExpiry = new Date(Date.now() + 15 * 60000); await user.save();
-        res.json({ success: true, message: "Mã đang gửi!" });
-        transporter.sendMail({ from: '"Cổng Tĩnh Nguyện" <anklee206@gmail.com>', to: user.email, subject: 'Mã OTP Khôi Phục', text: `Mã của bạn là: ${otp}` });
-    } catch (error) { res.status(500).json({ success: false }); }
+        user.resetOtp = otp; 
+        user.resetOtpExpiry = new Date(Date.now() + 15 * 60000); 
+        await user.save();
+        
+        // Cố gắng gửi mail, nếu lỗi sẽ văng xuống block catch bên dưới
+        try {
+            await transporter.sendMail({ 
+                from: '"Cổng Tĩnh Nguyện" <anklee206@gmail.com>', 
+                to: user.email, 
+                subject: 'Mã OTP Khôi Phục Mật Khẩu', 
+                text: `Xin chào ${user.username},\n\nMã OTP khôi phục mật khẩu của bạn là: ${otp}\n\nMã này sẽ hết hạn sau 15 phút. Nếu bạn không yêu cầu đổi mật khẩu, vui lòng bỏ qua email này.\n\nPhước hạnh và bình an!` 
+            });
+            res.json({ success: true, message: "Đã gửi mã OTP! Hãy kiểm tra Hộp thư đến (và Hộp thư rác)." });
+        } catch (mailErr) {
+            console.error("Lỗi Gmail:", mailErr);
+            res.status(500).json({ success: false, message: "Lỗi kết nối Gmail! Vui lòng báo Admin kiểm tra lại mật khẩu App." });
+        }
+        
+    } catch (error) { 
+        console.error(error);
+        res.status(500).json({ success: false, message: "Lỗi hệ thống máy chủ!" }); 
+    }
 });
 
 app.post('/api/reset-password', async (req, res) => {
