@@ -2,32 +2,18 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
-const nodemailer = require('nodemailer');
-
-// ÉP BUỘC NODE.JS CHỈ SỬ DỤNG IPv4 CHO MỌI KẾT NỐI MẠNG
-const dns = require('dns');
-dns.setDefaultResultOrder('ipv4first');
 
 const app = express();
 app.use(cors({ origin: '*' })); 
 app.use(express.json()); 
 
+// LẤY API KEY TỪ BIẾN MÔI TRƯỜNG CỦA RENDER (Tuyệt đối không dán trực tiếp key vào code để tránh GitHub chặn)
+const BREVO_API_KEY = process.env.BREVO_API_KEY; 
+
 // LINK MONGODB
 const MONGO_URI = "mongodb+srv://nguyenanh:16102006@cluster0.iwcowsc.mongodb.net/TinhNguyenApp?retryWrites=true&w=majority"; 
 
 mongoose.connect(MONGO_URI).then(() => console.log('DB Connected'));
-
-// CẤU HÌNH GMAIL KHẮC PHỤC LỖI MẠNG TRÊN RENDER
-const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 465,
-    secure: true,
-    auth: { user: 'anklee206@gmail.com', pass: 'azxpwgrzelqgzuyq' },
-    // ÉP BUỘC SỬ DỤNG IPv4 (family: 4) để tránh lỗi ENETUNREACH trên Render
-    family: 4, 
-    socketTimeout: 10000,
-    connectionTimeout: 10000
-});
 
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
@@ -49,6 +35,39 @@ const userSchema = new mongoose.Schema({
 });
 
 const User = mongoose.model('User', userSchema);
+
+// HÀM GỬI EMAIL CHUNG SỬ DỤNG BREVO API
+async function sendEmailViaBrevo(toEmail, subject, htmlContent) {
+    if (!BREVO_API_KEY) {
+        console.error("Thiếu BREVO_API_KEY trong biến môi trường!");
+        throw new Error("Lỗi cấu hình máy chủ gửi mail.");
+    }
+
+    const emailData = {
+        sender: { name: "Cổng Tĩnh Nguyện", email: "anklee206@gmail.com" }, // Có thể để email Brevo của bạn
+        to: [{ email: toEmail }],
+        subject: subject,
+        htmlContent: htmlContent
+    };
+
+    const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: {
+            'accept': 'application/json',
+            'api-key': BREVO_API_KEY,
+            'content-type': 'application/json'
+        },
+        body: JSON.stringify(emailData)
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Lỗi gửi mail qua Brevo API:", errorData);
+        throw new Error("Không thể gửi email.");
+    }
+    return true;
+}
+
 
 // HÀM KIỂM TRA VÀ RESET TRẠNG THÁI NGÀY MỚI
 function getDaysDiff(dateStr1, dateStr2) {
@@ -133,22 +152,29 @@ app.post('/api/auto-login', async (req, res) => {
     } catch (error) { res.status(500).json({ success: false }); }
 });
 
+// GÓP Ý DÙNG BREVO API
 app.post('/api/feedback', async (req, res) => {
     try {
         const { userId, content } = req.body;
         const user = await User.findById(userId);
         if (!user) return res.status(404).json({ success: false });
 
-        const mailOptions = {
-            from: '"Góp ý Chuỗi Tĩnh Nguyện" <anklee206@gmail.com>',
-            to: 'anklee206@gmail.com',
-            subject: `💡 Góp ý ứng dụng từ: ${user.username}`,
-            text: `Người dùng: ${user.username}\nNhóm: ${user.group || 'Chưa chọn'}\nEmail liên hệ: ${user.email || 'Không có'}\n\nNỘI DUNG GÓP Ý:\n${content}`
-        };
+        const htmlContent = `
+            <h3>💡 Có một góp ý mới từ người dùng!</h3>
+            <ul>
+                <li><strong>Người dùng:</strong> ${user.username}</li>
+                <li><strong>Nhóm:</strong> ${user.group || 'Chưa chọn'}</li>
+                <li><strong>Email liên hệ:</strong> ${user.email || 'Không có'}</li>
+            </ul>
+            <h4>Nội dung góp ý:</h4>
+            <p style="background: #f4f4f4; padding: 10px; border-left: 4px solid #007bff;">${content}</p>
+        `;
 
-        await transporter.sendMail(mailOptions);
+        await sendEmailViaBrevo('anklee206@gmail.com', `💡 Góp ý từ ${user.username}`, htmlContent);
         res.json({ success: true, message: "Cảm ơn bạn đã đóng góp ý kiến!" });
-    } catch (error) { res.status(500).json({ success: false, message: "Lỗi gửi góp ý." }); }
+    } catch (error) { 
+        res.status(500).json({ success: false, message: "Lỗi gửi góp ý." }); 
+    }
 });
 
 app.post('/api/update-profile', async (req, res) => {
@@ -166,6 +192,7 @@ app.post('/api/update-profile', async (req, res) => {
     } catch (error) { res.status(500).json({ success: false }); }
 });
 
+// GỬI OTP QUÊN MẬT KHẨU DÙNG BREVO API
 app.post('/api/forgot-password', async (req, res) => {
     try {
         const { email } = req.body;
@@ -177,22 +204,26 @@ app.post('/api/forgot-password', async (req, res) => {
         user.resetOtpExpiry = new Date(Date.now() + 15 * 60000); 
         await user.save();
         
-        try {
-            await transporter.sendMail({ 
-                from: '"Cổng Tĩnh Nguyện" <anklee206@gmail.com>', 
-                to: user.email, 
-                subject: 'Mã OTP Khôi Phục Mật Khẩu', 
-                text: `Xin chào ${user.username},\n\nMã OTP khôi phục mật khẩu của bạn là: ${otp}\n\nMã này sẽ hết hạn sau 15 phút. Nếu bạn không yêu cầu đổi mật khẩu, vui lòng bỏ qua email này.\n\nPhước hạnh và bình an!` 
-            });
-            res.json({ success: true, message: "Đã gửi mã OTP! Hãy kiểm tra Hộp thư đến (và Hộp thư rác)." });
-        } catch (mailErr) {
-            console.error("Lỗi Gmail:", mailErr);
-            res.status(500).json({ success: false, message: "Lỗi kết nối Gmail! Vui lòng báo Admin kiểm tra lại mật khẩu App." });
-        }
+        const htmlContent = `
+            <div style="font-family: Arial, sans-serif; padding: 20px; color: #333; max-width: 500px; margin: auto; border: 1px solid #eee; border-radius: 8px;">
+                <h2 style="color: #007bff; text-align: center;">Chuỗi Tĩnh Nguyện</h2>
+                <p>Xin chào <strong>${user.username}</strong>,</p>
+                <p>Bạn vừa yêu cầu khôi phục mật khẩu. Dưới đây là mã OTP của bạn:</p>
+                <div style="text-align: center; margin: 20px 0;">
+                    <span style="font-size: 28px; font-weight: bold; color: #d9534f; letter-spacing: 4px; padding: 10px 20px; background: #f9f9f9; border-radius: 4px;">${otp}</span>
+                </div>
+                <p style="font-size: 13px; color: #777;">Mã này sẽ hết hạn sau 15 phút. Nếu bạn không yêu cầu, xin hãy bỏ qua email này.</p>
+                <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
+                <p style="font-size: 12px; color: #aaa; text-align: center;">Phước hạnh và bình an!</p>
+            </div>
+        `;
+
+        await sendEmailViaBrevo(user.email, 'Mã OTP Khôi Phục Mật Khẩu', htmlContent);
+        res.json({ success: true, message: "Đã gửi mã OTP! Hãy kiểm tra Hộp thư đến (và Hộp thư rác)." });
         
     } catch (error) { 
-        console.error(error);
-        res.status(500).json({ success: false, message: "Lỗi hệ thống máy chủ!" }); 
+        console.error("Lỗi quên mật khẩu:", error);
+        res.status(500).json({ success: false, message: "Lỗi hệ thống máy chủ gửi mail!" }); 
     }
 });
 
