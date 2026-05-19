@@ -600,12 +600,7 @@
 
                 <div class="w-full flex-1 flex flex-col gap-4 relative z-10 max-w-xl">
                     
-                    <div class="bg-white/80 md:bg-white/90 rounded-2xl p-3 md:p-4 border border-slate-100 shadow-sm">
-                        <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 text-center">Lịch Tĩnh Nguyện Gần Đây</h3>
-                        <div class="flex justify-between items-center px-1 md:px-2" id="weekly-calendar"></div>
-                    </div>
-
-                    <!-- THÊM TÍNH NĂNG ĐỐ KINH THÁNH -->
+                    <!-- THÊM TÍNH NĂNG ĐỐ KINH THÁNH (Đã dời lên trên cùng) -->
                     <div class="bg-indigo-50/80 rounded-2xl p-4 md:p-5 border border-indigo-100 shadow-sm relative overflow-hidden">
                         <div class="absolute -right-4 -top-4 text-6xl opacity-10 pointer-events-none">📖</div>
                         <div class="flex justify-between items-start mb-2 relative z-10">
@@ -620,11 +615,10 @@
                         <!-- Hiển thị nội dung đố -->
                         <div id="quiz-display-area" class="relative z-10 mt-2">
                             <p class="text-[11px] font-semibold text-indigo-500 mb-0.5">Phân đoạn hiện tại:</p>
-                            <p id="ui-quiz-passage" class="text-base md:text-lg font-black text-indigo-900 mb-3 drop-shadow-sm">Đang tải...</p>
+                            <p id="ui-quiz-passage" class="text-base md:text-lg font-black text-indigo-900 mb-1 drop-shadow-sm">Đang tải...</p>
                             
-                            <div class="bg-white/90 rounded-xl p-3 md:p-4 border border-indigo-200 shadow-inner text-sm text-indigo-800 font-medium leading-relaxed whitespace-pre-line" id="ui-quiz-question">
-                                ...
-                            </div>
+                            <!-- Đã ẩn phần câu hỏi đi theo yêu cầu của bạn -->
+                            <div id="ui-quiz-question" class="hidden"></div>
                         </div>
 
                         <!-- Form cập nhật đố (Dành cho Admin) -->
@@ -637,6 +631,11 @@
                                 <button id="btn-cancel-quiz" class="bg-white border border-slate-200 text-slate-600 px-4 py-1.5 rounded-lg text-xs font-bold hover:bg-slate-50">Hủy</button>
                             </div>
                         </div>
+                    </div>
+
+                    <div class="bg-white/80 md:bg-white/90 rounded-2xl p-3 md:p-4 border border-slate-100 shadow-sm">
+                        <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 text-center">Lịch Tĩnh Nguyện Gần Đây</h3>
+                        <div class="flex justify-between items-center px-1 md:px-2" id="weekly-calendar"></div>
                     </div>
 
                     <!-- CÂU GỐC CỐ ĐỊNH Ở GIỮA TRANG -->
