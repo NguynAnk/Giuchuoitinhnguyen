@@ -23,7 +23,8 @@ const transporter = nodemailer.createTransport({
     port: 465,
     secure: true,
     auth: { user: 'anklee206@gmail.com', pass: 'neohvuwijoatsfrh' },
-    // Sử dụng tùy chọn dgram hoặc net socket để ép buộc IPv4 nếu cần thiết
+    // ÉP BUỘC SỬ DỤNG IPv4 (family: 4) để tránh lỗi ENETUNREACH trên Render
+    family: 4, 
     socketTimeout: 10000,
     connectionTimeout: 10000
 });
