@@ -22,7 +22,7 @@ const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 465,
     secure: true,
-    auth: { user: 'anklee206@gmail.com', pass: 'neohvuwijoatsfrh' },
+    auth: { user: 'anklee206@gmail.com', pass: 'azxpwgrzelqgzuyq' },
     // ÉP BUỘC SỬ DỤNG IPv4 (family: 4) để tránh lỗi ENETUNREACH trên Render
     family: 4, 
     socketTimeout: 10000,
