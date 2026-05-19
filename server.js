@@ -14,19 +14,13 @@ const MONGO_URI = "mongodb+srv://nguyenanh:16102006@cluster0.iwcowsc.mongodb.net
 
 mongoose.connect(MONGO_URI).then(() => console.log('DB Connected'));
 
-// CẤU HÌNH LẠI GMAIL CHUẨN (Bỏ pool chống treo mạng)
+// CẤU HÌNH GMAIL ÉP DÙNG IPv4 (Khắc phục triệt để lỗi ETIMEDOUT trên Render)
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: { user: 'anklee206@gmail.com', pass: 'neohvuwijoatsfrh' }
-});
-
-// HỆ THỐNG KIỂM TRA MẬT KHẨU GMAIL TỰ ĐỘNG NGAY KHI CHẠY SERVER
-transporter.verify((error, success) => {
-    if (error) {
-        console.error("❌ LỖI KẾT NỐI EMAIL (Rất có thể sai mật khẩu ứng dụng):", error.message);
-    } else {
-        console.log("✅ Hệ thống Email đã kết nối Google thành công và sẵn sàng gửi!");
-    }
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
+    auth: { user: 'anklee206@gmail.com', pass: 'neohvuwijoatsfrh' },
+    family: 4 // <--- QUAN TRỌNG: Ép buộc hệ thống sử dụng mạng IPv4, bỏ qua IPv6 bị lỗi của Render
 });
 
 const userSchema = new mongoose.Schema({
@@ -171,7 +165,6 @@ app.post('/api/update-profile', async (req, res) => {
     } catch (error) { res.status(500).json({ success: false }); }
 });
 
-// ĐÃ SỬA LẠI ĐỂ KIỂM TRA CHẮC CHẮN MAIL GỬI ĐƯỢC HAY KHÔNG
 app.post('/api/forgot-password', async (req, res) => {
     try {
         const { email } = req.body;
@@ -183,7 +176,7 @@ app.post('/api/forgot-password', async (req, res) => {
         user.resetOtpExpiry = new Date(Date.now() + 15 * 60000); 
         await user.save();
         
-        // Gửi mail có giới hạn thời gian tự hủy tránh treo máy
+        // Gửi mail và đợi kết quả
         try {
             await transporter.sendMail({ 
                 from: '"Cổng Tĩnh Nguyện" <anklee206@gmail.com>', 
