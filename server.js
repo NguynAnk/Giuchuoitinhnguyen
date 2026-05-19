@@ -14,9 +14,19 @@ const MONGO_URI = "mongodb+srv://nguyenanh:16102006@cluster0.iwcowsc.mongodb.net
 
 mongoose.connect(MONGO_URI).then(() => console.log('DB Connected'));
 
+// CẤU HÌNH LẠI GMAIL CHUẨN (Bỏ pool chống treo mạng)
 const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com', port: 465, secure: true, pool: true,
+    service: 'gmail',
     auth: { user: 'anklee206@gmail.com', pass: 'neohvuwijoatsfrh' }
+});
+
+// HỆ THỐNG KIỂM TRA MẬT KHẨU GMAIL TỰ ĐỘNG NGAY KHI CHẠY SERVER
+transporter.verify((error, success) => {
+    if (error) {
+        console.error("❌ LỖI KẾT NỐI EMAIL (Rất có thể sai mật khẩu ứng dụng):", error.message);
+    } else {
+        console.log("✅ Hệ thống Email đã kết nối Google thành công và sẵn sàng gửi!");
+    }
 });
 
 const userSchema = new mongoose.Schema({
@@ -173,7 +183,7 @@ app.post('/api/forgot-password', async (req, res) => {
         user.resetOtpExpiry = new Date(Date.now() + 15 * 60000); 
         await user.save();
         
-        // Cố gắng gửi mail, nếu lỗi sẽ văng xuống block catch bên dưới
+        // Gửi mail có giới hạn thời gian tự hủy tránh treo máy
         try {
             await transporter.sendMail({ 
                 from: '"Cổng Tĩnh Nguyện" <anklee206@gmail.com>', 
