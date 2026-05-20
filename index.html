@@ -1302,7 +1302,21 @@
             document.getElementById('tube-red-liquid').style.height = '';
             document.getElementById('tube-blue-liquid').style.height = '';
         }
-
+// HÀM KIỂM TRA CHỐNG SPAM
+        function validateSeriousText(text, minWords, minChars) {
+            const trimmed = text.trim();
+            if (trimmed.length < minChars) return false; // Quá ngắn
+            
+            const words = trimmed.split(/\s+/).filter(w => w.length > 0);
+            if (words.length < minWords) return false; // Ít từ quá (chỉ gõ dính liền 1 cục asdasdasd)
+            
+            // Chống gõ lặp 1 vài phím (ví dụ: cccccccc, aaaaa, cscscscscs)
+            const uniqueChars = new Set(trimmed.replace(/\s/g, '').split('')).size;
+            // Nếu chuỗi dài hơn 5 ký tự mà chỉ cấu tạo từ 1 hoặc 2 chữ cái lặp lại -> Đánh dấu là Spam
+            if (trimmed.length > 5 && uniqueChars < 3) return false; 
+            
+            return true;
+        }
         document.getElementById('checkin-btn').addEventListener('click', async () => {
             if (!userData || userData.hasCheckedInToday || isProcessing) return;
 
