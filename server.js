@@ -35,7 +35,8 @@ const userSchema = new mongoose.Schema({
   hasCheckedInToday: { type: Boolean, default: false },
   lastCheckinDateStr: { type: String, default: "" }, 
   history: [{ type: String }],
-  dailyLogs: [{ date: String, q1: String, q2: String, q3: String, source: String, emotion: String }]
+  dailyLogs: [{ date: String, q1: String, q2: String, q3: String, source: String, emotion: String }],
+  registerDateStr: { type: String, default: "" } 
 });
 const User = mongoose.model('User', userSchema);
 
@@ -135,7 +136,6 @@ app.post('/api/admin/update-quiz', async (req, res) => {
     } catch (error) { res.status(500).json({ success: false }); }
 });
 
-// API MỚI: ADMIN THU HỒI BÀI VIẾT
 app.post('/api/admin/revoke-checkin', async (req, res) => {
     try {
         const { adminUser, targetUserId, dateStr } = req.body;
@@ -144,11 +144,9 @@ app.post('/api/admin/revoke-checkin', async (req, res) => {
         const user = await User.findById(targetUserId);
         if (!user) return res.status(404).json({ success: false, message: "Không tìm thấy người dùng" });
 
-        // Xóa ngày đó khỏi lịch sử và nhật ký
         user.history = user.history.filter(d => d !== dateStr);
         user.dailyLogs = user.dailyLogs.filter(l => l.date !== dateStr);
         
-        // Trừ điểm và số lần checkin
         user.totalCheckins = Math.max(0, user.totalCheckins - 1);
         user.totalPoints = Math.max(0, user.totalPoints - 1);
         
@@ -157,7 +155,6 @@ app.post('/api/admin/revoke-checkin', async (req, res) => {
             user.hasCheckedInToday = false;
         }
 
-        // Tính lại chuỗi
         let tempStreak = 0;
         let checkDate = new Date(todayStr);
         if (!user.history.includes(todayStr)) checkDate.setDate(checkDate.getDate() - 1); 
@@ -187,7 +184,7 @@ app.post('/api/admin/reset-system', async (req, res) => {
 
 app.post('/api/register', async (req, res) => {
   try {
-    const { username, password, email, group } = req.body;
+    const { username, password, email, group, localDate } = req.body;
     const existingUser = await User.findOne({ username });
     if (existingUser) return res.status(400).json({ success: false, message: 'Tên tài khoản đã tồn tại' });
 
@@ -196,8 +193,18 @@ app.post('/api/register', async (req, res) => {
         if (existingEmail) return res.status(400).json({ success: false, message: 'Email này đã được sử dụng cho một tài khoản khác!' });
     }
 
+    const regDate = localDate || new Date().getFullYear() + "-" + String(new Date().getMonth() + 1).padStart(2, '0') + "-" + String(new Date().getDate()).padStart(2, '0');
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({ username, password: hashedPassword, email, role: (username === "Nguyên Anh" ? 'admin' : 'user'), group });
+    
+    const newUser = new User({ 
+        username, 
+        password: hashedPassword, 
+        email, 
+        role: (username === "Nguyên Anh" ? 'admin' : 'user'), 
+        group,
+        registerDateStr: regDate
+    });
+    
     await newUser.save();
     res.json({ success: true, user: newUser });
   } catch (error) { res.status(500).json({ success: false }); }
@@ -344,6 +351,83 @@ app.post('/api/update-group', async (req, res) => {
 
 app.get('/api/users', async (req, res) => {
     const users = await User.find({}, '-password').sort({ totalPoints: -1 }); res.json({ success: true, users });
+});
+
+app.post('/api/system/stats', async (req, res) => {
+    try {
+        const { localDate } = req.body; 
+        const users = await User.find({}, '-password');
+        
+        if (users.length === 0) {
+            return res.json({ success: true, totalCompleted: 0, totalUncompleted: 0, daily: [] });
+        }
+
+        let earliestDateStr = localDate;
+        users.forEach(u => {
+            if (u.registerDateStr && u.registerDateStr < earliestDateStr) {
+                earliestDateStr = u.registerDateStr;
+            }
+            u.history.forEach(d => {
+                if (d < earliestDateStr) earliestDateStr = d;
+            });
+        });
+
+        function formatDate(d) {
+            return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, '0') + "-" + String(d.getDate()).padStart(2, '0');
+        }
+
+        const dates = [];
+        let current = new Date(earliestDateStr);
+        const end = new Date(localDate);
+        while (current <= end) {
+            dates.push(formatDate(current));
+            current.setDate(current.getDate() + 1);
+        }
+        dates.reverse(); 
+
+        let totalCompletedOverall = 0;
+        let totalUncompletedOverall = 0;
+        const dailyStats = [];
+
+        dates.forEach(date => {
+            const completedUsers = [];
+            const uncompletedUsers = [];
+
+            users.forEach(u => {
+                const regDate = u.registerDateStr || earliestDateStr;
+                if (regDate <= date) {
+                    if (u.history && u.history.includes(date)) {
+                        completedUsers.push(u.username);
+                    } else {
+                        uncompletedUsers.push(u.username);
+                    }
+                }
+            });
+
+            const compCount = completedUsers.length;
+            const uncompCount = uncompletedUsers.length;
+
+            totalCompletedOverall += compCount;
+            totalUncompletedOverall += uncompCount;
+
+            dailyStats.push({
+                date,
+                completedCount: compCount,
+                uncompletedCount: uncompCount,
+                completedUsers,
+                uncompletedUsers
+            });
+        });
+
+        res.json({
+            success: true,
+            totalCompleted: totalCompletedOverall,
+            totalUncompleted: totalUncompletedOverall,
+            daily: dailyStats
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
 });
 
 const PORT = process.env.PORT || 3000;
