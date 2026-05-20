@@ -656,7 +656,7 @@
     <script>
         const API_URL = 'https://giuchuoitinhnguyen.onrender.com/api';
         let userData = null; let originalUserData = null; let authMode = 'login'; let isProcessing = false; let isTestMode = false; let currentUsersData = [];
-        
+
         async function checkAutoLogin() {
             const savedSession = localStorage.getItem('tinhnguyen_session');
             if (savedSession) {
@@ -808,74 +808,7 @@
             toggleModal('settings-modal', true); 
         });
         document.getElementById('btn-close-settings').addEventListener('click', () => toggleModal('settings-modal', false));
-        // LẮNG NGHE SỰ KIỆN MỞ/ĐÓNG MODAL THỐNG KÊ HỆ THỐNG
-    document.getElementById('btn-show-system-stats').addEventListener('click', async () => {
-    toggleModal('system-stats-modal', true);
-    const container = document.getElementById('system-stats-list-container');
-    container.innerHTML = '<p class="text-center text-slate-400 py-8 animate-pulse font-medium">Đang tải dữ liệu từ máy chủ...</p>';
-    
-    try {
-        const res = await fetch(`${API_URL}/system/stats`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ localDate: getLocalTodayStr() })
-        });
-        const data = await res.json();
-        if (data.success) {
-            renderSystemStats(data);
-        } else {
-            container.innerHTML = '<p class="text-center text-red-500 py-8 font-bold">Lỗi tải dữ liệu!</p>';
-        }
-    } catch (e) {
-        container.innerHTML = '<p class="text-center text-red-500 py-8 font-bold">Lỗi kết nối máy chủ!</p>';
-    }
-});
-
-document.getElementById('btn-close-system-stats').addEventListener('click', () => {
-    toggleModal('system-stats-modal', false);
-});
-
-// HÀM VẼ GIAO DIỆN THỐNG KÊ CHI TIẾT
-function renderSystemStats(data) {
-    document.getElementById('stat-total-completed').innerText = data.totalCompleted;
-    document.getElementById('stat-total-uncompleted').innerText = data.totalUncompleted;
-    const total = data.totalCompleted + data.totalUncompleted;
-    const ratio = total > 0 ? Math.round((data.totalCompleted / total) * 100) : 0;
-    document.getElementById('stat-ratio').innerText = ratio + '%';
-
-    const container = document.getElementById('system-stats-list-container');
-    if (!data.daily || data.daily.length === 0) {
-        container.innerHTML = '<p class="text-center text-slate-400 py-8">Chưa có dữ liệu thống kê.</p>';
-        return;
-    }
-
-    let html = '';
-    data.daily.forEach((day) => {
-        const totalDay = day.completedCount + day.uncompletedCount;
-        const dayRatio = totalDay > 0 ? Math.round((day.completedCount / totalDay) * 100) : 0;
-
-        html += `
-        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 transition-all">
-            <div class="flex justify-between items-center mb-3">
-                <span class="text-sm font-bold text-slate-800">${day.date}</span>
-                <span class="text-xs font-bold text-teal-700 bg-teal-50 border border-teal-100 px-2.5 py-1 rounded-full">Đã xong: ${dayRatio}%</span>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-                <!-- Cột Hoàn thành -->
-                <div class="bg-emerald-50/50 p-3 rounded-xl border border-emerald-100/50">
-                    <span class="font-bold text-emerald-700 block mb-1">✓ Đã Hoàn Thành (${day.completedCount}):</span>
-                    <p class="text-slate-600 leading-relaxed">${day.completedUsers.join(', ') || '<span class="text-slate-400 italic">Không có ai</span>'}</p>
-                </div>
-                <!-- Cột Chưa hoàn thành -->
-                <div class="bg-rose-50/50 p-3 rounded-xl border border-rose-100/50">
-                    <span class="font-bold text-rose-700 block mb-1">✗ Chưa Hoàn Thành (${day.uncompletedCount}):</span>
-                    <p class="text-slate-500 leading-relaxed">${day.uncompletedUsers.join(', ') || '<span class="text-slate-400 italic">Không có ai</span>'}</p>
-                </div>
-            </div>
-        </div>`;
-    });
-    container.innerHTML = html;
-}
+        
         document.getElementById('btn-save-settings').addEventListener('click', async () => {
             const btn = document.getElementById('btn-save-settings'); const msg = document.getElementById('setting-msg');
             const newUsername = document.getElementById('setting-username').value.trim();
