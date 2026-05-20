@@ -6,6 +6,7 @@
     <title>Giữ Chuỗi Tĩnh Nguyện</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <!-- THÊM THƯ VIỆN VẼ BIỂU ĐỒ CHUYÊN NGHIỆP CHART.JS -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body { font-family: 'Inter', sans-serif; position: relative; min-height: 100vh; overflow-x: hidden; }
@@ -156,7 +157,10 @@
     <audio id="daily-sound" src="https://actions.google.com/sounds/v1/water/water_drop.ogg" preload="auto"></audio>
     <audio id="rankup-sound" src="https://actions.google.com/sounds/v1/magic/fairy_glissando_short.ogg" preload="auto"></audio>
     <audio id="fail-sound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" preload="auto"></audio>
+    <!-- THÊM ÂM THANH THÔNG BÁO TING TING NHẮC NHỞ -->
+    <audio id="reminder-sound" src="https://actions.google.com/sounds/v1/cartoon/bell_ding.ogg" preload="auto"></audio>
 
+    <!-- MÀN HÌNH XEM DANH HIỆU -->
     <div id="rank-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
         <div id="rank-modal-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6 transform scale-95 transition-transform duration-300 flex flex-col max-h-[85vh]">
             <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3 shrink-0">
@@ -167,6 +171,7 @@
         </div>
     </div>
 
+    <!-- MÀN HÌNH GÓP Ý LINH VỤ -->
     <div id="feedback-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
         <div id="feedback-modal-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6 transform scale-95 transition-transform duration-300 flex flex-col">
             <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3 shrink-0">
@@ -180,6 +185,7 @@
         </div>
     </div>
 
+    <!-- MÀN HÌNH LỜI CHÚC PHƯỚC HẠNH -->
     <div id="blessing-modal" class="fixed inset-0 bg-white/80 backdrop-blur-sm z-[110] flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-500">
         <div class="bg-gradient-to-br from-amber-50 to-orange-100 rounded-[2rem] shadow-2xl w-full max-w-sm p-6 text-center border-2 border-amber-200 transform scale-90 transition-transform duration-500" id="blessing-content">
             <div class="text-6xl mb-4 animate-bounce">🕊️</div>
@@ -192,6 +198,7 @@
         </div>
     </div>
 
+    <!-- MÀN HÌNH CÀI ĐẶT USER & QR CODE & NHẮC NHỞ THÔNG BÁO -->
     <div id="settings-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[70] flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
         <div id="settings-modal-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-6 transform scale-95 transition-transform duration-300 flex flex-col max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3 shrink-0">
@@ -207,6 +214,26 @@
                 <div>
                     <label class="text-xs font-bold text-slate-500 block mb-1">Email khôi phục</label>
                     <input type="email" id="setting-email" placeholder="Ví dụ: abc@gmail.com" class="w-full px-3 py-2 rounded-lg border bg-slate-50 focus:bg-white outline-none">
+                </div>
+
+                <!-- KHU VỰC THIẾT LẬP NHẮC NHỞ TĨNH NGUYỆN (NEW!) -->
+                <div class="border-t border-slate-100 pt-3">
+                    <label class="text-xs font-bold text-slate-800 block mb-2">🔔 Nhắc Nhở Tĩnh Nguyện</label>
+                    <div class="flex items-center justify-between bg-slate-50 p-2.5 rounded-xl border border-slate-100 mb-2">
+                        <span class="text-xs font-semibold text-slate-600">Bật nhắc nhở hằng ngày</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="setting-reminder-toggle" class="sr-only peer">
+                            <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+                        </label>
+                    </div>
+                    <div class="flex items-center justify-between gap-2 mb-3">
+                        <span class="text-xs font-semibold text-slate-600">Thời gian báo thức</span>
+                        <input type="time" id="setting-reminder-time" class="px-2 py-1 text-xs border rounded-lg bg-slate-50 font-bold text-slate-700 outline-none">
+                    </div>
+                    <button id="btn-request-notification" class="w-full py-1.5 bg-slate-100 hover:bg-blue-50 text-slate-600 hover:text-blue-600 rounded-lg text-[11px] font-bold transition-all border border-dashed border-slate-300 hover:border-blue-300 flex items-center justify-center gap-1.5">
+                        🔔 Kích hoạt Thông báo Thiết bị (Ting Ting)
+                    </button>
+                    <p id="notification-status-text" class="text-[9px] text-slate-400 mt-1 text-center"></p>
                 </div>
                 
                 <div class="border-t border-slate-100 pt-3">
@@ -237,6 +264,7 @@
         </div>
     </div>
 
+    <!-- MÀN HÌNH NHẬT KÝ CÁ NHÂN -->
     <div id="history-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
         <div id="history-modal-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl p-6 transform scale-95 transition-transform duration-300 flex flex-col h-[85vh]">
             <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3 shrink-0">
@@ -261,6 +289,7 @@
         </div>
     </div>
 
+    <!-- MÀN HÌNH THỐNG KÊ NHÓM -->
     <div id="group-stats-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[55] flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
         <div id="group-stats-modal-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-4xl p-6 transform scale-95 transition-transform duration-300 flex flex-col h-[85vh]">
             <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3 shrink-0">
@@ -275,6 +304,7 @@
         </div>
     </div>
 
+    <!-- MÀN HÌNH ADMIN XEM BÀI VÀ THU HỒI -->
     <div id="admin-view-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
         <div id="admin-view-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-lg p-6 transform scale-95 transition-transform duration-300 flex flex-col max-h-[85vh]">
             <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3 shrink-0">
@@ -285,6 +315,7 @@
         </div>
     </div>
 
+    <!-- MODAL ĐỔI TÊN -->
     <div id="force-rename-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-3xl p-8 w-full max-w-md text-center shadow-2xl">
             <div class="text-5xl mb-4">✍️</div>
@@ -296,6 +327,7 @@
         </div>
     </div>
 
+    <!-- MÀN HÌNH QUẢN TRỊ ADMIN CHÍNH -->
     <div id="admin-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
         <div id="admin-modal-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden">
             <div class="p-4 border-b border-slate-100 flex justify-between bg-slate-50 items-center">
@@ -359,6 +391,7 @@
         </div>
     </div>
 
+    <!-- MÀN HÌNH ĐĂNG NHẬP / ĐĂNG KÝ -->
     <div id="auth-screen" class="transition-screen bg-white/90 md:bg-white/95 backdrop-blur-md rounded-3xl md:rounded-[2.5rem] shadow-2xl shadow-blue-100/50 w-full max-w-md border border-white relative z-20 p-6 md:p-8 flex flex-col gap-6 items-center">
         
         <div id="auth-main-container" class="w-full flex flex-col gap-4">
@@ -424,6 +457,7 @@
         </div>
     </div>
 
+    <!-- ==================== ỨNG DỤNG CHÍNH ==================== -->
     <div id="main-app" class="transition-screen opacity-0 scale-95 translate-y-4 hidden w-full max-w-[80rem] flex-col gap-3 md:gap-4 relative z-10">
         
         <div class="bg-white/90 backdrop-blur-md rounded-2xl p-3 md:p-4 shadow-sm border border-white/50 flex flex-col md:flex-row justify-between items-center gap-3 md:gap-4">
@@ -512,6 +546,7 @@
 
                 <div class="w-full flex-1 flex flex-col gap-4 relative z-10 max-w-xl">
                     
+                    <!-- ĐỐ KINH THÁNH LÊN TRÊN CÙNG -->
                     <div class="bg-indigo-50/80 rounded-2xl p-4 md:p-5 border border-indigo-100 shadow-sm relative overflow-hidden">
                         <div class="absolute -right-4 -top-4 text-6xl opacity-10 pointer-events-none">📖</div>
                         <div class="flex justify-between items-start mb-2 relative z-10">
@@ -540,18 +575,20 @@
                         </div>
                     </div>
 
+                    <!-- LỊCH -->
                     <div class="bg-white/80 md:bg-white/90 rounded-2xl p-3 md:p-4 border border-slate-100 shadow-sm">
                         <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 text-center">Lịch Tĩnh Nguyện Gần Đây</h3>
                         <div class="flex justify-between items-center px-1 md:px-2" id="weekly-calendar"></div>
                     </div>
 
+                    <!-- CÂU GỐC -->
                     <div class="text-center px-3 py-3 md:px-4 md:py-3 bg-amber-50/50 rounded-xl border border-amber-100 shadow-sm mt-1 mb-1">
                         <p class="text-[13px] italic text-amber-800 font-medium leading-relaxed">“Ai trung tín trong việc rất nhỏ, cũng trung tín trong việc lớn; ai bất nghĩa trong việc rất nhỏ, cũng bất nghĩa trong việc lớn.”</p>
                         <p class="text-[11px] font-bold text-amber-600 mt-1.5">— Luca 16:10</p>
                     </div>
 
                     <div class="bg-white/80 md:bg-white/90 rounded-2xl p-3 md:p-4 border border-slate-100 shadow-sm flex flex-col gap-4">
-                        <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1">Sổ Tĩnh Nguyện Hôm Nay</h3>
+                        <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1">Sổ Tĩnh Nguyện Hôm Ngày</h3>
                         
                         <div class="flex flex-col gap-4">
                             <div>
@@ -597,6 +634,7 @@
                 </div>
             </div>
 
+            <!-- CỘT 3: ỐNG DUNG DỊCH -->
             <div class="flex flex-col lg:flex-row gap-5 lg:gap-6 shrink-0 border-t lg:border-t-0 lg:border-l border-slate-100/50 pt-6 lg:pt-8 pl-0 lg:pl-10 items-center lg:items-start justify-center lg:justify-start w-full lg:w-auto mt-4 lg:mt-0">
                 <div class="flex flex-row lg:flex-col items-center justify-start gap-3 w-full lg:w-16">
                     <div class="text-center bg-red-50/80 px-3 py-2 lg:px-2 lg:py-1.5 rounded-xl border border-red-100 w-24 lg:w-full shrink-0 shadow-sm">
@@ -777,10 +815,20 @@
             if(currentUsersData.length > 0) calculateAndRenderChart(currentUsersData); // Vẽ lại để fix kích thước canvas
         });
 
+        // SỰ KIỆN MỞ CÀI ĐẶT TÀI KHOẢN (CÓ LOAD THỜI GIAN VÀ TRẠNG THÁI BÁO THỨC)
         document.getElementById('btn-open-settings').addEventListener('click', () => { 
-            document.getElementById('setting-username').value = userData.username || ''; document.getElementById('setting-email').value = userData.email || '';
-            document.getElementById('setting-old-pw').value = ''; document.getElementById('setting-new-pw').value = '';
-            document.getElementById('setting-msg').classList.add('hidden'); toggleModal('settings-modal', true); 
+            document.getElementById('setting-username').value = userData.username || ''; 
+            document.getElementById('setting-email').value = userData.email || '';
+            document.getElementById('setting-old-pw').value = ''; 
+            document.getElementById('setting-new-pw').value = '';
+            
+            // Đồng bộ trạng thái Nhắc nhở
+            document.getElementById('setting-reminder-toggle').checked = localStorage.getItem('tinhnguyen_reminder_enabled') === 'true';
+            document.getElementById('setting-reminder-time').value = localStorage.getItem('tinhnguyen_reminder_time') || '07:00';
+            updateNotificationStatusText();
+
+            document.getElementById('setting-msg').classList.add('hidden'); 
+            toggleModal('settings-modal', true); 
         });
         document.getElementById('btn-close-settings').addEventListener('click', () => toggleModal('settings-modal', false));
         
@@ -804,7 +852,21 @@
                 const payload = { userId: userData._id, newEmail: email, newUsername: newUsername }; if (newPw) payload.newPassword = newPw;
                 const res = await fetch(`${API_URL}/update-profile`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
                 const data = await res.json();
-                if(data.success) { userData = data.user; msg.innerText = "Lưu thành công!"; msg.className = "text-center text-sm font-bold text-green-600 block"; document.getElementById('setting-old-pw').value = ''; document.getElementById('setting-new-pw').value = ''; updateUIFromData(); } 
+                if(data.success) { 
+                    userData = data.user; 
+                    
+                    // Lưu trạng thái cấu hình Nhắc nhở hằng ngày
+                    const reminderToggled = document.getElementById('setting-reminder-toggle').checked;
+                    const reminderTimeVal = document.getElementById('setting-reminder-time').value;
+                    localStorage.setItem('tinhnguyen_reminder_enabled', reminderToggled);
+                    localStorage.setItem('tinhnguyen_reminder_time', reminderTimeVal);
+
+                    msg.innerText = "Lưu thành công!"; 
+                    msg.className = "text-center text-sm font-bold text-green-600 block"; 
+                    document.getElementById('setting-old-pw').value = ''; 
+                    document.getElementById('setting-new-pw').value = ''; 
+                    updateUIFromData(); 
+                } 
                 else { msg.innerText = "Lỗi: " + data.message; msg.className = "text-center text-sm font-bold text-red-600 block"; }
             } catch(e) { msg.innerText = "Lỗi kết nối máy chủ!"; msg.className = "text-center text-sm font-bold text-red-600 block"; }
             btn.innerText = "Lưu Thay Đổi"; btn.disabled = false;
@@ -1146,6 +1208,86 @@
             });
             container.innerHTML = html;
         }
+
+        // ================= HÀM XỬ LÝ NHẮC NHỞ / THÔNG BÁO TING TING (NEW!) =================
+        function updateNotificationStatusText() {
+            const el = document.getElementById('notification-status-text');
+            if (!('Notification' in window)) {
+                el.innerText = 'Trình duyệt này không hỗ trợ Thông báo.';
+                document.getElementById('btn-request-notification').disabled = true;
+                return;
+            }
+            if (Notification.permission === 'granted') {
+                el.innerText = 'Trạng thái: Đã kích hoạt báo thức thành công! ✅';
+                el.className = 'text-[9px] text-green-600 mt-1 text-center font-semibold';
+            } else if (Notification.permission === 'denied') {
+                el.innerText = 'Trạng thái: Bị từ chối. Hãy vào cài đặt trình duyệt để bật lại.';
+                el.className = 'text-[9px] text-red-500 mt-1 text-center font-semibold';
+            } else {
+                el.innerText = 'Trạng thái: Chưa cấp quyền thông báo đẩy.';
+                el.className = 'text-[9px] text-slate-400 mt-1 text-center';
+            }
+        }
+
+        document.getElementById('btn-request-notification').addEventListener('click', async () => {
+            if (!('Notification' in window)) return alert("Trình duyệt này không hỗ trợ Notifications API.");
+            const permission = await Notification.requestPermission();
+            updateNotificationStatusText();
+            if (permission === 'granted') {
+                // Thử test thông báo tại chỗ
+                new Notification("Chuỗi Tĩnh Nguyện", {
+                    body: "Đã bật nhắc nhở tĩnh nguyện hằng ngày thành công! 🕊️",
+                    icon: "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://nguynank.github.io/Giuchuoitinhnguyen/"
+                });
+                
+                // Phát thử chuông ting ting mẫu
+                const rSound = document.getElementById('reminder-sound');
+                if (rSound) { rSound.pause(); rSound.currentTime = 0; rSound.play().catch(e => {}); }
+            }
+        });
+
+        // Hàm kiểm tra và kích hoạt chuông báo nhắc nhở hằng ngày (Chạy ngầm mỗi 30 giây)
+        function checkDailyReminder() {
+            const isEnabled = localStorage.getItem('tinhnguyen_reminder_enabled') === 'true';
+            if (!isEnabled || !userData || userData.hasCheckedInToday) return;
+
+            const targetTime = localStorage.getItem('tinhnguyen_reminder_time') || '07:00';
+            const now = new Date();
+            const curTimeStr = String(now.getHours()).padStart(2, '0') + ":" + String(now.getMinutes()).padStart(2, '0');
+
+            if (curTimeStr === targetTime) {
+                const todayStr = getLocalTodayStr();
+                const lastFiredDate = localStorage.getItem('tinhnguyen_last_reminder_date');
+                
+                // Tránh lặp lại nhiều lần trong cùng một phút
+                if (lastFiredDate !== todayStr) {
+                    localStorage.setItem('tinhnguyen_last_reminder_date', todayStr);
+                    
+                    // 1. Phát âm thanh Ting Ting
+                    const rSound = document.getElementById('reminder-sound');
+                    if (rSound) {
+                        rSound.pause();
+                        rSound.currentTime = 0;
+                        rSound.volume = 1;
+                        rSound.play().catch(e => console.log("Không thể tự động phát nhạc: " + e));
+                    }
+                    
+                    // 2. Gửi thông báo trình duyệt của hệ điều hành
+                    if ('Notification' in window && Notification.permission === 'granted') {
+                        new Notification("🔔 Đến Giờ Tĩnh Nguyện Rồi Bạn Ơi!", {
+                            body: `Xin chào ${userData.username}, đã đến giờ tĩnh nguyện rồi! Cùng dành ra vài phút với Chúa nhé 🕊️`,
+                            icon: "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://nguynank.github.io/Giuchuoitinhnguyen/"
+                        });
+                    }
+                    
+                    // 3. Hiển thị thông báo nổi giữa màn hình để người dùng click
+                    alert(`🔔 Nhắc nhở Tĩnh Nguyện:\n\nXin chào ${userData.username}, đã đến lúc tĩnh nguyện hằng ngày rồi! Hãy dành ra ít thời gian đọc Kinh Thánh và tâm sự với Chúa nhé 🕊️`);
+                }
+            }
+        }
+        
+        // Khởi động scheduler quét nhắc nhở mỗi 30 giây
+        setInterval(checkDailyReminder, 30000);
 
         document.getElementById('btn-test-next-day').addEventListener('click', async () => { try { if (!isTestMode) { originalUserData = JSON.parse(JSON.stringify(userData)); isTestMode = true; } userData.hasCheckedInToday = false; updateUIFromData(); toggleModal('admin-modal', false); } catch(e) { } });
         document.getElementById('btn-test-rank-go').addEventListener('click', async () => { try { if (!isTestMode) { originalUserData = JSON.parse(JSON.stringify(userData)); isTestMode = true; } const s = parseInt(document.getElementById('test-rank-select').value); userData.currentStreak = s; userData.totalCheckins = s; userData.totalPoints = s; userData.maxStreak = Math.max(userData.maxStreak, s); userData.hasCheckedInToday = false; updateUIFromData(); toggleModal('admin-modal', false); } catch(e) { } });
