@@ -15,7 +15,7 @@ const MONGO_URI = "mongodb+srv://nguyenanh:16102006@cluster0.iwcowsc.mongodb.net
 
 mongoose.connect(MONGO_URI).then(() => {
     console.log('DB Connected');
-    initSystem(); // Khởi tạo dữ liệu hệ thống (Đố Kinh Thánh) khi chạy server
+    initSystem(); 
 });
 
 // ================= SCHEMA =================
@@ -39,7 +39,6 @@ const userSchema = new mongoose.Schema({
 });
 const User = mongoose.model('User', userSchema);
 
-// Schema mới lưu trữ Cấu hình hệ thống (Đố Kinh Thánh)
 const systemSchema = new mongoose.Schema({
     configId: { type: String, default: 'main' },
     quizPassage: { type: String, default: 'Ê-sai 26-40' },
@@ -47,7 +46,6 @@ const systemSchema = new mongoose.Schema({
 });
 const System = mongoose.model('System', systemSchema);
 
-// Hàm tạo dữ liệu mặc định nếu Database chưa có
 async function initSystem() {
     let sys = await System.findOne({ configId: 'main' });
     if (!sys) {
@@ -114,7 +112,6 @@ async function checkAndResetStreak(user, localDate) {
 
 // ================= API CHÍNH =================
 
-// API Lấy thông tin hệ thống (Đố Kinh Thánh)
 app.get('/api/system', async (req, res) => {
     try {
         const sys = await System.findOne({ configId: 'main' });
@@ -122,7 +119,6 @@ app.get('/api/system', async (req, res) => {
     } catch (error) { res.status(500).json({ success: false }); }
 });
 
-// API Quản trị cập nhật Đố Kinh Thánh
 app.post('/api/admin/update-quiz', async (req, res) => {
     try {
         const { adminUser, passage, question } = req.body;
@@ -137,6 +133,47 @@ app.post('/api/admin/update-quiz', async (req, res) => {
         
         res.json({ success: true, system: sys });
     } catch (error) { res.status(500).json({ success: false }); }
+});
+
+// API MỚI: ADMIN THU HỒI BÀI VIẾT
+app.post('/api/admin/revoke-checkin', async (req, res) => {
+    try {
+        const { adminUser, targetUserId, dateStr } = req.body;
+        if (adminUser !== "Nguyên Anh") return res.status(403).json({ success: false, message: "Không có quyền thực hiện!" });
+        
+        const user = await User.findById(targetUserId);
+        if (!user) return res.status(404).json({ success: false, message: "Không tìm thấy người dùng" });
+
+        // Xóa ngày đó khỏi lịch sử và nhật ký
+        user.history = user.history.filter(d => d !== dateStr);
+        user.dailyLogs = user.dailyLogs.filter(l => l.date !== dateStr);
+        
+        // Trừ điểm và số lần checkin
+        user.totalCheckins = Math.max(0, user.totalCheckins - 1);
+        user.totalPoints = Math.max(0, user.totalPoints - 1);
+        
+        const todayStr = new Date().getFullYear() + "-" + String(new Date().getMonth() + 1).padStart(2, '0') + "-" + String(new Date().getDate()).padStart(2, '0');
+        if (dateStr === todayStr) {
+            user.hasCheckedInToday = false;
+        }
+
+        // Tính lại chuỗi
+        let tempStreak = 0;
+        let checkDate = new Date(todayStr);
+        if (!user.history.includes(todayStr)) checkDate.setDate(checkDate.getDate() - 1); 
+        
+        for (let i = 0; i < 365; i++) {
+            const dStr = checkDate.getFullYear() + "-" + String(checkDate.getMonth() + 1).padStart(2, '0') + "-" + String(checkDate.getDate()).padStart(2, '0');
+            if (user.history.includes(dStr)) {
+                tempStreak++;
+                checkDate.setDate(checkDate.getDate() - 1);
+            } else { break; }
+        }
+        user.currentStreak = tempStreak;
+        
+        await user.save();
+        res.json({ success: true, user });
+    } catch (error) { res.status(500).json({ success: false, message: error.message }); }
 });
 
 app.post('/api/admin/reset-system', async (req, res) => {
@@ -310,54 +347,4 @@ app.get('/api/users', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-// ================= API QUẢN TRỊ: THU HỒI BÀI TĨNH NGUYỆN =================
-app.post('/api/admin/revoke-checkin', async (req, res) => {
-    try {
-        const { adminUser, targetUserId, dateStr } = req.body;
-        // Chỉ Nguyên Anh mới có quyền thu hồi
-        if (adminUser !== "Nguyên Anh") return res.status(403).json({ success: false, message: "Không có quyền thực hiện!" });
-        
-        const user = await User.findById(targetUserId);
-        if (!user) return res.status(404).json({ success: false, message: "Không tìm thấy người dùng" });
-
-        // Xóa ngày đó khỏi lịch sử và nhật ký
-        user.history = user.history.filter(d => d !== dateStr);
-        user.dailyLogs = user.dailyLogs.filter(l => l.date !== dateStr);
-        
-        // Trừ điểm và số lần checkin
-        user.totalCheckins = Math.max(0, user.totalCheckins - 1);
-        user.totalPoints = Math.max(0, user.totalPoints - 1);
-        
-        // Nếu ngày bị thu hồi là ngày hôm nay, reset trạng thái
-        const todayStr = new Date().getFullYear() + "-" + String(new Date().getMonth() + 1).padStart(2, '0') + "-" + String(new Date().getDate()).padStart(2, '0');
-        if (dateStr === todayStr) {
-            user.hasCheckedInToday = false;
-        }
-
-        // THUẬT TOÁN TÍNH LẠI CHUỖI LIÊN TỤC HIỆN TẠI TỪ LỊCH SỬ CÒN LẠI
-        let tempStreak = 0;
-        let checkDate = new Date(todayStr);
-        // Nếu hôm nay chưa có trong lịch sử, ta bắt đầu đếm ngược từ hôm qua
-        if (!user.history.includes(todayStr)) {
-            checkDate.setDate(checkDate.getDate() - 1); 
-        }
-        
-        // Đếm lùi từng ngày về quá khứ, nếu đứt đoạn thì dừng
-        for (let i = 0; i < 365; i++) {
-            const dStr = checkDate.getFullYear() + "-" + String(checkDate.getMonth() + 1).padStart(2, '0') + "-" + String(checkDate.getDate()).padStart(2, '0');
-            if (user.history.includes(dStr)) {
-                tempStreak++;
-                checkDate.setDate(checkDate.getDate() - 1);
-            } else {
-                break;
-            }
-        }
-        user.currentStreak = tempStreak;
-        
-        await user.save();
-        res.json({ success: true, user });
-    } catch (error) { 
-        res.status(500).json({ success: false, message: error.message }); 
-    }
-});
 app.listen(PORT, () => console.log(`Server running on ${PORT}`));
