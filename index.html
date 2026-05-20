@@ -6,68 +6,21 @@
     <title>Giữ Chuỗi Tĩnh Nguyện</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
-    <!-- THÊM THƯ VIỆN VẼ BIỂU ĐỒ CHUYÊN NGHIỆP CHART.JS -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body { font-family: 'Inter', sans-serif; position: relative; min-height: 100vh; overflow-x: hidden; }
         
-        /* --- HIỆU ỨNG CHUYỂN ĐỘNG NỀN VĨNH VIỄN (SEAMLESS GIF-LIKE LOOP) --- */
-        #bg-layer {
-            position: fixed; top: -50px; left: -50px; right: -50px; bottom: -50px;
-            z-index: -1; pointer-events: none; transition: all 1s ease-in-out;
-        }
+        #bg-layer { position: fixed; top: -50px; left: -50px; right: -50px; bottom: -50px; z-index: -1; pointer-events: none; transition: all 1s ease-in-out; }
+        @keyframes slideBg { 0% { background-position: 0px 0px, 0px 0px; } 100% { background-position: 100px 100px, 0px 0px; } }
+        @keyframes slideBgOffset { 0% { background-position: 0px 0px, 25px 25px; } 100% { background-position: 100px 100px, 125px 125px; } }
 
-        @keyframes slideBg {
-            0% { background-position: 0px 0px, 0px 0px; }
-            100% { background-position: 100px 100px, 0px 0px; }
-        }
-        @keyframes slideBgOffset {
-            0% { background-position: 0px 0px, 25px 25px; }
-            100% { background-position: 100px 100px, 125px 125px; }
-        }
-
-        .bg-theme-wood #bg-layer { 
-            background-color: #e7e5e4; 
-            background-image: repeating-linear-gradient(45deg, rgba(141,110,99,0.06) 0px, rgba(141,110,99,0.06) 2px, transparent 2px, transparent 20px), linear-gradient(135deg, #e7e5e4, #d6d3d1);
-            background-size: 100px 100px, 100% 100%;
-            animation: slideBg 6s linear infinite;
-        }
-        .bg-theme-bronze #bg-layer { 
-            background-color: #ffedd5; 
-            background-image: repeating-radial-gradient(circle at 0 0, transparent 0, rgba(217,119,6,0.08) 10px, transparent 10px, transparent 25px), linear-gradient(135deg, #ffedd5, #fed7aa);
-            background-size: 100px 100px, 100% 100%;
-            animation: slideBg 8s linear infinite;
-        }
-        .bg-theme-iron #bg-layer { 
-            background-color: #f1f5f9; 
-            background-image: linear-gradient(45deg, rgba(100,116,139,0.08) 25%, transparent 25%, transparent 75%, rgba(100,116,139,0.08) 75%, rgba(100,116,139,0.08)), linear-gradient(45deg, rgba(100,116,139,0.08) 25%, transparent 25%, transparent 75%, rgba(100,116,139,0.08) 75%, rgba(100,116,139,0.08));
-            background-size: 50px 50px, 50px 50px;
-            animation: slideBgOffset 10s linear infinite;
-        }
-        .bg-theme-gold #bg-layer { 
-            background-color: #fef08a; 
-            background-image: radial-gradient(rgba(234,179,8,0.2) 4px, transparent 4px), radial-gradient(rgba(234,179,8,0.2) 4px, transparent 4px);
-            background-size: 50px 50px, 50px 50px;
-            animation: slideBgOffset 8s linear infinite;
-        }
-        .bg-theme-platinum #bg-layer { 
-            background-color: #e0f2fe; 
-            background-image: repeating-linear-gradient(135deg, rgba(59,130,246,0.1) 0px, rgba(59,130,246,0.1) 2px, transparent 2px, transparent 20px), repeating-linear-gradient(45deg, rgba(59,130,246,0.1) 0px, rgba(59,130,246,0.1) 2px, transparent 2px, transparent 20px);
-            background-size: 100px 100px, 100px 100px;
-            animation: slideBg 12s linear infinite;
-        }
-        .bg-theme-diamond #bg-layer { 
-            background-color: #cffafe; 
-            background-image: linear-gradient(135deg, rgba(6,182,212,0.15) 25%, transparent 25%, transparent 50%, rgba(6,182,212,0.15) 50%, rgba(6,182,212,0.15) 75%, transparent 75%, transparent);
-            background-size: 50px 50px;
-            animation: slideBg 6s linear infinite;
-        }
-        .bg-theme-ruby #bg-layer { 
-            background-color: #ffe4e6; 
-            background-image: radial-gradient(circle, rgba(225,29,72,0.1) 20%, transparent 20%), radial-gradient(circle, rgba(225,29,72,0.1) 20%, transparent 20%);
-            background-size: 50px 50px, 50px 50px;
-            animation: slideBgOffset 8s linear infinite;
-        }
+        .bg-theme-wood #bg-layer { background-color: #e7e5e4; background-image: repeating-linear-gradient(45deg, rgba(141,110,99,0.06) 0px, rgba(141,110,99,0.06) 2px, transparent 2px, transparent 20px), linear-gradient(135deg, #e7e5e4, #d6d3d1); background-size: 100px 100px, 100% 100%; animation: slideBg 6s linear infinite; }
+        .bg-theme-bronze #bg-layer { background-color: #ffedd5; background-image: repeating-radial-gradient(circle at 0 0, transparent 0, rgba(217,119,6,0.08) 10px, transparent 10px, transparent 25px), linear-gradient(135deg, #ffedd5, #fed7aa); background-size: 100px 100px, 100% 100%; animation: slideBg 8s linear infinite; }
+        .bg-theme-iron #bg-layer { background-color: #f1f5f9; background-image: linear-gradient(45deg, rgba(100,116,139,0.08) 25%, transparent 25%, transparent 75%, rgba(100,116,139,0.08) 75%, rgba(100,116,139,0.08)), linear-gradient(45deg, rgba(100,116,139,0.08) 25%, transparent 25%, transparent 75%, rgba(100,116,139,0.08) 75%, rgba(100,116,139,0.08)); background-size: 50px 50px, 50px 50px; animation: slideBgOffset 10s linear infinite; }
+        .bg-theme-gold #bg-layer { background-color: #fef08a; background-image: radial-gradient(rgba(234,179,8,0.2) 4px, transparent 4px), radial-gradient(rgba(234,179,8,0.2) 4px, transparent 4px); background-size: 50px 50px, 50px 50px; animation: slideBgOffset 8s linear infinite; }
+        .bg-theme-platinum #bg-layer { background-color: #e0f2fe; background-image: repeating-linear-gradient(135deg, rgba(59,130,246,0.1) 0px, rgba(59,130,246,0.1) 2px, transparent 2px, transparent 20px), repeating-linear-gradient(45deg, rgba(59,130,246,0.1) 0px, rgba(59,130,246,0.1) 2px, transparent 2px, transparent 20px); background-size: 100px 100px, 100px 100px; animation: slideBg 12s linear infinite; }
+        .bg-theme-diamond #bg-layer { background-color: #cffafe; background-image: linear-gradient(135deg, rgba(6,182,212,0.15) 25%, transparent 25%, transparent 50%, rgba(6,182,212,0.15) 50%, rgba(6,182,212,0.15) 75%, transparent 75%, transparent); background-size: 50px 50px; animation: slideBg 6s linear infinite; }
+        .bg-theme-ruby #bg-layer { background-color: #ffe4e6; background-image: radial-gradient(circle, rgba(225,29,72,0.1) 20%, transparent 20%), radial-gradient(circle, rgba(225,29,72,0.1) 20%, transparent 20%); background-size: 50px 50px, 50px 50px; animation: slideBgOffset 8s linear infinite; }
 
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
@@ -76,7 +29,6 @@
         
         .glass-tube { box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
         .glass-tube-overlay { box-shadow: inset 5px 0 15px rgba(255,255,255,0.8), inset -5px 0 15px rgba(0,0,0,0.1); }
-        
         .tube-liquid-red { width: var(--fill-level, 6%); height: 100%; background-image: linear-gradient(to right, #dc2626, #ef4444, #f87171); }
         .tube-liquid-blue { width: var(--fill-level, 6%); height: 100%; background-image: linear-gradient(to right, #2563eb, #3b82f6, #60a5fa); }
         
@@ -88,17 +40,14 @@
         .wave-mask-v-1, .wave-mask-v-2 { position: absolute; width: 250px; height: 250px; left: -105px; pointer-events: none; }
         .wave-mask-v-1 { top: -243px; border-radius: 40%; background: rgba(248, 250, 252, 0.5); animation: spin 5s linear infinite; }
         .wave-mask-v-2 { top: -247px; border-radius: 45%; background: rgb(248, 250, 252); box-shadow: 0 5px 8px -2px rgba(0,0,0,0.15); animation: spin 7s linear infinite; }
-        
         .wave-mask-h-1, .wave-mask-h-2 { position: absolute; width: 250px; height: 250px; top: -105px; pointer-events: none; }
         .wave-mask-h-1 { right: -243px; border-radius: 40%; background: rgba(248, 250, 252, 0.5); animation: spin 5s linear infinite; }
         .wave-mask-h-2 { right: -247px; border-radius: 45%; background: rgb(248, 250, 252); box-shadow: -5px 0 8px -2px rgba(0,0,0,0.15); animation: spin 7s linear infinite; }
-        
         @media (max-width: 1023px) { .wave-mask-v-1, .wave-mask-v-2 { display: none !important; } }
         @media (min-width: 1024px) { .wave-mask-h-1, .wave-mask-h-2 { display: none !important; } }
 
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* --- CẤU HÌNH ĐÀN HẠC --- */
         :root { --harp-primary: #4E342E; --harp-secondary: #8D6E63; --harp-glow: rgba(78, 52, 46, 0.2); --harp-stroke: url(#wood-pattern); --wing-scale: 0; --wing-rot-l: -25deg; --wing-rot-r: 25deg; --wing-y: 15px; --halo-scale: 0; --extra-opacity: 0; }
         .harp-path { transition: stroke 1s ease-in-out, fill 1s ease-in-out; }
         #harp-glow { transition: background-color 1s ease-in-out; background-color: var(--harp-glow); }
@@ -157,8 +106,17 @@
     <audio id="daily-sound" src="https://actions.google.com/sounds/v1/water/water_drop.ogg" preload="auto"></audio>
     <audio id="rankup-sound" src="https://actions.google.com/sounds/v1/magic/fairy_glissando_short.ogg" preload="auto"></audio>
     <audio id="fail-sound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" preload="auto"></audio>
-    <!-- THÊM ÂM THANH THÔNG BÁO TING TING NHẮC NHỞ -->
-    <audio id="reminder-sound" src="https://actions.google.com/sounds/v1/cartoon/bell_ding.ogg" preload="auto"></audio>
+
+    <!-- MÀN HÌNH BÁO THỨC TRONG APP (VƯỢT RÀO MESSENGER) -->
+    <div id="alarm-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[200] flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
+        <div id="alarm-content" class="bg-gradient-to-b from-indigo-500 to-purple-600 rounded-[2rem] shadow-2xl w-full max-w-sm p-8 text-center border-4 border-white/20 transform scale-90 transition-transform duration-500 relative overflow-hidden">
+            <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-30"></div>
+            <div class="text-7xl mb-6 animate-bounce relative z-10 drop-shadow-lg">🔔</div>
+            <h2 class="text-3xl font-black text-white mb-2 relative z-10 drop-shadow-md">Đến Giờ Rồi!</h2>
+            <p class="text-indigo-100 font-semibold mb-8 relative z-10">Đã đến giờ Tĩnh nguyện hằng ngày. Hãy dành chút thời gian cho Chúa nhé 🕊️</p>
+            <button id="btn-close-alarm" class="w-full py-4 bg-white text-indigo-600 rounded-xl font-black text-lg hover:bg-indigo-50 transition-transform active:scale-95 shadow-xl relative z-10">Tôi Biết Rồi</button>
+        </div>
+    </div>
 
     <!-- MÀN HÌNH XEM DANH HIỆU -->
     <div id="rank-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
@@ -198,7 +156,7 @@
         </div>
     </div>
 
-    <!-- MÀN HÌNH CÀI ĐẶT USER & QR CODE & NHẮC NHỞ THÔNG BÁO -->
+    <!-- MÀN HÌNH CÀI ĐẶT USER & QR CODE & NHẮC NHỞ -->
     <div id="settings-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[70] flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
         <div id="settings-modal-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-6 transform scale-95 transition-transform duration-300 flex flex-col max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3 shrink-0">
@@ -216,24 +174,24 @@
                     <input type="email" id="setting-email" placeholder="Ví dụ: abc@gmail.com" class="w-full px-3 py-2 rounded-lg border bg-slate-50 focus:bg-white outline-none">
                 </div>
 
-                <!-- KHU VỰC THIẾT LẬP NHẮC NHỞ TĨNH NGUYỆN (NEW!) -->
-                <div class="border-t border-slate-100 pt-3">
-                    <label class="text-xs font-bold text-slate-800 block mb-2">🔔 Nhắc Nhở Tĩnh Nguyện</label>
-                    <div class="flex items-center justify-between bg-slate-50 p-2.5 rounded-xl border border-slate-100 mb-2">
-                        <span class="text-xs font-semibold text-slate-600">Bật nhắc nhở hằng ngày</span>
+                <!-- KHU VỰC THIẾT LẬP NHẮC NHỞ TĨNH NGUYỆN -->
+                <div class="border-t border-slate-100 pt-3 bg-blue-50/50 -mx-6 px-6 pb-4">
+                    <label class="text-xs font-bold text-slate-800 block mb-2 pt-2">🔔 Nhắc Nhở Hằng Ngày</label>
+                    <div class="flex items-center justify-between bg-white p-2.5 rounded-xl border border-blue-100 mb-2 shadow-sm">
+                        <span class="text-xs font-semibold text-slate-700">Bật báo thức tĩnh nguyện</span>
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" id="setting-reminder-toggle" class="sr-only peer">
                             <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
                         </label>
                     </div>
-                    <div class="flex items-center justify-between gap-2 mb-3">
-                        <span class="text-xs font-semibold text-slate-600">Thời gian báo thức</span>
-                        <input type="time" id="setting-reminder-time" class="px-2 py-1 text-xs border rounded-lg bg-slate-50 font-bold text-slate-700 outline-none">
+                    <div class="flex items-center justify-between gap-2 mb-3 px-1">
+                        <span class="text-xs font-semibold text-slate-600">Thời gian báo thức:</span>
+                        <input type="time" id="setting-reminder-time" class="px-3 py-1.5 text-sm border-2 border-blue-200 rounded-lg bg-white font-bold text-blue-700 outline-none focus:border-blue-500 shadow-inner">
                     </div>
-                    <button id="btn-request-notification" class="w-full py-1.5 bg-slate-100 hover:bg-blue-50 text-slate-600 hover:text-blue-600 rounded-lg text-[11px] font-bold transition-all border border-dashed border-slate-300 hover:border-blue-300 flex items-center justify-center gap-1.5">
-                        🔔 Kích hoạt Thông báo Thiết bị (Ting Ting)
+                    <button id="btn-test-notification" class="w-full py-2 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 rounded-lg text-xs font-bold transition-all border border-indigo-200 flex items-center justify-center gap-1.5 shadow-sm active:scale-95">
+                        🔊 Thử chuông & Cấp quyền
                     </button>
-                    <p id="notification-status-text" class="text-[9px] text-slate-400 mt-1 text-center"></p>
+                    <p id="notification-status-text" class="text-[10px] text-center mt-2 font-medium"></p>
                 </div>
                 
                 <div class="border-t border-slate-100 pt-3">
@@ -248,7 +206,7 @@
                 </div>
 
                 <p id="setting-msg" class="text-center text-sm font-bold hidden"></p>
-                <button id="btn-save-settings" class="w-full py-2 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition-transform active:scale-95">Lưu Thay Đổi</button>
+                <button id="btn-save-settings" class="w-full py-2.5 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-transform active:scale-95 shadow-md">Lưu Cài Đặt</button>
             </div>
 
             <div class="border-t border-slate-100 pt-6 mt-6 flex flex-col items-center justify-center relative pb-8">
@@ -257,7 +215,6 @@
                     <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 w-12 h-3 border-[3px] border-yellow-400 rounded-[50%] animate-pulse shadow-[0_0_8px_rgba(250,204,21,0.8)] z-20"></div>
                     <svg class="absolute -top-8 -left-12 w-20 h-20 text-amber-400 animate-pulse drop-shadow-md z-0 pointer-events-none" style="transform: rotate(-15deg);" viewBox="-80 -80 160 180" fill="currentColor"><path d="M 50 90 C 10 90 -40 70 -75 25 Q -40 40 -15 45 Q -55 10 -60 -25 Q -30 0 -5 20 Q -40 -20 -25 -50 Q -5 -15 15 5 Q -10 -40 10 -60 Q 20 -20 35 10 C 45 -10 50 20 50 90 Z" opacity="0.95"/><path d="M 45 80 C 15 80 -25 60 -55 25 Q -25 35 -5 40 Q -40 10 -45 -15 Q -20 5 5 15 Q -25 -15 -15 -35 Q 5 -10 20 5 Q 0 -25 15 -40 C 35 0 45 20 45 80 Z" fill="#FFF" opacity="0.75"/></svg>
                     <svg class="absolute -top-8 -right-12 w-20 h-20 text-amber-400 animate-pulse drop-shadow-md z-0 pointer-events-none" style="transform: scaleX(-1) rotate(-15deg); animation-delay: 0.5s;" viewBox="-80 -80 160 180" fill="currentColor"><path d="M 50 90 C 10 90 -40 70 -75 25 Q -40 40 -15 45 Q -55 10 -60 -25 Q -30 0 -5 20 Q -40 -20 -25 -50 Q -5 -15 15 5 Q -10 -40 10 -60 Q 20 -20 35 10 C 45 -10 50 20 50 90 Z" opacity="0.95"/><path d="M 45 80 C 15 80 -25 60 -55 25 Q -25 35 -5 40 Q -40 10 -45 -15 Q -20 5 5 15 Q -25 -15 -15 -35 Q 5 -10 20 5 Q 0 -25 15 -40 C 35 0 45 20 45 80 Z" fill="#FFF" opacity="0.75"/></svg>
-                    
                     <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://nguynank.github.io/Giuchuoitinhnguyen/&color=d97706" alt="QR Code" class="w-32 h-32 rounded-lg relative z-10" />
                 </div>
             </div>
@@ -337,7 +294,7 @@
 
             <div class="flex border-b border-slate-200 bg-slate-50 shrink-0">
                 <button id="admin-tab-table" class="flex-1 py-3 text-center font-bold text-sm text-red-600 border-b-2 border-red-600 transition-all">📋 Danh Sách Thành Viên</button>
-                <button id="admin-tab-chart" class="flex-1 py-3 text-center font-bold text-sm text-slate-400 border-b-2 border-transparent hover:text-slate-600 transition-all">📊 Biểu Đồ Thống Kê Điểm Danh</button>
+                <button id="admin-tab-chart" class="flex-1 py-3 text-center font-bold text-sm text-slate-400 border-b-2 border-transparent hover:text-slate-600 transition-all">📊 Biểu Đồ Thống Kê</button>
             </div>
             
             <div class="p-4 bg-amber-50 border-b border-amber-100 flex flex-col gap-2 relative shrink-0">
@@ -345,12 +302,8 @@
                 <div class="flex gap-2 flex-wrap mt-1 items-center">
                     <button id="btn-test-next-day" class="text-[11px] bg-white border border-amber-300 text-amber-700 px-3 py-1.5 rounded-lg hover:bg-amber-200 font-bold shadow-sm transition-transform active:scale-95">🔓 Mở Khóa Hôm Nay</button>
                     <select id="test-rank-select" class="text-[11px] font-bold bg-white border border-amber-300 text-amber-700 px-2 py-1.5 rounded-lg outline-none cursor-pointer">
-                        <option value="14">Đồng (14 ngày)</option>
-                        <option value="29">Sắt (29 ngày)</option>
-                        <option value="44">Vàng (44 ngày)</option>
-                        <option value="59">Bạch Kim (59 ngày)</option>
-                        <option value="74">Kim Cương (74 ngày)</option>
-                        <option value="89">Ruby (89 ngày)</option>
+                        <option value="14">Đồng (14 ngày)</option> <option value="29">Sắt (29 ngày)</option> <option value="44">Vàng (44 ngày)</option>
+                        <option value="59">Bạch Kim (59 ngày)</option> <option value="74">Kim Cương (74 ngày)</option> <option value="89">Ruby (89 ngày)</option>
                     </select>
                     <button id="btn-test-rank-go" class="text-[11px] bg-amber-500 text-white px-3 py-1.5 rounded-lg hover:bg-amber-600 font-bold shadow-sm transition-transform active:scale-95">⭐ Test Rank</button>
                     <button id="btn-test-reset" class="text-[11px] bg-slate-800 text-white px-3 py-1.5 rounded-lg hover:bg-slate-700 font-bold shadow-sm transition-transform active:scale-95 ml-auto">Khôi Phục Dữ Liệu</button>
@@ -373,9 +326,7 @@
             </div>
 
             <div id="admin-chart-wrapper" class="hidden p-4 md:p-6 flex-1 bg-white overflow-y-auto flex flex-col items-center">
-                <div class="w-full max-w-2xl h-64 md:h-80 relative mb-4">
-                    <canvas id="adminDistributionChart"></canvas>
-                </div>
+                <div class="w-full max-w-2xl h-64 md:h-80 relative mb-4"><canvas id="adminDistributionChart"></canvas></div>
                 <div id="admin-chart-summary" class="w-full max-w-2xl mt-4 border-t border-slate-100 pt-4"></div>
             </div>
 
@@ -669,7 +620,78 @@
     <script>
         const API_URL = 'https://giuchuoitinhnguyen.onrender.com/api';
         let userData = null; let originalUserData = null; let authMode = 'login'; let isProcessing = false; let isTestMode = false; let currentUsersData = [];
-        let distributionChart = null; // Biến lưu trữ đối tượng biểu đồ Chart.js
+        let distributionChart = null;
+        let globalAudioCtx = null;
+        let audioContextUnlocked = false;
+
+        // ================= HÀM KÍCH HOẠT ÂM THANH MƯỢT MÀ =================
+        function initAudio() {
+            if (audioContextUnlocked) return;
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                
+                globalAudioCtx = new AudioContext();
+                
+                // Mẹo vượt tường lửa trình duyệt: Phát một âm thanh câm cực ngắn (0.01 giây)
+                const osc = globalAudioCtx.createOscillator();
+                const gain = globalAudioCtx.createGain();
+                gain.gain.value = 0;
+                osc.connect(gain);
+                gain.connect(globalAudioCtx.destination);
+                osc.start(0);
+                osc.stop(globalAudioCtx.currentTime + 0.01);
+                
+                if (globalAudioCtx.state === 'suspended') { globalAudioCtx.resume(); }
+                audioContextUnlocked = true;
+
+                // Đồng thời kích hoạt file audio mồi HTML5 (Cho iOS Safari)
+                const rSound = document.getElementById('reminder-sound');
+                if(rSound) { rSound.play().then(()=>rSound.pause()).catch(e=>{}); }
+            } catch (e) { console.log("Audio Init Warning:", e); }
+        }
+
+        // Lắng nghe thao tác chạm đầu tiên để bẻ khóa âm thanh
+        document.body.addEventListener('click', initAudio, { once: true });
+        document.body.addEventListener('touchstart', initAudio, { once: true });
+
+        // Hàm phát nhạc Ting Ting siêu việt
+        function playTingTing() {
+            try {
+                // Ưu tiên phát bằng thẻ HTML5 (vì trong FB Messenger, thẻ này hoạt động tốt hơn nếu đã unlock)
+                const rSound = document.getElementById('reminder-sound');
+                if (rSound) {
+                    rSound.currentTime = 0;
+                    rSound.volume = 1;
+                    const playPromise = rSound.play();
+                    if (playPromise !== undefined) {
+                        playPromise.catch(e => { playWebAudioTing(); });
+                    }
+                } else {
+                    playWebAudioTing();
+                }
+            } catch (e) { playWebAudioTing(); }
+        }
+
+        // Nhạc dự phòng tự tổng hợp bằng sóng âm (Rất hay và vang)
+        function playWebAudioTing() {
+            if (!globalAudioCtx) return;
+            if (globalAudioCtx.state === 'suspended') globalAudioCtx.resume();
+            
+            const osc1 = globalAudioCtx.createOscillator(); const gain1 = globalAudioCtx.createGain();
+            osc1.type = 'sine'; osc1.frequency.setValueAtTime(1200, globalAudioCtx.currentTime); 
+            gain1.gain.setValueAtTime(0.2, globalAudioCtx.currentTime); gain1.gain.exponentialRampToValueAtTime(0.001, globalAudioCtx.currentTime + 0.8);
+            osc1.connect(gain1); gain1.connect(globalAudioCtx.destination);
+            osc1.start(); osc1.stop(globalAudioCtx.currentTime + 0.8);
+
+            setTimeout(() => {
+                const osc2 = globalAudioCtx.createOscillator(); const gain2 = globalAudioCtx.createGain();
+                osc2.type = 'sine'; osc2.frequency.setValueAtTime(1500, globalAudioCtx.currentTime); 
+                gain2.gain.setValueAtTime(0.2, globalAudioCtx.currentTime); gain2.gain.exponentialRampToValueAtTime(0.001, globalAudioCtx.currentTime + 0.8);
+                osc2.connect(gain2); gain2.connect(globalAudioCtx.destination);
+                osc2.start(); osc2.stop(globalAudioCtx.currentTime + 0.8);
+            }, 120);
+        }
 
         async function checkAutoLogin() {
             const savedSession = localStorage.getItem('tinhnguyen_session');
@@ -788,20 +810,13 @@
         document.getElementById('btn-show-ranks').addEventListener('click', () => { renderRanksModal(userData ? userData.totalCheckins : 0); toggleModal('rank-modal', true); });
         document.getElementById('btn-close-rank').addEventListener('click', () => toggleModal('rank-modal', false));
         
-        // SỰ KIỀN MỞ BẢNG QUẢN TRỊ ADMIN (RESET VỀ TAB 1 MẶC ĐỊNH)
         document.getElementById('btn-open-admin').addEventListener('click', async () => { 
-            toggleModal('admin-modal', true); 
-            document.getElementById('admin-tab-table').click(); 
-            try { 
-                const res = await fetch(`${API_URL}/users`); const data = await res.json(); 
-                if(data.success) { currentUsersData = data.users; renderAdminTable(data.users); calculateAndRenderChart(data.users); } 
-            } catch(e) { alert("Lỗi mạng"); } 
+            toggleModal('admin-modal', true); document.getElementById('admin-tab-table').click(); 
+            try { const res = await fetch(`${API_URL}/users`); const data = await res.json(); if(data.success) { currentUsersData = data.users; renderAdminTable(data.users); calculateAndRenderChart(data.users); } } catch(e) { alert("Lỗi mạng"); } 
         });
-
         document.getElementById('btn-close-admin').addEventListener('click', () => toggleModal('admin-modal', false));
         document.getElementById('btn-close-admin-view').addEventListener('click', () => toggleModal('admin-view-modal', false));
 
-        // XỬ LÝ CHUYỂN ĐỔI TABS TRONG KHU VỰC ADMIN
         document.getElementById('admin-tab-table').addEventListener('click', () => {
             document.getElementById('admin-tab-table').className = "flex-1 py-3 text-center font-bold text-sm text-red-600 border-b-2 border-red-600 transition-all";
             document.getElementById('admin-tab-chart').className = "flex-1 py-3 text-center font-bold text-sm text-slate-400 border-b-2 border-transparent hover:text-slate-600 transition-all";
@@ -812,35 +827,32 @@
             document.getElementById('admin-tab-chart').className = "flex-1 py-3 text-center font-bold text-sm text-red-600 border-b-2 border-red-600 transition-all";
             document.getElementById('admin-tab-table').className = "flex-1 py-3 text-center font-bold text-sm text-slate-400 border-b-2 border-transparent hover:text-slate-600 transition-all";
             document.getElementById('admin-chart-wrapper').classList.remove('hidden'); document.getElementById('admin-table-wrapper').classList.add('hidden');
-            if(currentUsersData.length > 0) calculateAndRenderChart(currentUsersData); // Vẽ lại để fix kích thước canvas
+            if(currentUsersData.length > 0) calculateAndRenderChart(currentUsersData); 
         });
 
-        // SỰ KIỆN MỞ CÀI ĐẶT TÀI KHOẢN (CÓ LOAD THỜI GIAN VÀ TRẠNG THÁI BÁO THỨC)
         document.getElementById('btn-open-settings').addEventListener('click', () => { 
-            document.getElementById('setting-username').value = userData.username || ''; 
-            document.getElementById('setting-email').value = userData.email || '';
-            document.getElementById('setting-old-pw').value = ''; 
-            document.getElementById('setting-new-pw').value = '';
+            document.getElementById('setting-username').value = userData.username || ''; document.getElementById('setting-email').value = userData.email || '';
+            document.getElementById('setting-old-pw').value = ''; document.getElementById('setting-new-pw').value = '';
             
-            // Đồng bộ trạng thái Nhắc nhở
             document.getElementById('setting-reminder-toggle').checked = localStorage.getItem('tinhnguyen_reminder_enabled') === 'true';
             document.getElementById('setting-reminder-time').value = localStorage.getItem('tinhnguyen_reminder_time') || '07:00';
             updateNotificationStatusText();
 
-            // Thêm sự kiện lưu trực tiếp khi thay đổi thiết lập nhắc nhở (không cần đợi nhấn nút Lưu để local nhắc nhở cập nhật)
-            document.getElementById('setting-reminder-toggle').addEventListener('change', (e) => {
-                localStorage.setItem('tinhnguyen_reminder_enabled', e.target.checked);
-                updateNotificationStatusText();
-            });
-            document.getElementById('setting-reminder-time').addEventListener('change', (e) => {
-                localStorage.setItem('tinhnguyen_reminder_time', e.target.value);
-            });
-
-            document.getElementById('setting-msg').classList.add('hidden'); 
-            toggleModal('settings-modal', true); 
+            document.getElementById('setting-msg').classList.add('hidden'); toggleModal('settings-modal', true); 
         });
         document.getElementById('btn-close-settings').addEventListener('click', () => toggleModal('settings-modal', false));
         
+        // CHỈNH SỬA: LƯU TỨC THÌ (AUTO-SAVE) THIẾT LẬP GIỜ NHẮC NHỞ MÀ KHÔNG CẦN BẤM NÚT LƯU CÀI ĐẶT
+        document.getElementById('setting-reminder-toggle').addEventListener('change', (e) => {
+            localStorage.setItem('tinhnguyen_reminder_enabled', e.target.checked);
+            updateNotificationStatusText();
+        });
+        document.getElementById('setting-reminder-time').addEventListener('change', (e) => {
+            localStorage.setItem('tinhnguyen_reminder_time', e.target.value);
+            // Xóa bộ nhớ lần báo cuối để chuông có thể kêu lại ngay lập tức nếu đổi giờ
+            localStorage.removeItem('tinhnguyen_last_reminder_date'); 
+        });
+
         document.getElementById('btn-save-settings').addEventListener('click', async () => {
             const btn = document.getElementById('btn-save-settings'); const msg = document.getElementById('setting-msg');
             const newUsername = document.getElementById('setting-username').value.trim(); const email = document.getElementById('setting-email').value.trim(); const oldPw = document.getElementById('setting-old-pw').value.trim(); const newPw = document.getElementById('setting-new-pw').value.trim();
@@ -863,22 +875,13 @@
                 const data = await res.json();
                 if(data.success) { 
                     userData = data.user; 
-                    
-                    // Lưu trạng thái cấu hình Nhắc nhở hằng ngày
-                    const reminderToggled = document.getElementById('setting-reminder-toggle').checked;
-                    const reminderTimeVal = document.getElementById('setting-reminder-time').value;
-                    localStorage.setItem('tinhnguyen_reminder_enabled', reminderToggled);
-                    localStorage.setItem('tinhnguyen_reminder_time', reminderTimeVal);
-
-                    msg.innerText = "Lưu thành công!"; 
-                    msg.className = "text-center text-sm font-bold text-green-600 block"; 
-                    document.getElementById('setting-old-pw').value = ''; 
-                    document.getElementById('setting-new-pw').value = ''; 
+                    msg.innerText = "Lưu thành công!"; msg.className = "text-center text-sm font-bold text-green-600 block"; 
+                    document.getElementById('setting-old-pw').value = ''; document.getElementById('setting-new-pw').value = ''; 
                     updateUIFromData(); 
                 } 
                 else { msg.innerText = "Lỗi: " + data.message; msg.className = "text-center text-sm font-bold text-red-600 block"; }
             } catch(e) { msg.innerText = "Lỗi kết nối máy chủ!"; msg.className = "text-center text-sm font-bold text-red-600 block"; }
-            btn.innerText = "Lưu Thay Đổi"; btn.disabled = false;
+            btn.innerText = "Lưu Cài Đặt"; btn.disabled = false;
         });
 
         document.getElementById('btn-settings-forgot-pw').addEventListener('click', () => {
@@ -969,71 +972,28 @@
             if (!isTestMode) { try { await fetch(`${API_URL}/update-group`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: userData._id, group: newGroup }) }); } catch(err) {} }
         });
 
-        // HÀM TÍNH TOÁN DỮ LIỆU VÀ VẼ BIỂU ĐỒ PHÂN PHỐI SỐ NGÀY ĐIỂM DANH (NEW!)
         function calculateAndRenderChart(users) {
-            const counts = {};
-            users.forEach(u => {
-                const days = u.totalCheckins || 0;
-                counts[days] = (counts[days] || 0) + 1; // Gom số lượng người đạt mốc ngày
-            });
-
-            // Sắp xếp các ngày tăng dần từ nhỏ tới lớn (0, 1, 2...)
+            const counts = {}; users.forEach(u => { const days = u.totalCheckins || 0; counts[days] = (counts[days] || 0) + 1; });
             const sortedDays = Object.keys(counts).map(Number).sort((a,b) => a - b);
-            const labels = sortedDays.map(d => `${d} ngày`);
-            const dataValues = sortedDays.map(d => counts[d]);
-
-            // 1. Khởi tạo đồ thị cột Chart.js
+            const labels = sortedDays.map(d => `${d} ngày`); const dataValues = sortedDays.map(d => counts[d]);
             const ctx = document.getElementById('adminDistributionChart').getContext('2d');
-            if (distributionChart) { distributionChart.destroy(); } // Xóa biểu đồ cũ để tránh chồng lấn
-            
+            if (distributionChart) { distributionChart.destroy(); }
             distributionChart = new Chart(ctx, {
                 type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Số lượng người đạt mốc',
-                        data: dataValues,
-                        backgroundColor: 'rgba(234, 179, 8, 0.7)', // Màu hổ phách nhạt amber
-                        borderColor: 'rgb(217, 119, 6)',
-                        borderWidth: 1.5,
-                        borderRadius: 6
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: { beginAtZero: true, ticks: { stepSize: 1, precision: 0 } }
-                    },
-                    plugins: { legend: { display: false } }
-                }
+                data: { labels: labels, datasets: [{ label: 'Số lượng người đạt mốc', data: dataValues, backgroundColor: 'rgba(234, 179, 8, 0.7)', borderColor: 'rgb(217, 119, 6)', borderWidth: 1.5, borderRadius: 6 }] },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { stepSize: 1, precision: 0 } } }, plugins: { legend: { display: false } } }
             });
 
-            // 2. Tạo phần hiển thị dạng thanh chạy ngang cho Điện thoại
             const summaryContainer = document.getElementById('admin-chart-summary');
             let summaryHtml = '<h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Chi tiết phân phối theo mốc điểm danh</h4><div class="flex flex-col gap-3">';
             const maxPeople = Math.max(...dataValues, 1);
-            
             sortedDays.forEach(day => {
-                const count = counts[day];
-                const pct = (count / users.length) * 100;
-                const barWidth = (count / maxPeople) * 100;
-                summaryHtml += `
-                    <div class="flex items-center gap-3 text-xs">
-                        <div class="w-16 font-bold text-slate-600 shrink-0 text-right">${day} ngày:</div>
-                        <div class="flex-1 h-5 bg-slate-50 border border-slate-200/60 rounded-full overflow-hidden relative">
-                            <div class="h-full bg-gradient-to-r from-amber-400 to-yellow-500 transition-all duration-500 rounded-full" style="width: ${barWidth}%"></div>
-                            <span class="absolute inset-y-0 left-2 flex items-center font-bold text-[10px] ${barWidth > 15 ? 'text-white' : 'text-slate-600'}">${pct.toFixed(0)}% nhóm</span>
-                        </div>
-                        <div class="w-20 text-right font-black text-slate-700">${count} người</div>
-                    </div>
-                `;
+                const count = counts[day]; const pct = (count / users.length) * 100; const barWidth = (count / maxPeople) * 100;
+                summaryHtml += `<div class="flex items-center gap-3 text-xs"><div class="w-16 font-bold text-slate-600 shrink-0 text-right">${day} ngày:</div><div class="flex-1 h-5 bg-slate-50 border border-slate-200/60 rounded-full overflow-hidden relative"><div class="h-full bg-gradient-to-r from-amber-400 to-yellow-500 transition-all duration-500 rounded-full" style="width: ${barWidth}%"></div><span class="absolute inset-y-0 left-2 flex items-center font-bold text-[10px] ${barWidth > 15 ? 'text-white' : 'text-slate-600'}">${pct.toFixed(0)}% nhóm</span></div><div class="w-20 text-right font-black text-slate-700">${count} người</div></div>`;
             });
-            summaryHtml += '</div>';
-            summaryContainer.innerHTML = summaryHtml;
+            summaryHtml += '</div>'; summaryContainer.innerHTML = summaryHtml;
         }
 
-        // CÁC ĐOẠN KHÁC GIỮ NGUYÊN HOÀN TOÀN
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('.filter-btn').forEach(b => { b.classList.remove('bg-blue-600', 'text-white'); b.classList.add('bg-white', 'text-slate-700'); });
@@ -1043,7 +1003,7 @@
 
         function checkRealNameCompliance() {
             if (!userData) return false;
-            const nameRegex = /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\s]+$/;
+            const nameRegex = /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\s]+$/;
             if (!nameRegex.test(userData.username) || userData.username.trim().split(/\s+/).length < 2) {
                 document.getElementById('force-rename-modal').classList.remove('hidden'); return false;
             }
@@ -1053,10 +1013,7 @@
         async function fetchSystemData() {
             try {
                 const res = await fetch(`${API_URL}/system`); const data = await res.json();
-                if(data.success && data.system) {
-                    document.getElementById('ui-quiz-passage').innerText = data.system.quizPassage;
-                    document.getElementById('ui-quiz-question').innerText = data.system.quizQuestion;
-                }
+                if(data.success && data.system) { document.getElementById('ui-quiz-passage').innerText = data.system.quizPassage; document.getElementById('ui-quiz-question').innerText = data.system.quizQuestion; }
             } catch(e) { console.error("Lỗi tải cấu hình:", e); }
         }
 
@@ -1151,8 +1108,11 @@
             toggleModal('blessing-modal', true); isProcessing = false; updateUIFromData();
         }
 
+        // BẢO MẬT HIỂN THỊ MỤC 3 TRONG ADMIN
         window.showUserLogs = function(userId, logsJson) {
             const logs = JSON.parse(decodeURIComponent(logsJson)); const body = document.getElementById('admin-view-body');
+            const isSuperAdmin = (userData && userData.username.trim() === "Nguyên Anh");
+
             if(!logs || logs.length === 0) { body.innerHTML = '<p class="text-slate-500 text-center py-4">Người này chưa viết bài nào.</p>'; } 
             else { 
                 let inner = '';
@@ -1161,7 +1121,12 @@
                     inner += '<div class="flex justify-between items-center bg-blue-50 p-2 rounded-lg mb-3 text-sm"><span class="font-bold text-blue-700">Ngày: ' + (log.date || 'Không rõ') + ' ' + (log.emotion || '') + '</span> <button onclick="revokeCheckin(\''+userId+'\', \''+log.date+'\')" class="bg-red-500 text-white px-2 py-1 rounded text-[10px] font-bold shadow-sm">🗑️ Thu hồi</button></div>';
                     inner += '<div class="bg-slate-50 border p-2 rounded-lg mb-2 text-sm"><span class="font-bold text-slate-700">1. Nguồn tài liệu:</span><p class="mt-1">' + (log.source || '(Trống)') + '</p></div>';
                     inner += '<div class="bg-slate-50 border p-2 rounded-lg text-sm"><span class="font-bold text-slate-700">2. Phân đoạn/Chủ đề:</span><p class="mt-1">' + (log.q1 || '(Trống)') + '</p></div>';
-                    inner += '<div class="bg-slate-50 border p-2 rounded-lg mt-2 text-sm"><span class="font-bold text-slate-700">3. Nội dung đụng chạm:</span><p class="mt-1">' + (log.q2 || '(Trống)') + '</p></div>';
+                    
+                    if (isSuperAdmin) {
+                        inner += '<div class="bg-slate-50 border p-2 rounded-lg mt-2 text-sm"><span class="font-bold text-slate-700">3. Nội dung đụng chạm:</span><p class="mt-1 text-slate-800">' + (log.q2 || '(Trống)') + '</p></div>';
+                    } else {
+                        inner += '<div class="bg-slate-50 border border-red-100 p-2 rounded-lg mt-2 text-sm"><span class="font-bold text-red-700">🔒 3. Nội dung đụng chạm:</span><p class="mt-1 italic text-slate-400 text-xs">Chỉ có Nguyên Anh mới có quyền xem nội dung nhạy cảm này.</p></div>';
+                    }
                     inner += '</div>';
                 });
                 body.innerHTML = inner;
@@ -1206,137 +1171,82 @@
             selectEl.disabled = false;
         };
 
-        function renderRanksModal(totalCheckinsCount) {
-            const container = document.getElementById('ranks-list-container'); let html = '';
-            rankData.forEach((r) => {
-                const isUnlocked = totalCheckinsCount >= r.streak; const isWinged = r.streak >= 45;
-                const mWingScale = isWinged ? 0.65 : 0; const mWingRotL = isWinged ? -25 : 0; const mWingRotR = isWinged ? 25 : 0; const mWingY = isWinged ? 10 : 0; const mHaloScale = isWinged ? 0.65 : 0; const mOpacity = isWinged ? 1 : 0;
-                const lockHtml = !isUnlocked ? '<div class="absolute inset-0 bg-slate-900/5 z-10 flex items-center justify-center backdrop-blur-[1px]"><span class="bg-white/90 text-xs font-bold px-3 py-1 rounded-full text-slate-500 shadow-sm">🔒 Đạt ' + r.streak + ' chuỗi</span></div>' : '';
-                const bgClass = isUnlocked ? 'bg-slate-50 border-amber-200 shadow-sm' : 'bg-slate-50 border-slate-200 opacity-60';
-                html += '<div class="flex items-center gap-4 p-4 rounded-2xl ' + bgClass + ' border relative overflow-hidden shrink-0">' + lockHtml + '<div class="relative w-16 h-16 flex justify-center items-center ' + r.class + '"><svg viewBox="0 0 160 180" class="w-16 h-16 relative z-10 overflow-visible"><g class="harp-halo" style="transform: scale(' + mHaloScale + '); opacity: ' + mOpacity + '; transform-origin: 80px 25px;"><ellipse cx="80" cy="25" rx="35" ry="10" fill="none" class="harp-stroke-primary" stroke-width="3" /><ellipse cx="80" cy="25" rx="42" ry="14" fill="none" class="harp-stroke-secondary" stroke-width="1.5" opacity="0.8" /></g><g class="harp-wings" style="opacity: ' + mOpacity + ';"><g style="transform: translate(0px, ' + mWingY + 'px) scale(' + mWingScale + ') rotate(' + mWingRotL + 'deg); transform-origin: 50px 90px;"><use href="#angel-wing-detailed" /></g><g style="transform: translate(0px, ' + mWingY + 'px) scale(' + mWingScale + ') rotate(' + mWingRotR + 'deg); transform-origin: 110px 90px;"><use href="#angel-wing-detailed" transform="translate(160, 0) scale(-1, 1)" /></g></g><g transform="translate(20, 10)"><path class="harp-path harp-stroke-primary" d="M 25 45 C 25 100 15 130 40 140 L 80 140 C 105 130 95 100 95 45" fill="none" stroke-width="8" stroke-linecap="round" /><line class="harp-path harp-stroke-primary" x1="12" y1="45" x2="108" y2="45" stroke-width="8" /><line class="harp-path harp-stroke-secondary" x1="40" y1="45" x2="40" y2="135" stroke-width="2"/><line class="harp-path harp-stroke-secondary" x1="60" y1="45" x2="60" y2="139" stroke-width="2"/><line class="harp-path harp-stroke-secondary" x1="80" y1="45" x2="80" y2="135" stroke-width="2"/></g></svg></div><div><h4 class="font-bold ' + (isUnlocked ? 'text-slate-800' : 'text-slate-500') + '">' + r.name + '</h4><p class="text-[11px] text-slate-500">Mốc: ' + r.streak + ' ngày</p></div></div>';
-            });
-            container.innerHTML = html;
-        }
-
-        // ================= HÀM PHÁT ÂM THANH "TING TING" BẰNG NATIVE WEB AUDIO API (NEW & SIÊU ỔN ĐỊNH) =================
-        function playTingTing() {
-            try {
-                const AudioContext = window.AudioContext || window.webkitAudioContext;
-                if (!AudioContext) {
-                    // Fallback phát file dự phòng nếu trình duyệt quá cũ
-                    const rSound = document.getElementById('reminder-sound');
-                    if (rSound) { rSound.pause(); rSound.currentTime = 0; rSound.play().catch(()=>{}); }
-                    return;
-                }
-                const ctx = new AudioContext();
-                
-                // Tiếng Ting thứ nhất (Nốt thanh tao)
-                const osc1 = ctx.createOscillator();
-                const gain1 = ctx.createGain();
-                osc1.type = 'sine';
-                osc1.frequency.setValueAtTime(1200, ctx.currentTime); 
-                gain1.gain.setValueAtTime(0.2, ctx.currentTime);
-                gain1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.8);
-                osc1.connect(gain1);
-                gain1.connect(ctx.destination);
-                osc1.start();
-                osc1.stop(ctx.currentTime + 0.8);
-
-                // Tiếng Ting thứ hai (Nhịp đôi trễ 120ms, cao độ cao hơn một chút tạo âm hưởng thiên sứ)
-                setTimeout(() => {
-                    const osc2 = ctx.createOscillator();
-                    const gain2 = ctx.createGain();
-                    osc2.type = 'sine';
-                    osc2.frequency.setValueAtTime(1500, ctx.currentTime); 
-                    gain2.gain.setValueAtTime(0.2, ctx.currentTime);
-                    gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.8);
-                    osc2.connect(gain2);
-                    gain2.connect(ctx.destination);
-                    osc2.start();
-                    osc2.stop(ctx.currentTime + 0.8);
-                }, 120);
-            } catch (e) {
-                console.error("Lỗi Web Audio:", e);
-                const rSound = document.getElementById('reminder-sound');
-                if (rSound) { rSound.play().catch(() => {}); }
-            }
-        }
-
-        // ================= HÀM XỬ LÝ NHẮC NHỞ / THÔNG BÁO TING TING =================
-        function updateNotificationStatusText() {
-            const el = document.getElementById('notification-status-text');
-            if (!('Notification' in window)) {
-                el.innerText = 'Trình duyệt này không hỗ trợ Thông báo.';
-                document.getElementById('btn-request-notification').disabled = true;
-                return;
-            }
-            if (Notification.permission === 'granted') {
-                el.innerText = 'Trạng thái: Đã kích hoạt báo thức thành công! ✅';
-                el.className = 'text-[9px] text-green-600 mt-1 text-center font-semibold';
-            } else if (Notification.permission === 'denied') {
-                el.innerText = 'Trạng thái: Bị từ chối. Hãy vào cài đặt trình duyệt để bật lại.';
-                el.className = 'text-[9px] text-red-500 mt-1 text-center font-semibold';
-            } else {
-                el.innerText = 'Trạng thái: Chưa cấp quyền thông báo đẩy.';
-                el.className = 'text-[9px] text-slate-400 mt-1 text-center';
-            }
-        }
-
-        document.getElementById('btn-request-notification').addEventListener('click', async () => {
-            if (!('Notification' in window)) return alert("Trình duyệt này không hỗ trợ Notifications API.");
-            const permission = await Notification.requestPermission();
-            updateNotificationStatusText();
-            if (permission === 'granted') {
-                new Notification("Chuỗi Tĩnh Nguyện", {
-                    body: "Đã bật nhắc nhở tĩnh nguyện hằng ngày thành công! 🕊️",
-                    icon: "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://nguynank.github.io/Giuchuoitinhnguyen/"
-                });
-                
-                // Chạy thử chuông Ting Ting lập tức bằng thuật toán mới để trình duyệt cấp phép âm thanh
-                playTingTing();
-            }
+        // KÍCH HOẠT NÚT ĐĂNG XUẤT AN TOÀN
+        document.getElementById('btn-logout').addEventListener('click', () => { 
+            localStorage.removeItem('tinhnguyen_session'); 
+            location.reload(); 
         });
 
-        // Hàm kiểm tra và kích hoạt chuông báo nhắc nhở hằng ngày (Chạy ngầm mỗi 30 giây)
+        document.getElementById('btn-test-next-day').addEventListener('click', async () => { try { if (!isTestMode) { originalUserData = JSON.parse(JSON.stringify(userData)); isTestMode = true; } userData.hasCheckedInToday = false; updateUIFromData(); toggleModal('admin-modal', false); } catch(e) { } });
+        document.getElementById('btn-test-rank-go').addEventListener('click', async () => { try { if (!isTestMode) { originalUserData = JSON.parse(JSON.stringify(userData)); isTestMode = true; } const s = parseInt(document.getElementById('test-rank-select').value); userData.currentStreak = s; userData.totalCheckins = s; userData.totalPoints = s; userData.maxStreak = Math.max(userData.maxStreak, s); userData.hasCheckedInToday = false; updateUIFromData(); toggleModal('admin-modal', false); } catch(e) { } });
+        document.getElementById('btn-test-reset').addEventListener('click', async () => { try { if (isTestMode && originalUserData) { userData = JSON.parse(JSON.stringify(originalUserData)); isTestMode = false; updateUIFromData(); alert("Khôi phục thành công!"); } } catch(e) {} });
+        
+        window.addEventListener('focus', () => { if (userData && userData.hasCheckedInToday) { const todayStr = getLocalTodayStr(); const historySet = new Set(userData.history || []); if (!historySet.has(todayStr)) { userData.hasCheckedInToday = false; updateUIFromData(); } } });
+
+        // CẢI TIẾN TRÌNH QUÉT THÔNG BÁO CHẠY NGẦM BẤT CHẤP FB MESSENGER
         function checkDailyReminder() {
             const isEnabled = localStorage.getItem('tinhnguyen_reminder_enabled') === 'true';
             if (!isEnabled || !userData || userData.hasCheckedInToday) return;
 
             const targetTime = localStorage.getItem('tinhnguyen_reminder_time') || '07:00';
+            const [targetHour, targetMin] = targetTime.split(':').map(Number);
+            
             const now = new Date();
-            const curTimeStr = String(now.getHours()).padStart(2, '0') + ":" + String(now.getMinutes()).padStart(2, '0');
+            const curHour = now.getHours();
+            const curMin = now.getMinutes();
 
-            if (curTimeStr === targetTime) {
+            // Chuyển sang tổng phút để tránh lỡ mất do trình duyệt ngủ đông trễ 1 phút
+            const curTotalMinutes = curHour * 60 + curMin;
+            const targetTotalMinutes = targetHour * 60 + targetMin;
+
+            // Kích hoạt khi ĐÃ QUA hoặc BẰNG giờ cài đặt, trong phạm vi cùng một ngày
+            if (curTotalMinutes >= targetTotalMinutes) {
                 const todayStr = getLocalTodayStr();
                 const lastFiredDate = localStorage.getItem('tinhnguyen_last_reminder_date');
                 
                 if (lastFiredDate !== todayStr) {
                     localStorage.setItem('tinhnguyen_last_reminder_date', todayStr);
                     
-                    // 1. Phát chuông Ting Ting độc lập bằng Web Audio API cực kỳ ổn định
+                    // Phát chuông
                     playTingTing();
                     
-                    // 2. Gửi thông báo hệ thống
-                    if ('Notification' in window && Notification.permission === 'granted') {
-                        new Notification("🔔 Đến Giờ Tĩnh Nguyện Rồi Bạn Ơi!", {
-                            body: `Xin chào ${userData.username}, đã đến giờ tĩnh nguyện rồi! Cùng dành ra vài phút với Chúa nhé 🕊️`,
-                            icon: "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://nguynank.github.io/Giuchuoitinhnguyen/"
-                        });
-                    }
+                    // Thử Notification API (Thường xịt trên Messenger)
+                    try {
+                        if ('Notification' in window && Notification.permission === 'granted') {
+                            new Notification("🔔 Đến Giờ Tĩnh Nguyện!", {
+                                body: `Xin chào ${userData.username}, đã đến giờ tĩnh nguyện rồi!`,
+                                icon: "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://nguynank.github.io/Giuchuoitinhnguyen/"
+                            });
+                        }
+                    } catch(e){}
                     
-                    // 3. Hiển thị Popup cảnh báo nổi
-                    alert(`🔔 Nhắc nhở Tĩnh Nguyện:\n\nXin chào ${userData.username}, đã đến lúc tĩnh nguyện hằng ngày rồi! Hãy dành ra ít thời gian đọc Kinh Thánh và tâm sự với Chúa nhé 🕊️`);
+                    // BUNG MÀN HÌNH BÁO THỨC ÉP BUỘC TRONG TRANG WEB
+                    document.getElementById('alarm-modal').classList.remove('hidden');
+                    setTimeout(()=> document.getElementById('alarm-modal').classList.add('opacity-100'), 10);
                 }
             }
         }
         
-        // Khởi động scheduler quét nhắc nhở mỗi 30 giây
-        setInterval(checkDailyReminder, 30000);
+        // Quét mỗi 15 giây
+        setInterval(checkDailyReminder, 15000);
 
-        document.getElementById('btn-test-next-day').addEventListener('click', async () => { try { if (!isTestMode) { originalUserData = JSON.parse(JSON.stringify(userData)); isTestMode = true; } userData.hasCheckedInToday = false; updateUIFromData(); toggleModal('admin-modal', false); } catch(e) { } });
-        document.getElementById('btn-test-rank-go').addEventListener('click', async () => { try { if (!isTestMode) { originalUserData = JSON.parse(JSON.stringify(userData)); isTestMode = true; } const s = parseInt(document.getElementById('test-rank-select').value); userData.currentStreak = s; userData.totalCheckins = s; userData.totalPoints = s; userData.maxStreak = Math.max(userData.maxStreak, s); userData.hasCheckedInToday = false; updateUIFromData(); toggleModal('admin-modal', false); } catch(e) { } });
-        document.getElementById('btn-test-reset').addEventListener('click', async () => { try { if (isTestMode && originalUserData) { userData = JSON.parse(JSON.stringify(originalUserData)); isTestMode = false; updateUIFromData(); alert("Khôi phục thành công!"); } } catch(e) {} });
-        window.addEventListener('focus', () => { if (userData && userData.hasCheckedInToday) { const todayStr = getLocalTodayStr(); const historySet = new Set(userData.history || []); if (!historySet.has(todayStr)) { userData.hasCheckedInToday = false; updateUIFromData(); } } });
+        // Đóng chuông báo thức trong trang
+        document.getElementById('btn-close-alarm').addEventListener('click', () => {
+            document.getElementById('alarm-modal').classList.remove('opacity-100');
+            setTimeout(()=> document.getElementById('alarm-modal').classList.add('hidden'), 300);
+        });
+
+        document.getElementById('btn-test-notification').addEventListener('click', async () => {
+            if (!('Notification' in window)) alert("Trình duyệt này chặn gửi thông báo ngoài.");
+            try { 
+                const permission = await Notification.requestPermission(); updateNotificationStatusText(); 
+                if (permission === 'granted') new Notification("Chuỗi Tĩnh Nguyện", { body: "Đã bật nhắc nhở thành công! 🕊️" });
+            } catch(e){}
+            // Vẫn phát chuông âm thanh giả lập
+            playTingTing();
+            document.getElementById('alarm-modal').classList.remove('hidden');
+            setTimeout(()=> document.getElementById('alarm-modal').classList.add('opacity-100'), 10);
+        });
 
         checkAutoLogin();
     </script>
