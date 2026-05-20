@@ -827,6 +827,15 @@
             document.getElementById('setting-reminder-time').value = localStorage.getItem('tinhnguyen_reminder_time') || '07:00';
             updateNotificationStatusText();
 
+            // Thêm sự kiện lưu trực tiếp khi thay đổi thiết lập nhắc nhở (không cần đợi nhấn nút Lưu để local nhắc nhở cập nhật)
+            document.getElementById('setting-reminder-toggle').addEventListener('change', (e) => {
+                localStorage.setItem('tinhnguyen_reminder_enabled', e.target.checked);
+                updateNotificationStatusText();
+            });
+            document.getElementById('setting-reminder-time').addEventListener('change', (e) => {
+                localStorage.setItem('tinhnguyen_reminder_time', e.target.value);
+            });
+
             document.getElementById('setting-msg').classList.add('hidden'); 
             toggleModal('settings-modal', true); 
         });
@@ -1209,7 +1218,51 @@
             container.innerHTML = html;
         }
 
-        // ================= HÀM XỬ LÝ NHẮC NHỞ / THÔNG BÁO TING TING (NEW!) =================
+        // ================= HÀM PHÁT ÂM THANH "TING TING" BẰNG NATIVE WEB AUDIO API (NEW & SIÊU ỔN ĐỊNH) =================
+        function playTingTing() {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) {
+                    // Fallback phát file dự phòng nếu trình duyệt quá cũ
+                    const rSound = document.getElementById('reminder-sound');
+                    if (rSound) { rSound.pause(); rSound.currentTime = 0; rSound.play().catch(()=>{}); }
+                    return;
+                }
+                const ctx = new AudioContext();
+                
+                // Tiếng Ting thứ nhất (Nốt thanh tao)
+                const osc1 = ctx.createOscillator();
+                const gain1 = ctx.createGain();
+                osc1.type = 'sine';
+                osc1.frequency.setValueAtTime(1200, ctx.currentTime); 
+                gain1.gain.setValueAtTime(0.2, ctx.currentTime);
+                gain1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.8);
+                osc1.connect(gain1);
+                gain1.connect(ctx.destination);
+                osc1.start();
+                osc1.stop(ctx.currentTime + 0.8);
+
+                // Tiếng Ting thứ hai (Nhịp đôi trễ 120ms, cao độ cao hơn một chút tạo âm hưởng thiên sứ)
+                setTimeout(() => {
+                    const osc2 = ctx.createOscillator();
+                    const gain2 = ctx.createGain();
+                    osc2.type = 'sine';
+                    osc2.frequency.setValueAtTime(1500, ctx.currentTime); 
+                    gain2.gain.setValueAtTime(0.2, ctx.currentTime);
+                    gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.8);
+                    osc2.connect(gain2);
+                    gain2.connect(ctx.destination);
+                    osc2.start();
+                    osc2.stop(ctx.currentTime + 0.8);
+                }, 120);
+            } catch (e) {
+                console.error("Lỗi Web Audio:", e);
+                const rSound = document.getElementById('reminder-sound');
+                if (rSound) { rSound.play().catch(() => {}); }
+            }
+        }
+
+        // ================= HÀM XỬ LÝ NHẮC NHỞ / THÔNG BÁO TING TING =================
         function updateNotificationStatusText() {
             const el = document.getElementById('notification-status-text');
             if (!('Notification' in window)) {
@@ -1234,15 +1287,13 @@
             const permission = await Notification.requestPermission();
             updateNotificationStatusText();
             if (permission === 'granted') {
-                // Thử test thông báo tại chỗ
                 new Notification("Chuỗi Tĩnh Nguyện", {
                     body: "Đã bật nhắc nhở tĩnh nguyện hằng ngày thành công! 🕊️",
                     icon: "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://nguynank.github.io/Giuchuoitinhnguyen/"
                 });
                 
-                // Phát thử chuông ting ting mẫu
-                const rSound = document.getElementById('reminder-sound');
-                if (rSound) { rSound.pause(); rSound.currentTime = 0; rSound.play().catch(e => {}); }
+                // Chạy thử chuông Ting Ting lập tức bằng thuật toán mới để trình duyệt cấp phép âm thanh
+                playTingTing();
             }
         });
 
@@ -1259,20 +1310,13 @@
                 const todayStr = getLocalTodayStr();
                 const lastFiredDate = localStorage.getItem('tinhnguyen_last_reminder_date');
                 
-                // Tránh lặp lại nhiều lần trong cùng một phút
                 if (lastFiredDate !== todayStr) {
                     localStorage.setItem('tinhnguyen_last_reminder_date', todayStr);
                     
-                    // 1. Phát âm thanh Ting Ting
-                    const rSound = document.getElementById('reminder-sound');
-                    if (rSound) {
-                        rSound.pause();
-                        rSound.currentTime = 0;
-                        rSound.volume = 1;
-                        rSound.play().catch(e => console.log("Không thể tự động phát nhạc: " + e));
-                    }
+                    // 1. Phát chuông Ting Ting độc lập bằng Web Audio API cực kỳ ổn định
+                    playTingTing();
                     
-                    // 2. Gửi thông báo trình duyệt của hệ điều hành
+                    // 2. Gửi thông báo hệ thống
                     if ('Notification' in window && Notification.permission === 'granted') {
                         new Notification("🔔 Đến Giờ Tĩnh Nguyện Rồi Bạn Ơi!", {
                             body: `Xin chào ${userData.username}, đã đến giờ tĩnh nguyện rồi! Cùng dành ra vài phút với Chúa nhé 🕊️`,
@@ -1280,7 +1324,7 @@
                         });
                     }
                     
-                    // 3. Hiển thị thông báo nổi giữa màn hình để người dùng click
+                    // 3. Hiển thị Popup cảnh báo nổi
                     alert(`🔔 Nhắc nhở Tĩnh Nguyện:\n\nXin chào ${userData.username}, đã đến lúc tĩnh nguyện hằng ngày rồi! Hãy dành ra ít thời gian đọc Kinh Thánh và tâm sự với Chúa nhé 🕊️`);
                 }
             }
