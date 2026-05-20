@@ -310,4 +310,54 @@ app.get('/api/users', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
+// ================= API QUẢN TRỊ: THU HỒI BÀI TĨNH NGUYỆN =================
+app.post('/api/admin/revoke-checkin', async (req, res) => {
+    try {
+        const { adminUser, targetUserId, dateStr } = req.body;
+        // Chỉ Nguyên Anh mới có quyền thu hồi
+        if (adminUser !== "Nguyên Anh") return res.status(403).json({ success: false, message: "Không có quyền thực hiện!" });
+        
+        const user = await User.findById(targetUserId);
+        if (!user) return res.status(404).json({ success: false, message: "Không tìm thấy người dùng" });
+
+        // Xóa ngày đó khỏi lịch sử và nhật ký
+        user.history = user.history.filter(d => d !== dateStr);
+        user.dailyLogs = user.dailyLogs.filter(l => l.date !== dateStr);
+        
+        // Trừ điểm và số lần checkin
+        user.totalCheckins = Math.max(0, user.totalCheckins - 1);
+        user.totalPoints = Math.max(0, user.totalPoints - 1);
+        
+        // Nếu ngày bị thu hồi là ngày hôm nay, reset trạng thái
+        const todayStr = new Date().getFullYear() + "-" + String(new Date().getMonth() + 1).padStart(2, '0') + "-" + String(new Date().getDate()).padStart(2, '0');
+        if (dateStr === todayStr) {
+            user.hasCheckedInToday = false;
+        }
+
+        // THUẬT TOÁN TÍNH LẠI CHUỖI LIÊN TỤC HIỆN TẠI TỪ LỊCH SỬ CÒN LẠI
+        let tempStreak = 0;
+        let checkDate = new Date(todayStr);
+        // Nếu hôm nay chưa có trong lịch sử, ta bắt đầu đếm ngược từ hôm qua
+        if (!user.history.includes(todayStr)) {
+            checkDate.setDate(checkDate.getDate() - 1); 
+        }
+        
+        // Đếm lùi từng ngày về quá khứ, nếu đứt đoạn thì dừng
+        for (let i = 0; i < 365; i++) {
+            const dStr = checkDate.getFullYear() + "-" + String(checkDate.getMonth() + 1).padStart(2, '0') + "-" + String(checkDate.getDate()).padStart(2, '0');
+            if (user.history.includes(dStr)) {
+                tempStreak++;
+                checkDate.setDate(checkDate.getDate() - 1);
+            } else {
+                break;
+            }
+        }
+        user.currentStreak = tempStreak;
+        
+        await user.save();
+        res.json({ success: true, user });
+    } catch (error) { 
+        res.status(500).json({ success: false, message: error.message }); 
+    }
+});
 app.listen(PORT, () => console.log(`Server running on ${PORT}`));
