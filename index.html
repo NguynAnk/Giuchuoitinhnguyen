@@ -106,6 +106,7 @@
     <audio id="daily-sound" src="https://actions.google.com/sounds/v1/water/water_drop.ogg" preload="auto"></audio>
     <audio id="rankup-sound" src="https://actions.google.com/sounds/v1/magic/fairy_glissando_short.ogg" preload="auto"></audio>
     <audio id="fail-sound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" preload="auto"></audio>
+    <audio id="reminder-sound" src="https://actions.google.com/sounds/v1/cartoon/bell_ding.ogg" preload="auto"></audio>
 
     <!-- MÀN HÌNH BÁO THỨC TRONG APP (VƯỢT RÀO MESSENGER) -->
     <div id="alarm-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[200] flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
@@ -633,7 +634,6 @@
                 
                 globalAudioCtx = new AudioContext();
                 
-                // Mẹo vượt tường lửa trình duyệt: Phát một âm thanh câm cực ngắn (0.01 giây)
                 const osc = globalAudioCtx.createOscillator();
                 const gain = globalAudioCtx.createGain();
                 gain.gain.value = 0;
@@ -645,35 +645,26 @@
                 if (globalAudioCtx.state === 'suspended') { globalAudioCtx.resume(); }
                 audioContextUnlocked = true;
 
-                // Đồng thời kích hoạt file audio mồi HTML5 (Cho iOS Safari)
                 const rSound = document.getElementById('reminder-sound');
                 if(rSound) { rSound.play().then(()=>rSound.pause()).catch(e=>{}); }
             } catch (e) { console.log("Audio Init Warning:", e); }
         }
 
-        // Lắng nghe thao tác chạm đầu tiên để bẻ khóa âm thanh
         document.body.addEventListener('click', initAudio, { once: true });
         document.body.addEventListener('touchstart', initAudio, { once: true });
 
-        // Hàm phát nhạc Ting Ting siêu việt
         function playTingTing() {
             try {
-                // Ưu tiên phát bằng thẻ HTML5 (vì trong FB Messenger, thẻ này hoạt động tốt hơn nếu đã unlock)
                 const rSound = document.getElementById('reminder-sound');
                 if (rSound) {
                     rSound.currentTime = 0;
                     rSound.volume = 1;
                     const playPromise = rSound.play();
-                    if (playPromise !== undefined) {
-                        playPromise.catch(e => { playWebAudioTing(); });
-                    }
-                } else {
-                    playWebAudioTing();
-                }
+                    if (playPromise !== undefined) { playPromise.catch(e => { playWebAudioTing(); }); }
+                } else { playWebAudioTing(); }
             } catch (e) { playWebAudioTing(); }
         }
 
-        // Nhạc dự phòng tự tổng hợp bằng sóng âm (Rất hay và vang)
         function playWebAudioTing() {
             if (!globalAudioCtx) return;
             if (globalAudioCtx.state === 'suspended') globalAudioCtx.resume();
@@ -842,14 +833,12 @@
         });
         document.getElementById('btn-close-settings').addEventListener('click', () => toggleModal('settings-modal', false));
         
-        // CHỈNH SỬA: LƯU TỨC THÌ (AUTO-SAVE) THIẾT LẬP GIỜ NHẮC NHỞ MÀ KHÔNG CẦN BẤM NÚT LƯU CÀI ĐẶT
         document.getElementById('setting-reminder-toggle').addEventListener('change', (e) => {
             localStorage.setItem('tinhnguyen_reminder_enabled', e.target.checked);
             updateNotificationStatusText();
         });
         document.getElementById('setting-reminder-time').addEventListener('change', (e) => {
             localStorage.setItem('tinhnguyen_reminder_time', e.target.value);
-            // Xóa bộ nhớ lần báo cuối để chuông có thể kêu lại ngay lập tức nếu đổi giờ
             localStorage.removeItem('tinhnguyen_last_reminder_date'); 
         });
 
@@ -865,23 +854,114 @@
             }
             try {
                 if (newPw) {
-                    if (!oldPw) { msg.innerText = "Vui lòng nhập mật khẩu hiện tại!"; msg.className = "text-center text-sm font-bold text-red-600 block"; btn.innerText = "Lưu"; btn.disabled = false; return; }
+                    if (!oldPw) { msg.innerText = "Vui lòng nhập mật khẩu hiện tại!"; msg.className = "text-center text-sm font-bold text-red-600 block"; btn.innerText = "Lưu Cài Đặt"; btn.disabled = false; return; }
                     const verifyRes = await fetch(`${API_URL}/login`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ username: userData.username, password: oldPw, localDate: getLocalTodayStr() }) });
                     const verifyData = await verifyRes.json();
-                    if (!verifyData.success) { msg.innerText = "Mật khẩu cũ không đúng!"; msg.className = "text-center text-sm font-bold text-red-600 block"; btn.innerText = "Lưu"; btn.disabled = false; return; }
+                    if (!verifyData.success) { msg.innerText = "Mật khẩu cũ không đúng!"; msg.className = "text-center text-sm font-bold text-red-600 block"; btn.innerText = "Lưu Cài Đặt"; btn.disabled = false; return; }
                 }
                 const payload = { userId: userData._id, newEmail: email, newUsername: newUsername }; if (newPw) payload.newPassword = newPw;
                 const res = await fetch(`${API_URL}/update-profile`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
                 const data = await res.json();
                 if(data.success) { 
                     userData = data.user; 
-                    msg.innerText = "Lưu thành công!"; msg.className = "text-center text-sm font-bold text-green-600 block"; 
+                    
+                    const reminderToggled = document.getElementById('setting-reminder-toggle').checked;
+                    const reminderTimeVal = document.getElementById('setting-reminder-time').value;
+                    localStorage.setItem('tinhnguyen_reminder_enabled', reminderToggled);
+                    localStorage.setItem('tinhnguyen_reminder_time', reminderTimeVal);
+
+                    msg.innerText = "Lưu thành công!"; 
+                    msg.className = "text-center text-sm font-bold text-green-600 block"; 
                     document.getElementById('setting-old-pw').value = ''; document.getElementById('setting-new-pw').value = ''; 
                     updateUIFromData(); 
                 } 
                 else { msg.innerText = "Lỗi: " + data.message; msg.className = "text-center text-sm font-bold text-red-600 block"; }
             } catch(e) { msg.innerText = "Lỗi kết nối máy chủ!"; msg.className = "text-center text-sm font-bold text-red-600 block"; }
             btn.innerText = "Lưu Cài Đặt"; btn.disabled = false;
+        });
+
+        // =========================================================================
+        // --- KHU VỰC SỰ KIỆN NÚT BẤM (ĐĂNG NHẬP / ĐĂNG KÝ / ĐĂNG XUẤT) ĐÃ ĐƯỢC PHỤC HỒI ---
+        // =========================================================================
+
+        document.getElementById('tab-login').addEventListener('click', () => { 
+            authMode = 'login'; 
+            document.getElementById('tab-login').className = "flex-1 pb-2 border-b-2 border-amber-500 text-amber-600 font-bold transition-all"; 
+            document.getElementById('tab-register').className = "flex-1 pb-2 border-b-2 border-transparent text-slate-400 font-bold hover:text-slate-600 transition-all"; 
+            document.getElementById('btn-auth-action').innerText = "Vào Ứng Dụng"; 
+            document.getElementById('auth-group-container').classList.add('hidden'); document.getElementById('auth-group-container').classList.remove('block');
+            document.getElementById('auth-email-container').classList.add('hidden'); document.getElementById('auth-email-container').classList.remove('block');
+            document.getElementById('auth-error').classList.add('hidden');
+        });
+        
+        document.getElementById('tab-register').addEventListener('click', () => { 
+            authMode = 'register'; 
+            document.getElementById('tab-register').className = "flex-1 pb-2 border-b-2 border-amber-500 text-amber-600 font-bold transition-all"; 
+            document.getElementById('tab-login').className = "flex-1 pb-2 border-b-2 border-transparent text-slate-400 font-bold hover:text-slate-600 transition-all"; 
+            document.getElementById('btn-auth-action').innerText = "Đăng Ký Tài Khoản"; 
+            document.getElementById('auth-group-container').classList.remove('hidden'); document.getElementById('auth-group-container').classList.add('block');
+            document.getElementById('auth-email-container').classList.remove('hidden'); document.getElementById('auth-email-container').classList.add('block');
+            document.getElementById('auth-error').classList.add('hidden');
+        });
+
+        document.getElementById('auth-group').addEventListener('change', () => document.getElementById('auth-error').classList.add('hidden'));
+        
+        // SỰ KIỆN NÚT ĐĂNG XUẤT
+        document.getElementById('btn-logout').addEventListener('click', () => { 
+            localStorage.removeItem('tinhnguyen_session'); 
+            location.reload(); 
+        });
+
+        // SỰ KIỆN NÚT ĐĂNG NHẬP / ĐĂNG KÝ
+        document.getElementById('btn-auth-action').addEventListener('click', async () => {
+            const u = document.getElementById('auth-username').value.trim(); const p = document.getElementById('auth-password').value.trim();
+            const g = document.getElementById('auth-group').value; const e = document.getElementById('auth-email').value.trim();
+
+            if(!u || !p) {
+                document.getElementById('auth-error').innerText = "Vui lòng nhập đủ thông tin!";
+                document.getElementById('auth-error').classList.remove('hidden');
+                return;
+            }
+
+            if (authMode === 'register') {
+                if (localStorage.getItem('tinhnguyen_device_registered')) {
+                    document.getElementById('auth-error').innerText = "❌ Thiết bị này đã đăng ký tài khoản! Mỗi máy chỉ được 1 tài khoản.";
+                    document.getElementById('auth-error').classList.remove('hidden'); return;
+                }
+                const nameRegex = /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\s]+$/;
+                if (!nameRegex.test(u) || u.split(/\s+/).length < 2) {
+                    document.getElementById('auth-error').innerText = "Vui lòng nhập đúng Họ và Tên thật (ít nhất 2 chữ)!";
+                    document.getElementById('auth-error').classList.remove('hidden'); return;
+                }
+                if (!g) { document.getElementById('auth-error').innerText = "Vui lòng chọn Nhóm!"; document.getElementById('auth-error').classList.remove('hidden'); return; }
+                if (!e) { document.getElementById('auth-error').innerText = "Vui lòng điền Email!"; document.getElementById('auth-error').classList.remove('hidden'); return; }
+            }
+            
+            const btn = document.getElementById('btn-auth-action'); const slowWarning = document.getElementById('slow-network-warning');
+            btn.innerText = "Đang kết nối..."; btn.disabled = true; document.getElementById('auth-error').classList.add('hidden');
+            const slowNetworkTimer = setTimeout(() => { slowWarning.classList.remove('hidden'); }, 3000);
+
+            const payload = { username: u, password: p, localDate: getLocalTodayStr() };
+            if (authMode === 'register') { payload.group = g; payload.email = e; }
+
+            try {
+                const res = await fetch(`${API_URL}${authMode === 'register' ? '/register' : '/login'}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                clearTimeout(slowNetworkTimer); slowWarning.classList.add('hidden');
+                const data = await res.json();
+                if (data.success) { 
+                    userData = data.user; 
+                    localStorage.setItem('tinhnguyen_session', JSON.stringify({ userId: data.user._id, expiry: Date.now() + 7*24*60*60*1000 }));
+                    if (authMode === 'register') localStorage.setItem('tinhnguyen_device_registered', 'true');
+                    enterApp(); 
+                } else { 
+                    document.getElementById('auth-error').innerText = data.message; document.getElementById('auth-error').classList.remove('hidden'); 
+                    btn.innerText = authMode === 'register' ? "Đăng Ký Tài Khoản" : "Vào Ứng Dụng"; btn.disabled = false; 
+                }
+            } catch (err) { 
+                clearTimeout(slowNetworkTimer); slowWarning.classList.add('hidden');
+                document.getElementById('auth-error').innerText = "Lỗi kết nối máy chủ!"; document.getElementById('auth-error').classList.remove('hidden');
+                btn.innerText = authMode === 'register' ? "Đăng Ký Tài Khoản" : "Vào Ứng Dụng"; btn.disabled = false;
+            }
         });
 
         document.getElementById('btn-settings-forgot-pw').addEventListener('click', () => {
@@ -916,6 +996,18 @@
                 else { msg.innerText = data.message; msg.className = "text-center text-sm font-bold text-red-600 block"; }
             } catch(e) { msg.innerText = "Lỗi mạng!"; msg.className = "text-center text-sm font-bold text-red-600 block"; }
             btn.innerText = "Đặt Lại Mật Khẩu"; btn.disabled = false;
+        });
+
+        // SỰ KIỆN ADMIN RESET TOÀN BỘ
+        document.getElementById('btn-master-reset').addEventListener('click', async () => {
+            const pass = prompt("Hành động này sẽ đưa ĐIỂM và CHUỖI của TẤT CẢ mọi người về 0.\nHãy nhập mật khẩu Admin để xác nhận:");
+            if (pass === "16102006") {
+                if (confirm("BẠN CÓ CHẮC CHẮN KHÔNG? Dữ liệu điểm sẽ mất vĩnh viễn!")) {
+                    const res = await fetch(`${API_URL}/admin/reset-system`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ adminUser: "Nguyên Anh", adminPass: "16102006" }) });
+                    const data = await res.json();
+                    if (data.success) { alert("Đã reset thành công! Vui lòng F5 lại trang."); location.reload(); } else { alert(data.message || "Lỗi reset!"); }
+                }
+            } else { alert("Sai mật khẩu Admin!"); }
         });
 
         function renderHistory(filterEmo) {
@@ -1010,12 +1102,54 @@
             return true;
         }
 
+        // BẮT BUỘC ĐỔI TÊN
+        document.getElementById('btn-confirm-rename').addEventListener('click', async () => {
+            const newName = document.getElementById('new-real-name').value.trim();
+            const nameRegex = /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\s]+$/;
+            if (newName.split(/\s+/).length < 2 || !nameRegex.test(newName)) {
+                document.getElementById('rename-error').innerText = "Vui lòng nhập tên thật (ít nhất 2 chữ)!";
+                document.getElementById('rename-error').classList.remove('hidden'); return;
+            }
+
+            const res = await fetch(`${API_URL}/update-profile`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ userId: userData._id, newUsername: newName }) });
+            const data = await res.json();
+            if (data.success) { userData = data.user; document.getElementById('force-rename-modal').classList.add('hidden'); enterApp(); } 
+            else { alert(data.message); }
+        });
+
         async function fetchSystemData() {
             try {
                 const res = await fetch(`${API_URL}/system`); const data = await res.json();
                 if(data.success && data.system) { document.getElementById('ui-quiz-passage').innerText = data.system.quizPassage; document.getElementById('ui-quiz-question').innerText = data.system.quizQuestion; }
             } catch(e) { console.error("Lỗi tải cấu hình:", e); }
         }
+
+        // ADMIN CẬP NHẬT ĐỐ KINH THÁNH
+        document.getElementById('btn-edit-quiz').addEventListener('click', () => {
+            document.getElementById('quiz-display-area').classList.add('hidden'); document.getElementById('quiz-edit-form').classList.remove('hidden');
+            document.getElementById('edit-quiz-passage').value = document.getElementById('ui-quiz-passage').innerText;
+            document.getElementById('edit-quiz-question').value = document.getElementById('ui-quiz-question').innerText;
+        });
+
+        document.getElementById('btn-cancel-quiz').addEventListener('click', () => {
+            document.getElementById('quiz-display-area').classList.remove('hidden'); document.getElementById('quiz-edit-form').classList.add('hidden');
+        });
+
+        document.getElementById('btn-save-quiz').addEventListener('click', async () => {
+            const passage = document.getElementById('edit-quiz-passage').value.trim(); const question = document.getElementById('edit-quiz-question').value.trim();
+            if(!passage || !question) return alert("Vui lòng nhập đủ thông tin!");
+            
+            const btn = document.getElementById('btn-save-quiz'); btn.innerText = "Đang lưu..."; btn.disabled = true;
+            try {
+                const res = await fetch(`${API_URL}/admin/update-quiz`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ adminUser: userData.username, passage: passage, question: question }) });
+                const data = await res.json();
+                if(data.success) {
+                    document.getElementById('ui-quiz-passage').innerText = passage; document.getElementById('ui-quiz-question').innerText = question;
+                    document.getElementById('btn-cancel-quiz').click(); 
+                } else { alert("Lỗi hoặc không có quyền!"); }
+            } catch(e) { alert("Lỗi mạng!"); }
+            btn.innerText = "Lưu & Chuyển Ngay"; btn.disabled = false;
+        });
 
         function enterApp() {
             if (!checkRealNameCompliance()) return; 
@@ -1234,6 +1368,11 @@
         document.getElementById('btn-close-alarm').addEventListener('click', () => {
             document.getElementById('alarm-modal').classList.remove('opacity-100');
             setTimeout(()=> document.getElementById('alarm-modal').classList.add('hidden'), 300);
+            
+            // Tắt tiếng Ting Ting nếu còn vang
+            if (globalAudioCtx && globalAudioCtx.state === 'running') {
+                globalAudioCtx.suspend();
+            }
         });
 
         document.getElementById('btn-test-notification').addEventListener('click', async () => {
