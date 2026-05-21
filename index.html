@@ -47,7 +47,7 @@
         @media (min-width: 1024px) { .wave-mask-h-1, .wave-mask-h-2 { display: none !important; } }
 
         @keyframes spin { 100% { transform: rotate(360deg); } }
-
+        /* --- CẤU HÌNH ĐÀN HẠC --- */
         :root { --harp-primary: #4E342E; --harp-secondary: #8D6E63; --harp-glow: rgba(78, 52, 46, 0.2); --harp-stroke: url(#wood-pattern); --wing-scale: 0; --wing-rot-l: -25deg; --wing-rot-r: 25deg; --wing-y: 15px; --halo-scale: 0; --extra-opacity: 0; }
         .harp-path { transition: stroke 1s ease-in-out, fill 1s ease-in-out; }
         #harp-glow { transition: background-color 1s ease-in-out; background-color: var(--harp-glow); }
@@ -71,7 +71,7 @@
         @keyframes flap-right { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-4deg); } }
         .wing-flap-l { animation: flap-left 3s ease-in-out infinite; transform-origin: 50px 90px; }
         .wing-flap-r { animation: flap-right 3s ease-in-out infinite; transform-origin: 110px 90px; }
-        
+        /* Hiệu ứng XP / LV bay lên */
         @keyframes floatUp { 0% { opacity: 0; transform: translateY(15px) scale(0.8); } 20% { opacity: 1; transform: translateY(-10px) scale(1.2); } 70% { opacity: 1; transform: translateY(-35px) scale(1); } 100% { opacity: 0; transform: translateY(-60px) scale(0.9); } }
         .float-up-anim { animation: floatUp 2.5s cubic-bezier(0.2, 0, 0.2, 1) forwards; }
 
@@ -85,7 +85,7 @@
     </style>
 </head>
 <body id="app-body" class="bg-theme-wood flex items-center justify-center p-3 sm:p-4 lg:p-8 text-slate-800">
-
+<!-- LỚP NỀN HOẠT ẢNH CHẠY NGẦM LIÊN TỤC -->
     <div id="bg-layer"></div>
 
     <svg width="0" height="0" class="absolute pointer-events-none">
@@ -120,6 +120,7 @@
     </div>
 
     <!-- CÁC MODAL CƠ BẢN -->
+     <!-- MÀN HÌNH XEM DANH HIỆU -->
     <div id="rank-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
         <div id="rank-modal-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6 transform scale-95 transition-transform duration-300 flex flex-col max-h-[85vh]">
             <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3 shrink-0">
@@ -129,7 +130,7 @@
             <div id="ranks-list-container" class="flex flex-col gap-3 overflow-y-auto pr-2 flex-1"></div>
         </div>
     </div>
-
+    <!-- MÀN HÌNH GÓP Ý LINH VỤ -->
     <div id="feedback-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
         <div id="feedback-modal-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6 transform scale-95 transition-transform duration-300 flex flex-col">
             <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3 shrink-0">
@@ -141,7 +142,7 @@
             <button id="btn-send-feedback" class="w-full py-3 bg-amber-500 text-white rounded-xl font-bold hover:bg-amber-600 transition-transform active:scale-95 shadow-md mt-4">Gửi Góp Ý Báo Cáo</button>
         </div>
     </div>
-
+    <!-- MÀN HÌNH LỜI CHÚC PHƯỚC HẠNH VÀ CÂU KINH THÁNH -->
     <div id="blessing-modal" class="fixed inset-0 bg-white/80 backdrop-blur-sm z-[110] flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-500">
         <div class="bg-gradient-to-br from-amber-50 to-orange-100 rounded-[2rem] shadow-2xl w-full max-w-sm p-6 text-center border-2 border-amber-200 transform scale-90 transition-transform duration-500" id="blessing-content">
             <div class="text-6xl mb-4 animate-bounce">🕊️</div>
@@ -1146,7 +1147,16 @@
             try { const res = await fetch(`${API_URL}/update-group`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: userId, group: newGroup }) }); const data = await res.json(); if (data.success && userData && userData._id === userId) { userData.group = newGroup; updateUIFromData(); } } catch(e) { alert("Lỗi mạng!"); }
             selectEl.disabled = false;
         };
-
+        function renderRanksModal(totalCheckinsCount) {
+            const container = document.getElementById('ranks-list-container'); let html = '';
+            rankData.forEach((r) => {
+                const isUnlocked = totalCheckinsCount >= r.streak; const isWinged = r.streak >= 45;
+                const mWingScale = isWinged ? 0.65 : 0; const mWingRotL = isWinged ? -25 : 0; const mWingRotR = isWinged ? 25 : 0; const mWingY = isWinged ? 10 : 0; const mHaloScale = isWinged ? 0.65 : 0; const mOpacity = isWinged ? 1 : 0;
+                const lockHtml = !isUnlocked ? '<div class="absolute inset-0 bg-slate-900/5 z-10 flex items-center justify-center backdrop-blur-[1px]"><span class="bg-white/90 text-xs font-bold px-3 py-1 rounded-full text-slate-500 shadow-sm">🔒 Đạt ' + r.streak + ' chuỗi</span></div>' : '';
+                const bgClass = isUnlocked ? 'bg-slate-50 border-amber-200 shadow-sm' : 'bg-slate-50 border-slate-200 opacity-60';
+                
+                html += '<div class="flex items-center gap-4 p-4 rounded-2xl ' + bgClass + ' border relative overflow-hidden shrink-0">' + lockHtml + '<div class="relative w-16 h-16 flex justify-center items-center ' + r.class + '"><svg viewBox="0 0 160 180" class="w-16 h-16 relative z-10 overflow-visible"><g class="harp-halo" style="transform: scale(' + mHaloScale + '); opacity: ' + mOpacity + '; transform-origin: 80px 25px;"><ellipse cx="80" cy="25" rx="35" ry="10" fill="none" class="harp-stroke-primary" stroke-width="3" /><ellipse cx="80" cy="25" rx="42" ry="14" fill="none" class="harp-stroke-secondary" stroke-width="1.5" opacity="0.8" /></g><g class="harp-wings" style="opacity: ' + mOpacity + ';"><g style="transform: translate(0px, ' + mWingY + 'px) scale(' + mWingScale + ') rotate(' + mWingRotL + 'deg); transform-origin: 50px 90px;"><use href="#angel-wing-detailed" /></g><g style="transform: translate(0px, ' + mWingY + 'px) scale(' + mWingScale + ') rotate(' + mWingRotR + 'deg); transform-origin: 110px 90px;"><use href="#angel-wing-detailed" transform="translate(160, 0) scale(-1, 1)" /></g></g><g transform="translate(20, 10)"><path class="harp-path harp-stroke-primary" d="M 25 45 C 25 100 15 130 40 140 L 80 140 C 105 130 95 100 95 45" fill="none" stroke-width="8" stroke-linecap="round" /><line class="harp-path harp-stroke-primary" x1="12" y1="45" x2="108" y2="45" stroke-width="8" /><line class="harp-path harp-stroke-secondary" x1="40" y1="45" x2="40" y2="135" stroke-width="2"/><line class="harp-path harp-stroke-secondary" x1="60" y1="45" x2="60" y2="139" stroke-width="2"/><line class="harp-path harp-stroke-secondary" x1="80" y1="45" x2="80" y2="135" stroke-width="2"/></g></svg></div><div><h4 class="font-bold ' + (isUnlocked ? 'text-slate-800' : 'text-slate-500') + '">' + r.name + '</h4><p class="text-[11px] text-slate-500">Mốc: ' + r.streak + ' ngày</p></div></div>';
+            });
         function renderGroupStats(users) {
             currentUsersData = users; const groups = {};
             for(let i=1; i<=10; i++) groups[`Nhóm ${i}`] = { name: `Nhóm ${i}`, totalPoints: 0, maxStreak: 0, members: [] };
