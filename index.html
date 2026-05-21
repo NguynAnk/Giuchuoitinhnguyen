@@ -81,7 +81,7 @@
 
         .emotion-btn { filter: grayscale(100%); opacity: 0.5; transform: scale(0.9); transition: all 0.2s; cursor: pointer; user-select: none; }
         .emotion-btn:hover { filter: grayscale(0%); opacity: 1; transform: scale(1.1); }
-        .emotion-active { filter: grayscale(0%); opacity: 1; transform: scale(1.2); drop-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .emotion-active { filter: grayscale(0%); opacity: 1; transform: scale(1.2); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
     </style>
 </head>
 <body id="app-body" class="bg-theme-wood flex items-center justify-center p-3 sm:p-4 lg:p-8 text-slate-800">
@@ -682,7 +682,28 @@
             document.getElementById('auth-main-container')?.classList.remove('hidden');
             document.getElementById('slow-network-warning')?.classList.add('hidden');
         }
-
+        // Hàm enterApp để xử lý hiển thị màn hình chính
+    function enterApp() {
+    if (!userData) return;
+    const authScreen = document.getElementById('auth-screen');
+    const mainApp = document.getElementById('main-app');
+    
+    // Kiểm tra và ẩn màn hình đăng nhập
+    if (authScreen) authScreen.classList.add('fade-out-scale');
+    
+    fetchSystemData();
+    
+    setTimeout(() => {
+        if (authScreen) authScreen.classList.add('hidden');
+        if (mainApp) {
+            mainApp.classList.remove('hidden');
+            updateUIFromData();
+            setTimeout(() => {
+                mainApp.classList.add('fade-in-scale');
+            }, 50);
+        }
+    }, 500);
+}
         // Binds an toàn cho tất cả các nút
         window.onload = () => {
             // NÚT CƠ BẢN APP
