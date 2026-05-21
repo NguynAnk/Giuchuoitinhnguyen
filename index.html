@@ -1315,6 +1315,7 @@
         }
 
         window.addEventListener('focus', () => { if (userData && userData.hasCheckedInToday) { const todayStr = getLocalTodayStr(); const historySet = new Set(userData.history || []); if (!historySet.has(todayStr)) { userData.hasCheckedInToday = false; updateUIFromData(); } } });
+    }
     </script>
 </body>
 </html>
