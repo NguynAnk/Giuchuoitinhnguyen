@@ -81,7 +81,7 @@
 
         .emotion-btn { filter: grayscale(100%); opacity: 0.5; transform: scale(0.9); transition: all 0.2s; cursor: pointer; user-select: none; }
         .emotion-btn:hover { filter: grayscale(0%); opacity: 1; transform: scale(1.1); }
-        .emotion-active { filter: grayscale(0%); opacity: 1; transform: scale(1.2); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .emotion-active { filter: grayscale(0%); opacity: 1; transform: scale(1.2); drop-shadow: 0 4px 6px rgba(0,0,0,0.1); }
     </style>
 </head>
 <body id="app-body" class="bg-theme-wood flex items-center justify-center p-3 sm:p-4 lg:p-8 text-slate-800">
@@ -682,28 +682,7 @@
             document.getElementById('auth-main-container')?.classList.remove('hidden');
             document.getElementById('slow-network-warning')?.classList.add('hidden');
         }
-        // Hàm enterApp để xử lý hiển thị màn hình chính
-    function enterApp() {
-    if (!userData) return;
-    const authScreen = document.getElementById('auth-screen');
-    const mainApp = document.getElementById('main-app');
-    
-    // Kiểm tra và ẩn màn hình đăng nhập
-    if (authScreen) authScreen.classList.add('fade-out-scale');
-    
-    fetchSystemData();
-    
-    setTimeout(() => {
-        if (authScreen) authScreen.classList.add('hidden');
-        if (mainApp) {
-            mainApp.classList.remove('hidden');
-            updateUIFromData();
-            setTimeout(() => {
-                mainApp.classList.add('fade-in-scale');
-            }, 50);
-        }
-    }, 500);
-}
+
         // Binds an toàn cho tất cả các nút
         window.onload = () => {
             // NÚT CƠ BẢN APP
@@ -1168,16 +1147,7 @@
             try { const res = await fetch(`${API_URL}/update-group`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: userId, group: newGroup }) }); const data = await res.json(); if (data.success && userData && userData._id === userId) { userData.group = newGroup; updateUIFromData(); } } catch(e) { alert("Lỗi mạng!"); }
             selectEl.disabled = false;
         };
-        function renderRanksModal(totalCheckinsCount) {
-            const container = document.getElementById('ranks-list-container'); let html = '';
-            rankData.forEach((r) => {
-                const isUnlocked = totalCheckinsCount >= r.streak; const isWinged = r.streak >= 45;
-                const mWingScale = isWinged ? 0.65 : 0; const mWingRotL = isWinged ? -25 : 0; const mWingRotR = isWinged ? 25 : 0; const mWingY = isWinged ? 10 : 0; const mHaloScale = isWinged ? 0.65 : 0; const mOpacity = isWinged ? 1 : 0;
-                const lockHtml = !isUnlocked ? '<div class="absolute inset-0 bg-slate-900/5 z-10 flex items-center justify-center backdrop-blur-[1px]"><span class="bg-white/90 text-xs font-bold px-3 py-1 rounded-full text-slate-500 shadow-sm">🔒 Đạt ' + r.streak + ' chuỗi</span></div>' : '';
-                const bgClass = isUnlocked ? 'bg-slate-50 border-amber-200 shadow-sm' : 'bg-slate-50 border-slate-200 opacity-60';
-                
-                html += '<div class="flex items-center gap-4 p-4 rounded-2xl ' + bgClass + ' border relative overflow-hidden shrink-0">' + lockHtml + '<div class="relative w-16 h-16 flex justify-center items-center ' + r.class + '"><svg viewBox="0 0 160 180" class="w-16 h-16 relative z-10 overflow-visible"><g class="harp-halo" style="transform: scale(' + mHaloScale + '); opacity: ' + mOpacity + '; transform-origin: 80px 25px;"><ellipse cx="80" cy="25" rx="35" ry="10" fill="none" class="harp-stroke-primary" stroke-width="3" /><ellipse cx="80" cy="25" rx="42" ry="14" fill="none" class="harp-stroke-secondary" stroke-width="1.5" opacity="0.8" /></g><g class="harp-wings" style="opacity: ' + mOpacity + ';"><g style="transform: translate(0px, ' + mWingY + 'px) scale(' + mWingScale + ') rotate(' + mWingRotL + 'deg); transform-origin: 50px 90px;"><use href="#angel-wing-detailed" /></g><g style="transform: translate(0px, ' + mWingY + 'px) scale(' + mWingScale + ') rotate(' + mWingRotR + 'deg); transform-origin: 110px 90px;"><use href="#angel-wing-detailed" transform="translate(160, 0) scale(-1, 1)" /></g></g><g transform="translate(20, 10)"><path class="harp-path harp-stroke-primary" d="M 25 45 C 25 100 15 130 40 140 L 80 140 C 105 130 95 100 95 45" fill="none" stroke-width="8" stroke-linecap="round" /><line class="harp-path harp-stroke-primary" x1="12" y1="45" x2="108" y2="45" stroke-width="8" /><line class="harp-path harp-stroke-secondary" x1="40" y1="45" x2="40" y2="135" stroke-width="2"/><line class="harp-path harp-stroke-secondary" x1="60" y1="45" x2="60" y2="139" stroke-width="2"/><line class="harp-path harp-stroke-secondary" x1="80" y1="45" x2="80" y2="135" stroke-width="2"/></g></svg></div><div><h4 class="font-bold ' + (isUnlocked ? 'text-slate-800' : 'text-slate-500') + '">' + r.name + '</h4><p class="text-[11px] text-slate-500">Mốc: ' + r.streak + ' ngày</p></div></div>';
-            });
+        
         function renderGroupStats(users) {
             currentUsersData = users; const groups = {};
             for(let i=1; i<=10; i++) groups[`Nhóm ${i}`] = { name: `Nhóm ${i}`, totalPoints: 0, maxStreak: 0, members: [] };
@@ -1336,7 +1306,6 @@
         }
 
         window.addEventListener('focus', () => { if (userData && userData.hasCheckedInToday) { const todayStr = getLocalTodayStr(); const historySet = new Set(userData.history || []); if (!historySet.has(todayStr)) { userData.hasCheckedInToday = false; updateUIFromData(); } } });
-    }
     </script>
 </body>
 </html>
