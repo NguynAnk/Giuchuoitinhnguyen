@@ -807,55 +807,166 @@
             document.getElementById('btn-close-rank')?.addEventListener('click', () => toggleModal('rank-modal', false));
             document.getElementById('btn-close-alarm')?.addEventListener('click', () => { toggleModal('alarm-modal', false); if (globalAudioCtx && globalAudioCtx.state === 'running') globalAudioCtx.suspend(); });
             
-            // CHECKIN SUBMIT LISTENER
-            document.getElementById('checkin-btn')?.addEventListener('click', async () => {
-                if (!userData || userData.hasCheckedInToday || isProcessing) return;
-                const checkedRadio = document.querySelector('input[name="source"]:checked'); const q1Val = document.getElementById('q1').value.trim(); const q2Val = document.getElementById('q2').value.trim(); let srcVal = '';
-                let errorMsg = []; 
-                if (!checkedRadio) { errorMsg.push("- Bạn chưa chọn Nguồn tài liệu (Câu 1)"); } else if (checkedRadio.value === 'Khác') { srcVal = document.getElementById('source-other-text').value.trim(); if (!srcVal) { errorMsg.push("- Bạn chưa ghi rõ tên tài liệu khác (Câu 1)"); } } else { srcVal = checkedRadio.value; }
-                
-                function validateSeriousText(text, minWords, minChars) {
-                    const trimmed = text.trim(); if (trimmed.length < minChars) return false; 
-                    const words = trimmed.split(/\s+/).filter(w => w.length > 0); if (words.length < minWords) return false; 
-                    const uniqueChars = new Set(trimmed.replace(/\s/g, '').split('')).size; if (trimmed.length > 5 && uniqueChars < 3) return false; 
-                    return true;
-                }
+            function finishCheckIn() {
+    // 1. Hiển thị hiệu ứng pháo hoa / chúc mừng
+    document.getElementById('celebration')?.classList.remove('hidden'); 
+    setTimeout(() => document.getElementById('celebration')?.classList.add('hidden'), 3000);
+    
+    // 2. Hiệu ứng bay chữ +1 XP và +1 LV
+    const floatXp = document.getElementById('float-xp'); 
+    const floatLv = document.getElementById('float-lv');
+    if (floatXp && floatLv) { 
+        floatXp.classList.remove('hidden', 'float-up-anim'); 
+        floatLv.classList.remove('hidden', 'float-up-anim'); 
+        void floatXp.offsetWidth; // Trigger reflow để restart animation
+        floatXp.classList.add('float-up-anim'); 
+        floatLv.classList.add('float-up-anim'); 
+        setTimeout(() => { floatXp.classList.add('hidden'); floatLv.classList.add('hidden'); }, 2500); 
+    }
+    
+    // 3. Reset toàn bộ form nhập liệu về trống
+    if(document.getElementById('q1')) document.getElementById('q1').value = ''; 
+    if(document.getElementById('q2')) document.getElementById('q2').value = ''; 
+    document.querySelectorAll('input[name="source"]').forEach(r => r.checked = false); 
+    if(document.getElementById('source-other-text')) { 
+        document.getElementById('source-other-text').value = ''; 
+        document.getElementById('source-other-text').disabled = true; 
+    }
+    document.querySelectorAll('.emotion-btn').forEach(b => b.classList.remove('emotion-active')); 
+    selectedEmotion = '';
+    
+    // 4. Lấy ngẫu nhiên lời chúc phước hạnh và câu Kinh Thánh
+    const randomItem = blessingsAndVerses[Math.floor(Math.random() * blessingsAndVerses.length)]; 
+    if(document.getElementById('blessing-text')) document.getElementById('blessing-text').innerText = `"${randomItem.text}"`; 
+    if(document.getElementById('blessing-verse')) document.getElementById('blessing-verse').innerText = randomItem.verse;
+    
+    // 5. Mở Modal lời chúc và cập nhật lại giao diện chính
+    toggleModal('blessing-modal', true); 
+    isProcessing = false; 
+    updateUIFromData();
+}
 
-                if (!q1Val) { errorMsg.push("- Bạn chưa nhập Phân đoạn / Chủ đề (Câu 2)"); } else if (!validateSeriousText(q1Val, 2, 4)) { errorMsg.push("- Phân đoạn/Chủ đề quá ngắn hoặc đang gõ bừa. (Tối thiểu 2 từ hợp lệ)"); }
-                if (!q2Val) { errorMsg.push("- Bạn chưa nhập Đụng chạm / Thúc giục (Câu 3)"); } else if (!validateSeriousText(q2Val, 4, 15)) { errorMsg.push("- Nội dung tĩnh nguyện quá sơ sài. Xin hãy viết một câu hoàn chỉnh! (Tối thiểu 4 từ)"); }
-                if (!selectedEmotion) { errorMsg.push("- Bạn chưa chọn Tâm trạng (Câu 4)"); }
-                
-                if (errorMsg.length > 0) { alert("⚠️ CHƯA ĐẠT YÊU CẦU:\n\n" + errorMsg.join("\n\n")); return; }
-                
-                isProcessing = true; const btn = document.getElementById('checkin-btn');
-                btn.innerHTML = `<svg class="animate-spin -ml-1 mr-2 h-5 w-5 text-white inline" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Đang ghi nhận...`;
-                const payload = { userId: userData._id, action: 'checkin', localDate: getLocalTodayStr(), logData: { q1: q1Val, q2: q2Val, q3: '', source: srcVal, emotion: selectedEmotion } };
-                
-                try { 
-                    const res = await fetch(`${API_URL}/update-streak`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); const data = await res.json(); 
-                    if (data.success) { 
-                        userData = data.user; 
-                        const oldRank = getCurrentRankInfo(userData.totalCheckins - 1); const expectedNewRank = getCurrentRankInfo(userData.totalCheckins);
-                        try { if (expectedNewRank.id > oldRank.id) { const s = document.getElementById('rankup-sound'); if(s){ s.pause(); s.currentTime=0; s.play().catch(e=>{}); } } else { const s = document.getElementById('daily-sound'); if(s){ s.pause(); s.currentTime=0; s.play().catch(e=>{}); } } } catch(e) {}
-                        
-                        document.getElementById('celebration')?.classList.remove('hidden'); setTimeout(() => document.getElementById('celebration')?.classList.add('hidden'), 3000);
-                        const floatXp = document.getElementById('float-xp'); const floatLv = document.getElementById('float-lv');
-                        if (floatXp && floatLv) { floatXp.classList.remove('hidden', 'float-up-anim'); floatLv.classList.remove('hidden', 'float-up-anim'); void floatXp.offsetWidth; floatXp.classList.add('float-up-anim'); floatLv.classList.add('float-up-anim'); setTimeout(() => { floatXp.classList.add('hidden'); floatLv.classList.add('hidden'); }, 2500); }
-                        
-                        if(document.getElementById('q1')) document.getElementById('q1').value = ''; 
-                        if(document.getElementById('q2')) document.getElementById('q2').value = ''; 
-                        document.querySelectorAll('input[name="source"]').forEach(r=>r.checked=false); 
-                        if(document.getElementById('source-other-text')) { document.getElementById('source-other-text').value=''; document.getElementById('source-other-text').disabled=true; }
-                        document.querySelectorAll('.emotion-btn').forEach(b => b.classList.remove('emotion-active')); selectedEmotion='';
-                        
-                        const randomItem = blessingsAndVerses[Math.floor(Math.random() * blessingsAndVerses.length)]; 
-                        if(document.getElementById('blessing-text')) document.getElementById('blessing-text').innerText = `"${randomItem.text}"`; 
-                        if(document.getElementById('blessing-verse')) document.getElementById('blessing-verse').innerText = randomItem.verse;
-                        
-                        toggleModal('blessing-modal', true); isProcessing = false; updateUIFromData();
-                    } else { alert("Lỗi: " + data.message); isProcessing = false; updateUIFromData(); }
-                } catch (error) { alert("Lỗi mạng!"); isProcessing = false; updateUIFromData(); } 
-            });
+// --- CHECKIN SUBMIT LISTENER HOÀN CHỈNH KẾT HỢP V9 ---
+document.getElementById('checkin-btn')?.addEventListener('click', async () => {
+    if (!userData || userData.hasCheckedInToday || isProcessing) return;
+    
+    const checkedRadio = document.querySelector('input[name="source"]:checked'); 
+    const q1Val = document.getElementById('q1').value.trim(); 
+    const q2Val = document.getElementById('q2').value.trim(); 
+    let srcVal = '';
+    let errorMsg = []; 
+
+    // Kiểm tra câu 1 (Nguồn tài liệu)
+    if (!checkedRadio) { 
+        errorMsg.push("- Bạn chưa chọn Nguồn tài liệu (Câu 1)"); 
+    } else if (checkedRadio.value === 'Khác') { 
+        srcVal = document.getElementById('source-other-text').value.trim(); 
+        if (!srcVal) { errorMsg.push("- Bạn chưa ghi rõ tên tài liệu khác (Câu 1)"); } 
+    } else { 
+        srcVal = checkedRadio.value; 
+    }
+    
+    // Hàm kiểm tra gõ bừa/spam nghiêm túc từ Đoạn 1
+    function validateSeriousText(text, minWords, minChars) {
+        const trimmed = text.trim(); 
+        if (trimmed.length < minChars) return false; 
+        const words = trimmed.split(/\s+/).filter(w => w.length > 0); 
+        if (words.length < minWords) return false; 
+        const uniqueChars = new Set(trimmed.replace(/\s/g, '').split('')).size; 
+        if (trimmed.length > 5 && uniqueChars < 3) return false; 
+        return true;
+    }
+
+    // Kiểm tra tính hợp lệ của câu 2, câu 3 và cảm xúc
+    if (!q1Val) { 
+        errorMsg.push("- Bạn chưa nhập Phân đoạn / Chủ đề (Câu 2)"); 
+    } else if (!validateSeriousText(q1Val, 2, 4)) { 
+        errorMsg.push("- Phân đoạn/Chủ đề quá ngắn hoặc đang gõ bừa. (Tối thiểu 2 từ hợp lệ)"); 
+    }
+    
+    if (!q2Val) { 
+        errorMsg.push("- Bạn chưa nhập Đụng chạm / Thúc giục (Câu 3)"); 
+    } else if (!validateSeriousText(q2Val, 4, 15)) { 
+        errorMsg.push("- Nội dung tĩnh nguyện quá sơ sài. Xin hãy viết một câu hoàn chỉnh! (Tối thiểu 4 từ)"); 
+    }
+    
+    if (!selectedEmotion) { 
+        errorMsg.push("- Bạn chưa chọn Tâm trạng (Câu 4)"); 
+    }
+    
+    // Nếu có lỗi, hiển thị cảnh báo chặn lại luôn
+    if (errorMsg.length > 0) { 
+        alert("⚠️ BẠN CHƯA ĐIỀN ĐỦ THỂ THỨC YÊU CẦU:\n\n" + errorMsg.join("\n\n")); 
+        return; 
+    }
+    
+    // Bắt đầu trạng thái xử lý khóa nút bấm tránh click trùng
+    isProcessing = true; 
+    const btn = document.getElementById('checkin-btn');
+    btn.innerHTML = `<svg class="animate-spin -ml-1 mr-2 h-5 w-5 text-white inline" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Đang ghi nhận (Chờ xíu)...`;
+    
+    // Tính toán Rank để chuẩn bị phát âm thanh tương ứng
+    const oldRank = getCurrentRankInfo(userData.totalCheckins); 
+    const expectedNewRank = getCurrentRankInfo(userData.totalCheckins + 1);
+    
+    try { 
+        if (expectedNewRank.id > oldRank.id) { 
+            const s = document.getElementById('rankup-sound'); 
+            if(s){ s.pause(); s.currentTime = 0; s.volume = 1; s.play().catch(e=>{}); } 
+        } else { 
+            const s = document.getElementById('daily-sound'); 
+            if(s){ s.pause(); s.currentTime = 0; s.volume = 1; s.play().catch(e=>{}); } 
+        } 
+    } catch(e) {}
+
+    // Đóng gói dữ liệu gửi đi
+    const payload = { 
+        userId: userData._id, 
+        action: 'checkin', 
+        localDate: getLocalTodayStr(), 
+        logData: { q1: q1Val, q2: q2Val, q3: '', source: srcVal, emotion: selectedEmotion } 
+    };
+
+    // KHỐI XỬ LÝ CHẾ ĐỘ TEST OFFLINE (GIỮ LẠI TỪ FILE CŨ)
+    if (isTestMode) {
+        userData.currentStreak++; 
+        userData.maxStreak = Math.max(userData.maxStreak, userData.currentStreak); 
+        userData.totalCheckins++; 
+        userData.totalPoints++; 
+        userData.hasCheckedInToday = true; 
+        userData.lastCheckinDateStr = getLocalTodayStr();
+        
+        if(!userData.history) userData.history = []; 
+        userData.history.push(getLocalTodayStr());
+        
+        if(!userData.dailyLogs) userData.dailyLogs = []; 
+        userData.dailyLogs.unshift({ date: payload.localDate, ...payload.logData });
+        
+        finishCheckIn();
+    } else {
+        // CHẾ ĐỘ ONLINE - GỬI DATA LÊN SERVER RENDER
+        try { 
+            const res = await fetch(`${API_URL}/update-streak`, { 
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json' }, 
+                body: JSON.stringify(payload) 
+            }); 
+            const data = await res.json(); 
+            if (data.success) { 
+                userData = data.user; 
+                finishCheckIn();
+            } else {
+                alert("Lỗi từ máy chủ: " + data.message);
+                isProcessing = false; 
+                updateUIFromData();
+            }
+        } catch (error) { 
+            alert("Lỗi mạng! Có thể máy chủ đang ngủ hoặc quá tải, vui lòng thử lại ngay.");
+            isProcessing = false; 
+            updateUIFromData();
+        } 
+    }
+});
 
             // GÁN CÁC EVENT LẮNG NGHE KHÁC
             document.getElementById('btn-save-settings')?.addEventListener('click', async () => {
