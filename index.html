@@ -1199,6 +1199,9 @@
             });
             container.innerHTML = html;
         }
+        document.getElementById('btn-test-next-day').addEventListener('click', async () => { try { if (!isTestMode) { originalUserData = JSON.parse(JSON.stringify(userData)); isTestMode = true; } userData.hasCheckedInToday = false; updateUIFromData(); toggleModal('admin-modal', false); } catch(e) { console.error(e); alert("Lỗi hệ thống hiển thị"); } });
+        document.getElementById('btn-test-rank-go').addEventListener('click', async () => { try { if (!isTestMode) { originalUserData = JSON.parse(JSON.stringify(userData)); isTestMode = true; } const s = parseInt(document.getElementById('test-rank-select').value); userData.currentStreak = s; userData.totalCheckins = s; userData.totalPoints = s; userData.maxStreak = Math.max(userData.maxStreak, s); userData.hasCheckedInToday = false; updateUIFromData(); toggleModal('admin-modal', false); } catch(e) { console.error(e); alert("Lỗi hệ thống hiển thị"); } });
+        document.getElementById('btn-test-reset').addEventListener('click', async () => { try { if (isTestMode && originalUserData) { userData = JSON.parse(JSON.stringify(originalUserData)); isTestMode = false; updateUIFromData(); alert("Đã khôi phục dữ liệu thật!"); } } catch(e) { console.error(e); alert("Lỗi hệ thống hiển thị"); } });
         function renderGroupStats(users) {
             currentUsersData = users; const groups = {};
             for(let i=1; i<=10; i++) groups[`Nhóm ${i}`] = { name: `Nhóm ${i}`, totalPoints: 0, maxStreak: 0, members: [] };
