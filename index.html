@@ -881,13 +881,13 @@ document.getElementById('checkin-btn')?.addEventListener('click', async () => {
     if (!q1Val) { 
         errorMsg.push("- Bạn chưa nhập Phân đoạn / Chủ đề (Câu 2)"); 
     } else if (!validateSeriousText(q1Val, 2, 4)) { 
-        errorMsg.push("- Phân đoạn/Chủ đề quá ngắn hoặc đang gõ bừa. (Tối thiểu 2 từ hợp lệ)"); 
+        errorMsg.push("- Phân đoạn/Chủ đề chưa điền đủ tiêu chuẩn yêu cầu. (Tối thiểu 2 từ hợp lệ)"); 
     }
     
     if (!q2Val) { 
         errorMsg.push("- Bạn chưa nhập Đụng chạm / Thúc giục (Câu 3)"); 
     } else if (!validateSeriousText(q2Val, 4, 15)) { 
-        errorMsg.push("- Nội dung tĩnh nguyện quá sơ sài. Xin hãy viết một câu hoàn chỉnh! (Tối thiểu 4 từ)"); 
+        errorMsg.push("- Nội dung tĩnh nguyện chưa điền đủ tiêu chuẩn yêu cầu. Xin hãy hoàn thành phần trả lời hoàn chỉnh để tiếp tục! (Tối thiểu 4 từ)"); 
     }
     
     if (!selectedEmotion) { 
@@ -896,7 +896,7 @@ document.getElementById('checkin-btn')?.addEventListener('click', async () => {
     
     // Nếu có lỗi, hiển thị cảnh báo chặn lại luôn
     if (errorMsg.length > 0) { 
-        alert("⚠️ BẠN CHƯA ĐIỀN ĐỦ THỂ THỨC YÊU CẦU:\n\n" + errorMsg.join("\n\n")); 
+        alert("⚠️ BẠN CHƯA ĐIỀN ĐỦ TIÊU CHUẨN YÊU CẦU:\n\n" + errorMsg.join("\n\n")); 
         return; 
     }
     
