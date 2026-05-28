@@ -887,7 +887,7 @@ document.getElementById('checkin-btn')?.addEventListener('click', async () => {
     if (!q2Val) { 
         errorMsg.push("- Bạn chưa nhập Đụng chạm / Thúc giục (Câu 3)"); 
     } else if (!validateSeriousText(q2Val, 4, 15)) { 
-        errorMsg.push("- Nội dung tĩnh nguyện chưa điền đủ tiêu chuẩn yêu cầu. Xin hãy hoàn thành phần trả lời hoàn chỉnh để tiếp tục! (Tối thiểu 4 từ)"); 
+        errorMsg.push("- Nội dung tĩnh nguyện chưa điền đủ tiêu chuẩn yêu cầu. Xin hãy hoàn thành phần trả lời hoàn chỉnh để tiếp tục!"); 
     }
     
     if (!selectedEmotion) { 
