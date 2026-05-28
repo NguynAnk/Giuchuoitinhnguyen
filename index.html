@@ -881,7 +881,7 @@ document.getElementById('checkin-btn')?.addEventListener('click', async () => {
     if (!q1Val) { 
         errorMsg.push("- Bạn chưa nhập Phân đoạn / Chủ đề (Câu 2)"); 
     } else if (!validateSeriousText(q1Val, 2, 4)) { 
-        errorMsg.push("- Phân đoạn/Chủ đề chưa điền đủ tiêu chuẩn yêu cầu. (Tối thiểu 2 từ hợp lệ)"); 
+        errorMsg.push("- Phân đoạn/Chủ đề chưa điền đủ tiêu chuẩn yêu cầu."); 
     }
     
     if (!q2Val) { 
