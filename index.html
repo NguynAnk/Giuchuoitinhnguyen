@@ -952,6 +952,9 @@
                             <th class="p-4 text-center text-slate-500 uppercase text-xs">Duyệt Bài</th>
                             <th class="p-4 text-center text-amber-500 uppercase text-xs">Kỷ Lục</th>
                             <th class="p-4 text-center text-blue-500 uppercase text-xs">Chuỗi</th>
+                            <th class="p-4 text-center text-emerald-600 uppercase text-xs">Tổng Ngày</th>
+                            <th class="p-4 text-center text-red-500 uppercase text-xs">Lỡ Chuỗi</th>
+                            <th class="p-4 text-left text-slate-500 uppercase text-xs">Ngày Lỡ</th>
                         </tr>
                     </thead>
                     <tbody id="admin-table-body" class="divide-y divide-slate-100"></tbody>
@@ -3076,11 +3079,74 @@
             } catch (e) { alert("Lỗi mạng!"); btn.innerText = "🗑️ Thu hồi"; btn.disabled = false; }
         }
 
+        function getMissedCheckinDates(history, campaignStartStr) {
+            const missed = [];
+            if (!campaignStartStr) return missed;
+            const start = new Date(campaignStartStr);
+            const todayStr = getLocalTodayStr();
+            let current = new Date(start);
+            const historySet = new Set(history || []);
+            let safetyLimit = 1000;
+            
+            while (safetyLimit-- > 0) {
+                const yyyy = current.getFullYear();
+                const mm = String(current.getMonth() + 1).padStart(2, '0');
+                const dd = String(current.getDate()).padStart(2, '0');
+                const dateStr = `${yyyy}-${mm}-${dd}`;
+                
+                if (dateStr >= todayStr) {
+                    break;
+                }
+                
+                if (!historySet.has(dateStr)) {
+                    missed.push(dateStr);
+                }
+                current.setDate(current.getDate() + 1);
+            }
+            return missed;
+        }
+
         function renderAdminTable(users) {
             let html = ''; const groupOptionsArr = ['', 'Nhóm 1', 'Nhóm 2', 'Nhóm 3', 'Nhóm 4', 'Nhóm 5', 'Nhóm 6', 'Nhóm 7', 'Nhóm 8', 'Nhóm 9', 'Nhóm 10'];
             users.forEach(u => {
-                const safeLogs = encodeURIComponent(JSON.stringify(u.dailyLogs || [])); let selectOptions = ''; groupOptionsArr.forEach(g => { selectOptions += `<option value="${g}" ${(u.group === g) ? 'selected' : ''}>${g || '-Trống-'}</option>`; });
-                html += `<tr class="hover:bg-slate-50 transition-colors"><td class="p-3 md:p-4 font-medium text-slate-800 whitespace-nowrap">${u.username}</td><td class="p-3 md:p-4 whitespace-nowrap"><select onchange="adminChangeGroup('${u._id}', this.value, this)" class="text-xs font-bold bg-purple-50 text-purple-600 border border-purple-200 rounded px-2 py-1.5 outline-none cursor-pointer">${selectOptions}</select></td><td class="p-3 md:p-4 whitespace-nowrap"><div class="flex justify-center"><button onclick="showUserLogs('${u._id}', '${safeLogs}')" class="bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1.5 rounded-lg font-bold text-xs shadow-sm flex items-center gap-1">👁️ Xem</button></div></td><td class="p-3 md:p-4 text-center text-amber-500 font-black text-base whitespace-nowrap">${u.maxStreak}</td><td class="p-3 md:p-4 text-center text-blue-500 font-black text-base whitespace-nowrap">${u.currentStreak}</td></tr>`;
+                const safeLogs = encodeURIComponent(JSON.stringify(u.dailyLogs || []));
+                let selectOptions = '';
+                groupOptionsArr.forEach(g => {
+                    selectOptions += `<option value="${g}" ${(u.group === g) ? 'selected' : ''}>${g || '-Trống-'}</option>`;
+                });
+                
+                const missedDates = getMissedCheckinDates(u.history, campaignStartDate);
+                const formattedMissed = missedDates.map(d => {
+                    const parts = d.split('-');
+                    return `${parts[2]}/${parts[1]}`;
+                }).join(', ');
+                const tooltipMissed = missedDates.map(d => {
+                    const parts = d.split('-');
+                    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+                }).join('\n');
+                
+                const missedHtml = formattedMissed 
+                    ? `<span class="cursor-help border-b border-dashed border-slate-300 font-medium text-red-400 hover:text-red-500" title="${tooltipMissed}">${formattedMissed}</span>` 
+                    : `<span class="text-slate-300">-</span>`;
+
+                html += `<tr class="hover:bg-slate-50 transition-colors">
+                    <td class="p-3 md:p-4 font-medium text-slate-800 whitespace-nowrap">${u.username}</td>
+                    <td class="p-3 md:p-4 whitespace-nowrap">
+                        <select onchange="adminChangeGroup('${u._id}', this.value, this)" class="text-xs font-bold bg-purple-50 text-purple-600 border border-purple-200 rounded px-2 py-1.5 outline-none cursor-pointer">
+                            ${selectOptions}
+                        </select>
+                    </td>
+                    <td class="p-3 md:p-4 whitespace-nowrap">
+                        <div class="flex justify-center">
+                            <button onclick="showUserLogs('${u._id}', '${safeLogs}')" class="bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1.5 rounded-lg font-bold text-xs shadow-sm flex items-center gap-1">👁️ Xem</button>
+                        </div>
+                    </td>
+                    <td class="p-3 md:p-4 text-center text-amber-500 font-black text-base whitespace-nowrap">${u.maxStreak}</td>
+                    <td class="p-3 md:p-4 text-center text-blue-500 font-black text-base whitespace-nowrap">${u.currentStreak}</td>
+                    <td class="p-3 md:p-4 text-center text-emerald-600 font-black text-base whitespace-nowrap">${u.totalCheckins || 0}</td>
+                    <td class="p-3 md:p-4 text-center text-red-500 font-black text-base whitespace-nowrap">${u.lostStreaks || 0}</td>
+                    <td class="p-3 md:p-4 text-left whitespace-nowrap text-xs">${missedHtml}</td>
+                </tr>`;
             });
             const tableBody = document.getElementById('admin-table-body');
             if (tableBody) tableBody.innerHTML = html;
