@@ -2075,6 +2075,38 @@
             const container = document.getElementById('sheep-pet-container');
             if (!container) return;
 
+            // Đảm bảo tọa độ an toàn không bị NaN hoặc null
+            if (isNaN(petX) || petX === null) petX = 0;
+            if (isNaN(petY) || petY === null) petY = 0;
+            if (isNaN(targetX) || targetX === null) targetX = petX;
+            if (isNaN(targetY) || targetY === null) targetY = petY;
+
+            // Kiểm tra khoảng cách đến đàn Harp để ẩn chiên con đi tránh cản trở gảy đàn
+            const harpEl = document.getElementById('harp-wrapper');
+            let isNearHarp = false;
+            if (harpEl) {
+                const rect = harpEl.getBoundingClientRect();
+                if (rect.width > 0 && rect.height > 0) {
+                    const margin = 30; // Vùng đệm xung quanh đàn Harp
+                    const minX_harp = rect.left - margin;
+                    const maxX_harp = rect.right + margin;
+                    const minY_harp = rect.top - margin;
+                    const maxY_harp = rect.bottom + margin;
+
+                    const isMouseNear = (targetX >= minX_harp && targetX <= maxX_harp && targetY >= minY_harp && targetY <= maxY_harp);
+                    const isSheepNear = (petX >= minX_harp - 30 && petX <= maxX_harp && petY >= minY_harp - 30 && petY <= maxY_harp);
+                    isNearHarp = isMouseNear || isSheepNear;
+                }
+            }
+
+            if (isNearHarp) {
+                container.style.opacity = '0';
+                container.style.pointerEvents = 'none';
+            } else {
+                container.style.opacity = '1';
+                container.style.pointerEvents = 'auto';
+            }
+
             const dx = targetX - petX;
             const dy = targetY - petY;
             const dist = Math.hypot(dx, dy);
@@ -2091,12 +2123,15 @@
                 petY += stepY;
 
                 const minX = 0;
-                const maxX = window.innerWidth - SHEEP_WIDTH;
+                const maxX = (window.innerWidth || document.documentElement.clientWidth || 800) - SHEEP_WIDTH;
                 const minY = 0;
-                const maxY = window.innerHeight - SHEEP_HEIGHT;
+                const maxY = (window.innerHeight || document.documentElement.clientHeight || 600) - SHEEP_HEIGHT;
 
-                petX = Math.max(minX, Math.min(petX, maxX));
-                petY = Math.max(minY, Math.min(petY, maxY));
+                const safeMaxX = isNaN(maxX) || maxX < 0 ? 800 : maxX;
+                const safeMaxY = isNaN(maxY) || maxY < 0 ? 600 : maxY;
+
+                petX = Math.max(minX, Math.min(petX, safeMaxX));
+                petY = Math.max(minY, Math.min(petY, safeMaxY));
 
                 container.style.transform = `translate3d(${petX}px, ${petY}px, 0)`;
 
@@ -3694,17 +3729,42 @@
             const sheepContainer = document.getElementById('sheep-pet-container');
             if (sheepContainer) {
                 if (userData) {
-                    if (petX <= 0 || petY <= 0) {
+                    if (petX <= 0 || petY <= 0 || isNaN(petX) || isNaN(petY)) {
                         petX = (window.innerWidth || document.documentElement.clientWidth || 800) / 2;
                         petY = (window.innerHeight || document.documentElement.clientHeight || 600) / 2;
                         targetX = petX;
                         targetY = petY;
                     }
+
+                    // Kiểm tra khoảng cách đến đàn Harp để ẩn chiên con đi tránh cản trở gảy đàn
+                    const harpEl = document.getElementById('harp-wrapper');
+                    let isNearHarp = false;
+                    if (harpEl) {
+                        const rect = harpEl.getBoundingClientRect();
+                        if (rect.width > 0 && rect.height > 0) {
+                            const margin = 30; // Vùng đệm xung quanh đàn Harp
+                            const minX_harp = rect.left - margin;
+                            const maxX_harp = rect.right + margin;
+                            const minY_harp = rect.top - margin;
+                            const maxY_harp = rect.bottom + margin;
+
+                            const isMouseNear = (targetX >= minX_harp && targetX <= maxX_harp && targetY >= minY_harp && targetY <= maxY_harp);
+                            const isSheepNear = (petX >= minX_harp - 30 && petX <= maxX_harp && petY >= minY_harp - 30 && petY <= maxY_harp);
+                            isNearHarp = isMouseNear || isSheepNear;
+                        }
+                    }
+
                     sheepContainer.classList.remove('hidden');
                     sheepContainer.style.display = 'block';
                     void sheepContainer.offsetHeight; // Force reflow so transition works instantly
                     sheepContainer.style.transform = `translate3d(${petX}px, ${petY}px, 0)`;
-                    sheepContainer.style.opacity = '1';
+                    if (isNearHarp) {
+                        sheepContainer.style.opacity = '0';
+                        sheepContainer.style.pointerEvents = 'none';
+                    } else {
+                        sheepContainer.style.opacity = '1';
+                        sheepContainer.style.pointerEvents = 'auto';
+                    }
 
                     // Force start animation loop once to position eyes and elements
                     if (!petAnimationId) {
@@ -3832,7 +3892,7 @@
                 </button>
                 <div id="garden-journal-list" class="hidden mt-2 max-h-40 overflow-y-auto flex flex-col gap-2 pr-1"></div>
             </div>
-        
+        </div>
     </div>
 
     <!-- THÚ CƯNG CHIÊN CON ĐỒNG HÀNH -->
