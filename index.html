@@ -2246,7 +2246,8 @@
             isPetting = true;
 
             const container = document.getElementById('sheep-pet-container');
-            container.classList.add('sheep-bounce');
+            const avatarWrapper = document.getElementById('sheep-avatar-wrapper');
+            if (avatarWrapper) avatarWrapper.classList.add('sheep-bounce');
 
             const pupilL = document.getElementById('sheep-pupil-l');
             const pupilR = document.getElementById('sheep-pupil-r');
@@ -2265,7 +2266,7 @@
             }
 
             setTimeout(() => {
-                container.classList.remove('sheep-bounce');
+                if (avatarWrapper) avatarWrapper.classList.remove('sheep-bounce');
                 if (pupilL) pupilL.setAttribute('r', '1.8');
                 if (pupilR) pupilR.setAttribute('r', '1.8');
                 cheeks.forEach(c => c.setAttribute('opacity', '0.4'));
@@ -3838,61 +3839,63 @@
     <div id="sheep-pet-container" class="hidden">
         <div id="sheep-bubble" class="sheep-bubble">Beee~ Chào bạn! 🐑</div>
 
-        <svg viewBox="0 0 80 80" width="80" height="80" class="drop-shadow-md overflow-visible">
-            <!-- Đôi cánh thiên sứ (Mốc 30 ngày) -->
-            <g id="sheep-angel-wings" class="hidden">
-                <path class="sheep-wing-l" d="M 26 42 C 16 42, 10 32, 13 22 C 20 22, 24 32, 26 42" fill="#f8fafc"
-                    stroke="#cbd5e1" stroke-width="1" />
-                <path class="sheep-wing-r" d="M 54 42 C 64 42, 70 32, 67 22 C 60 22, 56 32, 54 42" fill="#f8fafc"
-                    stroke="#cbd5e1" stroke-width="1" />
-            </g>
+        <div id="sheep-avatar-wrapper" style="transform-origin: bottom center; will-change: transform;">
+            <svg viewBox="0 0 80 80" width="80" height="80" class="drop-shadow-md overflow-visible">
+                <!-- Đôi cánh thiên sứ (Mốc 30 ngày) -->
+                <g id="sheep-angel-wings" class="hidden">
+                    <path class="sheep-wing-l" d="M 26 42 C 16 42, 10 32, 13 22 C 20 22, 24 32, 26 42" fill="#f8fafc"
+                        stroke="#cbd5e1" stroke-width="1" />
+                    <path class="sheep-wing-r" d="M 54 42 C 64 42, 70 32, 67 22 C 60 22, 56 32, 54 42" fill="#f8fafc"
+                        stroke="#cbd5e1" stroke-width="1" />
+                </g>
 
-            <!-- Chân -->
-            <rect x="27" y="55" width="4" height="12" rx="2" fill="#475569" />
-            <rect x="34" y="55" width="4" height="12" rx="2" fill="#475569" />
-            <rect x="42" y="55" width="4" height="12" rx="2" fill="#475569" />
-            <rect x="49" y="55" width="4" height="12" rx="2" fill="#475569" />
+                <!-- Chân -->
+                <rect x="27" y="55" width="4" height="12" rx="2" fill="#475569" />
+                <rect x="34" y="55" width="4" height="12" rx="2" fill="#475569" />
+                <rect x="42" y="55" width="4" height="12" rx="2" fill="#475569" />
+                <rect x="49" y="55" width="4" height="12" rx="2" fill="#475569" />
 
-            <!-- Thân bông len -->
-            <path
-                d="M 40 22 C 30 22, 22 30, 22 40 C 22 44, 24 48, 27 50 C 24 53, 25 58, 29 60 C 33 62, 38 61, 40 59 C 42 61, 47 62, 51 60 C 55 58, 56 53, 53 50 C 56 48, 58 44, 58 40 C 58 30, 50 22, 40 22 Z"
-                fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5" />
+                <!-- Thân bông len -->
+                <path
+                    d="M 40 22 C 30 22, 22 30, 22 40 C 22 44, 24 48, 27 50 C 24 53, 25 58, 29 60 C 33 62, 38 61, 40 59 C 42 61, 47 62, 51 60 C 55 58, 56 53, 53 50 C 56 48, 58 44, 58 40 C 58 30, 50 22, 40 22 Z"
+                    fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5" />
 
-            <!-- Đầu -->
-            <rect x="28" y="28" width="24" height="24" rx="10" fill="#fed7aa" />
-            <!-- Đôi tai -->
-            <path d="M 28 32 C 22 32, 22 44, 28 40 Z" fill="#fdba74" />
-            <path d="M 52 32 C 58 32, 58 44, 52 40 Z" fill="#fdba74" />
+                <!-- Đầu -->
+                <rect x="28" y="28" width="24" height="24" rx="10" fill="#fed7aa" />
+                <!-- Đôi tai -->
+                <path d="M 28 32 C 22 32, 22 44, 28 40 Z" fill="#fdba74" />
+                <path d="M 52 32 C 58 32, 58 44, 52 40 Z" fill="#fdba74" />
 
-            <!-- Má hồng -->
-            <ellipse cx="33" cy="46" rx="3" ry="1.5" fill="#f43f5e" opacity="0.4" />
-            <ellipse cx="47" cy="46" rx="3" ry="1.5" fill="#f43f5e" opacity="0.4" />
+                <!-- Má hồng -->
+                <ellipse cx="33" cy="46" rx="3" ry="1.5" fill="#f43f5e" opacity="0.4" />
+                <ellipse cx="47" cy="46" rx="3" ry="1.5" fill="#f43f5e" opacity="0.4" />
 
-            <!-- Mắt và Con ngươi -->
-            <circle cx="34" cy="38" r="3.5" fill="#ffffff" />
-            <circle id="sheep-pupil-l" cx="34" cy="38" r="1.8" fill="#1e293b" />
-            <circle cx="46" cy="38" r="3.5" fill="#ffffff" />
-            <circle id="sheep-pupil-r" cx="46" cy="38" r="1.8" fill="#1e293b" />
+                <!-- Mắt và Con ngươi -->
+                <circle cx="34" cy="38" r="3.5" fill="#ffffff" />
+                <circle id="sheep-pupil-l" cx="34" cy="38" r="1.8" fill="#1e293b" />
+                <circle cx="46" cy="38" r="3.5" fill="#ffffff" />
+                <circle id="sheep-pupil-r" cx="46" cy="38" r="1.8" fill="#1e293b" />
 
-            <!-- Miệng -->
-            <path d="M 38 45 Q 40 47, 42 45" stroke="#475569" stroke-width="1.5" stroke-linecap="round" fill="none" />
+                <!-- Miệng -->
+                <path d="M 38 45 Q 40 47, 42 45" stroke="#475569" stroke-width="1.5" stroke-linecap="round" fill="none" />
 
-            <!-- Vòng hoa (Mốc 15 ngày) -->
-            <g id="sheep-flower-crown" class="hidden">
-                <circle cx="33" cy="27" r="2.5" fill="#f472b6" />
-                <circle cx="40" cy="25" r="2.5" fill="#60a5fa" />
-                <circle cx="47" cy="27" r="2.5" fill="#34d399" />
-                <path d="M 30 28 Q 40 24, 50 28" stroke="#4ade80" stroke-width="1.2" fill="none" />
-            </g>
+                <!-- Vòng hoa (Mốc 15 ngày) -->
+                <g id="sheep-flower-crown" class="hidden">
+                    <circle cx="33" cy="27" r="2.5" fill="#f472b6" />
+                    <circle cx="40" cy="25" r="2.5" fill="#60a5fa" />
+                    <circle cx="47" cy="27" r="2.5" fill="#34d399" />
+                    <path d="M 30 28 Q 40 24, 50 28" stroke="#4ade80" stroke-width="1.2" fill="none" />
+                </g>
 
-            <!-- Vương miện (Mốc 60 ngày) -->
-            <g id="sheep-crown" class="hidden">
-                <path d="M 33 24 L 35 15 L 40 20 L 45 15 L 47 24 Z" fill="#fbbf24" stroke="#d97706" stroke-width="1" />
-                <circle cx="35" cy="14" r="1" fill="#ef4444" />
-                <circle cx="40" cy="19" r="1" fill="#ef4444" />
-                <circle cx="45" cy="14" r="1" fill="#ef4444" />
-            </g>
-        </svg>
+                <!-- Vương miện (Mốc 60 ngày) -->
+                <g id="sheep-crown" class="hidden">
+                    <path d="M 33 24 L 35 15 L 40 20 L 45 15 L 47 24 Z" fill="#fbbf24" stroke="#d97706" stroke-width="1" />
+                    <circle cx="35" cy="14" r="1" fill="#ef4444" />
+                    <circle cx="40" cy="19" r="1" fill="#ef4444" />
+                    <circle cx="45" cy="14" r="1" fill="#ef4444" />
+                </g>
+            </svg>
+        </div>
     </div>
 </body>
 
