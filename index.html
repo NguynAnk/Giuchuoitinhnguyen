@@ -900,7 +900,7 @@
         <div id="admin-modal-content"
             class="bg-white rounded-3xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden">
             <div class="p-4 border-b border-slate-100 flex justify-between bg-slate-50 items-center">
-                <h2 class="text-xl font-bold text-red-600">Bảng Quản Trị (Admin)</h2>
+                <h2 class="text-xl font-bold text-red-600">Bảng Quản Trị (Admin) - v1.1</h2>
                 <button id="btn-close-admin" class="font-bold text-slate-400 hover:text-slate-600 px-2">✕</button>
             </div>
 
@@ -3087,17 +3087,17 @@
             let current = new Date(start);
             const historySet = new Set(history || []);
             let safetyLimit = 1000;
-            
+
             while (safetyLimit-- > 0) {
                 const yyyy = current.getFullYear();
                 const mm = String(current.getMonth() + 1).padStart(2, '0');
                 const dd = String(current.getDate()).padStart(2, '0');
                 const dateStr = `${yyyy}-${mm}-${dd}`;
-                
+
                 if (dateStr >= todayStr) {
                     break;
                 }
-                
+
                 if (!historySet.has(dateStr)) {
                     missed.push(dateStr);
                 }
@@ -3114,7 +3114,7 @@
                 groupOptionsArr.forEach(g => {
                     selectOptions += `<option value="${g}" ${(u.group === g) ? 'selected' : ''}>${g || '-Trống-'}</option>`;
                 });
-                
+
                 const missedDates = getMissedCheckinDates(u.history, campaignStartDate);
                 const formattedMissed = missedDates.map(d => {
                     const parts = d.split('-');
@@ -3124,9 +3124,9 @@
                     const parts = d.split('-');
                     return `${parts[2]}/${parts[1]}/${parts[0]}`;
                 }).join('\n');
-                
-                const missedHtml = formattedMissed 
-                    ? `<span class="cursor-help border-b border-dashed border-slate-300 font-medium text-red-400 hover:text-red-500" title="${tooltipMissed}">${formattedMissed}</span>` 
+
+                const missedHtml = formattedMissed
+                    ? `<span class="cursor-help border-b border-dashed border-slate-300 font-medium text-red-400 hover:text-red-500" title="${tooltipMissed}">${formattedMissed}</span>`
                     : `<span class="text-slate-300">-</span>`;
 
                 html += `<tr class="hover:bg-slate-50 transition-colors">
@@ -3357,7 +3357,7 @@
                     void sheepContainer.offsetHeight; // Force reflow so transition works instantly
                     sheepContainer.style.transform = `translate3d(${petX}px, ${petY}px, 0)`;
                     sheepContainer.style.opacity = '1';
-                    
+
                     // Force start animation loop once to position eyes and elements
                     if (!petAnimationId) {
                         isMoving = true;
