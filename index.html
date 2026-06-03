@@ -473,9 +473,204 @@
             transition: stroke 0.3s, stroke-width 0.2s;
             cursor: pointer;
         }
+
         .harp-string:hover {
             stroke: #fde047 !important;
             stroke-width: 4px !important;
+        }
+
+        /* --- CẤU HÌNH THÚ CƯNG CHIÊN CON (SHEEP PET) --- */
+        #sheep-pet-container {
+            position: fixed;
+            z-index: 90;
+            width: 80px;
+            height: 80px;
+            will-change: transform;
+            pointer-events: auto;
+            transform-origin: bottom center;
+            opacity: 0;
+            display: none;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .sheep-bounce {
+            animation: sheep-jump 0.4s ease-out 1;
+        }
+
+        @keyframes sheep-jump {
+
+            0%,
+            100% {
+                transform: scale(1) translateY(0);
+            }
+
+            50% {
+                transform: scale(1.1, 0.9) translateY(-15px);
+            }
+        }
+
+        /* Bong bóng thoại chibi */
+        .sheep-bubble {
+            position: absolute;
+            bottom: 85px;
+            left: 50%;
+            transform: translateX(-50%) scale(0.8) translateY(10px);
+            width: 140px;
+            background: white;
+            border: 2px solid #fbcfe8;
+            border-radius: 16px;
+            padding: 8px 10px;
+            font-size: 10px;
+            font-weight: bold;
+            color: #db2777;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .sheep-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 8px 8px 0;
+            border-style: solid;
+            border-color: white transparent;
+            display: block;
+            width: 0;
+        }
+
+        .sheep-bubble::before {
+            content: '';
+            position: absolute;
+            bottom: -11px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 9px 9px 0;
+            border-style: solid;
+            border-color: #fbcfe8 transparent;
+            display: block;
+            width: 0;
+            z-index: -1;
+        }
+
+        .sheep-bubble.show {
+            opacity: 1;
+            transform: translateX(-50%) scale(1) translateY(0);
+        }
+
+        /* Hoạt ảnh vỗ cánh thiên thần chiên */
+        @keyframes sheep-wing-flap {
+
+            0%,
+            100% {
+                transform: rotate(0deg);
+            }
+
+            50% {
+                transform: rotate(-15deg) translateY(-2px);
+            }
+        }
+
+        .sheep-wing-l {
+            animation: sheep-wing-flap 1.2s ease-in-out infinite;
+            transform-origin: 30px 45px;
+        }
+
+        .sheep-wing-r {
+            animation: sheep-wing-flap 1.2s ease-in-out infinite alternate;
+            transform-origin: 50px 45px;
+        }
+
+        /* Hạt tim bay */
+        .sheep-heart-particle {
+            position: fixed;
+            font-size: 16px;
+            color: #ec4899;
+            pointer-events: none;
+            z-index: 95;
+            transition: all 0.8s ease-out;
+        }
+
+        /* --- VƯỜN CÂY TĨNH NGUYỆN (GARDEN) --- */
+        .pot-wiggle {
+            animation: pot-wiggle-anim 0.6s ease-in-out;
+        }
+
+        @keyframes pot-wiggle-anim {
+
+            0%,
+            100% {
+                transform: rotate(0deg);
+            }
+
+            20%,
+            60% {
+                transform: rotate(-6deg);
+            }
+
+            40%,
+            80% {
+                transform: rotate(6deg);
+            }
+        }
+
+        .water-drop {
+            position: absolute;
+            background: #38bdf8;
+            width: 6px;
+            height: 10px;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            pointer-events: none;
+            opacity: 0.8;
+            animation: drop-fall 0.8s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
+        }
+
+        @keyframes drop-fall {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 0.9;
+            }
+
+            90% {
+                transform: translateY(110px) scale(0.8);
+                opacity: 0.9;
+            }
+
+            100% {
+                transform: translateY(115px) scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        .watering-can-anim {
+            animation: tilt-can 2.5s ease-in-out forwards;
+        }
+
+        @keyframes tilt-can {
+            0% {
+                transform: translate(50px, -50px) rotate(0deg);
+                opacity: 0;
+            }
+
+            20% {
+                transform: translate(10px, -20px) rotate(-35deg);
+                opacity: 1;
+            }
+
+            80% {
+                transform: translate(10px, -20px) rotate(-35deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translate(50px, -50px) rotate(0deg);
+                opacity: 0;
+            }
         }
     </style>
 </head>
@@ -970,6 +1165,9 @@
                 <button id="btn-open-feedback"
                     class="text-amber-600 bg-amber-50 px-2.5 py-1.5 rounded-lg border border-amber-200 font-bold shadow-sm">💡
                     Góp ý</button>
+                <button id="btn-open-garden"
+                    class="text-green-600 bg-green-50 px-2.5 py-1.5 rounded-lg border border-green-200 font-bold shadow-sm flex items-center gap-1 cursor-pointer">🪴
+                    Vườn Cây</button>
                 <div
                     class="text-amber-600 bg-amber-50 px-2.5 py-1.5 rounded-lg border border-amber-100 flex items-center">
                     Kỷ lục: <span id="ui-max-streak" class="font-bold ml-1">0</span></div>
@@ -979,7 +1177,8 @@
                     class="hidden text-white bg-red-500 px-3 py-1.5 rounded-lg font-bold shadow-md active:scale-95">Bảng
                     Admin</button>
                 <button id="btn-toggle-harp-sound"
-                    class="text-slate-500 hover:text-indigo-500 bg-slate-50 px-2.5 py-1.5 rounded-lg border font-bold cursor-pointer transition-colors flex items-center gap-1">🔊 Đàn Harp</button>
+                    class="text-slate-500 hover:text-indigo-500 bg-slate-50 px-2.5 py-1.5 rounded-lg border font-bold cursor-pointer transition-colors flex items-center gap-1">🔊
+                    Đàn Harp</button>
                 <button id="btn-open-settings"
                     class="text-slate-500 hover:text-blue-500 bg-slate-50 px-2.5 py-1.5 rounded-lg border font-bold cursor-pointer">⚙️
                     Cài đặt</button>
@@ -1022,10 +1221,12 @@
                             <div id="harp-glow" class="absolute inset-0 rounded-full blur-3xl hidden"></div>
                             <div id="float-lv"
                                 class="absolute left-[-20px] top-[20%] text-red-500 font-black flex flex-col items-center opacity-0 pointer-events-none z-50">
-                                <span class="text-2xl">+1 LV</span></div>
+                                <span class="text-2xl">+1 LV</span>
+                            </div>
                             <div id="float-xp"
                                 class="absolute right-[-20px] top-[20%] text-blue-500 font-black flex flex-col items-center opacity-0 pointer-events-none z-50">
-                                <span class="text-2xl">+1 XP</span></div>
+                                <span class="text-2xl">+1 XP</span>
+                            </div>
                             <svg id="harp-svg" viewBox="0 0 160 180"
                                 class="w-48 h-48 relative z-10 transition-all duration-1000 scale-90 opacity-80 overflow-visible">
                                 <g class="harp-halo"
@@ -1063,13 +1264,27 @@
                                     <line class="harp-path harp-stroke-primary" x1="12" y1="45" x2="108" y2="45"
                                         stroke-width="8" />
                                     <g id="harp-strings-container">
-                                        <path id="harp-string-0" class="harp-string" d="M 30 45 L 30 100" stroke="var(--harp-secondary)" stroke-width="2.5" stroke-linecap="round" fill="none" />
-                                        <path id="harp-string-1" class="harp-string" d="M 40 45 L 40 132" stroke="var(--harp-secondary)" stroke-width="2.5" stroke-linecap="round" fill="none" />
-                                        <path id="harp-string-2" class="harp-string" d="M 50 45 L 50 137" stroke="var(--harp-secondary)" stroke-width="2.5" stroke-linecap="round" fill="none" />
-                                        <path id="harp-string-3" class="harp-string" d="M 60 45 L 60 139" stroke="var(--harp-secondary)" stroke-width="2.5" stroke-linecap="round" fill="none" />
-                                        <path id="harp-string-4" class="harp-string" d="M 70 45 L 70 137" stroke="var(--harp-secondary)" stroke-width="2.5" stroke-linecap="round" fill="none" />
-                                        <path id="harp-string-5" class="harp-string" d="M 80 45 L 80 132" stroke="var(--harp-secondary)" stroke-width="2.5" stroke-linecap="round" fill="none" />
-                                        <path id="harp-string-6" class="harp-string" d="M 90 45 L 90 100" stroke="var(--harp-secondary)" stroke-width="2.5" stroke-linecap="round" fill="none" />
+                                        <path id="harp-string-0" class="harp-string" d="M 30 45 L 30 100"
+                                            stroke="var(--harp-secondary)" stroke-width="2.5" stroke-linecap="round"
+                                            fill="none" />
+                                        <path id="harp-string-1" class="harp-string" d="M 40 45 L 40 132"
+                                            stroke="var(--harp-secondary)" stroke-width="2.5" stroke-linecap="round"
+                                            fill="none" />
+                                        <path id="harp-string-2" class="harp-string" d="M 50 45 L 50 137"
+                                            stroke="var(--harp-secondary)" stroke-width="2.5" stroke-linecap="round"
+                                            fill="none" />
+                                        <path id="harp-string-3" class="harp-string" d="M 60 45 L 60 139"
+                                            stroke="var(--harp-secondary)" stroke-width="2.5" stroke-linecap="round"
+                                            fill="none" />
+                                        <path id="harp-string-4" class="harp-string" d="M 70 45 L 70 137"
+                                            stroke="var(--harp-secondary)" stroke-width="2.5" stroke-linecap="round"
+                                            fill="none" />
+                                        <path id="harp-string-5" class="harp-string" d="M 80 45 L 80 132"
+                                            stroke="var(--harp-secondary)" stroke-width="2.5" stroke-linecap="round"
+                                            fill="none" />
+                                        <path id="harp-string-6" class="harp-string" d="M 90 45 L 90 100"
+                                            stroke="var(--harp-secondary)" stroke-width="2.5" stroke-linecap="round"
+                                            fill="none" />
                                     </g>
                                 </g>
                                 <g id="harp-sparkles" class="opacity-0 transition-opacity duration-1000">
@@ -1365,7 +1580,7 @@
             261.63, // C4
             220.00, // A3
             196.00, // G3
-            
+
             196.00, // G3
             261.63, // C4
             329.63, // E4
@@ -1373,7 +1588,7 @@
             329.63, // E4
             293.66, // D4
             392.00, // G4
-            
+
             329.63, // E4
             392.00, // G4
             329.63, // E4
@@ -1385,7 +1600,7 @@
             261.63, // C4
             220.00, // A3
             196.00, // G3
-            
+
             196.00, // G3
             261.63, // C4
             329.63, // E4
@@ -1402,40 +1617,40 @@
                 const osc = globalAudioCtx.createOscillator();
                 const gainNode = globalAudioCtx.createGain();
                 const filter = globalAudioCtx.createBiquadFilter();
-                
+
                 osc.type = 'triangle'; // Âm trầm ấm, tròn trịa
                 osc.frequency.setValueAtTime(freq, now);
-                
+
                 // Lowpass Filter quét nhanh từ sáng xuống tối để mô phỏng dây gảy thật
                 filter.type = 'lowpass';
                 filter.Q.setValueAtTime(2.0, now);
                 filter.frequency.setValueAtTime(freq * 5, now);
                 filter.frequency.exponentialRampToValueAtTime(freq * 1.5, now + 0.3);
-                
+
                 // Gain Envelope (Attack cực ngắn tránh tiếng bụp, Decay dài tắt dần)
                 gainNode.gain.setValueAtTime(0, now);
                 gainNode.gain.linearRampToValueAtTime(0.25, now + 0.015);
                 gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration);
-                
+
                 // Tạo Delay vang vọng nhẹ tựa giáo đường (Cathedral Reverb)
                 const delay = globalAudioCtx.createDelay();
                 const delayGain = globalAudioCtx.createGain();
                 delay.delayTime.setValueAtTime(0.28, now);
                 delayGain.gain.setValueAtTime(0.22, now); // Phản hồi 22%
-                
+
                 osc.connect(filter);
                 filter.connect(gainNode);
                 gainNode.connect(globalAudioCtx.destination);
-                
+
                 // Nối qua mạch Delay tạo chiều sâu
                 gainNode.connect(delay);
                 delay.connect(delayGain);
                 delayGain.connect(delay);
                 delayGain.connect(globalAudioCtx.destination);
-                
+
                 osc.start(now);
                 osc.stop(now + duration + 0.2);
-            } catch (e) {}
+            } catch (e) { }
         }
 
         function playHarpSound(stringId) {
@@ -1518,15 +1733,15 @@
                     active = true;
                     vib.phase += vib.freq;
                     vib.amplitude *= vib.decay;
-                    
+
                     const currentOffset = vib.amplitude * Math.sin(vib.phase);
-                    
+
                     const x = geom.x;
                     const y1 = geom.y1;
                     const y2 = geom.y2;
                     const y_mid = (y1 + y2) / 2;
                     const x_mid = x + currentOffset;
-                    
+
                     // Vẽ dây võng theo đường cong Quadratic Bezier Curve Q
                     el.setAttribute('d', `M ${x} ${y1} Q ${x_mid} ${y_mid} ${x} ${y2}`);
                 } else {
@@ -1540,37 +1755,37 @@
         function createHarpSparkle(stringId) {
             const wrapper = document.getElementById('harp-wrapper');
             if (!wrapper) return;
-            
+
             const geom = stringGeometries[stringId];
             // Tính toán phần trăm tương đối trong SVG 160x180 để định vị tuyệt đối trên wrapper
             const xPercent = ((geom.x + 20) / 160) * 100;
             const yPercent = (((geom.y1 + geom.y2) / 2 + 10) / 180) * 100;
-            
+
             const colors = ['#fef08a', '#fde047', '#a5b4fc', '#818cf8', '#f472b6', '#38bdf8'];
             const chars = ['✦', '✧', '★', '✨', '•'];
-            
+
             for (let i = 0; i < 4; i++) {
                 const particle = document.createElement('div');
                 particle.className = 'absolute pointer-events-none text-xs z-50 transition-all duration-1000 ease-out select-none';
                 particle.innerText = chars[Math.floor(Math.random() * chars.length)];
                 particle.style.color = colors[Math.floor(Math.random() * colors.length)];
-                
+
                 particle.style.left = `${xPercent}%`;
                 particle.style.top = `${yPercent}%`;
                 particle.style.opacity = '1';
                 particle.style.transform = 'translate(-50%, -50%) scale(0.5)';
-                
+
                 wrapper.appendChild(particle);
-                
+
                 const dx = (Math.random() - 0.5) * 45; // Bay ngang lệch
                 const dy = -30 - Math.random() * 45;   // Bay lên trên
                 const scale = 0.6 + Math.random() * 0.9;
-                
+
                 requestAnimationFrame(() => {
                     particle.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(${scale})`;
                     particle.style.opacity = '0';
                 });
-                
+
                 setTimeout(() => particle.remove(), 1000);
             }
         }
@@ -1601,11 +1816,11 @@
 
             const svg = document.getElementById('harp-svg');
             if (!svg) return;
-            
+
             const coords = getSVGCoords(svg, e);
             const curX = coords.x;
             const curY = coords.y;
-            
+
             if (lastMouseX !== null) {
                 HARP_STRINGS.forEach(str => {
                     // Kiểm tra xem chuột/ngón tay có cắt ngang đường dọc x của dây đàn không
@@ -1615,7 +1830,7 @@
                         const minY = Math.min(lastMouseY, curY);
                         const maxY = Math.max(lastMouseY, curY);
                         const overlap = (minY <= str.y2 && maxY >= str.y1) || (curY >= str.y1 && curY <= str.y2);
-                        
+
                         if (overlap) {
                             playHarpSound(str.id);
                             vibrateString(str.id);
@@ -1624,7 +1839,7 @@
                     }
                 });
             }
-            
+
             lastMouseX = curX;
             lastMouseY = curY;
         }
@@ -1720,6 +1935,442 @@
             localStorage.removeItem('tinhnguyen_session');
             document.getElementById('auth-main-container')?.classList.remove('hidden');
             document.getElementById('slow-network-warning')?.classList.add('hidden');
+        }
+
+        // --- LOGIC CHÚ CHIÊN CON ĐỒNG HÀNH & VƯỜN CÂY TĨNH NGUYỆN ---
+        let petX = window.innerWidth / 2;
+        let petY = window.innerHeight / 2;
+        let targetX = petX;
+        let targetY = petY;
+        let isMoving = false;
+        let isPetting = false;
+        let petAnimationId = null;
+        let lastSpeechTime = 0;
+        const LERP_FACTOR = 0.06;
+        const SHEEP_SAFE_DISTANCE = 50;
+        const SHEEP_WIDTH = 80;
+        const SHEEP_HEIGHT = 80;
+
+        const sheepQuotes = [
+            "Beee~ Ấm áp quá! 🐑",
+            "Cảm ơn bạn đã xoa đầu mình! ❤️",
+            "Hôm nay bạn đã tĩnh nguyện chưa? ✨",
+            "Bạn thật là chăm chỉ! Giỏi lắm! 🌟",
+            "Cùng nhau giữ chuỗi tĩnh nguyện nhé! 🪴",
+            "Beee~ Mình thích được xoa đầu lắm! 🥰",
+            "Tĩnh nguyện mỗi ngày để nuôi dưỡng tâm hồn! 🙏"
+        ];
+
+        function updateTargetPosition(x, y) {
+            targetX = x;
+            targetY = y;
+            if (!isMoving && !isPetting) {
+                isMoving = true;
+                animateSheep();
+            }
+        }
+
+        function animateSheep() {
+            if (!isMoving && !isPetting) {
+                petAnimationId = null;
+                return;
+            }
+
+            const container = document.getElementById('sheep-pet-container');
+            if (!container) return;
+
+            const dx = targetX - petX;
+            const dy = targetY - petY;
+            const dist = Math.hypot(dx, dy);
+
+            if (dist > SHEEP_SAFE_DISTANCE && !isPetting) {
+                isMoving = true;
+                const desiredX = targetX - (dx / dist) * SHEEP_SAFE_DISTANCE;
+                const desiredY = targetY - (dy / dist) * SHEEP_SAFE_DISTANCE;
+
+                const stepX = (desiredX - petX) * LERP_FACTOR;
+                const stepY = (desiredY - petY) * LERP_FACTOR;
+
+                petX += stepX;
+                petY += stepY;
+
+                const minX = 0;
+                const maxX = window.innerWidth - SHEEP_WIDTH;
+                const minY = 0;
+                const maxY = window.innerHeight - SHEEP_HEIGHT;
+
+                petX = Math.max(minX, Math.min(petX, maxX));
+                petY = Math.max(minY, Math.min(petY, maxY));
+
+                container.style.transform = `translate3d(${petX}px, ${petY}px, 0)`;
+
+                const svgEl = container.querySelector('svg');
+                if (svgEl) {
+                    svgEl.style.transformOrigin = 'center';
+                    svgEl.style.transform = `scaleX(${dx >= 0 ? 1 : -1})`;
+                }
+
+                // Cập nhật con ngươi mắt nhìn theo hướng chuột/chạm
+                const sheepCenterX = petX + SHEEP_WIDTH / 2;
+                const sheepCenterY = petY + SHEEP_HEIGHT / 2;
+                const eyeDx = targetX - sheepCenterX;
+                const eyeDy = targetY - sheepCenterY;
+                const eyeDist = Math.hypot(eyeDx, eyeDy);
+
+                let offsetX = 0;
+                let offsetY = 0;
+                if (eyeDist > 0.1) {
+                    const maxOffset = 1.5;
+                    const currentOffset = Math.min(maxOffset, eyeDist * 0.01);
+                    offsetX = (eyeDx / eyeDist) * currentOffset;
+                    offsetY = (eyeDy / eyeDist) * currentOffset;
+                }
+
+                const pupilL = document.getElementById('sheep-pupil-l');
+                const pupilR = document.getElementById('sheep-pupil-r');
+                if (pupilL && pupilR) {
+                    const isFlipped = dx < 0;
+                    const finalOffsetX = isFlipped ? -offsetX : offsetX;
+                    pupilL.setAttribute('cx', (34 + finalOffsetX).toFixed(2));
+                    pupilL.setAttribute('cy', (38 + offsetY).toFixed(2));
+                    pupilR.setAttribute('cx', (46 + finalOffsetX).toFixed(2));
+                    pupilR.setAttribute('cy', (38 + offsetY).toFixed(2));
+                }
+            } else {
+                isMoving = false;
+            }
+
+            if (isMoving || isPetting) {
+                petAnimationId = requestAnimationFrame(animateSheep);
+            } else {
+                petAnimationId = null;
+            }
+        }
+
+        function spawnHearts() {
+            const container = document.getElementById('sheep-pet-container');
+            if (!container) return;
+
+            const rect = container.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+
+            for (let i = 0; i < 5; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'sheep-heart-particle';
+                heart.innerHTML = '❤️';
+                heart.style.left = centerX + 'px';
+                heart.style.top = centerY + 'px';
+
+                const angle = Math.random() * Math.PI * 2;
+                const speed = 40 + Math.random() * 40;
+                const vx = Math.cos(angle) * speed;
+                const vy = Math.sin(angle) * speed - 50;
+
+                document.body.appendChild(heart);
+
+                heart.offsetHeight; // trigger reflow
+
+                heart.style.transform = `translate3d(${vx}px, ${vy}px, 0) scale(${0.8 + Math.random() * 0.5})`;
+                heart.style.opacity = '0';
+
+                setTimeout(() => {
+                    heart.remove();
+                }, 800);
+            }
+        }
+
+        function showSheepBubble() {
+            const now = Date.now();
+            if (now - lastSpeechTime < 2000) return;
+            lastSpeechTime = now;
+
+            const bubble = document.getElementById('sheep-bubble');
+            if (!bubble) return;
+
+            const randomQuote = sheepQuotes[Math.floor(Math.random() * sheepQuotes.length)];
+            bubble.innerText = randomQuote;
+            bubble.classList.add('show');
+
+            setTimeout(() => {
+                bubble.classList.remove('show');
+            }, 3000);
+        }
+
+        function playCuteSheepSound() {
+            if (!globalAudioCtx) return;
+            if (globalAudioCtx.state === 'suspended') globalAudioCtx.resume();
+
+            try {
+                const now = globalAudioCtx.currentTime;
+
+                const osc = globalAudioCtx.createOscillator();
+                const lfo = globalAudioCtx.createOscillator();
+                const lfoGain = globalAudioCtx.createGain();
+
+                const filter = globalAudioCtx.createBiquadFilter();
+                const gainNode = globalAudioCtx.createGain();
+
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(320, now);
+                osc.frequency.exponentialRampToValueAtTime(240, now + 0.5);
+
+                lfo.type = 'sawtooth';
+                lfo.frequency.setValueAtTime(16, now);
+
+                lfoGain.gain.setValueAtTime(15, now);
+
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(1000, now);
+                filter.frequency.exponentialRampToValueAtTime(600, now + 0.5);
+
+                gainNode.gain.setValueAtTime(0.01, now);
+                gainNode.gain.linearRampToValueAtTime(0.15, now + 0.05);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+
+                lfo.connect(lfoGain);
+                lfoGain.connect(osc.frequency);
+
+                osc.connect(filter);
+                filter.connect(gainNode);
+                gainNode.connect(globalAudioCtx.destination);
+
+                lfo.start(now);
+                osc.start(now);
+
+                lfo.stop(now + 0.5);
+                osc.stop(now + 0.5);
+            } catch (e) {
+                console.error("Lỗi phát âm thanh chiên con:", e);
+            }
+        }
+
+        function triggerPetting() {
+            if (isPetting) return;
+            isPetting = true;
+
+            const container = document.getElementById('sheep-pet-container');
+            container.classList.add('sheep-bounce');
+
+            const pupilL = document.getElementById('sheep-pupil-l');
+            const pupilR = document.getElementById('sheep-pupil-r');
+            if (pupilL) pupilL.setAttribute('r', '0');
+            if (pupilR) pupilR.setAttribute('r', '0');
+
+            const cheeks = container.querySelectorAll('ellipse[fill="#f43f5e"]');
+            cheeks.forEach(c => c.setAttribute('opacity', '1'));
+
+            spawnHearts();
+            showSheepBubble();
+            playCuteSheepSound();
+
+            if (!petAnimationId) {
+                animateSheep();
+            }
+
+            setTimeout(() => {
+                container.classList.remove('sheep-bounce');
+                if (pupilL) pupilL.setAttribute('r', '1.8');
+                if (pupilR) pupilR.setAttribute('r', '1.8');
+                cheeks.forEach(c => c.setAttribute('opacity', '0.4'));
+                isPetting = false;
+            }, 1000);
+        }
+
+        function renderPlant(checkins) {
+            const container = document.getElementById('plant-growth');
+            const statusText = document.getElementById('plant-status-text');
+            if (!container || !statusText) return;
+
+            let html = '';
+            let status = '';
+            let desc = '';
+
+            if (checkins < 15) {
+                status = "Hạt mầm (0 - 14 ngày)";
+                desc = "Điểm danh tĩnh nguyện mỗi ngày để tưới nước giúp hạt mầm nảy mầm!";
+                html = `
+                    <path d="M 60 80 Q 55 72, 62 70 Q 64 74, 60 80" fill="#4ade80" stroke="#16a34a" stroke-width="1.5" />
+                    <path d="M 60 80 Q 65 74, 57 73 Q 56 78, 60 80" fill="#22c55e" stroke="#16a34a" stroke-width="1.5" />
+                    <path d="M 52 80 Q 60 77, 68 80" fill="none" stroke="#78350f" stroke-width="2" stroke-linecap="round" />
+                `;
+            } else if (checkins < 30) {
+                status = "Chồi non (15 - 29 ngày)";
+                desc = "Wow! Chồi non đã nhú lên rồi. Hãy tiếp tục tưới nước mỗi ngày nhé!";
+                html = `
+                    <path d="M 60 80 Q 58 68, 60 60" fill="none" stroke="#16a34a" stroke-width="3" stroke-linecap="round" />
+                    <path d="M 59 70 Q 48 66, 50 74 C 54 75, 58 72, 59 70" fill="#4ade80" stroke="#15803d" stroke-width="1.5" />
+                    <path d="M 60 65 Q 70 60, 68 68 C 64 70, 61 67, 60 65" fill="#22c55e" stroke="#15803d" stroke-width="1.5" />
+                `;
+            } else if (checkins < 45) {
+                status = "Cây trưởng thành (30 - 44 ngày)";
+                desc = "Cây tĩnh nguyện của bạn đang lớn nhanh và rất khỏe mạnh!";
+                html = `
+                    <path d="M 60 80 Q 57 60, 60 48" fill="none" stroke="#16a34a" stroke-width="3.5" stroke-linecap="round" />
+                    <path d="M 59 65 Q 50 58, 46 58" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" />
+                    <path d="M 60 56 Q 70 50, 74 52" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" />
+                    <path d="M 46 58 Q 38 52, 42 60 C 46 60, 46 58, 46 58" fill="#4ade80" stroke="#15803d" stroke-width="1.2" />
+                    <path d="M 74 52 Q 82 46, 78 54 C 74 54, 74 52, 74 52" fill="#22c55e" stroke="#15803d" stroke-width="1.2" />
+                    <path d="M 60 48 Q 52 42, 54 49 Q 60 50, 60 48" fill="#86efac" stroke="#15803d" stroke-width="1.2" />
+                    <path d="M 60 48 Q 68 42, 66 49 Q 60 50, 60 48" fill="#4ade80" stroke="#15803d" stroke-width="1.2" />
+                `;
+            } else if (checkins < 60) {
+                status = "Đơm nụ (45 - 59 ngày)";
+                desc = "Tuyệt vời! Những nụ hoa xinh xắn đầu tiên đã bắt đầu xuất hiện rồi.";
+                html = `
+                    <path d="M 60 80 Q 57 60, 60 42" fill="none" stroke="#16a34a" stroke-width="4" stroke-linecap="round" />
+                    <path d="M 59 65 Q 48 55, 42 56" fill="none" stroke="#16a34a" stroke-width="3" stroke-linecap="round" />
+                    <path d="M 60 54 Q 72 46, 76 48" fill="none" stroke="#16a34a" stroke-width="3" stroke-linecap="round" />
+                    <path d="M 42 56 Q 34 50, 38 58 C 42 58, 42 56, 42 56" fill="#22c55e" stroke="#15803d" stroke-width="1.2" />
+                    <path d="M 76 48 Q 84 42, 80 50 C 76 50, 76 48, 76 48" fill="#4ade80" stroke="#15803d" stroke-width="1.2" />
+                    <path d="M 60 42 Q 52 36, 54 43 Q 60 44, 60 42" fill="#86efac" stroke="#15803d" stroke-width="1.2" />
+                    <path d="M 60 42 Q 68 36, 66 43 Q 60 44, 60 42" fill="#4ade80" stroke="#15803d" stroke-width="1.2" />
+                    <circle cx="42" cy="56" r="3.5" fill="#f43f5e" stroke="#be123c" stroke-width="1" />
+                    <circle cx="76" cy="48" r="3.5" fill="#ec4899" stroke="#be123c" stroke-width="1" />
+                    <circle cx="60" cy="42" r="4" fill="#fbbf24" stroke="#d97706" stroke-width="1" />
+                `;
+            } else {
+                status = "Đơm hoa kết trái 🍎 (60+ ngày)";
+                desc = "Tuyệt phẩm tâm linh! Cây tĩnh nguyện đã đơm hoa kết trái ngọt ngào!";
+                html = `
+                    <path d="M 60 80 Q 57 58, 60 40" fill="none" stroke="#16a34a" stroke-width="4" stroke-linecap="round" />
+                    <path d="M 59 62 Q 46 52, 40 54" fill="none" stroke="#16a34a" stroke-width="3" stroke-linecap="round" />
+                    <path d="M 60 52 Q 74 44, 80 46" fill="none" stroke="#16a34a" stroke-width="3" stroke-linecap="round" />
+                    <path d="M 40 54 Q 32 46, 36 56 C 40 56, 40 54, 40 54" fill="#15803d" stroke="#166534" stroke-width="1.2" />
+                    <path d="M 80 46 Q 88 38, 84 48 C 80 48, 80 46, 80 46" fill="#15803d" stroke="#166534" stroke-width="1.2" />
+                    <path d="M 60 40 Q 50 32, 53 41 Q 60 42, 60 40" fill="#22c55e" stroke="#15803d" stroke-width="1.2" />
+                    <path d="M 60 40 Q 70 32, 67 41 Q 60 42, 60 40" fill="#22c55e" stroke="#15803d" stroke-width="1.2" />
+                    <circle cx="38" cy="58" r="6" fill="#ef4444" stroke="#b91c1c" stroke-width="1.2" />
+                    <path d="M 38 52 Q 41 53, 39 55" fill="none" stroke="#78350f" stroke-width="1.2" />
+                    <path d="M 39 52 Q 43 49, 41 53 Z" fill="#22c55e" />
+                    <circle cx="82" cy="50" r="6" fill="#ef4444" stroke="#b91c1c" stroke-width="1.2" />
+                    <path d="M 82 44 Q 85 45, 83 47" fill="none" stroke="#78350f" stroke-width="1.2" />
+                    <path d="M 83 44 Q 87 41, 85 45 Z" fill="#22c55e" />
+                    <circle cx="54" cy="34" r="4.5" fill="#fbcfe8" />
+                    <circle cx="66" cy="34" r="4.5" fill="#fbcfe8" />
+                    <circle cx="60" cy="28" r="4.5" fill="#fbcfe8" />
+                    <circle cx="60" cy="40" r="4.5" fill="#fbcfe8" />
+                    <circle cx="60" cy="34" r="4.5" fill="#fbbf24" stroke="#d97706" stroke-width="1" />
+                `;
+            }
+
+            container.innerHTML = html;
+            statusText.innerText = status;
+            document.getElementById('plant-description-text').innerText = desc;
+        }
+
+        let isWatering = false;
+        function triggerWatering() {
+            if (isWatering) return;
+
+            const msgEl = document.getElementById('garden-msg');
+            if (msgEl) msgEl.classList.add('hidden');
+
+            if (!userData || !userData.hasCheckedInToday) {
+                if (msgEl) {
+                    msgEl.innerText = "⚠️ Hôm nay bạn chưa tĩnh nguyện để có nước tưới cây nhé!";
+                    msgEl.classList.remove('hidden');
+                    setTimeout(() => msgEl.classList.add('hidden'), 3500);
+                }
+                return;
+            }
+
+            isWatering = true;
+            const btnWater = document.getElementById('btn-water-plant');
+            if (btnWater) btnWater.disabled = true;
+
+            const wateringCan = document.getElementById('watering-can');
+            const plantPot = document.getElementById('plant-pot');
+            const dropsContainer = document.getElementById('water-drops-container');
+            const plantSvg = document.getElementById('garden-plant-svg');
+
+            if (wateringCan) {
+                wateringCan.style.opacity = '1';
+                wateringCan.classList.remove('watering-can-anim');
+                wateringCan.offsetWidth;
+                wateringCan.classList.add('watering-can-anim');
+            }
+
+            const waterSound = document.getElementById('daily-sound');
+            if (waterSound) {
+                waterSound.currentTime = 0;
+                waterSound.play().catch(e => { });
+            }
+
+            let dropInterval = null;
+            setTimeout(() => {
+                if (plantPot) {
+                    plantPot.classList.remove('pot-wiggle');
+                    plantPot.offsetWidth;
+                    plantPot.classList.add('pot-wiggle');
+                }
+
+                if (plantSvg) {
+                    plantSvg.style.transition = 'transform 0.5s ease-out';
+                    plantSvg.style.transform = 'scale(1.08)';
+                    setTimeout(() => {
+                        plantSvg.style.transform = 'scale(1)';
+                    }, 800);
+                }
+
+                let count = 0;
+                dropInterval = setInterval(() => {
+                    if (count > 12) {
+                        clearInterval(dropInterval);
+                        return;
+                    }
+                    spawnWaterDrop(dropsContainer);
+                    count++;
+                }, 100);
+
+            }, 500);
+
+            setTimeout(() => {
+                if (wateringCan) {
+                    wateringCan.classList.remove('watering-can-anim');
+                    wateringCan.style.opacity = '0';
+                }
+                if (plantPot) {
+                    plantPot.classList.remove('pot-wiggle');
+                }
+                if (btnWater) {
+                    btnWater.disabled = false;
+                }
+                isWatering = false;
+            }, 2500);
+        }
+
+        function spawnWaterDrop(container) {
+            if (!container) return;
+            const drop = document.createElement('div');
+            drop.className = 'water-drop';
+
+            const startX = 85 + Math.random() * 15;
+            const startY = 55 + Math.random() * 5;
+
+            drop.style.left = startX + 'px';
+            drop.style.top = startY + 'px';
+
+            container.appendChild(drop);
+
+            setTimeout(() => {
+                drop.remove();
+            }, 800);
+        }
+
+        function closeGardenModal() {
+            const modal = document.getElementById('garden-modal');
+            const content = document.getElementById('garden-modal-content');
+            if (modal) {
+                modal.classList.remove('opacity-100');
+                if (content) {
+                    content.classList.remove('scale-100');
+                    content.classList.add('scale-95');
+                }
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 300);
+            }
         }
 
         // Binds an toàn cho tất cả các nút
@@ -2135,6 +2786,54 @@
                 } catch (e) { alert("Lỗi mạng!"); }
                 btn.innerText = "Lưu"; btn.disabled = false;
             });
+
+            // Sự kiện của Vườn Cây Tĩnh Nguyện
+            document.getElementById('btn-open-garden')?.addEventListener('click', () => {
+                if (!userData) return;
+
+                const modal = document.getElementById('garden-modal');
+                if (modal) {
+                    modal.classList.remove('hidden');
+                    modal.offsetHeight;
+                    modal.classList.add('opacity-100');
+                    const content = document.getElementById('garden-modal-content');
+                    if (content) {
+                        content.classList.remove('scale-95');
+                        content.classList.add('scale-100');
+                    }
+
+                    renderPlant(userData.totalCheckins);
+
+                    const btnWater = document.getElementById('btn-water-plant');
+                    if (btnWater) {
+                        if (userData.hasCheckedInToday) {
+                            btnWater.className = 'flex-1 py-3 rounded-xl font-bold transition-all active:scale-95 flex items-center justify-center gap-1.5 shadow-md bg-gradient-to-r from-blue-400 to-indigo-500 text-white hover:from-blue-500 hover:to-indigo-600 cursor-pointer';
+                        } else {
+                            btnWater.className = 'flex-1 py-3 rounded-xl font-bold flex items-center justify-center gap-1.5 shadow-md bg-slate-100 text-slate-400 cursor-not-allowed';
+                        }
+                    }
+                }
+            });
+
+            document.getElementById('btn-close-garden')?.addEventListener('click', closeGardenModal);
+            document.getElementById('garden-modal')?.addEventListener('click', (e) => {
+                if (e.target === document.getElementById('garden-modal')) {
+                    closeGardenModal();
+                }
+            });
+            document.getElementById('btn-water-plant')?.addEventListener('click', triggerWatering);
+
+            // Sự kiện Chú Chiên Con
+            window.addEventListener('mousemove', (e) => {
+                updateTargetPosition(e.clientX, e.clientY);
+            });
+            window.addEventListener('touchmove', (e) => {
+                if (e.touches && e.touches.length > 0) {
+                    updateTargetPosition(e.touches[0].clientX, e.touches[0].clientY);
+                }
+            }, { passive: true });
+
+            document.getElementById('sheep-pet-container')?.addEventListener('click', triggerPetting);
 
             // Khởi chạy ngầm sau khi window.onload xong
             checkAutoLogin();
@@ -2564,10 +3263,171 @@
                     restoreContainer.classList.add('hidden');
                 }
             }
+
+            // Quản lý Chú Chiên Con & phụ kiện
+            const sheepContainer = document.getElementById('sheep-pet-container');
+            if (sheepContainer) {
+                if (userData) {
+                    sheepContainer.classList.remove('hidden');
+                    sheepContainer.style.display = 'block';
+                    setTimeout(() => {
+                        sheepContainer.style.opacity = '1';
+                    }, 100);
+
+                    const streak = userData.currentStreak || 0;
+
+                    const flowerCrown = document.getElementById('sheep-flower-crown');
+                    const angelWings = document.getElementById('sheep-angel-wings');
+                    const goldCrown = document.getElementById('sheep-crown');
+
+                    if (flowerCrown) {
+                        if (streak >= 15) flowerCrown.classList.remove('hidden');
+                        else flowerCrown.classList.add('hidden');
+                    }
+
+                    if (angelWings) {
+                        if (streak >= 30) angelWings.classList.remove('hidden');
+                        else angelWings.classList.add('hidden');
+                    }
+
+                    if (goldCrown) {
+                        if (streak >= 60) goldCrown.classList.remove('hidden');
+                        else goldCrown.classList.add('hidden');
+                    }
+                } else {
+                    sheepContainer.style.opacity = '0';
+                    setTimeout(() => {
+                        sheepContainer.style.display = 'none';
+                        sheepContainer.classList.add('hidden');
+                    }, 500);
+                }
+            }
         }
 
         window.addEventListener('focus', () => { if (userData && userData.hasCheckedInToday) { const todayStr = getLocalTodayStr(); const historySet = new Set(userData.history || []); if (!historySet.has(todayStr)) { userData.hasCheckedInToday = false; updateUIFromData(); } } });
     </script>
+    <!-- MÀN HÌNH VƯỜN CÂY TĨNH NGUYỆN (USER) -->
+    <div id="garden-modal"
+        class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
+        <div id="garden-modal-content"
+            class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6 transform scale-95 transition-transform duration-300 flex flex-col relative overflow-hidden">
+
+            <!-- Icon trang trí nền bay nhẹ -->
+            <div class="absolute -right-6 -bottom-6 text-8xl opacity-5 pointer-events-none">🪴</div>
+
+            <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3 shrink-0">
+                <h3 class="text-xl font-bold text-green-600 flex items-center gap-2">🪴 Vườn Cây Tĩnh Nguyện</h3>
+                <button id="btn-close-garden"
+                    class="text-slate-400 hover:bg-slate-100 p-2 rounded-full transition-colors font-bold">✕</button>
+            </div>
+
+            <!-- Khung chậu cây -->
+            <div
+                class="relative w-48 h-48 mx-auto my-4 bg-gradient-to-b from-green-50/50 to-emerald-100/50 rounded-full border-4 border-green-200/80 flex items-center justify-center overflow-hidden shadow-inner">
+
+                <!-- Bình tưới nước ẩn/hiện hoạt ảnh -->
+                <div id="watering-can" class="absolute top-4 right-4 pointer-events-none opacity-0 transition-opacity"
+                    style="transform-origin: 40px 40px;">
+                    <svg viewBox="0 0 60 60" width="50" height="50">
+                        <path d="M 15 25 L 35 25 L 35 45 L 15 45 Z" fill="#059669" rx="3" />
+                        <path d="M 35 32 L 48 24 L 48 27 L 35 37" fill="#047857" />
+                        <path d="M 46 22 L 50 25 L 48 28 Z" fill="#34d399" />
+                        <path d="M 15 28 C 8 28, 8 42, 15 42" fill="none" stroke="#047857" stroke-width="3.5" />
+                    </svg>
+                </div>
+
+                <!-- Khu vực giọt nước rơi tự do -->
+                <div id="water-drops-container" class="absolute inset-0 pointer-events-none"></div>
+
+                <!-- Chậu cây SVG -->
+                <svg id="garden-plant-svg" viewBox="0 0 120 120" width="120" height="120" class="overflow-visible mt-6">
+                    <g id="plant-pot" style="transform-origin: 60px 105px;">
+                        <path d="M 45 85 L 75 85 L 70 108 L 50 108 Z" fill="#b45309" stroke="#78350f"
+                            stroke-width="1.5" />
+                        <rect x="42" y="80" width="36" height="6" rx="2" fill="#d97706" stroke="#78350f"
+                            stroke-width="1.5" />
+                        <ellipse cx="60" cy="81.5" rx="14" ry="1.5" fill="#451a03" />
+                    </g>
+                    <g id="plant-growth"></g>
+                </svg>
+            </div>
+
+            <div class="bg-slate-50 border border-slate-100 rounded-2xl p-4 text-center mb-4">
+                <p id="plant-status-text" class="text-sm font-black text-slate-700">Cây đang ở giai đoạn Hạt mầm</p>
+                <p id="plant-description-text" class="text-[11px] text-slate-500 mt-1">Điểm danh tĩnh nguyện mỗi ngày để
+                    tưới nước giúp cây phát triển và đơm hoa kết trái.</p>
+            </div>
+
+            <div class="flex gap-3">
+                <button id="btn-water-plant"
+                    class="flex-1 py-3 rounded-xl font-bold transition-all active:scale-95 flex items-center justify-center gap-1.5 shadow-md">
+                    💧 Tưới Nước
+                </button>
+            </div>
+            <p id="garden-msg" class="text-center text-xs font-bold text-red-500 mt-2 hidden"></p>
+        </div>
+    </div>
+
+    <!-- THÚ CƯNG CHIÊN CON ĐỒNG HÀNH -->
+    <div id="sheep-pet-container" class="hidden">
+        <div id="sheep-bubble" class="sheep-bubble">Beee~ Chào bạn! 🐑</div>
+
+        <svg viewBox="0 0 80 80" width="80" height="80" class="drop-shadow-md overflow-visible">
+            <!-- Đôi cánh thiên sứ (Mốc 30 ngày) -->
+            <g id="sheep-angel-wings" class="hidden">
+                <path class="sheep-wing-l" d="M 26 42 C 16 42, 10 32, 13 22 C 20 22, 24 32, 26 42" fill="#f8fafc"
+                    stroke="#cbd5e1" stroke-width="1" />
+                <path class="sheep-wing-r" d="M 54 42 C 64 42, 70 32, 67 22 C 60 22, 56 32, 54 42" fill="#f8fafc"
+                    stroke="#cbd5e1" stroke-width="1" />
+            </g>
+
+            <!-- Chân -->
+            <rect x="27" y="55" width="4" height="12" rx="2" fill="#475569" />
+            <rect x="34" y="55" width="4" height="12" rx="2" fill="#475569" />
+            <rect x="42" y="55" width="4" height="12" rx="2" fill="#475569" />
+            <rect x="49" y="55" width="4" height="12" rx="2" fill="#475569" />
+
+            <!-- Thân bông len -->
+            <path
+                d="M 40 22 C 30 22, 22 30, 22 40 C 22 44, 24 48, 27 50 C 24 53, 25 58, 29 60 C 33 62, 38 61, 40 59 C 42 61, 47 62, 51 60 C 55 58, 56 53, 53 50 C 56 48, 58 44, 58 40 C 58 30, 50 22, 40 22 Z"
+                fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5" />
+
+            <!-- Đầu -->
+            <rect x="28" y="28" width="24" height="24" rx="10" fill="#fed7aa" />
+            <!-- Đôi tai -->
+            <path d="M 28 32 C 22 32, 22 44, 28 40 Z" fill="#fdba74" />
+            <path d="M 52 32 C 58 32, 58 44, 52 40 Z" fill="#fdba74" />
+
+            <!-- Má hồng -->
+            <ellipse cx="33" cy="46" rx="3" ry="1.5" fill="#f43f5e" opacity="0.4" />
+            <ellipse cx="47" cy="46" rx="3" ry="1.5" fill="#f43f5e" opacity="0.4" />
+
+            <!-- Mắt và Con ngươi -->
+            <circle cx="34" cy="38" r="3.5" fill="#ffffff" />
+            <circle id="sheep-pupil-l" cx="34" cy="38" r="1.8" fill="#1e293b" />
+            <circle cx="46" cy="38" r="3.5" fill="#ffffff" />
+            <circle id="sheep-pupil-r" cx="46" cy="38" r="1.8" fill="#1e293b" />
+
+            <!-- Miệng -->
+            <path d="M 38 45 Q 40 47, 42 45" stroke="#475569" stroke-width="1.5" stroke-linecap="round" fill="none" />
+
+            <!-- Vòng hoa (Mốc 15 ngày) -->
+            <g id="sheep-flower-crown" class="hidden">
+                <circle cx="33" cy="27" r="2.5" fill="#f472b6" />
+                <circle cx="40" cy="25" r="2.5" fill="#60a5fa" />
+                <circle cx="47" cy="27" r="2.5" fill="#34d399" />
+                <path d="M 30 28 Q 40 24, 50 28" stroke="#4ade80" stroke-width="1.2" fill="none" />
+            </g>
+
+            <!-- Vương miện (Mốc 60 ngày) -->
+            <g id="sheep-crown" class="hidden">
+                <path d="M 33 24 L 35 15 L 40 20 L 45 15 L 47 24 Z" fill="#fbbf24" stroke="#d97706" stroke-width="1" />
+                <circle cx="35" cy="14" r="1" fill="#ef4444" />
+                <circle cx="40" cy="19" r="1" fill="#ef4444" />
+                <circle cx="45" cy="14" r="1" fill="#ef4444" />
+            </g>
+        </svg>
+    </div>
 </body>
 
 </html>
