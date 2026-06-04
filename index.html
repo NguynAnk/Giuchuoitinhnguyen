@@ -135,9 +135,12 @@
         }
 
         @keyframes tube-float {
-            0%, 100% {
+
+            0%,
+            100% {
                 transform: translateY(0) rotate(0deg);
             }
+
             50% {
                 transform: translateY(-6px) rotate(6deg);
             }
@@ -704,17 +707,21 @@
             filter: drop-shadow(0 0 3px #eab308);
             animation: sun-float 3.5s ease-in-out infinite;
         }
+
         @keyframes sun-float {
             0% {
                 transform: translate3d(0, 0, 0) scale(0.5);
                 opacity: 0;
             }
+
             20% {
                 opacity: 0.8;
             }
+
             80% {
                 opacity: 0.8;
             }
+
             100% {
                 transform: translate3d(var(--x-drift, 20px), -80px, 0) scale(1.1);
                 opacity: 0;
@@ -730,17 +737,21 @@
             transform: rotate(12deg);
             animation: rain-fall-soft 2s linear infinite;
         }
+
         @keyframes rain-fall-soft {
             0% {
                 transform: translate3d(0, -20px, 0) rotate(12deg);
                 opacity: 0;
             }
+
             10% {
                 opacity: 0.6;
             }
+
             90% {
                 opacity: 0.6;
             }
+
             100% {
                 transform: translate3d(-25px, 210px, 0) rotate(12deg);
                 opacity: 0;
@@ -764,6 +775,7 @@
             opacity: 0;
             pointer-events: none;
         }
+
         #fruit-detail-card.active {
             transform: translateY(0);
             opacity: 1;
@@ -774,14 +786,16 @@
             cursor: pointer;
             transition: transform 0.2s ease-in-out, filter 0.2s ease-in-out;
         }
+
         .fruit-btn:hover {
             transform: scale(1.18) !important;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
         }
 
         #garden-journal-list::-webkit-scrollbar {
             width: 4px;
         }
+
         #garden-journal-list::-webkit-scrollbar-thumb {
             background: #cbd5e1;
             border-radius: 2px;
@@ -1063,6 +1077,8 @@
                         <tr>
                             <th class="p-4 text-slate-500 uppercase text-xs">Người dùng</th>
                             <th class="p-4 text-slate-500 uppercase text-xs">Nhóm</th>
+                            <th class="p-4 text-center text-slate-500 uppercase text-xs">Bắt đầu</th>
+                            <th class="p-4 text-center text-slate-500 uppercase text-xs">Thường xuyên</th>
                             <th class="p-4 text-center text-slate-500 uppercase text-xs">Duyệt Bài</th>
                             <th class="p-4 text-center text-amber-500 uppercase text-xs">Kỷ Lục</th>
                             <th class="p-4 text-center text-blue-500 uppercase text-xs">Chuỗi</th>
@@ -1571,7 +1587,8 @@
                         <div id="tube-red-liquid"
                             class="relative tube-liquid-red transition-all duration-1000 ease-in-out flex justify-end lg:justify-center lg:items-start"
                             style="--fill-level: 6%;"></div>
-                        <div id="tube-red-decor" class="absolute inset-0 pointer-events-none overflow-hidden z-20"></div>
+                        <div id="tube-red-decor" class="absolute inset-0 pointer-events-none overflow-hidden z-20">
+                        </div>
                         <div
                             class="absolute inset-0 rounded-full lg:rounded-[20px] pointer-events-none glass-tube-overlay">
                         </div>
@@ -1588,7 +1605,8 @@
                         <div id="tube-blue-liquid"
                             class="relative tube-liquid-blue transition-all duration-1000 ease-in-out flex justify-end lg:justify-center lg:items-start"
                             style="--fill-level: 6%;"></div>
-                        <div id="tube-blue-decor" class="absolute inset-0 pointer-events-none overflow-hidden z-20"></div>
+                        <div id="tube-blue-decor" class="absolute inset-0 pointer-events-none overflow-hidden z-20">
+                        </div>
                         <div
                             class="absolute inset-0 rounded-full lg:rounded-[20px] pointer-events-none glass-tube-overlay">
                         </div>
@@ -2066,10 +2084,18 @@
             "Cảm ơn bạn đã xoa đầu mình! ❤️",
             "Hôm nay bạn đã tĩnh nguyện chưa? ✨",
             "Bạn thật là chăm chỉ! Giỏi lắm! 🌟",
-            "Cùng nhau giữ chuỗi tĩnh nguyện nhé! 🪴",
+            "Cùng nhau giữ chuỗi tĩnh nguyện nhé! 💪 ",
             "Beee~ Mình thích được xoa đầu lắm! 🥰",
-            "Tĩnh nguyện mỗi ngày để nuôi dưỡng tâm hồn! 🙏"
+            "Tĩnh nguyện mỗi ngày để nuôi dưỡng tâm linh! 🙏",
+            "Nhột quá! Nhưng mình thích mà!",
+            "Phước hạnh và bình an cho bạn hôm nay nhé! ☀️",
+            "Đừng nản lòng nha, bạn đang làm rất tốt! 💖",
+            "Mỗi ngày một chút, hạt giống tâm hồn sẽ lớn lên! 🪴",
+            "Hôm nay Lời Chúa đã sưởi ấm lòng bạn chưa? 📖",
+            "Có mình luôn đồng hành cùng bạn giữ chuỗi nè! 🐑",
+            "Beee~ Chạm thêm một cái nữa đi mà! 🥺"
         ];
+
 
         function updateTargetPosition(x, y) {
             targetX = x;
@@ -2467,7 +2493,7 @@
             }
         ];
 
-        window.showFruitDetail = function(index) {
+        window.showFruitDetail = function (index) {
             const fruit = fruitData[index];
             if (!fruit) return;
 
@@ -2487,10 +2513,10 @@
                 if (globalAudioCtx && !isHarpMuted) {
                     playNote(440 + index * 50, 1.2);
                 }
-            } catch (e) {}
+            } catch (e) { }
         };
 
-        window.closeFruitCard = function() {
+        window.closeFruitCard = function () {
             const card = document.getElementById('fruit-detail-card');
             if (card) {
                 card.classList.remove('active');
@@ -2502,7 +2528,7 @@
 
         let currentGardenWeather = 'sun';
 
-        window.toggleGardenWeather = function(type) {
+        window.toggleGardenWeather = function (type) {
             currentGardenWeather = type;
             const btnSun = document.getElementById('btn-weather-sun');
             const btnRain = document.getElementById('btn-weather-rain');
@@ -2518,7 +2544,7 @@
             updateGardenWeather();
         };
 
-        window.updateGardenWeather = function() {
+        window.updateGardenWeather = function () {
             const container = document.getElementById('garden-weather-overlay');
             if (!container) return;
 
@@ -2529,14 +2555,14 @@
                 for (let i = 0; i < count; i++) {
                     const particle = document.createElement('div');
                     particle.className = 'sun-dust';
-                    
+
                     const size = 5 + Math.random() * 7;
                     particle.style.width = size + 'px';
                     particle.style.height = size + 'px';
-                    
+
                     particle.style.left = (Math.random() * 100) + '%';
                     particle.style.top = (35 + Math.random() * 55) + '%';
-                    
+
                     particle.style.animationDelay = (Math.random() * 3.5) + 's';
                     particle.style.setProperty('--x-drift', ((Math.random() - 0.5) * 35) + 'px');
 
@@ -2547,10 +2573,10 @@
                 for (let i = 0; i < count; i++) {
                     const drop = document.createElement('div');
                     drop.className = 'rain-drop-soft';
-                    
+
                     drop.style.left = (Math.random() * 120) + '%';
                     drop.style.top = (Math.random() * -30) + 'px';
-                    
+
                     drop.style.animationDelay = (Math.random() * 2) + 's';
                     drop.style.animationDuration = (1.5 + Math.random() * 0.7) + 's';
 
@@ -2559,7 +2585,7 @@
             }
         };
 
-        window.toggleGardenJournal = function() {
+        window.toggleGardenJournal = function () {
             const list = document.getElementById('garden-journal-list');
             const arrow = document.getElementById('journal-arrow');
             if (!list || !arrow) return;
@@ -2574,7 +2600,7 @@
             }
         };
 
-        window.renderGardenJournal = function() {
+        window.renderGardenJournal = function () {
             const container = document.getElementById('garden-journal-list');
             if (!container || !userData) return;
 
@@ -3115,7 +3141,7 @@
                     renderPlant(userData.totalCheckins);
                     closeFruitCard();
                     toggleGardenWeather(currentGardenWeather);
-                    
+
                     const list = document.getElementById('garden-journal-list');
                     const arrow = document.getElementById('journal-arrow');
                     if (list) list.classList.add('hidden');
@@ -3429,6 +3455,35 @@
 
         function renderAdminTable(users) {
             let html = ''; const groupOptionsArr = ['', 'Nhóm 1', 'Nhóm 2', 'Nhóm 3', 'Nhóm 4', 'Nhóm 5', 'Nhóm 6', 'Nhóm 7', 'Nhóm 8', 'Nhóm 9', 'Nhóm 10'];
+
+            function getStreakBreakDates(history) {
+                const breaks = [];
+                if (!history || history.length === 0) return breaks;
+                const sorted = Array.from(new Set(history)).sort();
+                const todayStr = getLocalTodayStr();
+
+                function addDays(dateStr, days) {
+                    const d = new Date(dateStr);
+                    d.setDate(d.getDate() + days);
+                    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, '0') + "-" + String(d.getDate()).padStart(2, '0');
+                }
+
+                for (let i = 0; i < sorted.length - 1; i++) {
+                    const diff = getDaysDiffClient(sorted[i], sorted[i + 1]);
+                    if (diff > 1) {
+                        breaks.push(addDays(sorted[i], 1));
+                    }
+                }
+
+                const lastCheckin = sorted[sorted.length - 1];
+                const diffToToday = getDaysDiffClient(lastCheckin, todayStr);
+                if (diffToToday > 1) {
+                    breaks.push(addDays(lastCheckin, 1));
+                }
+
+                return breaks;
+            }
+
             users.forEach(u => {
                 const safeLogs = encodeURIComponent(JSON.stringify(u.dailyLogs || []));
                 let selectOptions = '';
@@ -3436,7 +3491,22 @@
                     selectOptions += `<option value="${g}" ${(u.group === g) ? 'selected' : ''}>${g || '-Trống-'}</option>`;
                 });
 
-                const missedDates = getMissedCheckinDates(u.history, campaignStartDate);
+                // Ngày bắt đầu đăng ký tĩnh nguyện
+                let startDateFormatted = '-';
+                const regDate = u.registerDateStr || campaignStartDate || '2026-05-20';
+                if (regDate) {
+                    const parts = regDate.split('-');
+                    startDateFormatted = `${parts[2]}/${parts[1]}/${parts[0]}`;
+                }
+
+                // Tĩnh nguyện thường xuyên (>= 7 ngày chuỗi)
+                const isRegular = (u.currentStreak >= 7);
+                const regularHtml = isRegular
+                    ? `<span class="text-emerald-500 font-extrabold text-base" title="Duy trì chuỗi liên tục >= 7 ngày">✔️</span>`
+                    : `<span class="text-slate-300">-</span>`;
+
+                // Chỉ hiển thị ngày cụ thể lỡ chuỗi (đứt chuỗi) thay vì tất cả các ngày trống
+                const missedDates = getStreakBreakDates(u.history);
                 const formattedMissed = missedDates.map(d => {
                     const parts = d.split('-');
                     return `${parts[2]}/${parts[1]}`;
@@ -3457,6 +3527,8 @@
                             ${selectOptions}
                         </select>
                     </td>
+                    <td class="p-3 md:p-4 text-center whitespace-nowrap text-xs text-slate-600">${startDateFormatted}</td>
+                    <td class="p-3 md:p-4 text-center whitespace-nowrap">${regularHtml}</td>
                     <td class="p-3 md:p-4 whitespace-nowrap">
                         <div class="flex justify-center">
                             <button onclick="showUserLogs('${u._id}', '${safeLogs}')" class="bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1.5 rounded-lg font-bold text-xs shadow-sm flex items-center gap-1">👁️ Xem</button>
@@ -3799,9 +3871,14 @@
                 <h3 class="text-xl font-bold text-green-600 flex items-center gap-1">🪴 Vườn Cây</h3>
                 <div class="flex items-center gap-2">
                     <!-- Weather toggle -->
-                    <div class="flex bg-slate-100 p-0.5 rounded-lg text-[10px] gap-0.5 border border-slate-200/50 shadow-inner" id="weather-controls">
-                        <button id="btn-weather-sun" onclick="toggleGardenWeather('sun')" class="px-2 py-1 rounded-md font-bold transition-all bg-white shadow-sm text-amber-600 flex items-center gap-0.5">☀️ Nắng</button>
-                        <button id="btn-weather-rain" onclick="toggleGardenWeather('rain')" class="px-2 py-1 rounded-md font-bold transition-all text-slate-500 flex items-center gap-0.5">🌧️ Mưa</button>
+                    <div class="flex bg-slate-100 p-0.5 rounded-lg text-[10px] gap-0.5 border border-slate-200/50 shadow-inner"
+                        id="weather-controls">
+                        <button id="btn-weather-sun" onclick="toggleGardenWeather('sun')"
+                            class="px-2 py-1 rounded-md font-bold transition-all bg-white shadow-sm text-amber-600 flex items-center gap-0.5">☀️
+                            Nắng</button>
+                        <button id="btn-weather-rain" onclick="toggleGardenWeather('rain')"
+                            class="px-2 py-1 rounded-md font-bold transition-all text-slate-500 flex items-center gap-0.5">🌧️
+                            Mưa</button>
                     </div>
                     <button id="btn-close-garden"
                         class="text-slate-400 hover:bg-slate-100 p-1.5 rounded-full transition-colors font-bold">✕</button>
@@ -3813,7 +3890,8 @@
                 class="relative w-48 h-48 mx-auto my-4 bg-gradient-to-b from-green-50/50 to-emerald-100/50 rounded-full border-4 border-green-200/80 flex items-center justify-center overflow-hidden shadow-inner">
 
                 <!-- Hiệu ứng thời tiết (Nắng/Mưa) -->
-                <div id="garden-weather-overlay" class="absolute inset-0 pointer-events-none overflow-hidden rounded-full z-20"></div>
+                <div id="garden-weather-overlay"
+                    class="absolute inset-0 pointer-events-none overflow-hidden rounded-full z-20"></div>
 
                 <!-- Bình tưới nước ẩn/hiện hoạt ảnh -->
                 <div id="watering-can" class="absolute top-4 right-4 pointer-events-none opacity-0 transition-opacity"
@@ -3844,12 +3922,17 @@
 
             <!-- Card Chi tiết Trái Cây Thánh Linh -->
             <div id="fruit-detail-card" class="flex flex-col items-center justify-center p-5 text-center hidden">
-                <button onclick="closeFruitCard()" class="absolute top-3 right-3 text-slate-400 hover:text-slate-600 p-1 rounded-full transition-colors font-bold text-sm">✕</button>
+                <button onclick="closeFruitCard()"
+                    class="absolute top-3 right-3 text-slate-400 hover:text-slate-600 p-1 rounded-full transition-colors font-bold text-sm">✕</button>
                 <div id="fruit-icon" class="text-4xl mb-1.5 animate-bounce">🍎</div>
                 <h4 id="fruit-name" class="text-base font-black text-green-700 mb-0.5">Trái Yêu Thương</h4>
-                <p id="fruit-verse" class="text-[11px] italic text-slate-600 bg-white/70 border border-green-100 p-2 rounded-xl mb-2 shadow-sm leading-relaxed">"Nhưng trái của Thánh Linh, ấy là lòng yêu thương..."</p>
-                <p id="fruit-reflection-title" class="text-[9px] font-black text-green-600 uppercase tracking-wider mb-0.5">💡 Gợi ý suy ngẫm</p>
-                <p id="fruit-reflection" class="text-[10px] text-slate-600 font-medium leading-relaxed">Hôm nay bạn có thể bày tỏ lòng yêu thương với ai?</p>
+                <p id="fruit-verse"
+                    class="text-[11px] italic text-slate-600 bg-white/70 border border-green-100 p-2 rounded-xl mb-2 shadow-sm leading-relaxed">
+                    "Nhưng trái của Thánh Linh, ấy là lòng yêu thương..."</p>
+                <p id="fruit-reflection-title"
+                    class="text-[9px] font-black text-green-600 uppercase tracking-wider mb-0.5">💡 Gợi ý suy ngẫm</p>
+                <p id="fruit-reflection" class="text-[10px] text-slate-600 font-medium leading-relaxed">Hôm nay bạn có
+                    thể bày tỏ lòng yêu thương với ai?</p>
             </div>
 
             <div class="bg-slate-50 border border-slate-100 rounded-2xl p-4 text-center mb-4">
@@ -3868,11 +3951,13 @@
 
             <!-- Nhật Ký Hạt Mầm Accordion -->
             <div class="border-t border-slate-100 mt-4 pt-3 shrink-0">
-                <button id="btn-toggle-journal" onclick="toggleGardenJournal()" class="w-full flex justify-between items-center text-xs font-bold text-slate-500 hover:text-slate-700 py-1 outline-none">
+                <button id="btn-toggle-journal" onclick="toggleGardenJournal()"
+                    class="w-full flex justify-between items-center text-xs font-bold text-slate-500 hover:text-slate-700 py-1 outline-none">
                     <span class="flex items-center gap-1.5">📖 Nhật Ký Hạt Mầm (5 ngày qua)</span>
                     <span id="journal-arrow" class="transition-transform duration-200">▼</span>
                 </button>
-                <div id="garden-journal-list" class="hidden mt-2 max-h-40 overflow-y-auto flex flex-col gap-2 pr-1"></div>
+                <div id="garden-journal-list" class="hidden mt-2 max-h-40 overflow-y-auto flex flex-col gap-2 pr-1">
+                </div>
             </div>
         </div>
     </div>
@@ -3919,7 +4004,8 @@
                 <circle id="sheep-pupil-r" cx="46" cy="38" r="1.8" fill="#1e293b" />
 
                 <!-- Miệng -->
-                <path d="M 38 45 Q 40 47, 42 45" stroke="#475569" stroke-width="1.5" stroke-linecap="round" fill="none" />
+                <path d="M 38 45 Q 40 47, 42 45" stroke="#475569" stroke-width="1.5" stroke-linecap="round"
+                    fill="none" />
 
                 <!-- Vòng hoa (Mốc 15 ngày) -->
                 <g id="sheep-flower-crown" class="hidden">
@@ -3931,7 +4017,8 @@
 
                 <!-- Vương miện (Mốc 60 ngày) -->
                 <g id="sheep-crown" class="hidden">
-                    <path d="M 33 24 L 35 15 L 40 20 L 45 15 L 47 24 Z" fill="#fbbf24" stroke="#d97706" stroke-width="1" />
+                    <path d="M 33 24 L 35 15 L 40 20 L 45 15 L 47 24 Z" fill="#fbbf24" stroke="#d97706"
+                        stroke-width="1" />
                     <circle cx="35" cy="14" r="1" fill="#ef4444" />
                     <circle cx="40" cy="19" r="1" fill="#ef4444" />
                     <circle cx="45" cy="14" r="1" fill="#ef4444" />

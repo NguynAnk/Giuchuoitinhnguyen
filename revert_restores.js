@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const dns = require('dns');
+dns.setDefaultResultOrder('ipv4first');
 
 const MONGO_URI = "mongodb+srv://nguyenanh:16102006@cluster0.iwcowsc.mongodb.net/TinhNguyenApp?retryWrites=true&w=majority";
 
@@ -20,6 +22,13 @@ const userSchema = new mongoose.Schema({
 });
 
 const User = mongoose.model('User', userSchema);
+
+function getDaysDiff(dateStr1, dateStr2) {
+    if (!dateStr1 || !dateStr2) return 0;
+    const d1 = new Date(dateStr1);
+    const d2 = new Date(dateStr2);
+    return Math.round((d2 - d1) / (1000 * 60 * 60 * 24));
+}
 
 function getLocalTodayStr() {
     const d = new Date();
@@ -76,6 +85,31 @@ function calculateCurrentStreak(history, todayStr) {
     return tempStreak;
 }
 
+function calculateLostStreaks(history, todayStr) {
+    if (!history || history.length === 0) return 0;
+    
+    // Sort unique history dates ascending
+    const sorted = Array.from(new Set(history)).sort();
+    let lostCount = 0;
+
+    // 1. Gaps between consecutive check-ins
+    for (let i = 0; i < sorted.length - 1; i++) {
+        const diff = getDaysDiff(sorted[i], sorted[i+1]);
+        if (diff > 1) {
+            lostCount++;
+        }
+    }
+
+    // 2. Gap after the last check-in to today
+    const lastCheckin = sorted[sorted.length - 1];
+    const diffToToday = getDaysDiff(lastCheckin, todayStr);
+    if (diffToToday > 1) {
+        lostCount++;
+    }
+
+    return lostCount;
+}
+
 async function run() {
     try {
         await mongoose.connect(MONGO_URI);
@@ -85,68 +119,97 @@ async function run() {
         console.log(`Found ${users.length} total users.`);
 
         const todayStr = getLocalTodayStr();
-        let revertCount = 0;
+        console.log(`Today's date is calculated as: ${todayStr}`);
+
+        let revertedRestoresCount = 0;
+        let correctedStatsCount = 0;
 
         for (const user of users) {
             const hasRestoreLog = user.dailyLogs.some(log => log.q1 === 'Khôi phục chuỗi tự động');
             const hasRestoreDate = !!user.lastRestoreDateStr;
+            const needsRevert = hasRestoreLog || hasRestoreDate;
 
-            if (hasRestoreLog || hasRestoreDate) {
+            // 1. Clean logs and history if user restored streak
+            let cleanedLogs = [...user.dailyLogs];
+            let cleanedHistory = [...user.history];
+            let lastRestoreDateStr = user.lastRestoreDateStr || "";
+
+            if (needsRevert) {
+                cleanedLogs = user.dailyLogs.filter(log => log.q1 !== 'Khôi phục chuỗi tự động');
+                const actualDatesSet = new Set(cleanedLogs.map(log => log.date));
+                cleanedHistory = user.history.filter(dateStr => actualDatesSet.has(dateStr));
+                lastRestoreDateStr = "";
+            }
+
+            // Ensure history is sorted and unique
+            cleanedHistory = Array.from(new Set(cleanedHistory)).sort();
+
+            // 2. Calculate correct stats based on cleaned data
+            const targetTotalCheckins = cleanedHistory.length;
+            const targetTotalPoints = cleanedHistory.length;
+            const targetCurrentStreak = calculateCurrentStreak(cleanedHistory, todayStr);
+            const targetMaxStreak = calculateMaxStreak(cleanedHistory);
+            const targetLostStreaks = calculateLostStreaks(cleanedHistory, todayStr);
+            const targetHasCheckedInToday = cleanedHistory.includes(todayStr);
+
+            // Check if updates are needed
+            const isRestoreReverted = needsRevert;
+            const isStatsMismatch = 
+                user.totalCheckins !== targetTotalCheckins ||
+                user.totalPoints !== targetTotalPoints ||
+                user.currentStreak !== targetCurrentStreak ||
+                user.maxStreak !== targetMaxStreak ||
+                user.lostStreaks !== targetLostStreaks ||
+                user.hasCheckedInToday !== targetHasCheckedInToday ||
+                user.lastRestoreDateStr !== lastRestoreDateStr;
+
+            if (isRestoreReverted || isStatsMismatch) {
                 console.log(`\n----------------------------------------`);
                 console.log(`User: ${user.username}`);
-                console.log(`Old state:`);
-                console.log(`  - currentStreak: ${user.currentStreak}`);
-                console.log(`  - maxStreak: ${user.maxStreak}`);
-                console.log(`  - totalCheckins: ${user.totalCheckins}`);
-                console.log(`  - totalPoints: ${user.totalPoints}`);
-                console.log(`  - lastRestoreDateStr: ${user.lastRestoreDateStr}`);
-                console.log(`  - history length: ${user.history.length}`);
-                console.log(`  - dailyLogs length: ${user.dailyLogs.length}`);
+                
+                if (isRestoreReverted) {
+                    console.log(`⚠️  Reverting streak restoration...`);
+                    revertedRestoresCount++;
+                }
+                if (isStatsMismatch && !isRestoreReverted) {
+                    console.log(`🔧 Correcting stats mismatch...`);
+                    correctedStatsCount++;
+                }
 
-                // Reconstruct data
-                // 1. Clean dailyLogs (remove 'Khôi phục chuỗi tự động' logs)
-                const cleanedLogs = user.dailyLogs.filter(log => log.q1 !== 'Khôi phục chuỗi tự động');
+                console.log(`  - currentStreak: ${user.currentStreak} -> ${targetCurrentStreak}`);
+                console.log(`  - maxStreak: ${user.maxStreak} -> ${targetMaxStreak}`);
+                console.log(`  - totalCheckins: ${user.totalCheckins} -> ${targetTotalCheckins}`);
+                console.log(`  - totalPoints: ${user.totalPoints} -> ${targetTotalPoints}`);
+                console.log(`  - lostStreaks: ${user.lostStreaks} -> ${targetLostStreaks}`);
+                console.log(`  - hasCheckedInToday: ${user.hasCheckedInToday} -> ${targetHasCheckedInToday}`);
+                if (user.lastRestoreDateStr !== lastRestoreDateStr) {
+                    console.log(`  - lastRestoreDateStr: "${user.lastRestoreDateStr}" -> "${lastRestoreDateStr}"`);
+                }
 
-                // 2. Clean history: only keep dates that have a corresponding log in cleanedLogs
-                const actualDatesSet = new Set(cleanedLogs.map(log => log.date));
-                const cleanedHistory = user.history.filter(dateStr => actualDatesSet.has(dateStr));
-
-                // 3. Recalculate stats
-                const newTotalCheckins = cleanedHistory.length;
-                const newTotalPoints = cleanedHistory.length;
-                const newCurrentStreak = calculateCurrentStreak(cleanedHistory, todayStr);
-                const newMaxStreak = calculateMaxStreak(cleanedHistory);
-
-                console.log(`New state (Reconstructed):`);
-                console.log(`  - currentStreak: ${newCurrentStreak}`);
-                console.log(`  - maxStreak: ${newMaxStreak}`);
-                console.log(`  - totalCheckins: ${newTotalCheckins}`);
-                console.log(`  - totalPoints: ${newTotalPoints}`);
-                console.log(`  - lastRestoreDateStr: ""`);
-                console.log(`  - history length: ${cleanedHistory.length}`);
-                console.log(`  - dailyLogs length: ${cleanedLogs.length}`);
-
-                // Perform update
-                user.history = cleanedHistory.sort();
+                // Apply changes
                 user.dailyLogs = cleanedLogs;
-                user.totalCheckins = newTotalCheckins;
-                user.totalPoints = newTotalPoints;
-                user.currentStreak = newCurrentStreak;
-                user.maxStreak = newMaxStreak;
-                user.lastRestoreDateStr = "";
-
-                // Check if user has checked in today (if today's date is in actual dates)
-                user.hasCheckedInToday = actualDatesSet.has(todayStr);
+                user.history = cleanedHistory;
+                user.totalCheckins = targetTotalCheckins;
+                user.totalPoints = targetTotalPoints;
+                user.currentStreak = targetCurrentStreak;
+                user.maxStreak = targetMaxStreak;
+                user.lostStreaks = targetLostStreaks;
+                user.hasCheckedInToday = targetHasCheckedInToday;
+                user.lastRestoreDateStr = lastRestoreDateStr;
 
                 await user.save();
-                console.log(`✅ Successfully reverted user ${user.username}`);
-                revertCount++;
+                console.log(`✅ Successfully updated ${user.username}`);
             }
         }
 
-        console.log(`\nReverted ${revertCount} users in total.`);
+        console.log(`\n========================================`);
+        console.log(`Summary of execution:`);
+        console.log(`  - Reverted restorations: ${revertedRestoresCount} users`);
+        console.log(`  - Corrected stats/lostStreaks: ${correctedStatsCount} users`);
+        console.log(`========================================`);
+
     } catch (e) {
-        console.error("Error occurred:", e);
+        console.error("Error during run:", e);
     } finally {
         await mongoose.disconnect();
         console.log("Disconnected from MongoDB.");
