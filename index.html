@@ -825,6 +825,7 @@
         preload="auto"></audio>
     <audio id="fail-sound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" preload="auto"></audio>
     <audio id="reminder-sound" src="https://actions.google.com/sounds/v1/cartoon/bell_ding.ogg" preload="auto"></audio>
+    <audio id="sheep-sound" src="sheep.mp3" preload="auto"></audio>
 
     <!-- MÀN HÌNH BÁO THỨC TRONG APP -->
     <div id="alarm-modal"
@@ -2242,67 +2243,16 @@
         }
 
         function playCuteSheepSound() {
-            if (!globalAudioCtx) return;
-            if (globalAudioCtx.state === 'suspended') globalAudioCtx.resume();
-
             try {
-                const now = globalAudioCtx.currentTime;
-
-                // Hàm phát một tiếng kêu đơn "beee" tự nhiên
-                const playSingleBleat = (startTime, duration, baseFreq, endFreq) => {
-                    const osc1 = globalAudioCtx.createOscillator();
-                    const osc2 = globalAudioCtx.createOscillator(); // detuned osc cho hiệu ứng đồng ca dày hơn
-                    const lfo = globalAudioCtx.createOscillator();
-                    const lfoGain = globalAudioCtx.createGain();
-                    const gainNode = globalAudioCtx.createGain();
-                    const filter = globalAudioCtx.createBiquadFilter();
-
-                    osc1.type = 'sawtooth'; // Tạo hài âm nhọn sắc đặc trưng giọng kêu động vật
-                    osc2.type = 'triangle'; // Lớp nền ấm áp
-
-                    osc1.frequency.setValueAtTime(baseFreq, startTime);
-                    osc1.frequency.exponentialRampToValueAtTime(endFreq, startTime + duration);
-
-                    osc2.frequency.setValueAtTime(baseFreq * 0.98, startTime);
-                    osc2.frequency.exponentialRampToValueAtTime(endFreq * 0.98, startTime + duration);
-
-                    // LFO tạo độ rung giọng "b-e-e-e" (vibrato)
-                    lfo.type = 'sawtooth';
-                    lfo.frequency.setValueAtTime(14, startTime); // Rung 14Hz
-                    lfoGain.gain.setValueAtTime(12, startTime);
-
-                    // Bandpass filter tạo giọng mũi (nasal) của động vật
-                    filter.type = 'bandpass';
-                    filter.frequency.setValueAtTime(900, startTime);
-                    filter.frequency.exponentialRampToValueAtTime(600, startTime + duration);
-                    filter.Q.setValueAtTime(1.5, startTime);
-
-                    // Gain envelope của âm lượng
-                    gainNode.gain.setValueAtTime(0.001, startTime);
-                    gainNode.gain.linearRampToValueAtTime(0.12, startTime + 0.08); // fade in nhẹ nhàng
-                    gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
-
-                    lfo.connect(lfoGain);
-                    lfoGain.connect(osc1.frequency);
-                    lfoGain.connect(osc2.frequency);
-
-                    osc1.connect(filter);
-                    osc2.connect(filter);
-                    filter.connect(gainNode);
-                    gainNode.connect(globalAudioCtx.destination);
-
-                    lfo.start(startTime);
-                    osc1.start(startTime);
-                    osc2.start(startTime);
-
-                    lfo.stop(startTime + duration);
-                    osc1.stop(startTime + duration);
-                    osc2.stop(startTime + duration);
-                };
-
-                // Kêu kép "beeeeee beeee" đáng yêu
-                playSingleBleat(now, 0.45, 340, 260); // Tiếng thứ nhất
-                playSingleBleat(now + 0.52, 0.35, 300, 240); // Tiếng thứ hai thấp và ngắn hơn một chút
+                const s = document.getElementById('sheep-sound');
+                if (s) {
+                    s.pause();
+                    s.currentTime = 0;
+                    s.volume = 0.6;
+                    s.play().catch(e => {
+                        console.warn("Lỗi phát file mp3 tiếng cừu:", e);
+                    });
+                }
             } catch (e) {
                 console.error("Lỗi phát âm thanh chiên con:", e);
             }
