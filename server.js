@@ -347,62 +347,7 @@ app.post('/api/update-streak', async (req, res) => {
     } catch (error) { res.status(500).json({ success: false, message: error.message }); }
 });
 
-app.post('/api/restore-streak', async (req, res) => {
-    try {
-        const { userId, localDate } = req.body;
-        const user = await User.findById(userId);
-        if (!user) return res.status(404).json({ success: false, message: 'Không tìm thấy user' });
 
-        if (!user.hasCheckedInToday) {
-            return res.status(400).json({ success: false, message: 'Bạn cần hoàn thành tĩnh nguyện hôm nay trước khi khôi phục chuỗi!' });
-        }
-
-        if (user.lastRestoreDateStr === localDate) {
-            return res.status(400).json({ success: false, message: 'Bạn đã sử dụng tính năng khôi phục chuỗi ngày hôm nay rồi!' });
-        }
-
-        const sys = await System.findOne({ configId: 'main' }) || { campaignStartDateStr: '2026-05-20' };
-        const campaignStartDate = sys.campaignStartDateStr || '2026-05-20';
-        const campaignDay = getDaysDiff(campaignStartDate, localDate) + 1;
-
-        if (user.totalCheckins >= campaignDay) {
-            return res.status(400).json({ success: false, message: 'Chuỗi của bạn đã đầy đủ hoặc vượt mốc tiến độ hiện tại, không cần khôi phục!' });
-        }
-
-        // Thực hiện khôi phục
-        user.totalCheckins = campaignDay;
-        user.currentStreak = campaignDay;
-        user.maxStreak = Math.max(user.maxStreak, campaignDay);
-        user.lastRestoreDateStr = localDate;
-
-        // Điền các ngày còn thiếu vào mảng history
-        const historySet = new Set(user.history || []);
-        let current = new Date(campaignStartDate);
-        const end = new Date(localDate);
-        while (current <= end) {
-            const dateStr = current.getFullYear() + "-" + String(current.getMonth() + 1).padStart(2, '0') + "-" + String(current.getDate()).padStart(2, '0');
-            historySet.add(dateStr);
-            current.setDate(current.getDate() + 1);
-        }
-        user.history = Array.from(historySet).sort();
-
-        // Ghi log khôi phục
-        if (!user.dailyLogs) user.dailyLogs = [];
-        user.dailyLogs.unshift({
-            date: localDate,
-            q1: 'Khôi phục chuỗi tự động',
-            q2: 'Đã sử dụng quyền khôi phục chuỗi để đuổi kịp tiến độ Ngày ' + campaignDay + ' của chiến dịch.',
-            q3: '',
-            source: 'Hệ thống',
-            emotion: '✨'
-        });
-
-        await user.save();
-        res.json({ success: true, user });
-    } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
-    }
-});
 
 app.post('/api/update-group', async (req, res) => {
     try {

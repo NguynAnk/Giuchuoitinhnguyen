@@ -1407,17 +1407,7 @@
                                     class="text-[11px] bg-purple-50 text-purple-600 px-3 py-1.5 rounded-full font-bold">📊
                                     Nhóm</button>
                             </div>
-                            <div id="restore-streak-container" class="mt-4 hidden">
-                                <button id="btn-restore-streak"
-                                    class="relative group overflow-hidden px-5 py-2.5 rounded-full text-xs font-black text-white bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-600 shadow-md hover:shadow-lg transition-all duration-300 active:scale-95 flex items-center gap-1.5 border border-white/20">
-                                    <span class="relative z-10 flex items-center gap-1">✨ Khôi Phục Chuỗi Lên <span
-                                            id="ui-restore-target-day"
-                                            class="font-extrabold text-yellow-300 text-sm">15</span></span>
-                                    <div
-                                        class="absolute inset-0 bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                    </div>
-                                </button>
-                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -2867,59 +2857,7 @@
             document.getElementById('btn-close-rank')?.addEventListener('click', () => toggleModal('rank-modal', false));
             document.getElementById('btn-close-alarm')?.addEventListener('click', () => { toggleModal('alarm-modal', false); if (globalAudioCtx && globalAudioCtx.state === 'running') globalAudioCtx.suspend(); });
 
-            document.getElementById('btn-restore-streak')?.addEventListener('click', async () => {
-                if (!userData || !userData.hasCheckedInToday || isProcessing) return;
 
-                const todayStr = getLocalTodayStr();
-                const campaignDay = getDaysDiffClient(campaignStartDate, todayStr) + 1;
-
-                if (!confirm(`Bạn có chắc chắn muốn khôi phục chuỗi lên ${campaignDay} ngày? Mỗi người chỉ được khôi phục 1 lần trong ngày hôm nay.`)) {
-                    return;
-                }
-
-                isProcessing = true;
-                const btn = document.getElementById('btn-restore-streak');
-                const originalText = btn.innerHTML;
-                btn.disabled = true;
-                btn.innerHTML = `<svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Đang khôi phục...`;
-
-                try {
-                    const res = await fetch(`${API_URL}/restore-streak`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ userId: userData._id, localDate: todayStr })
-                    });
-                    const data = await res.json();
-                    if (data.success) {
-                        userData = data.user;
-
-                        // Kích hoạt âm thanh thăng cấp/thành công
-                        try {
-                            const s = document.getElementById('rankup-sound');
-                            if (s) { s.pause(); s.currentTime = 0; s.volume = 1; s.play().catch(e => { }); }
-                        } catch (e) { }
-
-                        // Hiệu ứng pháo hoa
-                        document.getElementById('celebration')?.classList.remove('hidden');
-                        setTimeout(() => document.getElementById('celebration')?.classList.add('hidden'), 3000);
-
-                        alert("🎉 Khôi phục chuỗi thành công! Chuỗi và Tổng tích lũy của bạn đã đạt " + campaignDay + " ngày.");
-
-                        isProcessing = false;
-                        updateUIFromData();
-                    } else {
-                        alert("Thất bại: " + data.message);
-                        isProcessing = false;
-                        btn.innerHTML = originalText;
-                        btn.disabled = false;
-                    }
-                } catch (error) {
-                    alert("Lỗi kết nối máy chủ! Vui lòng thử lại.");
-                    isProcessing = false;
-                    btn.innerHTML = originalText;
-                    btn.disabled = false;
-                }
-            });
 
             function finishCheckIn() {
                 // 1. Hiển thị hiệu ứng pháo hoa / chúc mừng
@@ -3712,18 +3650,7 @@
                 }
             }
 
-            // Quản lý hiển thị nút Khôi phục chuỗi
-            const restoreContainer = document.getElementById('restore-streak-container');
-            const restoreTargetEl = document.getElementById('ui-restore-target-day');
-            if (restoreContainer && restoreTargetEl) {
-                const campaignDay = getDaysDiffClient(campaignStartDate, todayStr) + 1;
-                if (userData.hasCheckedInToday && userData.totalCheckins < campaignDay && userData.lastRestoreDateStr !== todayStr && !isTestMode) {
-                    restoreTargetEl.innerText = campaignDay;
-                    restoreContainer.classList.remove('hidden');
-                } else {
-                    restoreContainer.classList.add('hidden');
-                }
-            }
+
 
             // Quản lý Chú Chiên Con & phụ kiện
             const sheepContainer = document.getElementById('sheep-pet-container');
