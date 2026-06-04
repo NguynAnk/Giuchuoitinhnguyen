@@ -122,6 +122,27 @@
             box-shadow: inset 5px 0 15px rgba(255, 255, 255, 0.8), inset -5px 0 15px rgba(0, 0, 0, 0.1);
         }
 
+        .tube-decor-item {
+            position: absolute;
+            font-size: 14px;
+            pointer-events: none;
+            opacity: 0.85;
+            user-select: none;
+            animation: tube-float 4s ease-in-out infinite;
+            filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.15));
+            transform-origin: center;
+            z-index: 25;
+        }
+
+        @keyframes tube-float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-6px) rotate(6deg);
+            }
+        }
+
         .tube-liquid-red {
             width: var(--fill-level, 6%);
             height: 100%;
@@ -1549,6 +1570,7 @@
                         <div id="tube-red-liquid"
                             class="relative tube-liquid-red transition-all duration-1000 ease-in-out flex justify-end lg:justify-center lg:items-start"
                             style="--fill-level: 6%;"></div>
+                        <div id="tube-red-decor" class="absolute inset-0 pointer-events-none overflow-hidden z-20"></div>
                         <div
                             class="absolute inset-0 rounded-full lg:rounded-[20px] pointer-events-none glass-tube-overlay">
                         </div>
@@ -1556,7 +1578,7 @@
                 </div>
                 <div class="flex flex-row lg:flex-col items-center justify-start gap-3 w-full lg:w-16">
                     <div
-                        class="text-center bg-blue-50/80 px-3 py-2 lg:px-2 lg:py-1.5 rounded-xl border border-blue-100 w-24 lg:w-full shrink-0 shadow-sm">
+                        class="text-center bg-blue-50/80 px-3 py-2 lg:px-2 lg:py-1.5 rounded-xl border border-red-100 w-24 lg:w-full shrink-0 shadow-sm">
                         <span class="text-[10px] font-bold text-blue-500 uppercase block">Chuỗi</span><span
                             id="tube-blue-text" class="text-xl font-black text-blue-600 leading-none">0</span>
                     </div>
@@ -1565,6 +1587,7 @@
                         <div id="tube-blue-liquid"
                             class="relative tube-liquid-blue transition-all duration-1000 ease-in-out flex justify-end lg:justify-center lg:items-start"
                             style="--fill-level: 6%;"></div>
+                        <div id="tube-blue-decor" class="absolute inset-0 pointer-events-none overflow-hidden z-20"></div>
                         <div
                             class="absolute inset-0 rounded-full lg:rounded-[20px] pointer-events-none glass-tube-overlay">
                         </div>
@@ -1715,14 +1738,14 @@
 
                 // Gain Envelope (Attack cực ngắn tránh tiếng bụp, Decay dài tắt dần)
                 gainNode.gain.setValueAtTime(0, now);
-                gainNode.gain.linearRampToValueAtTime(0.25, now + 0.015);
+                gainNode.gain.linearRampToValueAtTime(0.12, now + 0.015); // Giảm nhẹ âm lượng xuống 0.12
                 gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration);
 
                 // Tạo Delay vang vọng nhẹ tựa giáo đường (Cathedral Reverb)
                 const delay = globalAudioCtx.createDelay();
                 const delayGain = globalAudioCtx.createGain();
                 delay.delayTime.setValueAtTime(0.28, now);
-                delayGain.gain.setValueAtTime(0.22, now); // Phản hồi 22%
+                delayGain.gain.setValueAtTime(0.15, now); // Giảm phản hồi từ 22% xuống 15% cho dịu hơn
 
                 osc.connect(filter);
                 filter.connect(gainNode);
@@ -2225,42 +2248,61 @@
             try {
                 const now = globalAudioCtx.currentTime;
 
-                const osc = globalAudioCtx.createOscillator();
-                const lfo = globalAudioCtx.createOscillator();
-                const lfoGain = globalAudioCtx.createGain();
+                // Hàm phát một tiếng kêu đơn "beee" tự nhiên
+                const playSingleBleat = (startTime, duration, baseFreq, endFreq) => {
+                    const osc1 = globalAudioCtx.createOscillator();
+                    const osc2 = globalAudioCtx.createOscillator(); // detuned osc cho hiệu ứng đồng ca dày hơn
+                    const lfo = globalAudioCtx.createOscillator();
+                    const lfoGain = globalAudioCtx.createGain();
+                    const gainNode = globalAudioCtx.createGain();
+                    const filter = globalAudioCtx.createBiquadFilter();
 
-                const filter = globalAudioCtx.createBiquadFilter();
-                const gainNode = globalAudioCtx.createGain();
+                    osc1.type = 'sawtooth'; // Tạo hài âm nhọn sắc đặc trưng giọng kêu động vật
+                    osc2.type = 'triangle'; // Lớp nền ấm áp
 
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(320, now);
-                osc.frequency.exponentialRampToValueAtTime(240, now + 0.5);
+                    osc1.frequency.setValueAtTime(baseFreq, startTime);
+                    osc1.frequency.exponentialRampToValueAtTime(endFreq, startTime + duration);
 
-                lfo.type = 'sawtooth';
-                lfo.frequency.setValueAtTime(16, now);
+                    osc2.frequency.setValueAtTime(baseFreq * 0.98, startTime);
+                    osc2.frequency.exponentialRampToValueAtTime(endFreq * 0.98, startTime + duration);
 
-                lfoGain.gain.setValueAtTime(15, now);
+                    // LFO tạo độ rung giọng "b-e-e-e" (vibrato)
+                    lfo.type = 'sawtooth';
+                    lfo.frequency.setValueAtTime(14, startTime); // Rung 14Hz
+                    lfoGain.gain.setValueAtTime(12, startTime);
 
-                filter.type = 'lowpass';
-                filter.frequency.setValueAtTime(1000, now);
-                filter.frequency.exponentialRampToValueAtTime(600, now + 0.5);
+                    // Bandpass filter tạo giọng mũi (nasal) của động vật
+                    filter.type = 'bandpass';
+                    filter.frequency.setValueAtTime(900, startTime);
+                    filter.frequency.exponentialRampToValueAtTime(600, startTime + duration);
+                    filter.Q.setValueAtTime(1.5, startTime);
 
-                gainNode.gain.setValueAtTime(0.01, now);
-                gainNode.gain.linearRampToValueAtTime(0.15, now + 0.05);
-                gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+                    // Gain envelope của âm lượng
+                    gainNode.gain.setValueAtTime(0.001, startTime);
+                    gainNode.gain.linearRampToValueAtTime(0.12, startTime + 0.08); // fade in nhẹ nhàng
+                    gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
 
-                lfo.connect(lfoGain);
-                lfoGain.connect(osc.frequency);
+                    lfo.connect(lfoGain);
+                    lfoGain.connect(osc1.frequency);
+                    lfoGain.connect(osc2.frequency);
 
-                osc.connect(filter);
-                filter.connect(gainNode);
-                gainNode.connect(globalAudioCtx.destination);
+                    osc1.connect(filter);
+                    osc2.connect(filter);
+                    filter.connect(gainNode);
+                    gainNode.connect(globalAudioCtx.destination);
 
-                lfo.start(now);
-                osc.start(now);
+                    lfo.start(startTime);
+                    osc1.start(startTime);
+                    osc2.start(startTime);
 
-                lfo.stop(now + 0.5);
-                osc.stop(now + 0.5);
+                    lfo.stop(startTime + duration);
+                    osc1.stop(startTime + duration);
+                    osc2.stop(startTime + duration);
+                };
+
+                // Kêu kép "beeeeee beeee" đáng yêu
+                playSingleBleat(now, 0.45, 340, 260); // Tiếng thứ nhất
+                playSingleBleat(now + 0.52, 0.35, 300, 240); // Tiếng thứ hai thấp và ngắn hơn một chút
             } catch (e) {
                 console.error("Lỗi phát âm thanh chiên con:", e);
             }
@@ -3171,6 +3213,14 @@
 
             document.getElementById('sheep-pet-container')?.addEventListener('click', triggerPetting);
 
+            // Lắng nghe thay đổi kích thước màn hình để cập nhật lại trang trí ống nghiệm
+            window.addEventListener('resize', () => {
+                if (userData) {
+                    const rank = getCurrentRankInfo(userData.totalCheckins);
+                    updateTubeDecorations(rank.id);
+                }
+            });
+
             // Khởi chạy ngầm sau khi window.onload xong
             checkAutoLogin();
             setInterval(checkDailyReminder, 15000);
@@ -3582,6 +3632,58 @@
             setTimeout(() => { authScreen?.classList.add('hidden'); mainApp?.classList.remove('hidden'); updateUIFromData(); setTimeout(() => { mainApp?.classList.add('fade-in-scale'); }, 50); }, 500);
         }
 
+        // HÀM TRANG TRÍ ỐNG NGHIỆM THEO RANK
+        function updateTubeDecorations(rankId) {
+            const redDecor = document.getElementById('tube-red-decor');
+            const blueDecor = document.getElementById('tube-blue-decor');
+            if (!redDecor || !blueDecor) return;
+
+            const decorSets = {
+                0: ['🌱', '🌿', '🍀', '🍃'], // Mộc (Lá cây, mầm xanh)
+                1: ['⭐', '🪙', '✨', '🔸'], // Đồng (Sao đồng, đồng xu)
+                2: ['🫧', '🐟', '🐠', '🐚'], // Sắt (Bong bóng nước, cá nhỏ, vỏ sò)
+                3: ['🌟', '✨', '👑', '💫'], // Vàng (Sao vàng lung linh, vương miện)
+                4: ['💎', '✨', '💖', '❄️'], // Bạch Kim (Kim cương, tinh thể tuyết)
+                5: ['💎', '🌈', '👑', '✨'], // Kim Cương (Kim cương lớn, cầu vồng)
+                6: ['🌹', '❤️', '🍒', '✨']  // Hồng Ngọc (Hồng ngọc, hoa hồng)
+            };
+
+            const decors = decorSets[rankId] || decorSets[0];
+            const isDesktop = window.innerWidth >= 1024;
+
+            const positions = isDesktop ? [
+                { left: '25%', top: '22%' },
+                { left: '55%', top: '36%' },
+                { left: '20%', top: '50%' },
+                { left: '52%', top: '64%' },
+                { left: '30%', top: '78%' }
+            ] : [
+                { left: '15%', top: '25%' },
+                { left: '32%', top: '45%' },
+                { left: '50%', top: '20%' },
+                { left: '68%', top: '50%' },
+                { left: '85%', top: '30%' }
+            ];
+
+            let redHtml = '';
+            for (let i = 0; i < positions.length; i++) {
+                const emoji = decors[i % decors.length];
+                const pos = positions[i];
+                const delay = (i * 0.7).toFixed(1);
+                redHtml += `<span class="tube-decor-item" style="left: ${pos.left}; top: ${pos.top}; animation-delay: ${delay}s">${emoji}</span>`;
+            }
+            redDecor.innerHTML = redHtml;
+
+            let blueHtml = '';
+            for (let i = 0; i < positions.length; i++) {
+                const emoji = decors[(i + 1) % decors.length];
+                const pos = positions[i];
+                const delay = (i * 0.7 + 0.4).toFixed(1);
+                blueHtml += `<span class="tube-decor-item" style="left: ${pos.left}; top: ${pos.top}; animation-delay: ${delay}s">${emoji}</span>`;
+            }
+            blueDecor.innerHTML = blueHtml;
+        }
+
         // HÀM UPDATE GIAO DIỆN TỪNG BƯỚC AN TOÀN
         function updateUIFromData() {
             if (!userData) return;
@@ -3719,6 +3821,9 @@
                         if (streak >= 60) goldCrown.classList.remove('hidden');
                         else goldCrown.classList.add('hidden');
                     }
+
+                    // Cập nhật trang trí ống nghiệm theo hạng
+                    updateTubeDecorations(currentRank.id);
                 } else {
                     sheepContainer.style.opacity = '0';
                     setTimeout(() => {
