@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mê Cung Tĩnh Nguyện - Bản Thử Nghiệm</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Hiệu ứng kính mờ */
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Lớp lưới Grid game */
+        .game-grid {
+            background-size: 24px 24px;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+        }
+
+        /* Tùy biến thanh cuộn mượt */
+        .custom-scroll::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #1e293b;
+            border-radius: 10px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 10px;
+            border: 2px solid #1e293b;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+
+        /* Hiệu ứng nhấp nháy phát sáng nhẹ */
+        @keyframes pulse-glow {
+            0%, 100% {
+                filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.6));
+            }
+            50% {
+                filter: drop-shadow(0 0 12px rgba(245, 158, 11, 0.9));
+            }
+        }
+        .glow-active-path {
+            animation: pulse-glow 2.5s infinite;
+        }
+
+        /* Định dạng màu nền riêng cho các vùng đất mê cung */
+        .zone-grass { fill: #1b4332; stroke: #2d6a4f; stroke-width: 2; }
+        .zone-desert { fill: #78350f; stroke: #92400e; stroke-width: 2; }
+        .zone-lava { fill: #450a0a; stroke: #7f1d1d; stroke-width: 2; }
+        .zone-ruins { fill: #1e293b; stroke: #334155; stroke-width: 2; }
+        .zone-snow { fill: #0c4a6e; stroke: #0284c7; stroke-width: 2; }
+        .zone-sky { fill: #1e1b4b; stroke: #312e81; stroke-width: 2; }
+
+        /* Hoạt ảnh Zoom ảnh nổi bật */
+        .zoom-modal-enter {
+            opacity: 0;
+            transform: scale(0.85);
+        }
+        .zoom-modal-active {
+            opacity: 1;
+            transform: scale(1);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+    </style>
+</head>
+<body class="p-3 sm:p-6 lg:p-8 flex flex-col items-center justify-start min-h-screen">
+
+    <!-- Container chính -->
+    <div class="w-full max-w-6xl flex flex-col gap-4">
+        
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900/60 p-5 rounded-[2rem] border border-slate-800 shadow-xl">
+            <div>
+                <span class="text-amber-500 font-bold text-xs uppercase tracking-widest flex items-center gap-1.5">
+                    🎮 Đang Thử Nghiệm Giao Diện Mới
+                </span>
+                <h1 class="text-2xl sm:text-3xl font-black text-slate-100 mt-1">
+                    Bản Đồ Mê Cung Tĩnh Nguyện
+                </h1>
+                <p class="text-xs text-slate-400 mt-1">Nhân vật di chuyển trên bản đồ. Mỗi địa danh sẽ phóng to bức tranh minh họa câu chuyện Kinh Thánh!</p>
+            </div>
+            
+            <div class="flex gap-2 items-center flex-wrap">
+                <div class="bg-slate-800/80 px-4 py-2.5 rounded-2xl border border-slate-700/60 flex items-center gap-2">
+                    <span class="text-xs font-semibold text-slate-400">Tiến trình:</span>
+                    <span id="progress-text" class="text-sm font-black text-amber-400">Ngày 1/30 (Chặng 1)</span>
+                </div>
+                
+                <button id="btn-checkin" class="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-extrabold text-sm px-5 py-3 rounded-2xl shadow-lg shadow-orange-500/20 active:scale-95 transition-all flex items-center gap-2">
+                    🎯 Giả Lập Điểm Danh
+                </button>
+                
+                <button id="btn-reset" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs px-3.5 py-3 rounded-2xl border border-slate-700/60 transition-all active:scale-95">
+                    🔄 Reset
+                </button>
+            </div>
+        </div>
+
+        <!-- Layout 2 Cột: Bản đồ bên trái, Bảng thông tin bên phải -->
+        <div class="flex flex-col lg:flex-row gap-4 items-stretch">
+            
+            <!-- CỘT BÊN TRÁI: BẢN ĐỒ MÊ CUNG GAME (800x600px ảo) -->
+            <div class="flex-1 glass-panel rounded-[2rem] p-4 flex flex-col overflow-hidden relative shadow-2xl">
+                <!-- Nhãn bản đồ -->
+                <div class="absolute top-6 left-6 z-30 pointer-events-none flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-ping"></span>
+                    <span id="current-zone-label" class="text-xs font-bold text-emerald-400 tracking-wider uppercase bg-emerald-950/80 border border-emerald-800 px-3 py-1 rounded-full">
+                        Đang ở: Thung Lũng Xanh
+                    </span>
+                </div>
+
+                <div class="absolute top-6 right-6 z-30 flex items-center gap-1.5 bg-slate-900/80 border border-slate-700/60 px-3 py-1.5 rounded-full shadow-lg">
+                    <button id="btn-sound-toggle" class="text-xs text-amber-500 font-bold hover:text-amber-400 transition-colors flex items-center gap-1">
+                        🔊 Nhạc Đàn Harp: BẬT
+                    </button>
+                </div>
+
+                <!-- Viewport chứa bản đồ cuộn được -->
+                <div class="w-full overflow-auto custom-scroll p-2 mt-10 rounded-2xl bg-[#090d16]" id="map-scroll-container">
+                    
+                    <!-- Kích thước bản đồ thực tế mô phỏng đảo mê cung -->
+                    <div class="w-[840px] h-[640px] relative game-grid rounded-xl overflow-hidden" id="map-island">
+                        
+                        <!-- LỚP 1: BẢN ĐỒ VÙNG ĐẤT ĐỊA HÌNH (SVG BACKGROUND) -->
+                        <svg class="absolute inset-0 w-full h-full z-0 pointer-events-none">
+                            <defs>
+                                <pattern id="ocean-pattern" width="40" height="40" patternUnits="userSpaceOnUse">
+                                    <rect width="40" height="40" fill="#0f172a" />
+                                    <path d="M 0 20 Q 10 15, 20 20 T 40 20" fill="none" stroke="#1e293b" stroke-width="1" />
+                                </pattern>
+                            </defs>
+                            <rect width="100%" height="100%" fill="url(#ocean-pattern)" />
+
+                            <!-- THIẾT KẾ ĐẢO MÊ CUNG PHÂN ZONE -->
+                            <path d="M 50 350 L 50 590 L 450 590 L 450 450 L 320 340 L 220 380 Z" class="zone-grass" />
+                            <path d="M 450 590 L 800 590 L 800 380 L 620 300 L 450 450 Z" class="zone-desert" />
+                            <path d="M 800 380 L 800 150 L 550 150 L 520 220 L 620 300 Z" class="zone-lava" />
+                            <path d="M 320 340 L 520 220 L 620 300 L 450 450 Z" class="zone-ruins" />
+                            <path d="M 50 350 L 220 380 L 320 340 L 320 180 L 50 180 Z" class="zone-snow" />
+                            <path d="M 50 180 L 320 180 L 320 30 L 550 30 L 550 150 L 50 150 Z" class="zone-sky" />
+
+                            <!-- VẼ CÁC ĐƯỜNG MÊ CUNG GIẢ LẬP XUNG QUANH -->
+                            <g stroke="rgba(0,0,0,0.25)" stroke-width="3" fill="none" stroke-linecap="round">
+                                <path d="M 90 550 L 90 480 L 150 480 M 120 520 L 180 520 L 180 460" />
+                                <path d="M 230 570 L 290 570 L 290 510 L 350 510 M 320 550 L 380 550" />
+                                <path d="M 750 550 L 750 500 L 680 500 L 680 550 M 710 460 L 650 460 L 650 420" />
+                                <path d="M 520 570 L 520 530 L 480 530 L 480 490" />
+                                <path d="M 760 320 L 710 320 L 710 350 M 750 250 L 750 210 L 690 210 M 670 270 L 670 230 L 630 230" />
+                                <path d="M 480 380 L 410 380 L 410 410 M 470 330 L 430 330 L 430 290" />
+                                <path d="M 90 220 L 150 220 L 150 260 M 120 310 L 120 280 L 180 280 M 260 210 L 260 250" />
+                                <path d="M 90 100 L 150 100 L 150 60 M 200 130 L 200 80 L 250 80 M 420 120 L 420 70 L 480 70" />
+                            </g>
+                        </svg>
+
+                        <!-- LỚP 2: ĐƯỜNG DẪN HÀNH TRÌNH TĨNH NGUYỆN CHÍNH -->
+                        <svg class="absolute inset-0 w-full h-full z-10 pointer-events-none">
+                            <path id="quest-path-glow" d="" fill="none" stroke="rgba(245, 158, 11, 0.25)" stroke-width="8" stroke-linecap="round" class="glow-active-path" />
+                            <path id="quest-path-main" d="" fill="none" stroke="#f59e0b" stroke-width="4.5" stroke-linecap="round" stroke-dasharray="10, 8" />
+                        </svg>
+
+                        <!-- LỚP 3: CÁC NÚT ĐỊA DANH MẪU -->
+                        <div id="nodes-layer" class="absolute inset-0 z-20"></div>
+
+                        <!-- LỚP 4: QUÂN CỜ THÚ CƯNG DI CHUYỂN -->
+                        <div id="avatar-token" 
+                             class="absolute w-12 h-12 -ml-6 -mt-6 bg-white rounded-2xl shadow-[0_8px_16px_rgba(245,158,11,0.4)] border-2 border-amber-400 flex items-center justify-center text-2xl z-30 transition-all duration-1000 ease-in-out pointer-events-none token-shadow"
+                             style="transform: translate3d(80px, 520px, 0);">
+                             🐑
+                             <div class="absolute -top-1 -right-1 w-4 h-4 bg-amber-400 rounded-full animate-ping opacity-75"></div>
+                             <div class="absolute -top-1.5 left-1/2 transform -translate-x-1/2 w-7 h-1.5 border border-yellow-300 rounded-[50%] bg-yellow-400/80 shadow-[0_0_6px_rgba(250,204,21,0.9)]"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CỘT BÊN PHẢI: BẢNG THÔNG TIN CHI TIẾT ĐỊA DANH -->
+            <div class="w-full lg:w-[350px] glass-panel rounded-[2rem] p-6 flex flex-col justify-between shadow-2xl shrink-0">
+                
+                <!-- Phần thông tin chặng đi -->
+                <div class="flex flex-col gap-4">
+                    <div class="border-b border-slate-700/50 pb-4">
+                        <span id="info-zone-badge" class="text-[10px] font-bold text-amber-500 uppercase tracking-widest bg-amber-500/10 px-3 py-1 rounded-md border border-amber-500/20">
+                            VÙNG 1: THUNG LŨNG XANH
+                        </span>
+                        <h2 id="info-node-name" class="text-xl font-extrabold text-slate-100 mt-2 flex items-center gap-1.5">
+                            <span id="info-node-icon">🌿</span> <span id="info-node-title">Cửa Vào Đức Tin</span>
+                        </h2>
+                        <div class="flex justify-between items-center mt-1 text-[11px] text-slate-400">
+                            <span id="info-node-day">Chặng: Ngày 1/30</span>
+                            <button id="btn-view-illustration" class="text-amber-400 hover:text-amber-300 font-bold underline transition-colors">
+                                🖼️ Xem tranh minh họa
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Bức tranh xem thử thu nhỏ ở bảng thông tin -->
+                    <div class="relative w-full h-32 rounded-2xl overflow-hidden border border-slate-700/80 shadow-md group cursor-pointer" id="mini-illustration-card">
+                        <img id="info-node-img" src="" alt="bible-scene" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/10 to-transparent flex items-end p-2.5">
+                            <span class="text-[9px] font-bold text-amber-300 uppercase tracking-widest bg-slate-950/80 px-2 py-0.5 rounded border border-amber-500/30">Phóng to tranh 🔍</span>
+                        </div>
+                    </div>
+
+                    <!-- Mô tả câu chuyện và ý nghĩa lịch sử vùng đất -->
+                    <div>
+                        <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Mô tả Địa danh:</h3>
+                        <p id="info-node-desc" class="text-xs text-slate-400 leading-relaxed min-h-[70px]">
+                            Cổng chào bình yên mở lối cho hành trình tĩnh nguyện. Nơi người lữ khách đặt bước chân trung tín đầu tiên trên con đường mê cung thiêng liêng.
+                        </p>
+                    </div>
+
+                    <!-- Câu Kinh Thánh Lời Hứa -->
+                    <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-800/80 shadow-inner">
+                        <div class="flex items-center gap-1.5 text-xs font-bold text-amber-400 mb-1.5">
+                            <span>📖 Lời Hứa Kinh Thánh:</span>
+                        </div>
+                        <p id="info-node-verse" class="text-xs text-slate-200 italic leading-relaxed font-medium">
+                            "Lạy Đức Giê-hô-va, xin chỉ cho tôi biết các đường lối Ngài; xin dạy dỗ tôi các nẻo đàng Ngài." (Thi-thiên 25:4)
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Bảng hướng dẫn & Hướng dẫn sử dụng thử nghiệm -->
+                <div class="mt-4 pt-4 border-t border-slate-700/50 flex flex-col gap-2">
+                    <h4 class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Hướng dẫn Bản đồ:</h4>
+                    <p class="text-[11px] text-slate-400 leading-relaxed">
+                        • Điểm danh hoàn thành bài học để di chuyển tiếp qua mê cung.<br>
+                        • Mỗi lần đặt chân tới điểm mới, bức tranh sự kiện Kinh Thánh đặc trưng sẽ tự động phóng to hiện lên giữa màn hình để bạn suy ngẫm.
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- MÀN HÌNH MODAL PHÓNG TO TRANH MINH HỌA (CINEMATIC ZOOM MODAL) -->
+    <div id="illustration-modal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-[100] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-500">
+        <!-- Nút đóng nhanh bằng cách click nền đen -->
+        <div class="absolute inset-0 cursor-zoom-out" onclick="closeIllustrationModal()"></div>
+        
+        <!-- Khung chứa ảnh nổi bật được Zoom lên -->
+        <div id="illustration-card" class="bg-slate-900 border-2 border-amber-500/40 rounded-[2.5rem] shadow-2xl w-full max-w-lg overflow-hidden flex flex-col relative z-10 zoom-modal-enter transition-all">
+            
+            <!-- Nút đóng chéo -->
+            <button onclick="closeIllustrationModal()" class="absolute top-4 right-4 bg-slate-950/80 border border-slate-700 text-slate-300 w-8 h-8 rounded-full flex items-center justify-center font-bold hover:bg-slate-800 transition-colors z-20">
+                ✕
+            </button>
+
+            <!-- Khung hình minh họa câu chuyện Kinh Thánh phóng to -->
+            <div class="relative w-full aspect-[4/3] bg-slate-950 overflow-hidden group">
+                <img id="zoom-modal-img" src="" alt="bible-art" class="w-full h-full object-cover transition-transform duration-[10000ms] ease-out group-hover:scale-115">
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
+                <!-- Badge Ngày & Tên chặng -->
+                <div class="absolute bottom-4 left-6 right-6 flex items-end justify-between">
+                    <div>
+                        <span id="zoom-modal-chapter" class="text-[10px] font-bold text-amber-400 uppercase tracking-widest bg-amber-500/10 border border-amber-500/30 px-3 py-1 rounded-full">
+                            VÙNG 1: THUNG LŨNG XANH
+                        </span>
+                        <h3 id="zoom-modal-title" class="text-xl font-black text-slate-50 mt-2">Cổng Đức Tin</h3>
+                    </div>
+                    <span id="zoom-modal-day" class="text-xs font-bold text-slate-400 shrink-0">Chặng: Ngày 1/30</span>
+                </div>
+            </div>
+
+            <!-- Lời tự sự giải thích bối cảnh câu chuyện của phân đoạn -->
+            <div class="p-6 flex flex-col gap-4 bg-slate-900">
+                <div>
+                    <h4 class="text-xs font-extrabold text-amber-500 uppercase tracking-wider mb-1.5">Sự kiện chính của Phân đoạn:</h4>
+                    <p id="zoom-modal-desc" class="text-xs text-slate-300 leading-relaxed">
+                        Cổng chào bình yên mở lối cho hành trình tĩnh nguyện. Nơi người lữ khách đặt bước chân trung tín đầu tiên trên con đường mê cung thiêng liêng.
+                    </p>
+                </div>
+
+                <!-- Lời Hứa Kinh Thánh (Scroll Card) -->
+                <div class="bg-slate-950/60 p-4 rounded-2xl border border-slate-800 shadow-inner text-center">
+                    <p class="text-[10px] font-bold text-amber-400 uppercase tracking-widest mb-1">📖 Lời Hứa Của Cha:</p>
+                    <p id="zoom-modal-verse" class="text-xs text-slate-200 italic font-medium leading-relaxed">
+                        "Ta đã chọn con đường trung tín, Đặt luật lệ Chúa trước mặt ta." (Thi-thiên 119:30)
+                    </p>
+                </div>
+                
+                <button onclick="closeIllustrationModal()" class="w-full py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-extrabold text-sm rounded-xl shadow-lg shadow-orange-500/10 transition-transform active:scale-95">
+                    📖 Tôi Đã Suy Ngẫm Xong
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SCRIPT ĐIỀU KHIỂN HOẠT ẢNH BẢN ĐỒ -->
+    <script>
+        // Dấu mốc 30 ngày tương ứng với 6 vùng mê cung khác nhau
+        // Mỗi ngày có một bức hình (Unsplash) tiêu biểu minh họa câu chuyện phân đoạn Kinh Thánh tương ứng
+        const mazeQuestData = [
+            // === VÙNG ĐẤT 1: THUNG LŨNG XANH (GRASSLAND MAZE) - Ngày 1-5 ===
+            { 
+                day: 1, 
+                zone: "Thung Lũng Xanh", 
+                name: "Cổng Đức Tin", 
+                icon: "🌿", 
+                x: 80, 
+                y: 520, 
+                image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=600&auto=format&fit=crop&q=80", // Rừng rậm tươi mát
+                desc: "Cổng chào mở lối cho hành trình tĩnh nguyện. Nơi người lữ khách đặt bước chân trung tín đầu tiên để bắt đầu xây dựng mối tương giao ngọt ngào với Chúa.", 
+                verse: "Ta đã chọn con đường trung tín, Đặt luật lệ Chúa trước mặt ta. (Thi-thiên 119:30)" 
+            },
+            { 
+                day: 2, 
+                zone: "Thung Lũng Xanh", 
+                name: "Đồng Cỏ Bình An", 
+                icon: "🐑", 
+                x: 130, 
+                y: 450, 
+                image: "https://images.unsplash.com/photo-1484557985045-edf25e08da73?w=600&auto=format&fit=crop&q=80", // Đồng cỏ với đàn cừu
+                desc: "Đồng cỏ xanh tươi dưới bóng mát của Đấng Chăn Giữ, nơi linh hồn bạn tìm lại sự tĩnh lặng tuyệt đối sau những ngày dài mỏi mệt.", 
+                verse: "Ngài khiến tôi an nghỉ nơi đồng cỏ xanh tươi, dẫn tôi đến mé nước bình tịnh. (Thi-thiên 23:2)" 
+            },
+            { 
+                day: 3, 
+                zone: "Thung Lũng Xanh", 
+                name: "Suối Lời Sự Sống", 
+                icon: "💧", 
+                x: 230, 
+                y: 440, 
+                image: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=600&auto=format&fit=crop&q=80", // Dòng suối trong vắt
+                desc: "Dòng suối mát lành tuôn tràn từ thiên đàng để xoa dịu những khô cằn và nuôi lớn hạt mầm đức tin bên trong bạn.", 
+                verse: "Lời Chúa là ngọn đèn cho chân tôi, ánh sáng cho đường lối tôi. (Thi-thiên 119:105)" 
+            },
+            { 
+                day: 4, 
+                zone: "Thung Lũng Xanh", 
+                name: "Cầu Giao Ước", 
+                icon: "🌉", 
+                x: 230, 
+                y: 530, 
+                image: "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=600&auto=format&fit=crop&q=80", // Cầu gỗ qua hồ sương mù
+                desc: "Chiếc cầu bắc qua thung lũng sâu thẳm, biểu trưng cho nhịp cầu Giao ước vĩnh cửu của tình yêu Chúa chẳng bao giờ dời đổi.", 
+                verse: "Giao ước hòa bình ta cũng sẽ chẳng dời đi, Đức Giê-hô-va là Đấng thương xót ngươi phán vậy. (Ê-sai 54:10)" 
+            },
+            { 
+                day: 5, 
+                zone: "Thung Lũng Xanh", 
+                name: "Cửa Ải Thử Thách", 
+                icon: "🚪", 
+                x: 340, 
+                y: 530, 
+                image: "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=600&auto=format&fit=crop&q=80", // Cổng đá rêu phong
+                desc: "Ranh giới bước ra khỏi vùng an toàn bình lặng của Thung Lũng Xanh để đối mặt với hoang mạc sa mạc khắc nghiệt đầy cát bụi.", 
+                verse: "Hãy vững lòng bền chí, chớ run sợ, vì Giê-hô-va Đức Chúa Trời ngươi vẫn ở cùng ngươi đi bất cứ nơi nào. (Giô-suê 1:9)" 
+            },
+
+            // === VÙNG ĐẤT 2: SA MẠC CÁT NẮNG (DESERT DUNES MAZE) - Ngày 6-10 ===
+            { 
+                day: 6, 
+                zone: "Sa Mạc Cát Nắng", 
+                name: "Hoang Mạc Lửa Trắng", 
+                icon: "🏜️", 
+                x: 490, 
+                y: 540, 
+                image: "https://images.unsplash.com/photo-1509316975850-ff9c5edd0cd9?w=600&auto=format&fit=crop&q=80", // Sa mạc mênh mông cát vàng
+                desc: "Bản đồ dẫn sâu vào cồn cát nắng cháy, mô phỏng những ngày khô hạn tâm linh, khi bạn cảm giác như tiếng gọi cầu nguyện rơi vào thinh lặng.", 
+                verse: "Linh hồn tôi khát khao Ngài trong một đất khô khan, cực nhọc, chẳng có nước. (Thi-thiên 63:1)" 
+            },
+            { 
+                day: 7, 
+                zone: "Sa Mạc Cát Nắng", 
+                name: "Ốc Đảo Tiếp Trợ", 
+                icon: "🌴", 
+                x: 620, 
+                y: 530, 
+                image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&auto=format&fit=crop&q=80", // Ốc đảo dừa mát
+                desc: "Chúa ban Ốc đảo xanh tươi tiếp nước đúng thời điểm. Khi bạn nghĩ mình đã cạn kiệt sức lực, Ngài sẽ mở ra một nguồn sống bất ngờ.", 
+                verse: "Đức Giê-hô-va sẽ cứ dẫn dắt ngươi, làm cho ngươi no lòng giữa nơi khô hạn. (Ê-sai 58:11)" 
+            },
+            { 
+                day: 8, 
+                zone: "Sa Mạc Cát Nắng", 
+                name: "Giếng Nước Ma-ra", 
+                icon: "🧪", 
+                x: 740, 
+                y: 520, 
+                image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&auto=format&fit=crop&q=80", // Suối nước giữa đá sa mạc
+                desc: "Dân sự oán trách vì giếng nước đắng trong hoang mạc, nhưng Chúa đã hóa dòng nước đắng thành ngọt ngào cho người tin cậy.", 
+                verse: "Ngài chỉ cho ông một gốc cây, ông ném xuống nước, nước liền hóa ngọt. (Xuất Ê-díp-tô Ký 15:25)" 
+            },
+            { 
+                day: 9, 
+                zone: "Sa Mạc Cát Nắng", 
+                name: "Núi Sinai Giao Ước", 
+                icon: "⛰️", 
+                x: 690, 
+                y: 440, 
+                image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=600&auto=format&fit=crop&q=80", // Núi đá trọc hùng vĩ
+                desc: "Đỉnh núi Sinai chói lòa vinh quang, nơi Chúa trực tiếp phán truyền Mười Điều Răn và khắc trên những bia đá vĩnh cửu.", 
+                verse: "Bởi vì luật pháp ban cho bởi Môi-se, còn ân điển và lẽ thật đến bởi Đức Chúa Jêsus Christ. (Giăng 1:17)" 
+            },
+            { 
+                day: 10, 
+                zone: "Sa Mạc Cát Nắng", 
+                name: "Thung Lũng Quyết Định", 
+                icon: "🧭", 
+                x: 550, 
+                y: 420, 
+                image: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=600&auto=format&fit=crop&q=80", // Ngã rẽ thung lũng đá vàng
+                desc: "Ranh giới lựa chọn dứt khoát: rời bỏ sa mạc để sẵn sàng tiến thẳng vào lò lửa thử thách của vùng núi lửa nham thạch.", 
+                verse: "Ai thuộc về Đức Giê-hô-va, hãy đến đây cùng ta! (Xuất Ê-díp-tô Ký 32:26)" 
+            },
+
+            // === VÙNG ĐẤT 3: NÚI LỬA RỰC CHÁY (LAVA CORE MAZE) - Ngày 11-15 ===
+            { 
+                day: 11, 
+                zone: "Núi Lửa Rực Cháy", 
+                name: "Sông Dung Nham", 
+                icon: "🌋", 
+                x: 600, 
+                y: 260, 
+                image: "https://images.unsplash.com/photo-1508873696983-2df519f0397e?w=600&auto=format&fit=crop&q=80", // Nham thạch rực lửa ấm
+                desc: "Mê cung núi lửa chập chùng thử thách lòng quả cảm. Nơi sức nóng của thử thách tôi luyện đức tin bạn trở nên tinh ròng hơn cả vàng ròng.", 
+                verse: "Nếu ngươi đi qua lửa, sẽ chẳng bị cháy, ngọn lửa cũng chẳng táp vào ngươi. (Ê-sai 43:2)" 
+            },
+            { 
+                day: 12, 
+                zone: "Núi Lửa Rực Cháy", 
+                name: "Bàn Thờ Của Lễ", 
+                icon: "🔥", 
+                x: 700, 
+                y: 250, 
+                image: "https://images.unsplash.com/photo-1519751138087-5bf79df62d5b?w=600&auto=format&fit=crop&q=80", // Khói nhang bay lên ấm cúng
+                desc: "Nơi người dâng của lễ sống chiêm nghiệm sự tận hiến và sẵn sàng hy sinh những ước muốn cá nhân vì Chúa.", 
+                verse: "Hãy dâng thân thể mình làm của lễ sống và thánh, đẹp lòng Đức Chúa Trời. (Rô-ma 12:1)" 
+            },
+            { 
+                day: 13, 
+                zone: "Núi Lửa Rực Cháy", 
+                name: "Lò Lửa Thử Thách", 
+                icon: "⛪", 
+                x: 730, 
+                y: 180, 
+                image: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=600&auto=format&fit=crop&q=80", // Ánh sáng lửa đỏ bừng
+                desc: "Mô phỏng câu chuyện lò lửa hực đỏ của ba bạn trẻ Hê-bơ-rơ. Dù thế giới có nóng bỏng hoạn nạn đến đâu, Đấng Bảo Vệ hằng đi kề bên bạn.", 
+                verse: "Kìa, ta thấy bốn người đi dong chơi giữa lửa... hình dung người thứ tư giống như một con trai của các thần. (Đa-ni-ên 3:25)" 
+            },
+            { 
+                day: 14, 
+                zone: "Núi Lửa Rực Cháy", 
+                name: "Cổng Đắc Thắng", 
+                icon: "👑", 
+                x: 610, 
+                y: 170, 
+                image: "https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?w=600&auto=format&fit=crop&q=80", // Bầu trời tinh vân vàng
+                desc: "Đi qua khỏi lò lửa nham thạch nóng rẫy, bạn được đúc thành một chiếc vương miện đức tin bền bỉ kiên cường.", 
+                verse: "Sự thử thách đức tin anh em sinh ra sự kiên nhẫn. (Gia-cơ 1:3)" 
+            },
+            { 
+                day: 15, 
+                zone: "Núi Lửa Rực Cháy", 
+                name: "Lối Vào Ruins", 
+                icon: "🏰", 
+                x: 520, 
+                y: 230, 
+                image: "https://images.unsplash.com/photo-1604537529428-15bcbeecfe4d?w=600&auto=format&fit=crop&q=80", // Lâu đài đá phong rêu
+                desc: "Đoạn cầu rẽ dẫn người lữ hành trốn khỏi khu vực nóng rẫy dung nham núi lửa để đặt chân vào mê cung phế tích đá cổ.", 
+                verse: "Đức Giê-hô-va là đồn lũy vững chắc của tôi trong ngày tai nạn. (Thi-thiên 59:16)" 
+            },
+
+            // === VÙNG ĐẤT 4: MÊ CUNG ĐÁ PHẾ TÍCH (SHADOW LABYRINTH MAZE) - Ngày 16-20 ===
+            { 
+                day: 16, 
+                zone: "Mê Cung Đá Cổ", 
+                name: "Lối Vào Phế Tích", 
+                icon: "🧱", 
+                x: 450, 
+                y: 290, 
+                image: "https://images.unsplash.com/photo-1518005020951-eccb494ad742?w=600&auto=format&fit=crop&q=80", // Hành lang đá xám cổ kính
+                desc: "Hành lang đá âm u và im lìm, thử thách đức tin bạn bằng sự trung tín chờ đợi trong lặng thầm không tiếng động.", 
+                verse: "Hãy tìm kiếm Đức Giê-hô-va và sức mạnh Ngài, tìm kiếm mặt Ngài luôn luôn. (Thi-thiên 105:4)" 
+            },
+            { 
+                day: 17, 
+                zone: "Mê Cung Đá Cổ", 
+                name: "Tháp Cầu Nguyện", 
+                icon: "🗼", 
+                x: 370, 
+                y: 300, 
+                image: "https://images.unsplash.com/photo-1478147427282-58a87a120781?w=600&auto=format&fit=crop&q=80", // Ngọn tháp cao trong sương mù
+                desc: "Ngọn tháp đá cao sừng sững nâng lời cầu nguyện của bạn vượt khỏi bóng tối mê cung đá để bay thấu trời xanh.", 
+                verse: "Danh Đức Giê-hô-va là một tháp vững bền; người công bình chạy đến đó, được cứu rỗi an toàn. (Châm ngôn 18:10)" 
+            },
+            { 
+                day: 18, 
+                zone: "Mê Cung Đá Cổ", 
+                name: "Trũng Bóng Chết", 
+                icon: "💀", 
+                x: 360, 
+                y: 410, 
+                image: "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=600&auto=format&fit=crop&q=80", // Rừng thông tối tăm đầy sương
+                desc: "Đoạn đường u ám đầy nguy hiểm bao phủ, nơi nỗi sợ bủa vây nhưng giao ước bảo vệ thiêng liêng hằng rực sáng dẫn lối.", 
+                verse: "Dầu khi tôi đi trong trũng bóng chết, tôi sẽ chẳng sợ tai họa nào; vì Chúa ở cùng tôi. (Thi-thiên 23:4)" 
+            },
+            { 
+                day: 19, 
+                zone: "Mê Cung Đá Cổ", 
+                name: "Thung Lũng Xương Khô", 
+                icon: "🦴", 
+                x: 470, 
+                y: 390, 
+                image: "https://images.unsplash.com/photo-1532187863486-abf9d39d66e8?w=600&auto=format&fit=crop&q=80", // Đất nứt nẻ khô hạn cằn cỗi
+                desc: "Khải tượng xương khô sống dậy thành một đạo quân vĩ đại. Lời phán Chúa hồi sinh những hy vọng và hoài bão đã nguội lạnh từ lâu.", 
+                verse: "Hỡi các xương khô kia, hãy nghe lời của Đức Giê-hô-va! (Ê-xê-chi-ên 37:4)" 
+            },
+            { 
+                day: 20, 
+                zone: "Mê Cung Đá Cổ", 
+                name: "Cổng Ánh Sáng", 
+                icon: "✨", 
+                x: 440, 
+                y: 350, 
+                image: "https://images.unsplash.com/photo-1493612276216-ee3925520721?w=600&auto=format&fit=crop&q=80", // Tia sáng rực rỡ từ cửa hang
+                desc: "Những tia sáng ấm áp cuối phế tích rọi chiếu, mở ra con đường đưa lữ khách trèo lên đỉnh núi tuyết phủ trắng xóa.", 
+                verse: "Sự sáng soi trong tối tăm, tối tăm chẳng hề nhận lấy sự sáng. (Giăng 1:5)" 
+            },
+
+            // === VÙNG ĐẤT 5: ĐỈNH NÚI TUYẾT BĂNG GIÁ (SNOWY PEAKS MAZE) - Ngày 21-25 ===
+            { 
+                day: 21, 
+                zone: "Đỉnh Núi Tuyết", 
+                name: "Thung Lũng Băng", 
+                icon: "❄️", 
+                x: 280, 
+                y: 310, 
+                image: "https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?w=600&auto=format&fit=crop&q=80", // Hồ băng nứt nẻ tuyệt đẹp
+                desc: "Cái lạnh buốt giá thử thách sự nhẫn nại của bạn đối với mối liên kết đức tin và ngọn lửa yêu thương bền bỉ ấm nóng.", 
+                verse: "Lòng yêu thương của nhiều người sẽ nguội lần đi. Nhưng ai bền lòng cho đến cuối cùng, sẽ được cứu. (Ma-thi-ơ 24:12)" 
+            },
+            { 
+                day: 22, 
+                zone: "Đỉnh Núi Tuyết", 
+                name: "Hang Đá Trú Ẩn", 
+                icon: "❄️", 
+                x: 190, 
+                y: 320, 
+                image: "https://images.unsplash.com/photo-1482862549707-f63cb32c5fd9?w=600&auto=format&fit=crop&q=80", // Ánh lửa ấm áp trong hang tuyết
+                desc: "Chúa che chở bạn qua cơn bão tuyết trong một hang đá ấm cúng, giúp bạn giữ lửa tĩnh tâm mỗi ngày trọn vẹn.", 
+                verse: "Chúa là nơi ẩn náu của tôi, đồn lũy tôi, và là Đức Chúa Trời tôi, tôi tin cậy nơi Ngài. (Thi-thiên 91:2)" 
+            },
+            { 
+                day: 23, 
+                zone: "Đỉnh Núi Tuyết", 
+                name: "Cực Quang Hy Vọng", 
+                icon: "🌈", 
+                x: 130, 
+                y: 250, 
+                image: "https://images.unsplash.com/photo-1483168527879-c66136b56105?w=600&auto=format&fit=crop&q=80", // Ánh sáng aurora xanh lá cực đẹp
+                desc: "Ánh cực quang rực rỡ lóe sáng nơi màn trời đêm đông lạnh giá, thắp lên niềm tin sắt đá rằng Chúa hằng cứu giúp bạn.", 
+                verse: "Đức Giê-hô-va là sự sáng và sự cứu rỗi tôi: Tôi sẽ sợ ai? (Thi-thiên 27:1)" 
+            },
+            { 
+                day: 24, 
+                zone: "Đỉnh Núi Tuyết", 
+                name: "Thác Băng Sừng Sững", 
+                icon: "🧊", 
+                x: 140, 
+                y: 200, 
+                image: "https://images.unsplash.com/photo-1542856391-010fb87dcfed?w=600&auto=format&fit=crop&q=80", // Dòng thác đóng băng vĩ đại
+                desc: "Thử thách của sự đứng yên đầy kiên nhẫn. Có những chặng cuộc đời dường như ngưng đọng, nhưng dòng nước ngầm sự sống vẫn âm thầm tuân trào.", 
+                verse: "Hãy yên tịnh trước mặt Đức Giê-hô-va, và kiên trì chờ đợi Ngài. (Thi-thiên 37:7)" 
+            },
+            { 
+                day: 25, 
+                zone: "Đỉnh Núi Tuyết", 
+                name: "Lối Lên Sky", 
+                icon: "🪜", 
+                x: 230, 
+                y: 200, 
+                image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&auto=format&fit=crop&q=80", // Đường chân trời không gian trừu tượng
+                desc: "Bậc thang đá phủ tuyết lạnh giá mở ra lối dẫn bay cao lên thiên giới mây ngàn của Rừng Thượng Uyển.", 
+                verse: "Những kẻ trông đợi Đức Giê-hô-va sẽ được sức mới, cất cánh bay cao như chim ưng. (Ê-sai 40:31)" 
+            },
+
+            // === VÙNG ĐẤT 6: RỪNG THƯỢNG UYỂN TRÊN TRỜI (SKY LABYRINTH) - Ngày 26-30 ===
+            { 
+                day: 26, 
+                zone: "Rừng Thượng Uyển", 
+                name: "Cổng Thiên Đàng", 
+                icon: "🌤️", 
+                x: 280, 
+                y: 140, 
+                image: "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=600&auto=format&fit=crop&q=80", // Mây trắng bồng bềnh dưới nắng
+                desc: "Chào mừng bạn đặt chân lên chín tầng mây của vương quốc hòa bình tươi sáng tràn ngập tiếng nhạc thiên sứ du dương.", 
+                verse: "Ngài sẽ lau ráo nước mắt trên mắt họ... sẽ không có sự chết, cũng không có than khóc hay đau đớn nữa. (Khải huyền 21:4)" 
+            },
+            { 
+                day: 27, 
+                zone: "Rừng Thượng Uyển", 
+                name: "Sông Sự Sống", 
+                icon: "🏞️", 
+                x: 380, 
+                y: 120, 
+                image: "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=600&auto=format&fit=crop&q=80", // Dòng sông xanh uốn lượn trong rừng
+                desc: "Dòng nước trong suốt pha lê rọi chiếu linh hồn, giải khát vĩnh viễn cho những khao khát tâm linh cội rễ.", 
+                verse: "Đấng nào khát, hãy đến; kẻ nào muốn, hãy nhận lấy nước sự sống cách miễn phí. (Khải huyền 22:17)" 
+            },
+            { 
+                day: 28, 
+                zone: "Rừng Thượng Uyển", 
+                name: "Cây Sự Sống", 
+                icon: "🌳", 
+                x: 480, 
+                y: 110, 
+                image: "https://images.unsplash.com/photo-1438786657495-640937046d18?w=600&auto=format&fit=crop&q=80", // Cây sồi khổng lồ buổi tối thần bí
+                desc: "Nơi kết những chùm trái ngọt ngào của Thánh Linh, lá cây xoa dịu những vết thương tinh thần sâu kín.", 
+                verse: "Phước cho những kẻ giặt áo mình, để có quyền đến cùng cây sự sống. (Khải huyền 22:14)" 
+            },
+            { 
+                day: 29, 
+                zone: "Rừng Thượng Uyển", 
+                name: "Bàn Thờ Dâng Hương", 
+                icon: "🏺", 
+                x: 480, 
+                y: 50, 
+                image: "https://images.unsplash.com/photo-1519751138087-5bf79df62d5b?w=600&auto=format&fit=crop&q=80", // Hương khói rực rỡ lấp lánh
+                desc: "Nơi quy tụ những tiếng khẩn nguyện chân thành nhất của cộng đồng đức tin hòa làm một và được dâng lên Chúa.", 
+                verse: "Khói hương thơm cùng lời cầu nguyện của các thánh đồ từ tay thiên sứ bay lên trước mặt Chúa. (Khải huyền 8:4)" 
+            },
+            { 
+                day: 30, 
+                zone: "Rừng Thượng Uyển", 
+                name: "Ngai Thi Ân", 
+                icon: "👑", 
+                x: 380, 
+                y: 50, 
+                image: "https://images.unsplash.com/photo-1469840120186-b856c2285db2?w=600&auto=format&fit=crop&q=80", // Hoàng hôn hồng rực ngàn mây
+                desc: "Đích đến vinh hiển của hành trình 30 ngày. Chúa đón nhận bạn với vòng tay yêu thương và nụ cười mãn nguyện vì sự trung tín tuyệt đối.", 
+                verse: "Hỡi đầy tớ ngay lành và trung tín kia... Hãy đến hưởng sự vui mừng của Chúa ngươi! (Ma-thi-ơ 25:21)" 
+            }
+        ];
+
+        let userDay = 1;
+        let isSoundEnabled = true;
+
+        // Vẽ các chặng đi nối nhau lên SVG
+        function renderQuestPaths() {
+            const pathMain = document.getElementById('quest-path-main');
+            const pathGlow = document.getElementById('quest-path-glow');
+            
+            let pathD = `M ${mazeQuestData[0].x} ${mazeQuestData[0].y}`;
+            
+            for (let i = 1; i < mazeQuestData.length; i++) {
+                const prev = mazeQuestData[i-1];
+                const curr = mazeQuestData[i];
+                const cpX1 = prev.x + (curr.x - prev.x) / 1.5;
+                const cpY1 = prev.y;
+                const cpX2 = prev.x + (curr.x - prev.x) / 3;
+                const cpY2 = curr.y;
+                pathD += ` C ${cpX1} ${cpY1}, ${cpX2} ${cpY2}, ${curr.x} ${curr.y}`;
+            }
+
+            pathMain.setAttribute("d", pathD);
+            pathGlow.setAttribute("d", pathD);
+        }
+
+        // Tạo các nút tròn điểm mốc trên bản đồ
+        function renderMapNodes() {
+            const container = document.getElementById('nodes-layer');
+            container.innerHTML = '';
+
+            mazeQuestData.forEach((node) => {
+                const btn = document.createElement('button');
+                btn.className = `absolute w-9 h-9 -ml-4 -mt-4 rounded-full shadow-lg flex items-center justify-center text-sm transition-all duration-300 hover:scale-125 focus:outline-none z-20`;
+                
+                // Định hình trạng thái màu sắc nút
+                if (node.day < userDay) {
+                    btn.classList.add('bg-emerald-600', 'text-white', 'border-2', 'border-emerald-300', 'hover:bg-emerald-500');
+                } else if (node.day === userDay) {
+                    btn.classList.add('bg-amber-500', 'text-white', 'border-2', 'border-white', 'animate-pulse', 'shadow-[0_0_12px_rgba(245,158,11,0.8)]');
+                } else {
+                    btn.classList.add('bg-slate-800/80', 'text-slate-500', 'border-2', 'border-slate-700/60', 'cursor-not-allowed', 'opacity-60');
+                }
+
+                btn.style.left = `${node.x}px`;
+                btn.style.top = `${node.y}px`;
+                btn.innerHTML = node.icon;
+                
+                btn.onclick = () => {
+                    if (node.day <= userDay) {
+                        showNodeInformation(node);
+                        openIllustrationModal(node); // Zoom tranh khi người dùng chủ động click nút đã qua
+                    } else {
+                        playErrorSound();
+                    }
+                };
+
+                container.appendChild(btn);
+            });
+        }
+
+        // Đồng bộ hóa quân cờ nhân vật và tự động cuộn
+        function syncPlayerToken() {
+            const token = document.getElementById('avatar-token');
+            const activeNode = mazeQuestData.find(n => n.day === userDay);
+
+            if (activeNode) {
+                token.style.transform = `translate3d(${activeNode.x}px, ${activeNode.y}px, 0)`;
+
+                const scrollContainer = document.getElementById('map-scroll-container');
+                const scrollTarget = activeNode.x - scrollContainer.offsetWidth / 2;
+                scrollContainer.scrollTo({
+                    left: Math.max(0, scrollTarget),
+                    behavior: 'smooth'
+                });
+
+                const zoneLabel = document.getElementById('current-zone-label');
+                zoneLabel.innerText = `Đang ở: ${activeNode.zone}`;
+                
+                if (activeNode.zone === "Thung Lũng Xanh") {
+                    zoneLabel.className = "text-xs font-bold text-emerald-400 tracking-wider uppercase bg-emerald-950/80 border border-emerald-800 px-3 py-1 rounded-full";
+                } else if (activeNode.zone === "Sa Mạc Cát Nắng") {
+                    zoneLabel.className = "text-xs font-bold text-yellow-400 tracking-wider uppercase bg-yellow-950/80 border border-yellow-800 px-3 py-1 rounded-full";
+                } else if (activeNode.zone === "Núi Lửa Rực Cháy") {
+                    zoneLabel.className = "text-xs font-bold text-red-400 tracking-wider uppercase bg-red-950/80 border border-red-800 px-3 py-1 rounded-full";
+                } else if (activeNode.zone === "Mê Cung Đá Cổ") {
+                    zoneLabel.className = "text-xs font-bold text-slate-300 tracking-wider uppercase bg-slate-800/80 border border-slate-700 px-3 py-1 rounded-full";
+                } else if (activeNode.zone === "Đỉnh Núi Tuyết") {
+                    zoneLabel.className = "text-xs font-bold text-sky-400 tracking-wider uppercase bg-sky-950/80 border border-sky-800 px-3 py-1 rounded-full";
+                } else {
+                    zoneLabel.className = "text-xs font-bold text-indigo-400 tracking-wider uppercase bg-indigo-950/80 border border-indigo-800 px-3 py-1 rounded-full";
+                }
+            }
+        }
+
+        // Cập nhật bảng chi tiết địa danh bên phải
+        function showNodeInformation(node) {
+            const zoneBadge = document.getElementById('info-zone-badge');
+            const nodeIcon = document.getElementById('info-node-icon');
+            const nodeTitle = document.getElementById('info-node-title');
+            const nodeDay = document.getElementById('info-node-day');
+            const nodeCoord = document.getElementById('info-node-coord');
+            const nodeDesc = document.getElementById('info-node-desc');
+            const nodeVerse = document.getElementById('info-node-verse');
+            const nodeImg = document.getElementById('info-node-img');
+
+            // Set nội dung mới
+            zoneBadge.innerText = `Vùng: ${node.zone.toUpperCase()}`;
+            nodeIcon.innerText = node.icon;
+            nodeTitle.innerText = node.name;
+            nodeDay.innerText = `Chặng: Ngày ${node.day}/30`;
+            nodeCoord.innerText = `Tọa độ: (${node.x}, ${node.y})`;
+            nodeDesc.innerText = node.desc;
+            nodeVerse.innerText = `"${node.verse}"`;
+            nodeImg.src = node.image;
+
+            if (node.zone === "Thung Lũng Xanh") {
+                zoneBadge.className = "text-[10px] font-bold text-emerald-400 uppercase tracking-widest bg-emerald-500/10 px-3 py-1 rounded-md border border-emerald-500/20";
+            } else if (node.zone === "Sa Mạc Cát Nắng") {
+                zoneBadge.className = "text-[10px] font-bold text-yellow-400 uppercase tracking-widest bg-yellow-500/10 px-3 py-1 rounded-md border border-yellow-500/20";
+            } else if (node.zone === "Núi Lửa Rực Cháy") {
+                zoneBadge.className = "text-[10px] font-bold text-red-400 uppercase tracking-widest bg-red-500/10 px-3 py-1 rounded-md border border-red-500/20";
+            } else if (node.zone === "Mê Cung Đá Cổ") {
+                zoneBadge.className = "text-[10px] font-bold text-slate-300 uppercase tracking-widest bg-slate-500/10 px-3 py-1 rounded-md border border-slate-500/20";
+            } else if (node.zone === "Đỉnh Núi Tuyết") {
+                zoneBadge.className = "text-[10px] font-bold text-sky-400 uppercase tracking-widest bg-sky-500/10 px-3 py-1 rounded-md border border-sky-500/20";
+            } else {
+                zoneBadge.className = "text-[10px] font-bold text-indigo-400 uppercase tracking-widest bg-indigo-500/10 px-3 py-1 rounded-md border border-indigo-500/20";
+            }
+        }
+
+        // --- CÁC HÀM XỬ LÝ MODAL ZOOM TRANH MINH HỌA ---
+        
+        // Mở modal phóng to hình minh họa cốt truyện Kinh Thánh
+        function openIllustrationModal(node) {
+            const modal = document.getElementById('illustration-modal');
+            const card = document.getElementById('illustration-card');
+            
+            const zoomImg = document.getElementById('zoom-modal-img');
+            const zoomChapter = document.getElementById('zoom-modal-chapter');
+            const zoomTitle = document.getElementById('zoom-modal-title');
+            const zoomDay = document.getElementById('zoom-modal-day');
+            const zoomDesc = document.getElementById('zoom-modal-desc');
+            const zoomVerse = document.getElementById('zoom-modal-verse');
+
+            // Gán dữ liệu phóng to
+            zoomImg.src = node.image;
+            zoomChapter.innerText = `Vùng: ${node.zone.toUpperCase()}`;
+            zoomTitle.innerText = node.name;
+            zoomDay.innerText = `Chặng: Ngày ${node.day}/30`;
+            zoomDesc.innerText = node.desc;
+            zoomVerse.innerText = `"${node.verse}"`;
+
+            // Thay đổi màu sắc của Badge trong Modal
+            if (node.zone === "Thung Lũng Xanh") {
+                zoomChapter.className = "text-[10px] font-bold text-emerald-400 uppercase tracking-widest bg-emerald-500/10 border border-emerald-500/30 px-3 py-1 rounded-full";
+            } else if (node.zone === "Sa Mạc Cát Nắng") {
+                zoomChapter.className = "text-[10px] font-bold text-yellow-400 uppercase tracking-widest bg-yellow-500/10 border border-yellow-500/30 px-3 py-1 rounded-full";
+            } else if (node.zone === "Núi Lửa Rực Cháy") {
+                zoomChapter.className = "text-[10px] font-bold text-red-400 uppercase tracking-widest bg-red-500/10 border border-red-500/30 px-3 py-1 rounded-full";
+            } else if (node.zone === "Mê Cung Đá Cổ") {
+                zoomChapter.className = "text-[10px] font-bold text-slate-300 uppercase tracking-widest bg-slate-500/10 border border-slate-500/30 px-3 py-1 rounded-full";
+            } else if (node.zone === "Đỉnh Núi Tuyết") {
+                zoomChapter.className = "text-[10px] font-bold text-sky-400 uppercase tracking-widest bg-sky-500/10 border border-sky-500/30 px-3 py-1 rounded-full";
+            } else {
+                zoomChapter.className = "text-[10px] font-bold text-indigo-400 uppercase tracking-widest bg-indigo-500/10 border border-indigo-500/30 px-3 py-1 rounded-full";
+            }
+
+            // Kích hoạt animation zoom-in
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            card.classList.remove('zoom-modal-enter');
+            card.classList.add('zoom-modal-active');
+        }
+
+        // Đóng modal phóng to
+        function closeIllustrationModal() {
+            const modal = document.getElementById('illustration-modal');
+            const card = document.getElementById('illustration-card');
+            
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            card.classList.remove('zoom-modal-active');
+            card.classList.add('zoom-modal-enter');
+        }
+
+        // Hàm phát âm thanh thành công (Đàn Harp chiptune)
+        function playChirpSound() {
+            if (!isSoundEnabled) return;
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                
+                let osc1 = audioCtx.createOscillator();
+                let gain1 = audioCtx.createGain();
+                osc1.connect(gain1);
+                gain1.connect(audioCtx.destination);
+                osc1.type = 'triangle';
+                osc1.frequency.setValueAtTime(440, audioCtx.currentTime); // A4
+                gain1.gain.setValueAtTime(0, audioCtx.currentTime);
+                gain1.gain.linearRampToValueAtTime(0.25, audioCtx.currentTime + 0.05);
+                gain1.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                osc1.start();
+                osc1.stop(audioCtx.currentTime + 0.5);
+
+                setTimeout(() => {
+                    let osc2 = audioCtx.createOscillator();
+                    let gain2 = audioCtx.createGain();
+                    osc2.connect(gain2);
+                    gain2.connect(audioCtx.destination);
+                    osc2.type = 'triangle';
+                    osc2.frequency.setValueAtTime(554.37, audioCtx.currentTime); // C#5
+                    gain2.gain.setValueAtTime(0, audioCtx.currentTime);
+                    gain2.gain.linearRampToValueAtTime(0.25, audioCtx.currentTime + 0.05);
+                    gain2.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                    osc2.start();
+                    osc2.stop(audioCtx.currentTime + 0.5);
+                }, 100);
+
+                setTimeout(() => {
+                    let osc3 = audioCtx.createOscillator();
+                    let gain3 = audioCtx.createGain();
+                    osc3.connect(gain3);
+                    gain3.connect(audioCtx.destination);
+                    osc3.type = 'triangle';
+                    osc3.frequency.setValueAtTime(659.25, audioCtx.currentTime); // E5
+                    gain3.gain.setValueAtTime(0, audioCtx.currentTime);
+                    gain3.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + 0.05);
+                    gain3.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.7);
+                    osc3.start();
+                    osc3.stop(audioCtx.currentTime + 0.7);
+                }, 200);
+
+            } catch (e) {
+                console.warn(e);
+            }
+        }
+
+        // Hàm phát âm thanh khi click nút bị khóa (tiếng bip trầm ngắn)
+        function playErrorSound() {
+            if (!isSoundEnabled) return;
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, audioCtx.currentTime); 
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.2);
+            } catch (e) {}
+        }
+
+        // Khởi động toàn bộ luồng
+        function updateAllMapState() {
+            renderQuestPaths();
+            renderMapNodes();
+            syncPlayerToken();
+            
+            document.getElementById('progress-text').innerText = `Ngày ${userDay}/30 (Chặng ${userDay})`;
+
+            const activeNode = mazeQuestData.find(n => n.day === userDay);
+            if (activeNode) {
+                showNodeInformation(activeNode);
+            }
+        }
+
+        // Sự kiện: Bấm điểm danh (+1 Ngày)
+        document.getElementById('btn-checkin').onclick = () => {
+            if (userDay < 30) {
+                userDay++;
+                playChirpSound();
+                updateAllMapState();
+
+                // Chờ quân cờ di chuyển xong (700ms), tự động phóng to tranh minh họa sự kiện mới!
+                const activeNode = mazeQuestData.find(n => n.day === userDay);
+                if (activeNode) {
+                    setTimeout(() => {
+                        openIllustrationModal(activeNode);
+                    }, 850);
+                }
+            } else {
+                alert("🎉 Tuyệt vời! Bạn đã kết thúc toàn bộ mê cung 30 ngày tĩnh nguyện đức tin vững chắc!");
+            }
+        };
+
+        // Gán sự kiện click ảnh thu nhỏ ở bên phải cũng mở modal phóng to
+        document.getElementById('mini-illustration-card').onclick = () => {
+            const activeNode = mazeQuestData.find(n => n.day === userDay);
+            if (activeNode) {
+                openIllustrationModal(activeNode);
+            }
+        };
+        document.getElementById('btn-view-illustration').onclick = () => {
+            const activeNode = mazeQuestData.find(n => n.day === userDay);
+            if (activeNode) {
+                openIllustrationModal(activeNode);
+            }
+        };
+
+        // Sự kiện: Reset chặng đi về ngày 1
+        document.getElementById('btn-reset').onclick = () => {
+            userDay = 1;
+            updateAllMapState();
+        };
+
+        // Bật/tắt âm thanh
+        document.getElementById('btn-sound-toggle').onclick = () => {
+            isSoundEnabled = !isSoundEnabled;
+            const btn = document.getElementById('btn-sound-toggle');
+            if (isSoundEnabled) {
+                btn.innerText = "🔊 Nhạc Đàn Harp: BẬT";
+                btn.className = "text-xs text-amber-500 font-bold hover:text-amber-400 transition-colors flex items-center gap-1";
+            } else {
+                btn.innerText = "🔇 Nhạc Đàn Harp: TẮT";
+                btn.className = "text-xs text-slate-500 font-bold hover:text-slate-400 transition-colors flex items-center gap-1";
+            }
+        };
+
+        // Khởi chạy khi load trang
+        window.onload = () => {
+            updateAllMapState();
+            // Tự động mở tranh ngày 1 lúc mới mở trang demo để người dùng thấy ngay
+            setTimeout(() => {
+                openIllustrationModal(mazeQuestData[0]);
+            }, 500);
+        };
+    </script>
+</body>
+</html>

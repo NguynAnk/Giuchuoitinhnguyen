@@ -87,14 +87,14 @@ function calculateCurrentStreak(history, todayStr) {
 
 function calculateLostStreaks(history, todayStr) {
     if (!history || history.length === 0) return 0;
-    
+
     // Sort unique history dates ascending
     const sorted = Array.from(new Set(history)).sort();
     let lostCount = 0;
 
     // 1. Gaps between consecutive check-ins
     for (let i = 0; i < sorted.length - 1; i++) {
-        const diff = getDaysDiff(sorted[i], sorted[i+1]);
+        const diff = getDaysDiff(sorted[i], sorted[i + 1]);
         if (diff > 1) {
             lostCount++;
         }
@@ -154,7 +154,7 @@ async function run() {
 
             // Check if updates are needed
             const isRestoreReverted = needsRevert;
-            const isStatsMismatch = 
+            const isStatsMismatch =
                 user.totalCheckins !== targetTotalCheckins ||
                 user.totalPoints !== targetTotalPoints ||
                 user.currentStreak !== targetCurrentStreak ||
@@ -166,7 +166,7 @@ async function run() {
             if (isRestoreReverted || isStatsMismatch) {
                 console.log(`\n----------------------------------------`);
                 console.log(`User: ${user.username}`);
-                
+
                 if (isRestoreReverted) {
                     console.log(`⚠️  Reverting streak restoration...`);
                     revertedRestoresCount++;

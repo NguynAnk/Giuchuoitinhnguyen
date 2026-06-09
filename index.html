@@ -1433,7 +1433,7 @@
                         </div>
                         <div class="text-center z-10 flex flex-col items-center">
                             <h2 class="text-5xl font-black text-slate-800" id="streak-count">0</h2>
-                            <p class="text-sm font-bold text-amber-600 uppercase tracking-widest mt-1">Tổng Chuỗi</p>
+                            <p class="text-sm font-bold text-amber-600 uppercase tracking-widest mt-1">Tổng</p>
                             <div class="flex gap-2 mt-3 flex-wrap justify-center">
                                 <button id="btn-show-ranks"
                                     class="text-[11px] bg-slate-100 text-slate-600 px-3 py-1.5 rounded-full font-bold">🏆
@@ -2212,7 +2212,7 @@
                 if (pupilL && pupilR) {
                     const isFlipped = dx < 0;
                     const finalOffsetX = isFlipped ? -offsetX : offsetX;
-                    
+
                     // Tối ưu hóa hiệu năng trên di động bằng CSS transform 3D thay vì setAttribute cx/cy (tránh layout reflow)
                     pupilL.style.transform = `translate3d(${finalOffsetX}px, ${offsetY}px, 0)`;
                     pupilR.style.transform = `translate3d(${finalOffsetX}px, ${offsetY}px, 0)`;
@@ -3835,24 +3835,24 @@
                         animateSheep();
                     }
 
-                    const streak = userData.currentStreak || 0;
+                    const accCount = userData.totalCheckins || 0;
 
                     const flowerCrown = document.getElementById('sheep-flower-crown');
                     const angelWings = document.getElementById('sheep-angel-wings');
                     const goldCrown = document.getElementById('sheep-crown');
 
                     if (flowerCrown) {
-                        if (streak >= 15) flowerCrown.classList.remove('hidden');
+                        if (accCount >= 15) flowerCrown.classList.remove('hidden');
                         else flowerCrown.classList.add('hidden');
                     }
 
                     if (angelWings) {
-                        if (streak >= 30) angelWings.classList.remove('hidden');
+                        if (accCount >= 30) angelWings.classList.remove('hidden');
                         else angelWings.classList.add('hidden');
                     }
 
                     if (goldCrown) {
-                        if (streak >= 60) goldCrown.classList.remove('hidden');
+                        if (accCount >= 60) goldCrown.classList.remove('hidden');
                         else goldCrown.classList.add('hidden');
                     }
 
@@ -3868,7 +3868,37 @@
             }
         }
 
-        window.addEventListener('focus', () => { if (userData && userData.hasCheckedInToday) { const todayStr = getLocalTodayStr(); const historySet = new Set(userData.history || []); if (!historySet.has(todayStr)) { userData.hasCheckedInToday = false; updateUIFromData(); } } });
+        let lastCheckedLocalDate = getLocalTodayStr();
+        function checkNewDay() {
+            if (!userData) return;
+            const todayStr = getLocalTodayStr();
+            let needsUpdate = false;
+
+            if (todayStr !== lastCheckedLocalDate) {
+                lastCheckedLocalDate = todayStr;
+                needsUpdate = true;
+            }
+
+            const historySet = new Set(userData.history || []);
+            if (!historySet.has(todayStr) && userData.lastCheckinDateStr !== todayStr) {
+                if (userData.hasCheckedInToday) {
+                    userData.hasCheckedInToday = false;
+                    needsUpdate = true;
+                }
+            }
+
+            if (needsUpdate) {
+                updateUIFromData();
+            }
+        }
+
+        window.addEventListener('focus', checkNewDay);
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                checkNewDay();
+            }
+        });
+        setInterval(checkNewDay, 10000);
     </script>
     <!-- MÀN HÌNH VƯỜN CÂY TĨNH NGUYỆN (USER) -->
     <div id="garden-modal"
