@@ -2876,8 +2876,59 @@
 
             // CÁC NÚT ĐÓNG MODAL KHÁC
             document.getElementById('btn-close-blessing')?.addEventListener('click', () => toggleModal('blessing-modal', false));
-            document.getElementById('btn-open-feedback')?.addEventListener('click', () => { document.getElementById('feedback-content').value = ''; toggleModal('feedback-modal', true); });
+            document.getElementById('btn-open-feedback')?.addEventListener('click', () => {
+                document.getElementById('feedback-content').value = '';
+                const msg = document.getElementById('feedback-msg');
+                if (msg) {
+                    msg.innerText = '';
+                    msg.classList.add('hidden');
+                }
+                toggleModal('feedback-modal', true);
+            });
             document.getElementById('btn-close-feedback')?.addEventListener('click', () => toggleModal('feedback-modal', false));
+            document.getElementById('btn-send-feedback')?.addEventListener('click', async () => {
+                const contentVal = document.getElementById('feedback-content').value.trim();
+                const btn = document.getElementById('btn-send-feedback');
+                const msg = document.getElementById('feedback-msg');
+                if (!contentVal) {
+                    msg.innerText = "Vui lòng nhập nội dung góp ý!";
+                    msg.className = "text-center text-sm font-bold text-red-600 block mt-3";
+                    return;
+                }
+                if (!userData || !userData._id) {
+                    msg.innerText = "Không tìm thấy thông tin người dùng. Vui lòng đăng nhập lại!";
+                    msg.className = "text-center text-sm font-bold text-red-600 block mt-3";
+                    return;
+                }
+                btn.innerText = "Đang gửi...";
+                btn.disabled = true;
+                msg.classList.add('hidden');
+                try {
+                    const res = await fetch(`${API_URL}/feedback`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ userId: userData._id, content: contentVal })
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        msg.innerText = data.message || "Cảm ơn bạn đã đóng góp ý kiến!";
+                        msg.className = "text-center text-sm font-bold text-green-600 block mt-3";
+                        document.getElementById('feedback-content').value = '';
+                        setTimeout(() => {
+                            toggleModal('feedback-modal', false);
+                            msg.classList.add('hidden');
+                        }, 2000);
+                    } else {
+                        msg.innerText = data.message || "Lỗi gửi góp ý.";
+                        msg.className = "text-center text-sm font-bold text-red-600 block mt-3";
+                    }
+                } catch (e) {
+                    msg.innerText = "Lỗi kết nối máy chủ!";
+                    msg.className = "text-center text-sm font-bold text-red-600 block mt-3";
+                }
+                btn.innerText = "Gửi Góp Ý Báo Cáo";
+                btn.disabled = false;
+            });
             document.getElementById('btn-show-history')?.addEventListener('click', () => { renderHistory('all'); toggleModal('history-modal', true); });
             document.getElementById('btn-close-history')?.addEventListener('click', () => toggleModal('history-modal', false));
             document.getElementById('btn-show-group-stats')?.addEventListener('click', async () => { toggleModal('group-stats-modal', true); try { const res = await fetch(`${API_URL}/users`); const data = await res.json(); if (data.success) renderGroupStats(data.users); } catch (e) { } });
