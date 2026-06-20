@@ -37,7 +37,11 @@ const userSchema = new mongoose.Schema({
     history: [{ type: String }],
     dailyLogs: [{ date: String, q1: String, q2: String, q3: String, source: String, emotion: String }],
     registerDateStr: { type: String, default: "" },
-    lastRestoreDateStr: { type: String, default: "" }
+    lastRestoreDateStr: { type: String, default: "" },
+    streakShields: { type: Number, default: 1 },
+    shieldUsedDateStr: { type: String, default: "" },
+    hasReceivedShieldBonus: { type: Boolean, default: false },
+    justUsedShield: { type: Boolean, default: false }
 });
 const User = mongoose.model('User', userSchema);
 
@@ -98,13 +102,53 @@ function getDaysDiff(dateStr1, dateStr2) {
     return Math.round((d2 - d1) / (1000 * 60 * 60 * 24));
 }
 
+function addDays(dateStr, days) {
+    if (!dateStr) return dateStr;
+    const d = new Date(dateStr + "T00:00:00Z");
+    d.setUTCDate(d.getUTCDate() + days);
+    return d.getUTCFullYear() + "-" + String(d.getUTCMonth() + 1).padStart(2, '0') + "-" + String(d.getUTCDate()).padStart(2, '0');
+}
+
 async function checkAndResetStreak(user, localDate) {
     let justLostStreak = false;
     let lastDateStr = user.lastCheckinDateStr;
     if (!lastDateStr && user.history && user.history.length > 0) { lastDateStr = user.history[user.history.length - 1]; }
 
+    // Cộng điểm thưởng cuối quý (ngày 20/08/2026 trở đi)
+    if (localDate >= "2026-08-20" && user.streakShields > 0 && !user.hasReceivedShieldBonus) {
+        user.totalPoints += 5;
+        user.hasReceivedShieldBonus = true;
+        if (!user.dailyLogs) user.dailyLogs = [];
+        user.dailyLogs.unshift({
+            date: localDate,
+            q1: "Thưởng bảo vệ chuỗi",
+            q2: "Cộng 5 điểm thưởng vì không sử dụng tính năng bảo vệ chuỗi trong quý.",
+            emotion: "🛡️",
+            source: "Hệ thống"
+        });
+    }
+
     if (lastDateStr && localDate) {
-        const daysPassed = getDaysDiff(lastDateStr, localDate);
+        let daysPassed = getDaysDiff(lastDateStr, localDate);
+        
+        // Mở cửa tính năng: Từ 21/06/2026 hoặc tài khoản Admin
+        const isShieldActive = (localDate >= "2026-06-21" || user.role === 'admin' || user.username === "Nguyên Anh");
+
+        if (daysPassed > 1 && user.currentStreak > 0) {
+            if (isShieldActive && user.streakShields > 0) {
+                const missedDays = daysPassed - 1;
+                const shieldsToUse = Math.min(user.streakShields, missedDays);
+                user.streakShields -= shieldsToUse;
+                user.shieldUsedDateStr = addDays(lastDateStr, 1);
+                user.justUsedShield = true;
+
+                // Tịnh tiến lastCheckinDateStr thêm số ngày được bảo vệ
+                user.lastCheckinDateStr = addDays(lastDateStr, shieldsToUse);
+                lastDateStr = user.lastCheckinDateStr;
+                daysPassed = getDaysDiff(lastDateStr, localDate);
+            }
+        }
+
         if (daysPassed > 1 && user.currentStreak > 0) {
             user.currentStreak = 0; user.lostStreaks += 1; user.hasCheckedInToday = false; justLostStreak = true;
         } else if (daysPassed >= 1 && user.hasCheckedInToday) {
@@ -187,6 +231,37 @@ app.post('/api/admin/reset-system', async (req, res) => {
     } catch (error) { res.status(500).json({ success: false }); }
 });
 
+app.post('/api/admin/test-shield', async (req, res) => {
+    try {
+        const { adminUser, targetUserId, missedDays, streakShields } = req.body;
+        if (adminUser !== "Nguyên Anh") return res.status(403).json({ success: false, message: "Không có quyền!" });
+
+        const user = await User.findById(targetUserId);
+        if (!user) return res.status(404).json({ success: false, message: "Không tìm thấy người dùng" });
+
+        const todayStr = new Date().getFullYear() + "-" + String(new Date().getMonth() + 1).padStart(2, '0') + "-" + String(new Date().getDate()).padStart(2, '0');
+        
+        // Cập nhật số khiên nếu có truyền lên
+        if (typeof streakShields === 'number') {
+            user.streakShields = streakShields;
+        }
+
+        // Giả lập lỡ missedDays ngày: đặt lastCheckinDateStr = today - (missedDays + 1)
+        if (typeof missedDays === 'number' && missedDays >= 0) {
+            user.lastCheckinDateStr = addDays(todayStr, -(missedDays + 1));
+            user.hasCheckedInToday = false;
+            // Dọn dẹp lịch sử từ sau ngày check-in giả lập để điểm danh lại cho chính xác
+            const startMissDate = addDays(user.lastCheckinDateStr, 1);
+            user.history = user.history.filter(d => d < startMissDate);
+        }
+
+        await user.save();
+        res.json({ success: true, user });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
 app.post('/api/register', async (req, res) => {
     try {
         const { username, password, email, group, localDate } = req.body;
@@ -228,6 +303,10 @@ app.post('/api/login', async (req, res) => {
         let justLostStreak = false;
         if (localDate) { justLostStreak = await checkAndResetStreak(user, localDate); await user.save(); }
         const userObj = user.toObject(); userObj.justLostStreak = justLostStreak;
+        if (user.justUsedShield) {
+            user.justUsedShield = false;
+            await user.save();
+        }
         res.json({ success: true, user: userObj });
     } catch (error) { res.status(500).json({ success: false }); }
 });
@@ -241,6 +320,10 @@ app.post('/api/auto-login', async (req, res) => {
         let justLostStreak = false;
         if (localDate) { justLostStreak = await checkAndResetStreak(user, localDate); await user.save(); }
         const userObj = user.toObject(); userObj.justLostStreak = justLostStreak;
+        if (user.justUsedShield) {
+            user.justUsedShield = false;
+            await user.save();
+        }
         res.json({ success: true, user: userObj });
     } catch (error) { res.status(500).json({ success: false }); }
 });
@@ -342,8 +425,15 @@ app.post('/api/update-streak', async (req, res) => {
             if (!user.dailyLogs) user.dailyLogs = [];
             user.dailyLogs.unshift({ date: localDate, ...logData });
             await user.save();
+        } else {
+            await user.save();
         }
-        res.json({ success: true, user });
+        const userObj = user.toObject();
+        if (user.justUsedShield) {
+            user.justUsedShield = false;
+            await user.save();
+        }
+        res.json({ success: true, user: userObj });
     } catch (error) { res.status(500).json({ success: false, message: error.message }); }
 });
 

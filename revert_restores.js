@@ -18,7 +18,11 @@ const userSchema = new mongoose.Schema({
     history: [String],
     dailyLogs: [{ date: String, q1: String, q2: String, q3: String, source: String, emotion: String }],
     registerDateStr: String,
-    lastRestoreDateStr: String
+    lastRestoreDateStr: String,
+    streakShields: { type: Number, default: 1 },
+    shieldUsedDateStr: { type: String, default: "" },
+    hasReceivedShieldBonus: { type: Boolean, default: false },
+    justUsedShield: { type: Boolean, default: false }
 });
 
 const User = mongoose.model('User', userSchema);
@@ -142,6 +146,9 @@ async function run() {
             }
 
             // Ensure history is sorted and unique
+            if (user.shieldUsedDateStr && !cleanedHistory.includes(user.shieldUsedDateStr)) {
+                cleanedHistory.push(user.shieldUsedDateStr);
+            }
             cleanedHistory = Array.from(new Set(cleanedHistory)).sort();
 
             // 2. Calculate correct stats based on cleaned data

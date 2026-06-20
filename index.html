@@ -1070,6 +1070,32 @@
                 </div>
             </div>
 
+            <div class="p-4 bg-blue-50 border-b border-blue-100 flex flex-col gap-2 relative shrink-0">
+                <h3 class="text-[13px] font-bold text-blue-800 uppercase tracking-wider flex items-center gap-1.5">🛡️ Test Khiên Bảo Vệ Chuỗi (DB Thật)</h3>
+                <div class="flex gap-2.5 flex-wrap mt-1 items-center">
+                    <div class="flex items-center gap-1">
+                        <label class="text-[11px] font-bold text-blue-700">Lỡ chuỗi:</label>
+                        <select id="test-miss-days" class="text-[11px] font-bold bg-white border border-blue-300 text-blue-700 px-2 py-1.5 rounded-lg outline-none cursor-pointer">
+                            <option value="1">1 ngày (Dùng khiên)</option>
+                            <option value="2">2 ngày</option>
+                            <option value="3">3 ngày</option>
+                            <option value="5">5 ngày</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <label class="text-[11px] font-bold text-blue-700">Số Khiên cấp:</label>
+                        <select id="test-shields-count" class="text-[11px] font-bold bg-white border border-blue-300 text-blue-700 px-2 py-1.5 rounded-lg outline-none cursor-pointer">
+                            <option value="1">1 Khiên</option>
+                            <option value="2">2 Khiên</option>
+                            <option value="3">3 Khiên</option>
+                            <option value="0">0 Khiên</option>
+                        </select>
+                    </div>
+                    <button id="btn-test-shield-go" class="text-[11px] bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg font-bold shadow-sm active:scale-95 transition-all">Chạy Test Giả Lập</button>
+                    <p id="test-shield-msg" class="text-[11px] font-bold text-green-600 hidden ml-2"></p>
+                </div>
+            </div>
+
             <!-- TAB 1: BẢNG DANH SÁCH -->
             <div id="admin-table-wrapper" class="p-0 overflow-x-auto flex-1 bg-white">
                 <table class="w-full text-left border-collapse text-sm min-w-max">
@@ -1084,6 +1110,7 @@
                             <th class="p-4 text-center text-blue-500 uppercase text-xs">Chuỗi</th>
                             <th class="p-4 text-center text-emerald-600 uppercase text-xs">Tổng Ngày</th>
                             <th class="p-4 text-center text-red-500 uppercase text-xs">Lỡ Chuỗi</th>
+                            <th class="p-4 text-center text-blue-600 uppercase text-xs">Khiên</th>
                             <th class="p-4 text-left text-slate-500 uppercase text-xs">Ngày Lỡ</th>
                         </tr>
                     </thead>
@@ -1307,6 +1334,10 @@
                     Kỷ lục: <span id="ui-max-streak" class="font-bold ml-1">0</span></div>
                 <div class="text-red-500 bg-red-50 px-2.5 py-1.5 rounded-lg border border-red-100 flex items-center">Lỡ
                     chuỗi: <span id="ui-lost-streaks" class="font-bold ml-1">0</span></div>
+                <div id="ui-shield-container" class="hidden items-center gap-1.5 px-2.5 py-1.5 rounded-lg border font-bold shadow-sm transition-all duration-300 transform hover:scale-105">
+                    <span id="ui-shield-icon" class="text-sm">🛡️</span>
+                    <span id="ui-shield-text">Bảo vệ: Bật</span>
+                </div>
                 <button id="btn-open-admin"
                     class="hidden text-white bg-red-500 px-3 py-1.5 rounded-lg font-bold shadow-md active:scale-95">Bảng
                     Admin</button>
@@ -1331,6 +1362,10 @@
                     <div id="lost-streak-alert"
                         class="hidden absolute top-0 bg-red-100 text-red-700 px-4 py-2 rounded-xl text-sm font-bold animate-bounce z-50">
                         Bạn đã bỏ lỡ ngày hôm qua! Chuỗi bị đặt lại.
+                    </div>
+                    <div id="shield-used-alert"
+                        class="hidden absolute top-0 bg-blue-100 text-blue-700 px-4 py-2 rounded-xl text-sm font-bold animate-bounce z-50">
+                        🛡️ Chuỗi của bạn đã được bảo vệ thành công ngày hôm qua! (Đã dùng 1 Khiên)
                     </div>
 
                     <div id="celebration"
@@ -3582,6 +3617,11 @@
                     ? `<span class="cursor-help border-b border-dashed border-slate-300 font-medium text-red-400 hover:text-red-500" title="${tooltipMissed}">${formattedMissed}</span>`
                     : `<span class="text-slate-300">-</span>`;
 
+                // Bảo vệ chuỗi (Khiên)
+                const shieldHtml = (u.streakShields > 0)
+                    ? `<span class="text-blue-500 font-extrabold text-xs" title="Khiên bảo vệ chưa sử dụng">🛡️ Bật</span>`
+                    : `<span class="text-slate-300 font-medium text-xs" title="Đã sử dụng khiên">❌ Dùng</span>`;
+
                 html += `<tr class="hover:bg-slate-50 transition-colors">
                     <td class="p-3 md:p-4 font-medium text-slate-800 whitespace-nowrap">${u.username}</td>
                     <td class="p-3 md:p-4 whitespace-nowrap">
@@ -3600,6 +3640,7 @@
                     <td class="p-3 md:p-4 text-center text-blue-500 font-black text-base whitespace-nowrap">${u.currentStreak}</td>
                     <td class="p-3 md:p-4 text-center text-emerald-600 font-black text-base whitespace-nowrap">${u.totalCheckins || 0}</td>
                     <td class="p-3 md:p-4 text-center text-red-500 font-black text-base whitespace-nowrap">${u.lostStreaks || 0}</td>
+                    <td class="p-3 md:p-4 text-center whitespace-nowrap">${shieldHtml}</td>
                     <td class="p-3 md:p-4 text-left whitespace-nowrap text-xs">${missedHtml}</td>
                 </tr>`;
             });
@@ -3628,6 +3669,46 @@
         document.getElementById('btn-test-next-day').addEventListener('click', async () => { try { if (!isTestMode) { originalUserData = JSON.parse(JSON.stringify(userData)); isTestMode = true; } userData.hasCheckedInToday = false; updateUIFromData(); toggleModal('admin-modal', false); } catch (e) { console.error(e); alert("Lỗi hệ thống hiển thị"); } });
         document.getElementById('btn-test-rank-go').addEventListener('click', async () => { try { if (!isTestMode) { originalUserData = JSON.parse(JSON.stringify(userData)); isTestMode = true; } const s = parseInt(document.getElementById('test-rank-select').value); userData.currentStreak = s; userData.totalCheckins = s; userData.totalPoints = s; userData.maxStreak = Math.max(userData.maxStreak, s); userData.hasCheckedInToday = false; updateUIFromData(); toggleModal('admin-modal', false); } catch (e) { console.error(e); alert("Lỗi hệ thống hiển thị"); } });
         document.getElementById('btn-test-reset').addEventListener('click', async () => { try { if (isTestMode && originalUserData) { userData = JSON.parse(JSON.stringify(originalUserData)); isTestMode = false; updateUIFromData(); alert("Đã khôi phục dữ liệu thật!"); } } catch (e) { console.error(e); alert("Lỗi hệ thống hiển thị"); } });
+        document.getElementById('btn-test-shield-go')?.addEventListener('click', async () => {
+            const missedDays = parseInt(document.getElementById('test-miss-days').value);
+            const shieldsCount = parseInt(document.getElementById('test-shields-count').value);
+            const btn = document.getElementById('btn-test-shield-go');
+            const msg = document.getElementById('test-shield-msg');
+
+            btn.disabled = true;
+            btn.innerText = "Đang chạy...";
+            if (msg) { msg.classList.add('hidden'); }
+
+            try {
+                const res = await fetch(`${API_URL}/admin/test-shield`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        adminUser: userData.username,
+                        targetUserId: userData._id,
+                        missedDays: missedDays,
+                        streakShields: shieldsCount
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    userData = data.user;
+                    updateUIFromData();
+                    if (msg) {
+                        msg.innerText = `✅ Đã thiết lập: Lỡ ${missedDays}d, Khiên = ${shieldsCount}. Điểm danh để xem kết quả.`;
+                        msg.classList.remove('hidden');
+                    }
+                    setTimeout(() => { if (msg) msg.classList.add('hidden'); }, 6000);
+                } else {
+                    alert("Lỗi từ server: " + data.message);
+                }
+            } catch (err) {
+                alert("Lỗi kết nối máy chủ để chạy test!");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Chạy Test Giả Lập";
+            }
+        });
         function renderGroupStats(users) {
             currentUsersData = users; const groups = {};
             for (let i = 1; i <= 10; i++) groups[`Nhóm ${i}`] = { name: `Nhóm ${i}`, totalPoints: 0, maxStreak: 0, members: [] };
@@ -3799,6 +3880,40 @@
 
             const lostAlert = document.getElementById('lost-streak-alert');
             if (userData.justLostStreak) { lostAlert?.classList.remove('hidden'); document.getElementById('fail-sound')?.play().catch(e => { }); setTimeout(() => lostAlert?.classList.add('hidden'), 5000); userData.justLostStreak = false; }
+
+            const shieldAlert = document.getElementById('shield-used-alert');
+            if (userData.justUsedShield) {
+                shieldAlert?.classList.remove('hidden');
+                document.getElementById('rankup-sound')?.play().catch(e => { });
+                setTimeout(() => shieldAlert?.classList.add('hidden'), 5000);
+                userData.justUsedShield = false;
+            }
+
+            // Quản lý Khiên Bảo Vệ
+            const shieldContainer = document.getElementById('ui-shield-container');
+            const shieldText = document.getElementById('ui-shield-text');
+            const shieldIcon = document.getElementById('ui-shield-icon');
+            if (shieldContainer && shieldText && shieldIcon) {
+                const isShieldActive = (todayStr >= "2026-06-21" || userData.role === 'admin' || userData.username === "Nguyên Anh");
+                if (isShieldActive) {
+                    shieldContainer.classList.remove('hidden');
+                    shieldContainer.classList.add('flex');
+                    if (userData.streakShields > 0) {
+                        shieldContainer.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-blue-200 bg-blue-50 text-blue-600 font-bold shadow-sm transition-all duration-300 transform hover:scale-105";
+                        shieldText.innerText = "Bảo vệ chuỗi: Bật";
+                        shieldIcon.innerText = "🛡️";
+                        shieldIcon.classList.add('animate-pulse');
+                    } else {
+                        shieldContainer.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-400 font-bold shadow-sm opacity-60";
+                        shieldText.innerText = "Bảo vệ chuỗi: Đã dùng";
+                        shieldIcon.innerText = "❌";
+                        shieldIcon.classList.remove('animate-pulse');
+                    }
+                } else {
+                    shieldContainer.classList.add('hidden');
+                    shieldContainer.classList.remove('flex');
+                }
+            }
 
             const currentRank = getCurrentRankInfo(userData.totalCheckins);
             if (document.getElementById('app-body')) document.getElementById('app-body').className = 'bg-theme-wood flex items-center justify-center p-3 sm:p-4 lg:p-8 text-slate-800 ' + currentRank.theme;
