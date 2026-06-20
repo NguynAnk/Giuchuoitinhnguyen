@@ -38,7 +38,9 @@ const userSchema = new mongoose.Schema({
     dailyLogs: [{ date: String, q1: String, q2: String, q3: String, source: String, emotion: String }],
     registerDateStr: { type: String, default: "" },
     lastRestoreDateStr: { type: String, default: "" },
-    streakShields: { type: Number, default: 1 },
+    streakShields: { type: Number, default: 0 },
+    isShieldEnabled: { type: Boolean, default: false },
+    shieldInitialized: { type: Boolean, default: false },
     shieldUsedDateStr: { type: String, default: "" },
     hasReceivedShieldBonus: { type: Boolean, default: false },
     justUsedShield: { type: Boolean, default: false }
@@ -111,6 +113,13 @@ function addDays(dateStr, days) {
 
 async function checkAndResetStreak(user, localDate) {
     let justLostStreak = false;
+
+    // Tự động khởi tạo khiên sau ngày 20/06/2026 (từ 21/06/2026 trở đi)
+    if (localDate >= "2026-06-21" && !user.shieldInitialized) {
+        user.streakShields = 1;
+        user.shieldInitialized = true;
+    }
+
     let lastDateStr = user.lastCheckinDateStr;
     if (!lastDateStr && user.history && user.history.length > 0) { lastDateStr = user.history[user.history.length - 1]; }
 
@@ -135,10 +144,12 @@ async function checkAndResetStreak(user, localDate) {
         const isShieldActive = (localDate >= "2026-06-21" || user.role === 'admin' || user.username === "Nguyên Anh");
 
         if (daysPassed > 1 && user.currentStreak > 0) {
-            if (isShieldActive && user.streakShields > 0) {
+            // Chỉ bảo vệ chuỗi nếu tính năng đã mở hoạt động, có khiên và đã BẬT khiên bảo vệ
+            if (isShieldActive && user.streakShields > 0 && user.isShieldEnabled) {
                 const missedDays = daysPassed - 1;
-                const shieldsToUse = Math.min(user.streakShields, missedDays);
+                const shieldsToUse = 1; // Mỗi lần bảo vệ chỉ dùng 1 khiên
                 user.streakShields -= shieldsToUse;
+                user.isShieldEnabled = false; // Tắt trạng thái khiên sau khi dùng
                 user.shieldUsedDateStr = addDays(lastDateStr, 1);
                 user.justUsedShield = true;
 
@@ -233,7 +244,7 @@ app.post('/api/admin/reset-system', async (req, res) => {
 
 app.post('/api/admin/test-shield', async (req, res) => {
     try {
-        const { adminUser, targetUserId, missedDays, streakShields } = req.body;
+        const { adminUser, targetUserId, missedDays, streakShields, isShieldEnabled } = req.body;
         if (adminUser !== "Nguyên Anh") return res.status(403).json({ success: false, message: "Không có quyền!" });
 
         const user = await User.findById(targetUserId);
@@ -246,6 +257,11 @@ app.post('/api/admin/test-shield', async (req, res) => {
             user.streakShields = streakShields;
         }
 
+        // Cập nhật trạng thái bật/tắt khiên
+        if (typeof isShieldEnabled === 'boolean') {
+            user.isShieldEnabled = isShieldEnabled;
+        }
+
         // Giả lập lỡ missedDays ngày: đặt lastCheckinDateStr = today - (missedDays + 1)
         if (typeof missedDays === 'number' && missedDays >= 0) {
             user.lastCheckinDateStr = addDays(todayStr, -(missedDays + 1));
@@ -255,12 +271,40 @@ app.post('/api/admin/test-shield', async (req, res) => {
             user.history = user.history.filter(d => d < startMissDate);
         }
 
+        // Chạy ngay checkAndResetStreak để cập nhật chuỗi và tính toán khiên tức thì
+        await checkAndResetStreak(user, todayStr);
+
         await user.save();
         res.json({ success: true, user });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
 });
+
+app.post('/api/user/enable-shield', async (req, res) => {
+    try {
+        const { userId } = req.body;
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ success: false, message: "Không tìm thấy người dùng" });
+
+        const todayStr = new Date().getFullYear() + "-" + String(new Date().getMonth() + 1).padStart(2, '0') + "-" + String(new Date().getDate()).padStart(2, '0');
+        const isShieldActive = (todayStr >= "2026-06-21" || user.role === 'admin' || user.username === "Nguyên Anh");
+        if (!isShieldActive) {
+            return res.status(403).json({ success: false, message: "Tính năng khiên bảo vệ chuỗi chưa được kích hoạt cho tài khoản của bạn!" });
+        }
+
+        if (user.streakShields <= 0) {
+            return res.status(400).json({ success: false, message: "Bạn không còn khiên bảo vệ!" });
+        }
+
+        user.isShieldEnabled = true;
+        await user.save();
+        res.json({ success: true, user });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
 
 app.post('/api/register', async (req, res) => {
     try {

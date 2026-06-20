@@ -19,7 +19,9 @@ const userSchema = new mongoose.Schema({
     dailyLogs: [{ date: String, q1: String, q2: String, q3: String, source: String, emotion: String }],
     registerDateStr: String,
     lastRestoreDateStr: String,
-    streakShields: { type: Number, default: 1 },
+    streakShields: { type: Number, default: 0 },
+    isShieldEnabled: { type: Boolean, default: false },
+    shieldInitialized: { type: Boolean, default: false },
     shieldUsedDateStr: { type: String, default: "" },
     hasReceivedShieldBonus: { type: Boolean, default: false },
     justUsedShield: { type: Boolean, default: false }

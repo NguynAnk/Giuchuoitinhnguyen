@@ -96,6 +96,14 @@
             animation: slideBgOffset 8s linear infinite;
         }
 
+        @keyframes gentle-bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+        .shield-off-bounce {
+            animation: gentle-bounce 2s infinite ease-in-out;
+        }
+
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -1089,6 +1097,13 @@
                             <option value="2">2 Khiên</option>
                             <option value="3">3 Khiên</option>
                             <option value="0">0 Khiên</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <label class="text-[11px] font-bold text-blue-700">Trạng thái:</label>
+                        <select id="test-shield-enabled" class="text-[11px] font-bold bg-white border border-blue-300 text-blue-700 px-2 py-1.5 rounded-lg outline-none cursor-pointer">
+                            <option value="false">Tắt</option>
+                            <option value="true">Bật</option>
                         </select>
                     </div>
                     <button id="btn-test-shield-go" class="text-[11px] bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg font-bold shadow-sm active:scale-95 transition-all">Chạy Test Giả Lập</button>
@@ -3269,6 +3284,31 @@
             });
             document.getElementById('btn-water-plant')?.addEventListener('click', triggerWatering);
 
+            // Sự kiện Khiên bảo vệ chuỗi
+            document.getElementById('ui-shield-container')?.addEventListener('click', async () => {
+                if (!userData) return;
+                if (userData.streakShields > 0 && !userData.isShieldEnabled) {
+                    if (confirm("Liệu bạn thật sự muốn bật tính năng khiên bảo vệ chuỗi")) {
+                        try {
+                            const res = await fetch(`${API_URL}/user/enable-shield`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ userId: userData._id })
+                            });
+                            const data = await res.json();
+                            if (data.success) {
+                                userData = data.user;
+                                updateUIFromData();
+                            } else {
+                                alert(data.message || "Lỗi kích hoạt khiên!");
+                            }
+                        } catch (err) {
+                            alert("Lỗi kết nối máy chủ khi kích hoạt khiên!");
+                        }
+                    }
+                }
+            });
+
             // Sự kiện Chú Chiên Con
             window.addEventListener('mousemove', (e) => {
                 updateTargetPosition(e.clientX, e.clientY);
@@ -3618,9 +3658,16 @@
                     : `<span class="text-slate-300">-</span>`;
 
                 // Bảo vệ chuỗi (Khiên)
-                const shieldHtml = (u.streakShields > 0)
-                    ? `<span class="text-blue-500 font-extrabold text-xs" title="Khiên bảo vệ chưa sử dụng">🛡️ Bật</span>`
-                    : `<span class="text-slate-300 font-medium text-xs" title="Đã sử dụng khiên">❌ Dùng</span>`;
+                let shieldHtml = '';
+                if (u.streakShields > 0) {
+                    if (u.isShieldEnabled) {
+                        shieldHtml = `<span class="text-blue-500 font-extrabold text-xs" title="Khiên bảo vệ đã BẬT">🛡️ Bật</span>`;
+                    } else {
+                        shieldHtml = `<span class="text-amber-500 font-extrabold text-xs" title="Khiên bảo vệ đang TẮT">🛡️ Tắt</span>`;
+                    }
+                } else {
+                    shieldHtml = `<span class="text-slate-300 font-medium text-xs" title="Đã dùng hết khiên">❌ Dùng</span>`;
+                }
 
                 html += `<tr class="hover:bg-slate-50 transition-colors">
                     <td class="p-3 md:p-4 font-medium text-slate-800 whitespace-nowrap">${u.username}</td>
@@ -3672,6 +3719,7 @@
         document.getElementById('btn-test-shield-go')?.addEventListener('click', async () => {
             const missedDays = parseInt(document.getElementById('test-miss-days').value);
             const shieldsCount = parseInt(document.getElementById('test-shields-count').value);
+            const isShieldEnabled = document.getElementById('test-shield-enabled').value === 'true';
             const btn = document.getElementById('btn-test-shield-go');
             const msg = document.getElementById('test-shield-msg');
 
@@ -3687,7 +3735,8 @@
                         adminUser: userData.username,
                         targetUserId: userData._id,
                         missedDays: missedDays,
-                        streakShields: shieldsCount
+                        streakShields: shieldsCount,
+                        isShieldEnabled: isShieldEnabled
                     })
                 });
                 const data = await res.json();
@@ -3695,7 +3744,7 @@
                     userData = data.user;
                     updateUIFromData();
                     if (msg) {
-                        msg.innerText = `✅ Đã thiết lập: Lỡ ${missedDays}d, Khiên = ${shieldsCount}. Điểm danh để xem kết quả.`;
+                        msg.innerText = `✅ Đã thiết lập: Lỡ ${missedDays}d, Khiên = ${shieldsCount}, Trạng thái = ${isShieldEnabled ? 'Bật' : 'Tắt'}.`;
                         msg.classList.remove('hidden');
                     }
                     setTimeout(() => { if (msg) msg.classList.add('hidden'); }, 6000);
@@ -3899,12 +3948,22 @@
                     shieldContainer.classList.remove('hidden');
                     shieldContainer.classList.add('flex');
                     if (userData.streakShields > 0) {
-                        shieldContainer.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-blue-200 bg-blue-50 text-blue-600 font-bold shadow-sm transition-all duration-300 transform hover:scale-105";
-                        shieldText.innerText = "Bảo vệ chuỗi: Bật";
-                        shieldIcon.innerText = "🛡️";
-                        shieldIcon.classList.add('animate-pulse');
+                        if (userData.isShieldEnabled) {
+                            // Khiên Bật: Màu xanh dương sáng ("Bảo vệ chuỗi: Bật")
+                            shieldContainer.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-blue-200 bg-blue-50 text-blue-600 font-bold shadow-sm transition-all duration-300 transform hover:scale-105 cursor-default";
+                            shieldText.innerText = "Bảo vệ chuỗi: Bật";
+                            shieldIcon.innerText = "🛡️";
+                            shieldIcon.classList.add('animate-pulse');
+                        } else {
+                            // Khiên Tắt: Màu vàng nhấp nháy, có hiệu ứng nảy nhẹ ("Bảo vệ chuỗi: Tắt (Nhấp để bật)")
+                            shieldContainer.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-amber-200 bg-amber-50 text-amber-600 font-bold shadow-sm cursor-pointer hover:bg-amber-100 shield-off-bounce transition-all duration-300 transform hover:scale-105";
+                            shieldText.innerText = "Bảo vệ chuỗi: Tắt (Nhấp để bật)";
+                            shieldIcon.innerText = "🛡️";
+                            shieldIcon.classList.remove('animate-pulse');
+                        }
                     } else {
-                        shieldContainer.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-400 font-bold shadow-sm opacity-60";
+                        // Khiên đã dùng: Màu xám mờ ("Bảo vệ chuỗi: Đã dùng")
+                        shieldContainer.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-400 font-bold shadow-sm opacity-60 cursor-default";
                         shieldText.innerText = "Bảo vệ chuỗi: Đã dùng";
                         shieldIcon.innerText = "❌";
                         shieldIcon.classList.remove('animate-pulse');
