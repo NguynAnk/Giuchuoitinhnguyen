@@ -3293,7 +3293,7 @@
                             const res = await fetch(`${API_URL}/user/enable-shield`, {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ userId: userData._id })
+                                body: JSON.stringify({ userId: userData._id, localDate: getLocalTodayStr() })
                             });
                             const data = await res.json();
                             if (data.success) {

@@ -283,11 +283,11 @@ app.post('/api/admin/test-shield', async (req, res) => {
 
 app.post('/api/user/enable-shield', async (req, res) => {
     try {
-        const { userId } = req.body;
+        const { userId, localDate } = req.body;
         const user = await User.findById(userId);
         if (!user) return res.status(404).json({ success: false, message: "Không tìm thấy người dùng" });
 
-        const todayStr = new Date().getFullYear() + "-" + String(new Date().getMonth() + 1).padStart(2, '0') + "-" + String(new Date().getDate()).padStart(2, '0');
+        const todayStr = localDate || (new Date().getFullYear() + "-" + String(new Date().getMonth() + 1).padStart(2, '0') + "-" + String(new Date().getDate()).padStart(2, '0'));
         const isShieldActive = (todayStr >= "2026-06-21" || user.role === 'admin' || user.username === "Nguyên Anh");
         if (!isShieldActive) {
             return res.status(403).json({ success: false, message: "Tính năng khiên bảo vệ chuỗi chưa được kích hoạt cho tài khoản của bạn!" });
@@ -297,7 +297,49 @@ app.post('/api/user/enable-shield', async (req, res) => {
             return res.status(400).json({ success: false, message: "Bạn không còn khiên bảo vệ!" });
         }
 
-        user.isShieldEnabled = true;
+        let lastDateStr = user.lastCheckinDateStr;
+        if (!lastDateStr && user.history && user.history.length > 0) {
+            lastDateStr = user.history[user.history.length - 1];
+        }
+
+        if (lastDateStr) {
+            const daysPassed = getDaysDiff(lastDateStr, todayStr);
+            // Nếu lỡ đúng 1 ngày (daysPassed === 2) và hiện tại streak bị reset về 0 (currentStreak === 0)
+            if (daysPassed === 2 && user.currentStreak === 0) {
+                // Tiêu thụ khiên để hồi phục chuỗi luôn!
+                user.streakShields -= 1;
+                user.isShieldEnabled = false; // Đã tiêu thụ nên không bật nữa
+                user.shieldUsedDateStr = addDays(lastDateStr, 1);
+                user.justUsedShield = true;
+                user.lastCheckinDateStr = addDays(lastDateStr, 1); // Cập nhật ngày check-in cuối thành ngày lỡ được bảo vệ
+                
+                // Khôi phục lại currentStreak từ history.
+                let tempStreak = 0;
+                let checkDate = new Date(user.lastCheckinDateStr + "T00:00:00Z");
+                
+                const historySet = new Set(user.history);
+                historySet.add(user.lastCheckinDateStr); // Thêm ngày được bảo vệ vào tập hợp tạm thời để tính chuỗi
+
+                for (let i = 0; i < 365; i++) {
+                    const dStr = checkDate.getUTCFullYear() + "-" + String(checkDate.getUTCMonth() + 1).padStart(2, '0') + "-" + String(checkDate.getUTCDate()).padStart(2, '0');
+                    if (historySet.has(dStr)) {
+                        tempStreak++;
+                        checkDate.setUTCDate(checkDate.getUTCDate() - 1);
+                    } else {
+                        break;
+                    }
+                }
+                
+                user.currentStreak = tempStreak;
+                user.maxStreak = Math.max(user.maxStreak, user.currentStreak);
+                user.lostStreaks = Math.max(0, user.lostStreaks - 1); // Trả lại lostStreaks cũ
+            } else {
+                user.isShieldEnabled = true;
+            }
+        } else {
+            user.isShieldEnabled = true;
+        }
+
         await user.save();
         res.json({ success: true, user });
     } catch (error) {
