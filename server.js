@@ -2,6 +2,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
+const dns = require('dns');
+dns.setDefaultResultOrder('ipv4first');
+dns.setServers(['8.8.8.8', '8.8.4.4']);
 
 const app = express();
 app.use(cors({ origin: '*' }));
@@ -64,6 +67,30 @@ async function initSystem() {
         sys.campaignStartDateStr = '2026-05-20';
         await sys.save();
     }
+
+    // Reset trạng thái khiên của tất cả tài khoản thường nếu chạy trước giờ khai trương 18:00 ngày 21/06/2026
+    const now = new Date();
+    const launchTime = new Date("2026-06-21T18:00:00+07:00");
+    if (now < launchTime) {
+        try {
+            const result = await User.updateMany(
+                { 
+                    role: { $ne: 'admin' }, 
+                    username: { $ne: 'Nguyên Anh' } 
+                },
+                { 
+                    $set: { 
+                        isShieldEnabled: false, 
+                        streakShields: 0, 
+                        shieldInitialized: false 
+                    } 
+                }
+            );
+            console.log(`Database cleanup: Đã đặt lại trạng thái khiên cho ${result.modifiedCount} người dùng trước 18h ngày 21/06.`);
+        } catch (err) {
+            console.error("Lỗi khi reset trạng thái khiên:", err);
+        }
+    }
 }
 
 // ================= HÀM HỖ TRỢ =================
@@ -111,11 +138,23 @@ function addDays(dateStr, days) {
     return d.getUTCFullYear() + "-" + String(d.getUTCMonth() + 1).padStart(2, '0') + "-" + String(d.getUTCDate()).padStart(2, '0');
 }
 
+function isShieldFeatureActive(user, localDate, currentTime = new Date()) {
+    const isAdmin = (user.role === 'admin' || user.username === "Nguyên Anh");
+    if (isAdmin) return true;
+    if (localDate > "2026-06-21") return true;
+    if (localDate === "2026-06-21") {
+        const openingTime = new Date("2026-06-21T18:00:00+07:00");
+        return currentTime >= openingTime;
+    }
+    return false;
+}
+
 async function checkAndResetStreak(user, localDate) {
     let justLostStreak = false;
 
-    // Tự động khởi tạo khiên sau ngày 20/06/2026 (từ 21/06/2026 trở đi)
-    if (localDate >= "2026-06-21" && !user.shieldInitialized) {
+    // Tự động khởi tạo khiên từ 18:00 ngày 21/06/2026 (admin được test bình thường)
+    const canInitializeShield = isShieldFeatureActive(user, localDate);
+    if (canInitializeShield && !user.shieldInitialized) {
         user.streakShields = 1;
         user.shieldInitialized = true;
     }
@@ -140,8 +179,8 @@ async function checkAndResetStreak(user, localDate) {
     if (lastDateStr && localDate) {
         let daysPassed = getDaysDiff(lastDateStr, localDate);
         
-        // Mở cửa tính năng: Từ 21/06/2026 hoặc tài khoản Admin
-        const isShieldActive = (localDate >= "2026-06-21" || user.role === 'admin' || user.username === "Nguyên Anh");
+        // Mở cửa tính năng: Từ 18:00 ngày 21/06/2026
+        const isShieldActive = isShieldFeatureActive(user, localDate);
 
         if (daysPassed > 1 && user.currentStreak > 0) {
             // Chỉ bảo vệ chuỗi nếu tính năng đã mở hoạt động, có khiên và đã BẬT khiên bảo vệ
@@ -291,7 +330,7 @@ app.post('/api/user/enable-shield', async (req, res) => {
         if (!user) return res.status(404).json({ success: false, message: "Không tìm thấy người dùng" });
 
         const todayStr = localDate || (new Date().getFullYear() + "-" + String(new Date().getMonth() + 1).padStart(2, '0') + "-" + String(new Date().getDate()).padStart(2, '0'));
-        const isShieldActive = (todayStr >= "2026-06-21" || user.role === 'admin' || user.username === "Nguyên Anh");
+        const isShieldActive = isShieldFeatureActive(user, todayStr);
         if (!isShieldActive) {
             return res.status(403).json({ success: false, message: "Tính năng khiên bảo vệ chuỗi chưa được kích hoạt cho tài khoản của bạn!" });
         }

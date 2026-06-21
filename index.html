@@ -3943,7 +3943,8 @@
             const shieldText = document.getElementById('ui-shield-text');
             const shieldIcon = document.getElementById('ui-shield-icon');
             if (shieldContainer && shieldText && shieldIcon) {
-                const isShieldActive = (todayStr >= "2026-06-21" || userData.role === 'admin' || userData.username === "Nguyên Anh");
+                const isAdmin = (userData.role === 'admin' || userData.username === "Nguyên Anh");
+                const isShieldActive = (todayStr > "2026-06-21" || (todayStr === "2026-06-21" && (new Date().getHours() >= 18 || isAdmin)));
                 if (isShieldActive) {
                     shieldContainer.classList.remove('hidden');
                     shieldContainer.classList.add('flex');
