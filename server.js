@@ -183,7 +183,8 @@ app.get('/api/system', async (req, res) => {
 app.post('/api/admin/update-quiz', async (req, res) => {
     try {
         const { adminUser, passage, question } = req.body;
-        if (adminUser !== "Nguyên Anh") return res.status(403).json({ success: false, message: "Không có quyền!" });
+        const reqUser = await User.findOne({ username: adminUser });
+        if (adminUser !== "Nguyên Anh" && (!reqUser || reqUser.role !== 'admin')) return res.status(403).json({ success: false, message: "Không có quyền!" });
 
         let sys = await System.findOne({ configId: 'main' });
         if (!sys) sys = new System({ configId: 'main' });
@@ -199,7 +200,8 @@ app.post('/api/admin/update-quiz', async (req, res) => {
 app.post('/api/admin/revoke-checkin', async (req, res) => {
     try {
         const { adminUser, targetUserId, dateStr } = req.body;
-        if (adminUser !== "Nguyên Anh") return res.status(403).json({ success: false, message: "Không có quyền thực hiện!" });
+        const reqUser = await User.findOne({ username: adminUser });
+        if (adminUser !== "Nguyên Anh" && (!reqUser || reqUser.role !== 'admin')) return res.status(403).json({ success: false, message: "Không có quyền thực hiện!" });
 
         const user = await User.findById(targetUserId);
         if (!user) return res.status(404).json({ success: false, message: "Không tìm thấy người dùng" });
@@ -245,7 +247,8 @@ app.post('/api/admin/reset-system', async (req, res) => {
 app.post('/api/admin/test-shield', async (req, res) => {
     try {
         const { adminUser, targetUserId, missedDays, streakShields, isShieldEnabled } = req.body;
-        if (adminUser !== "Nguyên Anh") return res.status(403).json({ success: false, message: "Không có quyền!" });
+        const reqUser = await User.findOne({ username: adminUser });
+        if (adminUser !== "Nguyên Anh" && (!reqUser || reqUser.role !== 'admin')) return res.status(403).json({ success: false, message: "Không có quyền!" });
 
         const user = await User.findById(targetUserId);
         if (!user) return res.status(404).json({ success: false, message: "Không tìm thấy người dùng" });
