@@ -192,6 +192,12 @@ async function checkAndResetStreak(user, localDate) {
                 user.shieldUsedDateStr = addDays(lastDateStr, 1);
                 user.justUsedShield = true;
 
+                // Thêm ngày được bảo vệ vào lịch sử điểm danh
+                if (!user.history) user.history = [];
+                if (!user.history.includes(user.shieldUsedDateStr)) {
+                    user.history.push(user.shieldUsedDateStr);
+                }
+
                 // Tịnh tiến lastCheckinDateStr thêm số ngày được bảo vệ
                 user.lastCheckinDateStr = addDays(lastDateStr, shieldsToUse);
                 lastDateStr = user.lastCheckinDateStr;
@@ -355,6 +361,12 @@ app.post('/api/user/enable-shield', async (req, res) => {
                 user.justUsedShield = true;
                 user.lastCheckinDateStr = addDays(lastDateStr, 1); // Cập nhật ngày check-in cuối thành ngày lỡ được bảo vệ
                 
+                // Thêm ngày được bảo vệ vào lịch sử điểm danh
+                if (!user.history) user.history = [];
+                if (!user.history.includes(user.shieldUsedDateStr)) {
+                    user.history.push(user.shieldUsedDateStr);
+                }
+
                 // Khôi phục lại currentStreak từ history.
                 let tempStreak = 0;
                 let checkDate = new Date(user.lastCheckinDateStr + "T00:00:00Z");
