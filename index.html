@@ -629,6 +629,17 @@
             transition: all 0.8s ease-out;
         }
 
+        /* Hạt bong bóng ngủ zZZ */
+        .sheep-sleep-particle {
+            position: fixed;
+            font-size: 11px;
+            font-weight: bold;
+            color: #3b82f6;
+            pointer-events: none;
+            z-index: 95;
+            transition: all 2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
         /* --- VƯỜN CÂY TĨNH NGUYỆN (GARDEN) --- */
         .pot-wiggle {
             animation: pot-wiggle-anim 0.6s ease-in-out;
@@ -2128,6 +2139,8 @@
         const SHEEP_SAFE_DISTANCE = 50;
         const SHEEP_WIDTH = 80;
         const SHEEP_HEIGHT = 80;
+        let isSheepInBarn = localStorage.getItem('sheep_in_barn') === 'true';
+        let sleepTimer = null;
 
         const sheepQuotes = [
             "Beee~ Ấm áp quá! 🐑",
@@ -2150,6 +2163,7 @@
         let lastTime = performance.now();
 
         function updateTargetPosition(x, y) {
+            if (isSheepInBarn) return; // Không di chuyển theo chuột khi đang ở trong chuồng
             targetX = x;
             targetY = y;
             if (!isMoving && !isPetting) {
@@ -2174,6 +2188,17 @@
             if (isNaN(targetX) || targetX === null) targetX = petX;
             if (isNaN(targetY) || targetY === null) targetY = petY;
 
+            // Cập nhật vị trí đích theo vị trí chuồng nếu cừu đang ngủ
+            if (isSheepInBarn) {
+                const barn = document.getElementById('sheep-barn');
+                if (barn) {
+                    const rect = barn.getBoundingClientRect();
+                    // Đặt cừu nằm ngủ cạnh bên trái chuồng chiên
+                    targetX = rect.left - SHEEP_WIDTH + 10;
+                    targetY = rect.top + rect.height - SHEEP_HEIGHT + 10;
+                }
+            }
+
             // Tính toán deltaTime (dt) để di chuyển mượt mà độc lập với tốc độ khung hình (frame rate)
             const now = performance.now();
             const dt = Math.min(0.1, (now - lastTime) / 1000); // Giới hạn tối đa 100ms
@@ -2182,7 +2207,7 @@
             // Kiểm tra khoảng cách đến đàn Harp để ẩn chiên con đi tránh cản trở gảy đàn
             const harpEl = document.getElementById('harp-wrapper');
             let isNearHarp = false;
-            if (harpEl) {
+            if (harpEl && !isSheepInBarn) { // Chỉ ẩn cừu do gần Harp nếu cừu đang hoạt động
                 const rect = harpEl.getBoundingClientRect();
                 if (rect.width > 0 && rect.height > 0) {
                     const margin = 30; // Vùng đệm xung quanh đàn Harp
@@ -2209,10 +2234,13 @@
             const dy = targetY - petY;
             const dist = Math.hypot(dx, dy);
 
-            if (dist > SHEEP_SAFE_DISTANCE && !isPetting) {
+            // Cho phép cừu đi sát hoàn toàn vào chuồng khi đi ngủ
+            const threshold = isSheepInBarn ? 2 : SHEEP_SAFE_DISTANCE;
+
+            if (dist > threshold && !isPetting) {
                 isMoving = true;
-                const desiredX = targetX - (dx / dist) * SHEEP_SAFE_DISTANCE;
-                const desiredY = targetY - (dy / dist) * SHEEP_SAFE_DISTANCE;
+                const desiredX = isSheepInBarn ? targetX : (targetX - (dx / dist) * SHEEP_SAFE_DISTANCE);
+                const desiredY = isSheepInBarn ? targetY : (targetY - (dy / dist) * SHEEP_SAFE_DISTANCE);
 
                 // Công thức LERP đồng bộ theo thời gian thực (time-based LERP)
                 const currentLerp = 1 - Math.pow(1 - LERP_FACTOR, dt * 60);
@@ -2241,7 +2269,7 @@
                     svgEl.style.transform = `scaleX(${dx >= 0 ? 1 : -1})`;
                 }
 
-                // Cập nhật con ngươi mắt nhìn theo hướng chuột/chạm
+                // Cập nhật con ngươi mắt nhìn theo hướng chuột/chạm (chỉ khi không ngủ)
                 const sheepCenterX = petX + SHEEP_WIDTH / 2;
                 const sheepCenterY = petY + SHEEP_HEIGHT / 2;
                 const eyeDx = targetX - sheepCenterX;
@@ -2259,7 +2287,7 @@
 
                 const pupilL = document.getElementById('sheep-pupil-l');
                 const pupilR = document.getElementById('sheep-pupil-r');
-                if (pupilL && pupilR) {
+                if (pupilL && pupilR && !isSheepInBarn) {
                     const isFlipped = dx < 0;
                     const finalOffsetX = isFlipped ? -offsetX : offsetX;
 
@@ -2352,6 +2380,34 @@
             const avatarWrapper = document.getElementById('sheep-avatar-wrapper');
             if (avatarWrapper) avatarWrapper.classList.add('sheep-bounce');
 
+            // Xử lý vuốt ve cừu đang ngủ
+            if (isSheepInBarn) {
+                spawnHearts();
+                playCuteSheepSound();
+                
+                const bubble = document.getElementById('sheep-bubble');
+                if (bubble) {
+                    const sleepQuotes = [
+                        "Ưm... khò khò... 🐑💤",
+                        "Chuồng chiên ấm áp quá... zZZ",
+                        "Chúc bạn ngủ ngon nhé! 🌟",
+                        "Beee~ Vẫn cảm nhận được tình yêu thương... ❤️",
+                        "Beee~ Gặp bạn trong giấc mơ nhé! ☁️"
+                    ];
+                    bubble.innerText = sleepQuotes[Math.floor(Math.random() * sleepQuotes.length)];
+                    bubble.classList.add('show');
+                    setTimeout(() => {
+                        bubble.classList.remove('show');
+                    }, 2500);
+                }
+                
+                setTimeout(() => {
+                    if (avatarWrapper) avatarWrapper.classList.remove('sheep-bounce');
+                    isPetting = false;
+                }, 1000);
+                return;
+            }
+
             const pupilL = document.getElementById('sheep-pupil-l');
             const pupilR = document.getElementById('sheep-pupil-r');
             if (pupilL) pupilL.setAttribute('r', '0');
@@ -2376,6 +2432,148 @@
                 cheeks.forEach(c => c.setAttribute('opacity', '0.4'));
                 isPetting = false;
             }, 1000);
+        }
+
+        function updateBarnVisualState() {
+            const statusBadge = document.getElementById('barn-status-badge');
+            const barnIcon = document.getElementById('barn-icon-container');
+            const barnDoor = document.getElementById('barn-door-path');
+            
+            if (isSheepInBarn) {
+                if (statusBadge) {
+                    statusBadge.innerText = "Đang ngủ 💤";
+                    statusBadge.className = "text-[9px] font-black text-blue-800 bg-blue-100/90 px-1.5 py-0.5 rounded-full mt-1.5 shadow-sm border border-blue-200/50";
+                }
+                if (barnIcon) {
+                    barnIcon.className = "w-14 h-14 bg-white/90 backdrop-blur-md rounded-2xl border-2 border-blue-200 shadow-lg flex items-center justify-center transition-all duration-300 hover:border-blue-300";
+                }
+                if (barnDoor) {
+                    barnDoor.setAttribute('fill', '#27272a'); // Đóng cửa
+                }
+            } else {
+                if (statusBadge) {
+                    statusBadge.innerText = "Chuồng Chiên";
+                    statusBadge.className = "text-[9px] font-black text-amber-800 bg-amber-100/90 px-1.5 py-0.5 rounded-full mt-1.5 shadow-sm border border-amber-200/50";
+                }
+                if (barnIcon) {
+                    barnIcon.className = "w-14 h-14 bg-white/90 backdrop-blur-md rounded-2xl border-2 border-orange-100 shadow-lg flex items-center justify-center transition-all duration-300 hover:border-orange-300";
+                }
+                if (barnDoor) {
+                    barnDoor.setAttribute('fill', '#7c2d12'); // Mở cửa
+                }
+            }
+        }
+
+        function startSleepingEffects() {
+            if (sleepTimer) clearInterval(sleepTimer);
+            sleepTimer = setInterval(() => {
+                if (!isSheepInBarn) {
+                    clearInterval(sleepTimer);
+                    sleepTimer = null;
+                    return;
+                }
+                spawnSleepParticle();
+            }, 1500);
+        }
+
+        function spawnSleepParticle() {
+            const container = document.getElementById('sheep-pet-container');
+            if (!container || !isSheepInBarn) return;
+
+            const rect = container.getBoundingClientRect();
+            // Sinh hạt zZZ ở góc trên bên phải của cừu
+            const x = rect.left + rect.width * 0.7;
+            const y = rect.top + rect.height * 0.2;
+
+            const p = document.createElement('div');
+            p.className = 'sheep-sleep-particle';
+            p.innerText = Math.random() > 0.5 ? 'zZ' : 'zZZ';
+            p.style.left = x + 'px';
+            p.style.top = y + 'px';
+
+            document.body.appendChild(p);
+
+            p.offsetHeight; // trigger reflow
+
+            // Bay lên và lệch sang phải, mờ dần
+            const dx = 10 + Math.random() * 15;
+            const dy = -25 - Math.random() * 20;
+            p.style.transform = `translate3d(${dx}px, ${dy}px, 0) scale(${0.8 + Math.random() * 0.4})`;
+            p.style.opacity = '0';
+
+            setTimeout(() => {
+                p.remove();
+            }, 2000);
+        }
+
+        function toggleSheepBarnState() {
+            isSheepInBarn = !isSheepInBarn;
+            localStorage.setItem('sheep_in_barn', isSheepInBarn ? 'true' : 'false');
+            
+            const bubble = document.getElementById('sheep-bubble');
+            const eyeL = document.getElementById('sheep-eye-white-l');
+            const eyeR = document.getElementById('sheep-eye-white-r');
+            const pupilL = document.getElementById('sheep-pupil-l');
+            const pupilR = document.getElementById('sheep-pupil-r');
+            const sleepEyeL = document.getElementById('sheep-sleep-eye-l');
+            const sleepEyeR = document.getElementById('sheep-sleep-eye-r');
+            
+            if (isSheepInBarn) {
+                // Đi ngủ
+                if (bubble) {
+                    bubble.innerText = "Khò khò... zZZ 🐑💤";
+                    bubble.classList.add('show');
+                    setTimeout(() => bubble.classList.remove('show'), 2500);
+                }
+                
+                // Ẩn mắt bình thường, hiện mắt ngủ
+                eyeL?.classList.add('hidden');
+                eyeR?.classList.add('hidden');
+                pupilL?.classList.add('hidden');
+                pupilR?.classList.add('hidden');
+                sleepEyeL?.classList.remove('hidden');
+                sleepEyeR?.classList.remove('hidden');
+                
+                playCuteSheepSound();
+                startSleepingEffects();
+                
+                // Chạy hoạt ảnh đi về chuồng
+                isMoving = true;
+                lastTime = performance.now();
+                animateSheep();
+            } else {
+                // Ra chơi
+                if (bubble) {
+                    bubble.innerText = "Beee~ Ra chơi thôi! 🐑✨";
+                    bubble.classList.add('show');
+                    setTimeout(() => bubble.classList.remove('show'), 2500);
+                }
+                
+                // Hiện mắt bình thường, ẩn mắt ngủ
+                eyeL?.classList.remove('hidden');
+                eyeR?.classList.remove('hidden');
+                pupilL?.classList.remove('hidden');
+                pupilR?.classList.remove('hidden');
+                sleepEyeL?.classList.add('hidden');
+                sleepEyeR?.classList.add('hidden');
+                
+                if (sleepTimer) {
+                    clearInterval(sleepTimer);
+                    sleepTimer = null;
+                }
+                
+                // Trả lại má hồng opacity
+                const container = document.getElementById('sheep-pet-container');
+                const cheeks = container?.querySelectorAll('ellipse[fill="#f43f5e"]');
+                cheeks?.forEach(c => c.setAttribute('opacity', '0.4'));
+                
+                // Bắt đầu di chuyển theo chuột lại
+                isMoving = true;
+                lastTime = performance.now();
+                animateSheep();
+            }
+            
+            updateBarnVisualState();
         }
 
         function renderPlant(checkins) {
@@ -3325,12 +3523,18 @@
             }, { passive: true });
 
             document.getElementById('sheep-pet-container')?.addEventListener('click', triggerPetting);
+            document.getElementById('sheep-barn')?.addEventListener('click', toggleSheepBarnState);
 
-            // Lắng nghe thay đổi kích thước màn hình để cập nhật lại trang trí ống nghiệm
+            // Lắng nghe thay đổi kích thước màn hình để cập nhật lại trang trí ống nghiệm và vị trí chuồng cừu
             window.addEventListener('resize', () => {
                 if (userData) {
                     const rank = getCurrentRankInfo(userData.totalCheckins);
                     updateTubeDecorations(rank.id);
+                    if (isSheepInBarn && !isMoving) {
+                        isMoving = true;
+                        lastTime = performance.now();
+                        animateSheep();
+                    }
                 }
             });
 
@@ -4015,9 +4219,32 @@
 
             // Quản lý Chú Chiên Con & phụ kiện
             const sheepContainer = document.getElementById('sheep-pet-container');
+            const sheepBarn = document.getElementById('sheep-barn');
             if (sheepContainer) {
                 if (userData) {
-                    if (petX <= 0 || petY <= 0 || isNaN(petX) || isNaN(petY)) {
+                    if (isSheepInBarn) {
+                        const barn = document.getElementById('sheep-barn');
+                        if (barn) {
+                            const rect = barn.getBoundingClientRect();
+                            petX = rect.left - SHEEP_WIDTH + 10;
+                            petY = rect.top + rect.height - SHEEP_HEIGHT + 10;
+                            targetX = petX;
+                            targetY = petY;
+                        }
+                        
+                        // Áp dụng trạng thái mắt ngủ ngay khi load/update UI
+                        document.getElementById('sheep-eye-white-l')?.classList.add('hidden');
+                        document.getElementById('sheep-eye-white-r')?.classList.add('hidden');
+                        document.getElementById('sheep-pupil-l')?.classList.add('hidden');
+                        document.getElementById('sheep-pupil-r')?.classList.add('hidden');
+                        document.getElementById('sheep-sleep-eye-l')?.classList.remove('hidden');
+                        document.getElementById('sheep-sleep-eye-r')?.classList.remove('hidden');
+                        
+                        const cheeks = sheepContainer.querySelectorAll('ellipse[fill="#f43f5e"]');
+                        cheeks.forEach(c => c.setAttribute('opacity', '0.4'));
+                        
+                        startSleepingEffects();
+                    } else if (petX <= 0 || petY <= 0 || isNaN(petX) || isNaN(petY)) {
                         petX = (window.innerWidth || document.documentElement.clientWidth || 800) / 2;
                         petY = (window.innerHeight || document.documentElement.clientHeight || 600) / 2;
                         targetX = petX;
@@ -4027,7 +4254,7 @@
                     // Kiểm tra khoảng cách đến đàn Harp để ẩn chiên con đi tránh cản trở gảy đàn
                     const harpEl = document.getElementById('harp-wrapper');
                     let isNearHarp = false;
-                    if (harpEl) {
+                    if (harpEl && !isSheepInBarn) { // Chỉ ẩn cừu do gần Harp nếu cừu đang hoạt động
                         const rect = harpEl.getBoundingClientRect();
                         if (rect.width > 0 && rect.height > 0) {
                             const margin = 30; // Vùng đệm xung quanh đàn Harp
@@ -4052,6 +4279,12 @@
                     } else {
                         sheepContainer.style.opacity = '1';
                         sheepContainer.style.pointerEvents = 'auto';
+                    }
+
+                    if (sheepBarn) {
+                        sheepBarn.classList.remove('hidden');
+                        sheepBarn.style.display = 'flex';
+                        updateBarnVisualState();
                     }
 
                     // Force start animation loop once to position eyes and elements
@@ -4086,6 +4319,10 @@
                     updateTubeDecorations(currentRank.id);
                 } else {
                     sheepContainer.style.opacity = '0';
+                    if (sheepBarn) {
+                        sheepBarn.classList.add('hidden');
+                        sheepBarn.style.display = 'none';
+                    }
                     setTimeout(() => {
                         sheepContainer.style.display = 'none';
                         sheepContainer.classList.add('hidden');
@@ -4230,6 +4467,30 @@
         </div>
     </div>
 
+    <!-- CHUỒNG CHIÊN CON (SHEEP BARN) -->
+    <div id="sheep-barn" class="hidden fixed bottom-5 right-5 z-[95] flex flex-col items-center group cursor-pointer transition-all duration-300 hover:scale-105">
+        <!-- Tooltip -->
+        <div class="absolute bottom-16 bg-slate-800 text-white text-[10px] font-bold px-2 py-1 rounded shadow-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap mb-1">
+            Gọi Chiên Về Chuồng / Đi Chơi
+        </div>
+        <!-- Barn Icon -->
+        <div id="barn-icon-container" class="w-14 h-14 bg-white/90 backdrop-blur-md rounded-2xl border-2 border-orange-100 shadow-lg flex items-center justify-center transition-all duration-300 hover:border-orange-300">
+            <svg viewBox="0 0 64 64" width="44" height="44">
+                <!-- Roof -->
+                <path d="M 12 28 L 32 12 L 52 28 Z" fill="#ea580c" stroke="#c2410c" stroke-width="2" stroke-linejoin="round" />
+                <!-- Body -->
+                <rect x="16" y="28" width="32" height="24" rx="4" fill="#f97316" stroke="#c2410c" stroke-width="2" />
+                <!-- Door -->
+                <path id="barn-door-path" d="M 24 52 L 24 38 A 8 8 0 0 1 40 38 L 40 52 Z" fill="#7c2d12" stroke="#431407" stroke-width="1.5" />
+                <!-- Window -->
+                <circle cx="32" cy="22" r="3.5" fill="#fef08a" stroke="#ca8a04" stroke-width="1" />
+                <!-- Grass -->
+                <path d="M 8 52 C 20 50, 44 50, 56 52" stroke="#22c55e" stroke-width="2" stroke-linecap="round" fill="none" />
+            </svg>
+        </div>
+        <span id="barn-status-badge" class="text-[9px] font-black text-amber-800 bg-amber-100/90 px-1.5 py-0.5 rounded-full mt-1.5 shadow-sm border border-amber-200/50">Chuồng Chiên</span>
+    </div>
+
     <!-- THÚ CƯNG CHIÊN CON ĐỒNG HÀNH -->
     <div id="sheep-pet-container" class="hidden">
         <div id="sheep-bubble" class="sheep-bubble">Beee~ Chào bạn! 🐑</div>
@@ -4266,10 +4527,13 @@
                 <ellipse cx="47" cy="46" rx="3" ry="1.5" fill="#f43f5e" opacity="0.4" />
 
                 <!-- Mắt và Con ngươi -->
-                <circle cx="34" cy="38" r="3.5" fill="#ffffff" />
+                <circle id="sheep-eye-white-l" cx="34" cy="38" r="3.5" fill="#ffffff" />
                 <circle id="sheep-pupil-l" cx="34" cy="38" r="1.8" fill="#1e293b" style="will-change: transform;" />
-                <circle cx="46" cy="38" r="3.5" fill="#ffffff" />
+                <circle id="sheep-eye-white-r" cx="46" cy="38" r="3.5" fill="#ffffff" />
                 <circle id="sheep-pupil-r" cx="46" cy="38" r="1.8" fill="#1e293b" style="will-change: transform;" />
+                <!-- Mắt nhắm khi ngủ -->
+                <path id="sheep-sleep-eye-l" class="hidden" d="M 31.5 38 Q 34 40.5, 36.5 38" stroke="#1e293b" stroke-width="1.2" stroke-linecap="round" fill="none" />
+                <path id="sheep-sleep-eye-r" class="hidden" d="M 43.5 38 Q 46 40.5, 48.5 38" stroke="#1e293b" stroke-width="1.2" stroke-linecap="round" fill="none" />
 
                 <!-- Miệng -->
                 <path d="M 38 45 Q 40 47, 42 45" stroke="#475569" stroke-width="1.5" stroke-linecap="round"
