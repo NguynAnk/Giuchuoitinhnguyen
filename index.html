@@ -14,86 +14,121 @@
             position: relative;
             min-height: 100vh;
             overflow-x: hidden;
-        }
-
-        #bg-layer {
+        }        #bg-layer {
             position: fixed;
-            top: -50px;
-            left: -50px;
-            right: -50px;
-            bottom: -50px;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             z-index: -1;
             pointer-events: none;
-            transition: all 1s ease-in-out;
+            overflow: hidden;
         }
 
-        @keyframes slideBg {
+        #bg-layer::before {
+            content: "";
+            position: absolute;
+            top: -100px;
+            left: -100px;
+            right: -100px;
+            bottom: -100px;
+            will-change: transform;
+            pointer-events: none;
+            transition: background 1s ease-in-out, background-color 1s ease-in-out;
+        }        @keyframes slideBg {
             0% {
-                background-position: 0px 0px, 0px 0px;
+                transform: translate3d(0, 0, 0);
             }
-
             100% {
-                background-position: 100px 100px, 0px 0px;
+                transform: translate3d(100px, 100px, 0);
             }
         }
 
         @keyframes slideBgOffset {
             0% {
-                background-position: 0px 0px, 25px 25px;
+                transform: translate3d(0, 0, 0);
             }
-
             100% {
-                background-position: 100px 100px, 125px 125px;
+                transform: translate3d(100px, 100px, 0);
             }
         }
 
-        .bg-theme-wood #bg-layer {
+        .bg-theme-wood #bg-layer::before {
             background-color: #e7e5e4;
             background-image: repeating-linear-gradient(45deg, rgba(141, 110, 99, 0.06) 0px, rgba(141, 110, 99, 0.06) 2px, transparent 2px, transparent 20px), linear-gradient(135deg, #e7e5e4, #d6d3d1);
             background-size: 100px 100px, 100% 100%;
             animation: slideBg 6s linear infinite;
         }
 
-        .bg-theme-bronze #bg-layer {
+        .bg-theme-bronze #bg-layer::before {
             background-color: #ffedd5;
             background-image: repeating-radial-gradient(circle at 0 0, transparent 0, rgba(217, 119, 6, 0.08) 10px, transparent 10px, transparent 25px), linear-gradient(135deg, #ffedd5, #fed7aa);
             background-size: 100px 100px, 100% 100%;
             animation: slideBg 8s linear infinite;
         }
 
-        .bg-theme-iron #bg-layer {
+        .bg-theme-iron #bg-layer::before {
             background-color: #f1f5f9;
             background-image: linear-gradient(45deg, rgba(100, 116, 139, 0.08) 25%, transparent 25%, transparent 75%, rgba(100, 116, 139, 0.08) 75%, rgba(100, 116, 139, 0.08)), linear-gradient(45deg, rgba(100, 116, 139, 0.08) 25%, transparent 25%, transparent 75%, rgba(100, 116, 139, 0.08) 75%, rgba(100, 116, 139, 0.08));
             background-size: 50px 50px, 50px 50px;
             animation: slideBgOffset 10s linear infinite;
         }
 
-        .bg-theme-gold #bg-layer {
+        .bg-theme-gold #bg-layer::before {
             background-color: #fef08a;
             background-image: radial-gradient(rgba(234, 179, 8, 0.2) 4px, transparent 4px), radial-gradient(rgba(234, 179, 8, 0.2) 4px, transparent 4px);
             background-size: 50px 50px, 50px 50px;
             animation: slideBgOffset 8s linear infinite;
         }
 
-        .bg-theme-platinum #bg-layer {
+        .bg-theme-platinum #bg-layer::before {
             background-color: #e0f2fe;
             background-image: repeating-linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0px, rgba(59, 130, 246, 0.1) 2px, transparent 2px, transparent 20px), repeating-linear-gradient(45deg, rgba(59, 130, 246, 0.1) 0px, rgba(59, 130, 246, 0.1) 2px, transparent 2px, transparent 20px);
             background-size: 100px 100px, 100px 100px;
             animation: slideBg 12s linear infinite;
         }
 
-        .bg-theme-diamond #bg-layer {
+        .bg-theme-diamond #bg-layer::before {
             background-color: #cffafe;
             background-image: linear-gradient(135deg, rgba(6, 182, 212, 0.15) 25%, transparent 25%, transparent 50%, rgba(6, 182, 212, 0.15) 50%, rgba(6, 182, 212, 0.15) 75%, transparent 75%, transparent);
             background-size: 50px 50px;
             animation: slideBg 6s linear infinite;
-        }
-
-        .bg-theme-ruby #bg-layer {
+        }        .bg-theme-ruby #bg-layer::before {
             background-color: #ffe4e6;
             background-image: radial-gradient(circle, rgba(225, 29, 72, 0.1) 20%, transparent 20%), radial-gradient(circle, rgba(225, 29, 72, 0.1) 20%, transparent 20%);
             background-size: 50px 50px, 50px 50px;
             animation: slideBgOffset 8s linear infinite;
+        }
+
+        @media (max-width: 768px) {
+            /* Tối ưu hiệu năng: Tắt backdrop blur trên màn hình di động nhỏ để tăng FPS */
+            .backdrop-blur-sm, 
+            .backdrop-blur-md, 
+            .backdrop-blur-lg, 
+            .backdrop-blur {
+                backdrop-filter: none !important;
+                -webkit-backdrop-filter: none !important;
+            }
+            
+            /* Tăng nhẹ opacity của background trắng/xám để duy trì độ tương phản tốt khi không có blur */
+            .bg-white/80 {
+                background-color: rgba(255, 255, 255, 0.95) !important;
+            }
+            .bg-white/85 {
+                background-color: rgba(255, 255, 255, 0.95) !important;
+            }
+            .bg-white/90 {
+                background-color: rgba(255, 255, 255, 0.96) !important;
+            }
+            .bg-slate-900/40 {
+                background-color: rgba(15, 23, 42, 0.75) !important;
+            }
+            .bg-slate-900/60 {
+                background-color: rgba(15, 23, 42, 0.85) !important;
+            }
+            .bg-slate-900/80 {
+                background-color: rgba(15, 23, 42, 0.92) !important;
+            }
         }
 
         @keyframes gentle-bounce {
@@ -1904,11 +1939,16 @@
                 }
                 playNote(freq, 2.0);
             }
-        }
+        }        let isHarpAnimRunning = false;
 
         function vibrateString(id) {
             stringVibrations[id].amplitude = 8.5; // Đặt biên độ lệch ban đầu (px)
             stringVibrations[id].phase = 0;       // Reset góc pha
+            
+            if (!isHarpAnimRunning) {
+                isHarpAnimRunning = true;
+                animateStrings();
+            }
         }
 
         function animateStrings() {
@@ -1934,11 +1974,19 @@
                     // Vẽ dây võng theo đường cong Quadratic Bezier Curve Q
                     el.setAttribute('d', `M ${x} ${y1} Q ${x_mid} ${y_mid} ${x} ${y2}`);
                 } else {
-                    // Trả lại đường thẳng dẹp khi đã tắt rung hoàn toàn
-                    el.setAttribute('d', `M ${geom.x} ${geom.y1} L ${geom.x} ${geom.y2}`);
+                    // Trả lại đường thẳng dẹp khi đã tắt rung hoàn toàn (chỉ cập nhật nếu chưa ở dạng thẳng)
+                    const targetD = `M ${geom.x} ${geom.y1} L ${geom.x} ${geom.y2}`;
+                    if (el.getAttribute('d') !== targetD) {
+                        el.setAttribute('d', targetD);
+                    }
                 }
             });
-            requestAnimationFrame(animateStrings);
+            
+            if (active) {
+                requestAnimationFrame(animateStrings);
+            } else {
+                isHarpAnimRunning = false;
+            }
         }
 
         function createHarpSparkle(stringId) {
@@ -2138,9 +2186,20 @@
         const LERP_FACTOR = 0.06;
         const SHEEP_SAFE_DISTANCE = 50;
         const SHEEP_WIDTH = 80;
-        const SHEEP_HEIGHT = 80;
-        let isSheepInBarn = localStorage.getItem('sheep_in_barn') === 'true';
+        const SHEEP_HEIGHT = 80;        let isSheepInBarn = localStorage.getItem('sheep_in_barn') === 'true';
         let sleepTimer = null;
+
+        // Cache để tránh layout reflow liên tục trên trình duyệt di động
+        let cachedHarpRect = null;
+        let cachedBarnRect = null;
+        window.addEventListener('resize', () => {
+            cachedHarpRect = null;
+            cachedBarnRect = null;
+        });
+        window.addEventListener('scroll', () => {
+            cachedHarpRect = null;
+            cachedBarnRect = null;
+        });
 
         const sheepQuotes = [
             "Beee~ Ấm áp quá! 🐑",
@@ -2188,14 +2247,22 @@
             if (isNaN(targetX) || targetX === null) targetX = petX;
             if (isNaN(targetY) || targetY === null) targetY = petY;
 
-            // Cập nhật vị trí đích theo vị trí chuồng nếu cừu đang ngủ
+                        // Cập nhật vị trí đích theo vị trí chuồng nếu cừu đang ngủ
             if (isSheepInBarn) {
                 const barn = document.getElementById('sheep-barn');
                 if (barn) {
-                    const rect = barn.getBoundingClientRect();
+                    if (!cachedBarnRect) {
+                        const rect = barn.getBoundingClientRect();
+                        cachedBarnRect = {
+                            left: rect.left,
+                            top: rect.top,
+                            height: rect.height,
+                            width: rect.width
+                        };
+                    }
                     // Đặt cừu nằm ngủ cạnh bên trái chuồng chiên
-                    targetX = rect.left - SHEEP_WIDTH + 10;
-                    targetY = rect.top + rect.height - SHEEP_HEIGHT + 10;
+                    targetX = cachedBarnRect.left - SHEEP_WIDTH + 10;
+                    targetY = cachedBarnRect.top + cachedBarnRect.height - SHEEP_HEIGHT + 10;
                 }
             }
 
@@ -2208,13 +2275,24 @@
             const harpEl = document.getElementById('harp-wrapper');
             let isNearHarp = false;
             if (harpEl && !isSheepInBarn) { // Chỉ ẩn cừu do gần Harp nếu cừu đang hoạt động
-                const rect = harpEl.getBoundingClientRect();
+                if (!cachedHarpRect) {
+                    const rect = harpEl.getBoundingClientRect();
+                    cachedHarpRect = {
+                        left: rect.left,
+                        right: rect.right,
+                        top: rect.top,
+                        bottom: rect.bottom,
+                        width: rect.width,
+                        height: rect.height
+                    };
+                }
+                const rect = cachedHarpRect;
                 if (rect.width > 0 && rect.height > 0) {
                     const margin = 30; // Vùng đệm xung quanh đàn Harp
                     const minX_harp = rect.left - margin;
                     const maxX_harp = rect.right + margin;
                     const minY_harp = rect.top - margin;
-                    const maxY_harp = rect.bottom + margin;
+                    const maxY_harp = rect.bottom - margin;
 
                     const isMouseNear = (targetX >= minX_harp && targetX <= maxX_harp && targetY >= minY_harp && targetY <= maxY_harp);
                     const isSheepNear = (petX >= minX_harp - 30 && petX <= maxX_harp && petY >= minY_harp - 30 && petY <= maxY_harp);
@@ -3030,10 +3108,8 @@
                 harpSvg.addEventListener('touchmove', handleHarpInteraction, { passive: false });
                 harpSvg.addEventListener('mouseleave', () => { lastMouseX = null; lastMouseY = null; });
                 harpSvg.addEventListener('touchend', () => { lastMouseX = null; lastMouseY = null; });
-            }
-
-            // Khởi động hoạt ảnh rung dây
-            animateStrings();
+            }            // Khởi động hoạt ảnh rung dây (đã tối ưu: chỉ chạy khi có tương tác)
+            // animateStrings();
 
             // Nút bật/tắt âm thanh đàn Harp
             document.getElementById('btn-toggle-harp-sound')?.addEventListener('click', () => {
