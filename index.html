@@ -913,7 +913,116 @@
         </div>
     </div>
 
-    <!-- CÁC MODAL CƠ BẢN -->
+    <!-- MÀN HÌNH TỔNG KẾT QUÝ -->
+    <div id="quarter-end-modal"
+        class="fixed inset-0 bg-slate-900/70 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
+        <div id="quarter-end-modal-content"
+            class="bg-white rounded-3xl shadow-2xl w-full max-w-lg p-6 transform scale-95 transition-transform duration-300 flex flex-col max-h-[90vh] overflow-hidden border border-amber-200">
+            <!-- Modal Header -->
+            <div class="flex justify-between items-center pb-3 border-b border-slate-100 shrink-0">
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl animate-bounce">🏆</span>
+                    <div>
+                        <h3 class="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-600 via-purple-600 to-indigo-600">
+                            TỔNG KẾT QUÝ TĨNH NGUYỆN
+                        </h3>
+                        <p class="text-[11px] text-slate-500 font-bold">Hành Trình Giữ Chuỗi & Trưởng Thành Tâm Linh</p>
+                    </div>
+                </div>
+                <button id="btn-close-quarter-end"
+                    class="text-slate-400 hover:bg-slate-100 p-2 rounded-full transition-colors font-bold text-lg">✕</button>
+            </div>
+
+            <div class="overflow-y-auto pr-1 flex-1 py-4 flex flex-col gap-4">
+                <!-- Thông báo dừng cộng điểm từ 21/08 -->
+                <div class="p-3.5 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-2xl flex items-start gap-3 shadow-sm">
+                    <span class="text-xl shrink-0">📢</span>
+                    <div class="text-xs text-amber-900 leading-relaxed font-medium">
+                        <strong class="font-bold text-amber-900 block mb-0.5">Thông báo khép lại quý:</strong>
+                        Từ ngày <span class="font-bold text-amber-700 underline">21/08/2026</span>, hệ thống tạm dừng cộng điểm tích lũy khi nộp bài tĩnh nguyện để tổng kết quý và chuẩn bị cho bản cập nhật mới. <br>
+                        <span class="text-amber-800 font-bold mt-1 inline-block">✨ Bạn vẫn có thể tiếp tục điểm danh hằng ngày để duy trì chuỗi tĩnh nguyện của mình!</span>
+                    </div>
+                </div>
+
+                <!-- Thẻ Thành Tích Cá Nhân -->
+                <div class="bg-gradient-to-br from-slate-900 via-purple-950 to-slate-900 rounded-2xl p-5 text-white shadow-xl relative overflow-hidden">
+                    <div class="absolute -right-6 -top-6 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
+                    
+                    <!-- Avatar & User Info -->
+                    <div class="flex items-center gap-3 mb-4 pb-3 border-b border-white/10">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-amber-400 to-purple-500 text-slate-900 font-black flex items-center justify-center text-xl shadow-lg ring-2 ring-white/20" id="qe-avatar">
+                            A
+                        </div>
+                        <div>
+                            <h4 class="font-black text-lg text-white tracking-wide" id="qe-username">Tên người dùng</h4>
+                            <div class="flex items-center gap-2 mt-0.5">
+                                <span id="qe-group-badge" class="text-[10px] font-extrabold bg-purple-500/30 border border-purple-400/40 text-purple-200 px-2 py-0.5 rounded-full">Nhóm --</span>
+                                <span id="qe-system-rank" class="text-[10px] font-extrabold bg-amber-500/30 border border-amber-400/40 text-amber-200 px-2 py-0.5 rounded-full">Danh hiệu</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Grid chỉ số -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="bg-white/10 backdrop-blur-md p-3 rounded-xl border border-white/10 flex flex-col justify-between">
+                            <span class="text-[10px] uppercase font-bold text-amber-300 tracking-wider">🌟 Điểm Tích Lũy</span>
+                            <div class="flex items-baseline gap-1 mt-1">
+                                <span id="qe-total-points" class="text-2xl font-black text-amber-400">0</span>
+                                <span class="text-xs text-white/70 font-bold">đ</span>
+                            </div>
+                        </div>
+
+                        <div class="bg-white/10 backdrop-blur-md p-3 rounded-xl border border-white/10 flex flex-col justify-between">
+                            <span class="text-[10px] uppercase font-bold text-blue-300 tracking-wider">📅 Số Ngày Điểm Danh</span>
+                            <div class="flex items-baseline gap-1 mt-1">
+                                <span id="qe-total-checkins" class="text-2xl font-black text-blue-300">0</span>
+                                <span class="text-xs text-white/70 font-bold">ngày</span>
+                            </div>
+                        </div>
+
+                        <div class="bg-white/10 backdrop-blur-md p-3 rounded-xl border border-white/10 flex flex-col justify-between">
+                            <span class="text-[10px] uppercase font-bold text-orange-300 tracking-wider">🔥 Kỷ Lục Chuỗi</span>
+                            <div class="flex items-baseline gap-1 mt-1">
+                                <span id="qe-max-streak" class="text-2xl font-black text-orange-400">0</span>
+                                <span class="text-xs text-white/70 font-bold">ngày</span>
+                            </div>
+                        </div>
+
+                        <div class="bg-white/10 backdrop-blur-md p-3 rounded-xl border border-white/10 flex flex-col justify-between">
+                            <span class="text-[10px] uppercase font-bold text-emerald-300 tracking-wider">🛡️ Khiên Còn Lại</span>
+                            <div class="flex items-baseline gap-1 mt-1">
+                                <span id="qe-streak-shields" class="text-2xl font-black text-emerald-400">0</span>
+                                <span class="text-xs text-white/70 font-bold">khiên</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bảng vị trí Hạng -->
+                    <div class="mt-4 pt-3 border-t border-white/10 flex flex-col gap-2">
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="text-white/80 font-medium">🏆 Hạng Trong Nhóm:</span>
+                            <span id="qe-group-rank" class="font-black text-amber-300 bg-amber-500/20 px-2.5 py-1 rounded-lg border border-amber-400/30">Hạng #-- / --</span>
+                        </div>
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="text-white/80 font-medium">🌐 Hạng Toàn Hệ Thống:</span>
+                            <span id="qe-system-rank-pos" class="font-black text-purple-300 bg-purple-500/20 px-2.5 py-1 rounded-lg border border-purple-400/30">Hạng #-- / --</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Buttons -->
+            <div class="pt-3 border-t border-slate-100 flex gap-2 shrink-0">
+                <button id="qe-btn-group-stats" class="flex-1 py-2.5 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-1.5 border border-purple-200">
+                    📊 Xem Bảng Xếp Hạng Nhóm
+                </button>
+                <button id="btn-close-quarter-end-footer" class="py-2.5 px-5 bg-slate-800 hover:bg-slate-900 text-white rounded-xl font-bold text-xs transition-all active:scale-95">
+                    Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- MÀN HÌNH XEM DANH HIỆU -->
     <div id="rank-modal"
         class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
@@ -1531,6 +1640,9 @@
                             <h2 class="text-5xl font-black text-slate-800" id="streak-count">0</h2>
                             <p class="text-sm font-bold text-amber-600 uppercase tracking-widest mt-1">Tổng</p>
                             <div class="flex gap-2 mt-3 flex-wrap justify-center">
+                                <button id="btn-show-quarter-end"
+                                    class="text-[11px] bg-gradient-to-r from-amber-500 via-purple-600 to-indigo-600 text-white px-3 py-1.5 rounded-full font-bold shadow-sm hover:scale-105 active:scale-95 transition-all">🏆
+                                    Tổng Kết Quý</button>
                                 <button id="btn-show-ranks"
                                     class="text-[11px] bg-slate-100 text-slate-600 px-3 py-1.5 rounded-full font-bold">🏆
                                     Danh Hiệu</button>
@@ -3259,6 +3371,14 @@
             document.getElementById('btn-close-group-stats')?.addEventListener('click', () => toggleModal('group-stats-modal', false));
             document.getElementById('btn-show-ranks')?.addEventListener('click', () => { renderRanksModal(userData ? userData.totalCheckins : 0); toggleModal('rank-modal', true); });
             document.getElementById('btn-close-rank')?.addEventListener('click', () => toggleModal('rank-modal', false));
+            document.getElementById('btn-show-quarter-end')?.addEventListener('click', () => showQuarterEndModal());
+            document.getElementById('btn-close-quarter-end')?.addEventListener('click', () => toggleModal('quarter-end-modal', false));
+            document.getElementById('btn-close-quarter-end-footer')?.addEventListener('click', () => toggleModal('quarter-end-modal', false));
+            document.getElementById('qe-btn-group-stats')?.addEventListener('click', async () => {
+                toggleModal('quarter-end-modal', false);
+                toggleModal('group-stats-modal', true);
+                try { const res = await fetch(`${API_URL}/users`); const data = await res.json(); if (data.success) renderGroupStats(data.users); } catch (e) { }
+            });
             document.getElementById('btn-close-alarm')?.addEventListener('click', () => { toggleModal('alarm-modal', false); if (globalAudioCtx && globalAudioCtx.state === 'running') globalAudioCtx.suspend(); });
 
 
@@ -3388,7 +3508,9 @@
                     userData.currentStreak++;
                     userData.maxStreak = Math.max(userData.maxStreak, userData.currentStreak);
                     userData.totalCheckins++;
-                    userData.totalPoints++;
+                    if (getLocalTodayStr() < "2026-08-21") {
+                        userData.totalPoints++;
+                    }
                     userData.hasCheckedInToday = true;
                     userData.lastCheckinDateStr = getLocalTodayStr();
 
@@ -4070,6 +4192,67 @@
             container.innerHTML = html;
         };
 
+        window.renderQuarterEndInfo = function () {
+            if (!userData) return;
+            const qeAvatar = document.getElementById('qe-avatar');
+            const qeUsername = document.getElementById('qe-username');
+            const qeGroupBadge = document.getElementById('qe-group-badge');
+            const qeSystemRank = document.getElementById('qe-system-rank');
+            const qeTotalPoints = document.getElementById('qe-total-points');
+            const qeTotalCheckins = document.getElementById('qe-total-checkins');
+            const qeMaxStreak = document.getElementById('qe-max-streak');
+            const qeStreakShields = document.getElementById('qe-streak-shields');
+            const qeGroupRank = document.getElementById('qe-group-rank');
+            const qeSystemRankPos = document.getElementById('qe-system-rank-pos');
+
+            if (qeAvatar) qeAvatar.innerText = userData.username ? userData.username.charAt(0) : '?';
+            if (qeUsername) qeUsername.innerText = userData.username || 'Người dùng';
+            if (qeGroupBadge) qeGroupBadge.innerText = userData.group || 'Chưa vào nhóm';
+
+            const sysRank = getCurrentRankInfo(userData.totalCheckins || 0);
+            if (qeSystemRank) qeSystemRank.innerText = sysRank.name;
+
+            if (qeTotalPoints) qeTotalPoints.innerText = userData.totalPoints || 0;
+            if (qeTotalCheckins) qeTotalCheckins.innerText = userData.totalCheckins || 0;
+            if (qeMaxStreak) qeMaxStreak.innerText = userData.maxStreak || 0;
+            if (qeStreakShields) qeStreakShields.innerText = userData.streakShields || 0;
+
+            if (currentUsersData && currentUsersData.length > 0) {
+                const sortedSystem = [...currentUsersData].sort((a, b) => (b.totalPoints || 0) - (a.totalPoints || 0) || (b.maxStreak || 0) - (a.maxStreak || 0) || (b.totalCheckins || 0) - (a.totalCheckins || 0));
+                const sysIdx = sortedSystem.findIndex(u => u._id === userData._id || u.username === userData.username);
+                if (sysIdx >= 0 && qeSystemRankPos) {
+                    qeSystemRankPos.innerText = `Hạng #${sysIdx + 1} / ${sortedSystem.length}`;
+                } else if (qeSystemRankPos) {
+                    qeSystemRankPos.innerText = `Hạng -- / ${sortedSystem.length}`;
+                }
+
+                if (userData.group) {
+                    const groupMembers = currentUsersData.filter(u => u.group === userData.group).sort((a, b) => (b.totalPoints || 0) - (a.totalPoints || 0) || (b.maxStreak || 0) - (a.maxStreak || 0) || (b.totalCheckins || 0) - (a.totalCheckins || 0));
+                    const grpIdx = groupMembers.findIndex(u => u._id === userData._id || u.username === userData.username);
+                    if (grpIdx >= 0 && qeGroupRank) {
+                        qeGroupRank.innerText = `Hạng #${grpIdx + 1} / ${groupMembers.length}`;
+                    } else if (qeGroupRank) {
+                        qeGroupRank.innerText = `Hạng -- / ${groupMembers.length}`;
+                    }
+                } else if (qeGroupRank) {
+                    qeGroupRank.innerText = `Chưa tham gia nhóm`;
+                }
+            }
+        };
+
+        window.showQuarterEndModal = async function () {
+            renderQuarterEndInfo();
+            toggleModal('quarter-end-modal', true);
+            try {
+                const res = await fetch(`${API_URL}/users`);
+                const data = await res.json();
+                if (data.success) {
+                    currentUsersData = data.users;
+                    renderQuarterEndInfo();
+                }
+            } catch (e) { console.error(e); }
+        };
+
         function calculateAndRenderChart(users) {
             const counts = {}; users.forEach(u => { const days = u.totalCheckins || 0; counts[days] = (counts[days] || 0) + 1; });
             const sortedDays = Object.keys(counts).map(Number).sort((a, b) => a - b);
@@ -4288,6 +4471,11 @@
                     document.getElementById('harp-glow')?.classList.add('hidden'); document.getElementById('harp-svg')?.classList.remove('scale-100'); document.getElementById('harp-svg')?.classList.add('scale-90');
                     btn.className = 'w-full py-3.5 px-6 rounded-[1.25rem] font-bold text-lg bg-gradient-to-r from-amber-400 to-yellow-500 text-white shadow-xl hover:-translate-y-1 transition-transform active:scale-95 duration-300'; btn.innerHTML = 'Hoàn Thành Tĩnh Nguyện →';
                 }
+            }
+
+            if (todayStr >= "2026-08-20" && !sessionStorage.getItem('quarter_end_popup_shown')) {
+                sessionStorage.setItem('quarter_end_popup_shown', 'true');
+                setTimeout(() => { if (typeof showQuarterEndModal === 'function') showQuarterEndModal(); }, 1000);
             }
 
 

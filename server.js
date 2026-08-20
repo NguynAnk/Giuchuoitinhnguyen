@@ -524,7 +524,11 @@ app.post('/api/update-streak', async (req, res) => {
 
         if (!user.hasCheckedInToday) {
             user.currentStreak++; user.maxStreak = Math.max(user.maxStreak, user.currentStreak);
-            user.totalCheckins++; user.totalPoints++; user.hasCheckedInToday = true; user.lastCheckinDateStr = localDate;
+            user.totalCheckins++;
+            if (localDate < "2026-08-21") {
+                user.totalPoints++;
+            }
+            user.hasCheckedInToday = true; user.lastCheckinDateStr = localDate;
             if (!user.history) user.history = []; if (!user.history.includes(localDate)) user.history.push(localDate);
             if (!user.dailyLogs) user.dailyLogs = [];
             user.dailyLogs.unshift({ date: localDate, ...logData });
