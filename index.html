@@ -1125,7 +1125,7 @@
             </div>
 
             <div class="p-4 bg-blue-50 border-b border-blue-100 flex flex-col gap-2 relative shrink-0">
-                <h3 class="text-[13px] font-bold text-blue-800 uppercase tracking-wider flex items-center gap-1.5">🛡️ Test Khiên Bảo Vệ Chuỗi (DB Thật)</h3>
+                <h3 class="text-[13px] font-bold text-blue-800 uppercase tracking-wider flex items-center gap-1.5">🛡️ Test Khiên Bảo Vệ Chuỗi (DB Ảo - Giả Lập)</h3>
                 <div class="flex gap-2.5 flex-wrap mt-1 items-center">
                     <div class="flex items-center gap-1">
                         <label class="text-[11px] font-bold text-blue-700">Lỡ chuỗi:</label>
@@ -4000,42 +4000,41 @@
             const missedDays = parseInt(document.getElementById('test-miss-days').value);
             const shieldsCount = parseInt(document.getElementById('test-shields-count').value);
             const isShieldEnabled = document.getElementById('test-shield-enabled').value === 'true';
-            const btn = document.getElementById('btn-test-shield-go');
             const msg = document.getElementById('test-shield-msg');
 
-            btn.disabled = true;
-            btn.innerText = "Đang chạy...";
-            if (msg) { msg.classList.add('hidden'); }
-
             try {
-                const res = await fetch(`${API_URL}/admin/test-shield`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        adminUser: userData.username,
-                        targetUserId: userData._id,
-                        missedDays: missedDays,
-                        streakShields: shieldsCount,
-                        isShieldEnabled: isShieldEnabled
-                    })
-                });
-                const data = await res.json();
-                if (data.success) {
-                    userData = data.user;
-                    updateUIFromData();
-                    if (msg) {
-                        msg.innerText = `✅ Đã thiết lập: Lỡ ${missedDays}d, Khiên = ${shieldsCount}, Trạng thái = ${isShieldEnabled ? 'Bật' : 'Tắt'}.`;
-                        msg.classList.remove('hidden');
-                    }
-                    setTimeout(() => { if (msg) msg.classList.add('hidden'); }, 6000);
-                } else {
-                    alert("Lỗi từ server: " + data.message);
+                if (!isTestMode) {
+                    originalUserData = JSON.parse(JSON.stringify(userData));
+                    isTestMode = true;
                 }
+
+                userData.streakShields = shieldsCount;
+                userData.isShieldEnabled = isShieldEnabled;
+                userData.hasCheckedInToday = false;
+
+                if (isShieldEnabled && shieldsCount > 0) {
+                    if (missedDays === 1) {
+                        userData.streakShields -= 1;
+                        userData.isShieldEnabled = false;
+                        userData.justUsedShield = true;
+                    } else {
+                        userData.streakShields = Math.max(0, shieldsCount - 1);
+                        userData.isShieldEnabled = false;
+                        userData.currentStreak = 0;
+                    }
+                } else {
+                    userData.currentStreak = 0;
+                }
+
+                updateUIFromData();
+                if (msg) {
+                    msg.innerText = `✅ [DB Ảo] Đã giả lập: Lỡ ${missedDays}d, Khiên = ${shieldsCount}, Trạng thái = ${isShieldEnabled ? 'Bật' : 'Tắt'}. Bấm 'Khôi Phục Dữ Liệu' để về dữ liệu thật.`;
+                    msg.classList.remove('hidden');
+                }
+                setTimeout(() => { if (msg) msg.classList.add('hidden'); }, 8000);
             } catch (err) {
-                alert("Lỗi kết nối máy chủ để chạy test!");
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "Chạy Test Giả Lập";
+                console.error(err);
+                alert("Lỗi khi chạy giả lập test khiên!");
             }
         });
         function renderGroupStats(users) {

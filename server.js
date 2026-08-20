@@ -290,43 +290,7 @@ app.post('/api/admin/reset-system', async (req, res) => {
 });
 
 app.post('/api/admin/test-shield', async (req, res) => {
-    try {
-        const { adminUser, targetUserId, missedDays, streakShields, isShieldEnabled } = req.body;
-        const reqUser = await User.findOne({ username: adminUser });
-        if (adminUser !== "Nguyên Anh" && (!reqUser || reqUser.role !== 'admin')) return res.status(403).json({ success: false, message: "Không có quyền!" });
-
-        const user = await User.findById(targetUserId);
-        if (!user) return res.status(404).json({ success: false, message: "Không tìm thấy người dùng" });
-
-        const todayStr = new Date().getFullYear() + "-" + String(new Date().getMonth() + 1).padStart(2, '0') + "-" + String(new Date().getDate()).padStart(2, '0');
-        
-        // Cập nhật số khiên nếu có truyền lên
-        if (typeof streakShields === 'number') {
-            user.streakShields = streakShields;
-        }
-
-        // Cập nhật trạng thái bật/tắt khiên
-        if (typeof isShieldEnabled === 'boolean') {
-            user.isShieldEnabled = isShieldEnabled;
-        }
-
-        // Giả lập lỡ missedDays ngày: đặt lastCheckinDateStr = today - (missedDays + 1)
-        if (typeof missedDays === 'number' && missedDays >= 0) {
-            user.lastCheckinDateStr = addDays(todayStr, -(missedDays + 1));
-            user.hasCheckedInToday = false;
-            // Dọn dẹp lịch sử từ sau ngày check-in giả lập để điểm danh lại cho chính xác
-            const startMissDate = addDays(user.lastCheckinDateStr, 1);
-            user.history = user.history.filter(d => d < startMissDate);
-        }
-
-        // Chạy ngay checkAndResetStreak để cập nhật chuỗi và tính toán khiên tức thì
-        await checkAndResetStreak(user, todayStr);
-
-        await user.save();
-        res.json({ success: true, user });
-    } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
-    }
+    return res.json({ success: true, message: "Tính năng giả lập khiên hiện hoạt động ở chế độ DB Ảo trên giao diện client." });
 });
 
 app.post('/api/user/enable-shield', async (req, res) => {

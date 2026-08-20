@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tĩnh Nguyện 3D - Game RPG Sandbox 🕊️</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Three.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #080c14;
+            color: #f8fafc;
+            min-height: 100vh;
+            overflow: hidden;
+            margin: 0;
+            user-select: none;
+        }
+
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        #canvas-container {
+            width: 100%;
+            height: 100vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 10;
+        }
+
+        /* Tùy biến nút */
+        .btn-premium {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-premium:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.55);
+        }
+        .btn-premium:active {
+            transform: translateY(0);
+        }
+
+        /* Cinematic keyframes */
+        @keyframes scaleUp {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .animate-scale-up {
+            animation: scaleUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        /* Hiệu ứng trượt ẩn/hiện cho bảng điều khiển ở dưới */
+        #bottom-panels-container {
+            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease !important;
+        }
+        #bottom-panels-container.collapsed {
+            transform: translateY(135%) !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TOAST THÔNG BÁO TRONG GAME -->
+    <div id="game-toast" class="fixed top-24 left-1/2 transform -translate-x-1/2 bg-red-500/90 text-white font-extrabold text-xs px-6 py-3 rounded-full shadow-lg border border-red-400 opacity-0 pointer-events-none transition-all duration-300 z-50 translate-y-2 scale-95">
+        ⚠️ Rơi vực! Chiên con đã hồi sinh ở Đảo 1.
+    </div>
+
+    <!-- 3D WEBGL CANVAS -->
+    <div id="canvas-container"></div>
+
+    <!-- GIAO DIỆN TẬP TRUNG (HUD OVERLAYS) -->
+    <div class="absolute inset-0 z-20 pointer-events-none flex flex-col justify-between p-4 sm:p-6">
+        
+        <!-- DÒNG TRÊN: TIÊU ĐỀ & ĐIỂM SỐ (HUD TOP) -->
+        <div class="w-full flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pointer-events-auto">
+            <div class="glass-panel px-6 py-3.5 rounded-[2rem] shadow-2xl flex flex-col">
+                <span class="text-amber-500 font-extrabold text-[10px] uppercase tracking-widest">🎮 THỬ NGHIỆM ĐỘT PHÁ 3D RPG</span>
+                <h1 class="text-xl sm:text-2xl font-black text-slate-100 mt-0.5">Vườn Thánh Tĩnh Nguyện 3D</h1>
+                <p class="text-[10px] text-slate-400">Dùng các phím <b class="text-amber-400 bg-slate-900 px-1 py-0.5 rounded">W, A, S, D</b> hoặc <b class="text-amber-400 bg-slate-900 px-1 py-0.5 rounded">Mũi Tên</b> để di chuyển chiên con.</p>
+            </div>
+
+            <!-- BẢNG ĐIỂM & CHẶNG ĐƯỜNG -->
+            <div class="flex items-center gap-3 bg-slate-950/80 p-2.5 rounded-[2rem] border border-slate-800 shadow-xl">
+                <div class="flex flex-col items-center px-4 py-1 border-r border-slate-850">
+                    <span class="text-[9px] font-bold text-slate-400 uppercase">Điểm Đức Tin</span>
+                    <span id="hud-points" class="text-sm font-black text-yellow-400">0 ✨</span>
+                </div>
+                <div class="flex flex-col items-center px-4 py-1 border-r border-slate-850">
+                    <span class="text-[9px] font-bold text-slate-400 uppercase">Đã Mở Rộng</span>
+                    <span id="hud-unlocked" class="text-sm font-black text-emerald-400">1/6 Đảo</span>
+                </div>
+                <div class="flex flex-col items-center px-4 py-1 border-r border-slate-850">
+                    <span class="text-[9px] font-bold text-slate-400 uppercase">Năng Lượng 🌾</span>
+                    <span id="hud-stamina" class="text-sm font-black text-sky-400">3/3</span>
+                </div>
+                <!-- Nút ẩn hiện menu -->
+                <button id="btn-toggle-ui" class="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-extrabold text-xs px-4 py-2.5 rounded-2xl shadow-md active:scale-95 transition-all">
+                    👁️ Ẩn/Hiện Menu
+                </button>
+            </div>
+        </div>
+
+        <!-- NÚT MỞ RỘNG BẢNG ĐIỀU KHIỂN FLOATING KHI BỊ ẨN -->
+        <div id="floating-show-btn" class="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-30 pointer-events-none opacity-0 translate-y-10 scale-95 transition-all duration-400">
+            <button onclick="toggleBottomPanels(false)" class="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-extrabold text-xs px-6 py-3.5 rounded-[2rem] shadow-2xl flex items-center gap-2 border border-white/10 active:scale-95 transition-all pointer-events-auto">
+                📖 Hiện Bảng Tĩnh Nguyện & Tủ Đồ 🔼
+            </button>
+        </div>
+
+        <!-- DÒNG DƯỚI: TRÌNH TĨNH NGUYỆN & HỘP THƯ TƯƠNG TÁC (HUD BOTTOM) -->
+        <div id="bottom-panels-container" class="w-full flex flex-col lg:flex-row justify-between items-end gap-4 pointer-events-auto">
+            
+            <!-- PANEL BÊN TRÁI: CHO CHIÊN ĂN & CHECK-IN -->
+            <div class="glass-panel p-5 rounded-[2.2rem] shadow-2xl w-full lg:max-w-md flex flex-col gap-3">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                    <h3 class="text-xs font-black text-amber-500 uppercase tracking-widest flex items-center gap-1">
+                        📖 Tĩnh Nguyện & Nuôi Chiên
+                    </h3>
+                    <div class="flex items-center gap-2">
+                        <span id="reflection-char" class="text-[9px] font-bold text-slate-500">0 / 30 ký tự</span>
+                        <button onclick="toggleBottomPanels(true)" class="text-slate-500 hover:text-slate-350 text-xs font-bold px-1.5 py-0.5 rounded bg-slate-900 border border-slate-800" title="Ẩn bảng">🔽</button>
+                    </div>
+                </div>
+
+                <!-- Input bài tĩnh nguyện mô phỏng -->
+                <div class="flex flex-col gap-1">
+                    <textarea id="reflection-input" rows="2" class="w-full bg-slate-950 border border-slate-850 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none focus:border-amber-500 transition-all" placeholder="Nhập suy ngẫm Kinh Thánh hôm nay của bạn (ít nhất 10 ký tự)..."></textarea>
+                </div>
+
+                <div class="flex gap-2">
+                    <!-- Nút checkin -->
+                    <button id="btn-checkin" class="btn-premium flex-1 py-2.5 rounded-xl text-xs font-bold text-white flex items-center justify-center gap-1">
+                        🌾 Tĩnh Nguyện (+ Mở Đảo Mới)
+                    </button>
+                    <!-- Nút reset -->
+                    <button id="btn-reset" class="bg-slate-900 border border-slate-800 hover:bg-slate-800 px-3 rounded-xl text-xs font-bold text-slate-400 transition-all">
+                        🔄 Reset
+                    </button>
+                </div>
+            </div>
+
+            <!-- PANEL BÊN PHẢI: TỦ ĐỒ PHỤ KIỆN & THỐNG TIN CHIÊN -->
+            <div class="glass-panel p-5 rounded-[2.2rem] shadow-2xl w-full lg:max-w-xs flex flex-col gap-3">
+                <h3 class="text-xs font-black text-amber-500 uppercase tracking-widest border-b border-slate-800 pb-2">
+                    🎒 Tủ Đồ Trang Trí Chiên
+                </h3>
+                <div class="flex flex-col gap-2">
+                    <!-- Phụ kiện 1: Vòng thiên thần -->
+                    <div class="flex justify-between items-center bg-slate-950/50 p-2.5 rounded-xl border border-slate-850">
+                        <span class="text-xs text-slate-200 flex items-center gap-1.5">😇 Vòng Hào Quang</span>
+                        <button id="btn-equip-halo" class="text-[9px] font-extrabold px-3 py-1.5 rounded-lg border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 transition-all">Trang Bị</button>
+                    </div>
+                    <!-- Phụ kiện 2: Kính tri thức -->
+                    <div class="flex justify-between items-center bg-slate-950/50 p-2.5 rounded-xl border border-slate-850">
+                        <span class="text-xs text-slate-200 flex items-center gap-1.5">👓 Kính Tri Thức</span>
+                        <button id="btn-equip-glasses" class="text-[9px] font-extrabold px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-900 hover:bg-slate-800 text-slate-400 transition-all">Trang Bị</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- MODAL HIỂN THỊ KHI NHẶT ĐƯỢC CUỘN KINH THÁNH (COLUMN OF LIGHT ENTER) -->
+    <div id="bible-modal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-[100] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-500">
+        <div class="absolute inset-0 cursor-zoom-out" onclick="closeBibleModal()"></div>
+        <div id="bible-card" class="bg-slate-900 border border-slate-800 rounded-[2.5rem] shadow-2xl w-full max-w-md overflow-hidden flex flex-col relative z-10 scale-90 opacity-0 transition-all duration-500">
+            <button onclick="closeBibleModal()" class="absolute top-4 right-4 bg-slate-950/80 border border-slate-700 text-slate-350 w-8 h-8 rounded-full flex items-center justify-center font-bold hover:bg-slate-850 transition-colors z-20">✕</button>
+            
+            <div class="relative w-full h-40 bg-slate-950 overflow-hidden flex items-center justify-center bg-gradient-to-br from-amber-500/20 to-orange-500/10">
+                <span class="text-6xl animate-pulse">📜✨</span>
+                <div class="absolute bottom-4 left-5 right-5">
+                    <span id="modal-zone" class="text-[9px] font-extrabold text-amber-400 uppercase tracking-widest bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 rounded-full">Đảo Đức Tin</span>
+                    <h3 id="modal-title" class="text-lg font-black text-slate-50 mt-1">Cột Lời Chúa</h3>
+                </div>
+            </div>
+            
+            <div class="p-6 flex flex-col gap-4 bg-slate-900">
+                <p id="modal-desc" class="text-xs text-slate-300 leading-relaxed"></p>
+                <div class="bg-slate-950/80 p-4 rounded-2xl border border-slate-850 text-center">
+                    <span class="text-[9px] font-black text-amber-500 uppercase tracking-widest block mb-1">📖 Lời Hứa Lực Sống:</span>
+                    <p id="modal-verse" class="text-xs text-slate-200 italic font-medium leading-relaxed"></p>
+                </div>
+                <button onclick="closeBibleModal()" class="w-full py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-extrabold text-xs rounded-xl shadow-lg transition-transform active:scale-95">
+                    📖 Con Xin Tiếp Nhận Lời Chúa
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT ĐIỀU KHIỂN GAME 3D BẰNG THREE.JS -->
+    <script>
+        // Dữ liệu các Đảo trong Game (Cách nhau 12 đơn vị để tạo khoảng trống nhảy Parkour)
+        const islandData = [
+            { id: 1, name: "Thung Lũng Đức Tin", color: 0x2e7d32, x: 0, z: 0, text: "Đây là điểm khởi đầu của cuộc hành trình. Nơi linh hồn người lữ khách tìm lại đức tin ban đầu qua những mé nước bình tịnh.", verse: "Ta đã chọn con đường trung tín, Đặt luật lệ Chúa trước mặt ta. (Thi-thiên 119:30)" },
+            { id: 2, name: "Ốc Đảo Tiếp Trợ", color: 0x4caf50, x: 0, z: -12, text: "Chúa mở lối cho bạn đi qua những vùng khô cằn và ban Ốc đảo tươi mát để tiếp thêm sinh khí và lòng can đảm.", verse: "Đức Giê-hô-va sẽ cứ dẫn dắt ngươi, làm cho ngươi no lòng giữa nơi khô hạn. (Ê-sai 58:11)" },
+            { id: 3, name: "Đỉnh Núi Sinai", color: 0x1b5e20, x: 12, z: -12, text: "Đỉnh núi sấm truyền, nơi giao ước của Chúa được củng cố và ngọn lửa yêu mến của Ngài bao phủ tấm lòng bạn.", verse: "Lời Chúa là ngọn đèn cho chân tôi, ánh sáng cho đường lối tôi. (Thi-thiên 119:105)" },
+            { id: 4, name: "Đồng cỏ Bình An", color: 0x81c784, x: 12, z: 0, text: "Được nuôi dưỡng bởi người chăn hiền lành, bầy chiên được an nghỉ nơi mé nước bình tịnh, hồi phục lại mọi vết thương tâm hồn.", verse: "Ngài khiến tôi an nghỉ nơi đồng cỏ xanh tươi, dẫn tôi đến mé nước bình tịnh. (Thi-thiên 23:2)" },
+            { id: 5, name: "Vườn Trái Thánh Linh", color: 0x388e3c, x: 24, z: 0, text: "Nơi kết quả chín ngọt của lòng nhịn nhục, nhân từ và trung tín - những bông trái tỏa hương thơm từ cuộc đời tĩnh nguyện.", verse: "Nhưng trái của Thánh Linh, ấy là lòng yêu thương, sự vui mừng, bình an, nhịn nhục... (Ga-la-ti 5:22)" },
+            { id: 6, name: "Đích Đến Vinh Hiển", color: 0x2e7d32, x: 24, z: 12, text: "Nơi Ngai Thi Ân ngự trị, mở ra một thiên đường tràn ngập ánh sáng. Nơi Chúa đón tiếp bạn bằng cái ôm yêu thương vô bờ bến.", verse: "Hỡi đầy tớ ngay lành và trung tín kia... Hãy đến hưởng sự vui mừng của Chúa ngươi! (Ma-thi-ơ 25:21)" }
+        ];
+
+        // Danh sách bục nhảy Obby Parkour (stepping stones)
+        const obbyPlatforms = [
+            // Các bục nhảy nối Đảo 1 (0, 0) và Đảo 2 (0, -12)
+            { x: 0, y: 0, z: -4.25, width: 1.2, depth: 1.2, height: 1.2, requiredIsland: 2 },
+            { x: 0, y: 0, z: -8.25, width: 1.2, depth: 1.2, height: 1.2, requiredIsland: 2 },
+
+            // Các bục nhảy nối Đảo 2 (0, -12) và Đảo 3 (12, -12)
+            { x: 4.25, y: 0, z: -12, width: 1.2, depth: 1.2, height: 1.2, requiredIsland: 3 },
+            { x: 8.25, y: 0, z: -12, width: 1.2, depth: 1.2, height: 1.2, requiredIsland: 3 },
+
+            // Các bục nhảy nối Đảo 3 (12, -12) và Đảo 4 (12, 0)
+            { x: 12, y: 0, z: -7.75, width: 1.2, depth: 1.2, height: 1.2, requiredIsland: 4 },
+            { x: 12, y: 0, z: -3.75, width: 1.2, depth: 1.2, height: 1.2, requiredIsland: 4 },
+
+            // Các bục nhảy nối Đảo 4 (12, 0) và Đảo 5 (24, 0)
+            { x: 16.25, y: 0, z: 0, width: 1.2, depth: 1.2, height: 1.2, requiredIsland: 5 },
+            { x: 20.25, y: 0, z: 0, width: 1.2, depth: 1.2, height: 1.2, requiredIsland: 5 },
+
+            // Các bục nhảy nối Đảo 5 (24, 0) và Đảo 6 (24, 12)
+            { x: 24, y: 0, z: 4.25, width: 1.2, depth: 1.2, height: 1.2, requiredIsland: 6 },
+            { x: 24, y: 0, z: 8.25, width: 1.2, depth: 1.2, height: 1.2, requiredIsland: 6 },
+
+            // NHÁNH PHỤ: KHU OBBY THỬ THÁCH ĐỨC TIN (Có sẵn ngay từ Đảo 1)
+            { x: -4.5, y: 0, z: 0, width: 1.2, depth: 1.2, height: 1.2, requiredIsland: 1 },
+            { x: -9.0, y: 0.2, z: 0, width: 1.2, depth: 1.2, height: 1.6, requiredIsland: 1 },
+            { x: -9.0, y: 0.4, z: -4.5, width: 1.2, depth: 1.2, height: 2.0, requiredIsland: 1 },
+            { x: -4.5, y: 0.6, z: -4.5, width: 1.2, depth: 1.2, height: 2.4, requiredIsland: 1 },
+            // Đảo chứa Rương Kho Báu ở cuối chặng Obby Thử thách
+            { x: -4.5, y: 0.8, z: -9.0, width: 2.0, depth: 2.0, height: 2.8, requiredIsland: 1, isTreasure: true }
+        ];
+
+        // KHỞI TẠO BIẾN TOÀN CỤC THREE.JS
+        let scene, camera, renderer;
+        let sheep; // Mesh của chú chiên con
+        let sheepLegs = []; // Lưu 4 chân của chiên để làm chuyển động đi bộ
+        let islands = {}; // Chứa các group đảo 3D
+        let lightPillars = {}; // Chứa các cột ánh sáng của các đảo
+        let pointLights = []; // Chứa đèn nến/đốm sáng lơ lửng
+
+        // Biến trang bị
+        let haloMesh = null;
+        let glassesMesh = null;
+
+        // Biến điều khiển di chuyển
+        const keys = { w: false, a: false, s: false, d: false, ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false };
+        let isMoving = false;
+        let walkCycle = 0;
+        const playerSpeed = 0.12;
+
+        // Vật lý Nhảy (Jumping Physics) & Rơi tự do
+        let isAirborne = false;
+        let yVelocity = 0;
+        const gravity = 0.009; // Trọng lực nhẹ bay bổng
+        let hasCollectedTreasure = false;
+
+        // Game State
+        let state = {
+            points: 20,
+            unlockedIslands: 1, // Bắt đầu mở 1 đảo
+            stamina: 3,
+            reflectionText: ""
+        };
+
+        // KHỞI CHẠY THREE.JS
+        function init3D() {
+            const container = document.getElementById('canvas-container');
+
+            // 1. SCENE & FOG
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x080c14); // Tone deep navy tối huyền ảo
+            scene.fog = new THREE.FogExp2(0x080c14, 0.04); // Sương mù che các đảo bị khóa ở xa
+
+            // 2. CAMERA (Isometric perspective)
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(10, 12, 10);
+
+            // 3. RENDERER
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            container.appendChild(renderer.domElement);
+
+            // 4. LIGHTS
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.35); // Ánh sáng môi trường dịu nhẹ
+            scene.add(ambientLight);
+
+            const dirLight = new THREE.DirectionalLight(0xffedd5, 0.75); // Ánh nắng vàng ấm chiếu chéo
+            dirLight.position.set(20, 30, 15);
+            dirLight.castShadow = true;
+            dirLight.shadow.mapSize.width = 1024;
+            dirLight.shadow.mapSize.height = 1024;
+            dirLight.shadow.camera.near = 0.5;
+            dirLight.shadow.camera.far = 100;
+            const d = 15;
+            dirLight.shadow.camera.left = -d;
+            dirLight.shadow.camera.right = d;
+            dirLight.shadow.camera.top = d;
+            dirLight.shadow.camera.bottom = -d;
+            scene.add(dirLight);
+
+            // Đèn phụ tạo hiệu ứng ánh sáng ban đêm dịu dàng
+            const fillLight = new THREE.DirectionalLight(0x3b82f6, 0.3); // Ánh xanh dịu phản chiếu bầu trời sao
+            fillLight.position.set(-15, 10, -15);
+            scene.add(fillLight);
+
+            // 5. THIẾT KẾ CÁC ĐẢO & THÊM VÀO SCENE
+            createIslands();
+            createObbyPlatforms();
+
+            // 6. THIẾT KẾ NHÂN VẬT CHIÊN CON 3D
+            createSheep();
+
+            // 7. KHỞI CHẠY CÁC SỰ KIỆN ĐIỀU KHIỂN BÀN PHÍM
+                        // 7. KHỞI CHẠY CÁC SỰ KIỆN ĐIỀU KHIỂN BÀN PHÍM
+            window.addEventListener('keydown', e => {
+                // Bỏ qua nếu đang gõ chữ trong ô soạn thảo
+                if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') {
+                    return;
+                }
+                if (e.key in keys) keys[e.key] = true;
+                if (e.key === ' ' || e.key === 'Spacebar') {
+                    e.preventDefault(); // Tránh cuộn trang
+                    if (!isAirborne) {
+                        isAirborne = true;
+                        yVelocity = 0.18; // Gia tốc nhảy lên
+                        playJumpSound();
+                    }
+                }
+            });
+            window.addEventListener('keyup', e => {
+                if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') {
+                    return;
+                }
+                if (e.key in keys) keys[e.key] = false;
+            });
+
+            // Tự động resize màn hình
+            window.addEventListener('resize', onWindowResize, false);
+
+            // Cập nhật giao diện HUD ban đầu
+            updateHUD();
+
+            // Chạy vòng lặp Render
+            animate();
+        }
+
+        // TẠO NHÂN VẬT CHIÊN CON 3D (LOW-POLY STYLE CỰC KỲ DỄ THƯƠNG)
+        function createSheep() {
+            sheep = new THREE.Group();
+            sheep.position.set(0, 1.45, 0); // Đặt ở tâm đảo 1
+            scene.add(sheep);
+
+            // Thân chiên (Khối lông mây bông trắng)
+            const bodyGeo = new THREE.SphereGeometry(0.7, 8, 8);
+            const bodyMat = new THREE.MeshLambertMaterial({ color: 0xfafafa, flatShading: true });
+            const body = new THREE.Mesh(bodyGeo, bodyMat);
+            body.castShadow = true;
+            body.receiveShadow = true;
+            sheep.add(body);
+
+            // Đầu chiên (Khối hộp sẫm màu)
+            const headGeo = new THREE.BoxGeometry(0.35, 0.35, 0.35);
+            const headMat = new THREE.MeshLambertMaterial({ color: 0x334155, flatShading: true });
+            const head = new THREE.Mesh(headGeo, headMat);
+            head.position.set(0, 0.4, -0.6);
+            head.castShadow = true;
+            sheep.add(head);
+
+            // Mắt chiên (Hai điểm nhỏ trắng)
+            const eyeGeo = new THREE.BoxGeometry(0.08, 0.08, 0.08);
+            const eyeMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+            
+            const leftEye = new THREE.Mesh(eyeGeo, eyeMat);
+            leftEye.position.set(-0.16, 0.45, -0.78);
+            sheep.add(leftEye);
+
+            const rightEye = new THREE.Mesh(eyeGeo, eyeMat);
+            rightEye.position.set(0.16, 0.45, -0.78);
+            sheep.add(rightEye);
+
+            // 4 Chân chiên (Mỗi chân là 1 hình trụ gỗ nhỏ)
+            const legGeo = new THREE.BoxGeometry(0.14, 0.45, 0.14);
+            const legMat = new THREE.MeshLambertMaterial({ color: 0x1e293b });
+
+            const legPositions = [
+                { x: -0.3, z: -0.3 }, // Trước trái
+                { x: 0.3, z: -0.3 },  // Trước phải
+                { x: -0.3, z: 0.3 },  // Sau trái
+                { x: 0.3, z: 0.3 }    // Sau phải
+            ];
+
+            legPositions.forEach((pos, idx) => {
+                const legPivot = new THREE.Group();
+                legPivot.position.set(pos.x, -0.4, pos.z);
+                
+                const legMesh = new THREE.Mesh(legGeo, legMat);
+                legMesh.position.y = -0.22; // Căn lề chân để xoay theo khớp háng
+                legMesh.castShadow = true;
+                
+                legPivot.add(legMesh);
+                sheep.add(legPivot);
+                sheepLegs.push(legPivot); // Lưu chân lại để chạy hoạt ảnh đi bộ
+            });
+        }
+
+        // TẠO CÁC ĐẢO BẢN ĐỒ 3D
+        function createIslands() {
+            islandData.forEach(data => {
+                const islandGroup = new THREE.Group();
+                islandGroup.position.set(data.x, -12, data.z); // Ban đầu giấu dưới lòng đất (y = -12)
+
+                // Khối đất cỏ xanh nổi lên (6x6x1.2)
+                const landGeo = new THREE.BoxGeometry(6, 1.2, 6);
+                const landMat = new THREE.MeshStandardMaterial({ 
+                    color: data.color, 
+                    roughness: 0.8,
+                    metalness: 0.1,
+                    flatShading: true
+                });
+                const land = new THREE.Mesh(landGeo, landMat);
+                land.receiveShadow = true;
+                land.castShadow = true;
+                islandGroup.add(land);
+
+                // Khối đất nâu ở dưới mặt cỏ (để tạo cảm giác lớp cắt 3D)
+                const dirtGeo = new THREE.BoxGeometry(5.8, 1, 5.8);
+                const dirtMat = new THREE.MeshLambertMaterial({ color: 0x5c4033 });
+                const dirt = new THREE.Mesh(dirtGeo, dirtMat);
+                dirt.position.y = -0.8;
+                dirt.receiveShadow = true;
+                islandGroup.add(dirt);
+
+                // Thêm cây cối (Low-poly Pine Trees) trên mỗi đảo để sinh động
+                createTrees(islandGroup, data.id);
+
+                // CỘT ÁNH SÁNG KINH THÁNH (Glow Pillar) - đặt ở góc đảo
+                const pillarGeo = new THREE.CylinderGeometry(0.3, 0.3, 8, 16, 1, true);
+                const pillarMat = new THREE.MeshBasicMaterial({ 
+                    color: 0xf59e0b, 
+                    transparent: true, 
+                    opacity: 0.42, 
+                    blending: THREE.AdditiveBlending,
+                    side: THREE.DoubleSide
+                });
+                const pillar = new THREE.Mesh(pillarGeo, pillarMat);
+                pillar.position.set(1.8, 4, 1.8);
+                islandGroup.add(pillar);
+                lightPillars[data.id] = pillar;
+
+                // Một cuộn sách Kinh Thánh 3D nhỏ lơ lửng giữa cột sáng
+                const scrollGeo = new THREE.BoxGeometry(0.5, 0.12, 0.35);
+                const scrollMat = new THREE.MeshLambertMaterial({ color: 0xfffdd0 });
+                const scroll = new THREE.Mesh(scrollGeo, scrollMat);
+                scroll.position.set(1.8, 1, 1.8);
+                scroll.name = "scroll";
+                islandGroup.add(scroll);
+
+                scene.add(islandGroup);
+                islands[data.id] = islandGroup;
+
+                // Thực hiện hoạt ảnh nâng đảo lên cho các đảo đã được mở khóa ban đầu
+                if (data.id <= state.unlockedIslands) {
+                    islandGroup.position.y = 0;
+                }
+            });
+        }
+
+        // TẠO CÁC BỤC NHẢY OBBY PARKOUR
+        function createObbyPlatforms() {
+            obbyPlatforms.forEach((p, idx) => {
+                const platGroup = new THREE.Group();
+                platGroup.position.set(p.x, p.y + p.height / 2, p.z); // y ở đây là tâm hình hộp, nên cộng thêm half-height
+
+                // Tạo khối hình bục nhảy
+                const geo = new THREE.BoxGeometry(p.width, p.height, p.depth);
+                
+                // Thử thách kho báu (Đảo cuối cùng) có màu vàng kim lấp lánh, còn lại màu xám đá
+                const color = p.isTreasure ? 0xf59e0b : 0x475569;
+                const mat = new THREE.MeshStandardMaterial({ 
+                    color: color, 
+                    roughness: 0.9,
+                    flatShading: true 
+                });
+                const mesh = new THREE.Mesh(geo, mat);
+                mesh.receiveShadow = true;
+                mesh.castShadow = true;
+                platGroup.add(mesh);
+
+                // Nếu là đảo chứa rương kho báu, thêm một chiếc rương vàng lấp lánh trên bục
+                if (p.isTreasure) {
+                    const chestGroup = new THREE.Group();
+                    chestGroup.position.y = p.height / 2 + 0.2;
+                    chestGroup.name = "treasure_chest";
+
+                    // Hòm rương gỗ vàng
+                    const chestGeo = new THREE.BoxGeometry(0.6, 0.45, 0.4);
+                    const chestMat = new THREE.MeshLambertMaterial({ color: 0xd97706, flatShading: true });
+                    const chest = new THREE.Mesh(chestGeo, chestMat);
+                    chest.castShadow = true;
+                    chestGroup.add(chest);
+
+                    // Khóa rương vàng phát sáng
+                    const lockGeo = new THREE.BoxGeometry(0.12, 0.15, 0.05);
+                    const lockMat = new THREE.MeshBasicMaterial({ color: 0xfacc15 });
+                    const lock = new THREE.Mesh(lockGeo, lockMat);
+                    lock.position.set(0, 0, -0.22);
+                    chestGroup.add(lock);
+
+                    platGroup.add(chestGroup);
+
+                    // Thêm một đèn điểm vàng lấp lánh phát sáng xung quanh rương
+                    const pointLight = new THREE.PointLight(0xf59e0b, 1.8, 4);
+                    pointLight.position.set(0, p.height / 2 + 0.6, 0);
+                    platGroup.add(pointLight);
+                }
+
+                scene.add(platGroup);
+            });
+        }
+
+        // Tạo cây thông low-poly
+        function createTrees(parent, islandId) {
+            const treePositions = [
+                { x: -2, z: -2 },
+                { x: 2, z: -2 },
+                { x: -2, z: 2 }
+            ];
+
+            treePositions.forEach((pos, idx) => {
+                // Không đặt cây trùng vào vị trí cột ánh sáng (1.8, 1.8)
+                if (pos.x === 2 && pos.z === 2) return;
+                
+                const tree = new THREE.Group();
+                tree.position.set(pos.x, 0.6, pos.z);
+
+                // Thân cây (trụ nâu)
+                const trunkGeo = new THREE.CylinderGeometry(0.12, 0.12, 0.6, 8);
+                const trunkMat = new THREE.MeshLambertMaterial({ color: 0x4e3629 });
+                const trunk = new THREE.Mesh(trunkGeo, trunkMat);
+                trunk.position.y = 0.3;
+                trunk.castShadow = true;
+                tree.add(trunk);
+
+                // Tán cây (nón xanh lá)
+                const leavesGeo = new THREE.ConeGeometry(0.6, 1.2, 5);
+                const leavesMat = new THREE.MeshLambertMaterial({ color: 0x1b4d22, flatShading: true });
+                const leaves = new THREE.Mesh(leavesGeo, leavesMat);
+                leaves.position.y = 1;
+                leaves.castShadow = true;
+                tree.add(leaves);
+
+                parent.add(tree);
+            });
+        }
+
+        // CẬP NHẬT TRẠNG THÁI HUD TRANG WEB
+        function updateHUD() {
+            document.getElementById('hud-points').innerText = `${state.points} ✨`;
+            document.getElementById('hud-unlocked').innerText = `${state.unlockedIslands}/6 Đảo`;
+            document.getElementById('hud-stamina').innerText = `${state.stamina}/3`;
+        }
+
+        // HÀM CLICK CHECK-IN: KÍCH HOẠT HIỆU ỨNG MỞ ĐẢO MỚI (BOUNCING RISING TILE)
+        document.getElementById('btn-checkin').onclick = () => {
+            const val = document.getElementById('reflection-input').value.trim();
+            if (val.length < 10) {
+                alert("⚠️ Vui lòng ghi lại ít nhất 10 ký tự suy ngẫm để bầy chiên của bạn nhận được lương thực!");
+                return;
+            }
+
+            if (state.unlockedIslands >= 6) {
+                alert("🎉 Vườn Thánh Tĩnh Nguyện đã được mở rộng hoàn toàn! Hãy tiếp tục rèn luyện và suy ngẫm hằng ngày nhé.");
+                return;
+            }
+
+            // Tiêu hao stamina
+            state.stamina = Math.max(0, state.stamina - 1);
+            state.unlockedIslands++;
+            state.points += 15;
+
+            // Kích hoạt hiệu ứng âm thanh
+            playChirpSound();
+            updateHUD();
+
+            // Hoạt ảnh 3D nâng đảo mới lên từ biển khơi
+            animateIslandRise(state.unlockedIslands);
+
+            // Reset input
+            document.getElementById('reflection-input').value = '';
+            document.getElementById('reflection-char').innerText = '0 / 30 ký tự';
+        };
+
+        // Reset game về ban đầu
+        document.getElementById('btn-reset').onclick = () => {
+            state.unlockedIslands = 1;
+            state.points = 20;
+            state.stamina = 3;
+            updateHUD();
+
+            // Reset vị trí chiên và giấu các đảo 2-6 xuống dưới
+            sheep.position.set(0, 0.8, 0);
+            for (let i = 2; i <= 6; i++) {
+                islands[i].position.y = -12;
+                lightPillars[i].visible = true; // Mở lại cột sáng nếu đã tắt
+            }
+        };
+
+        // HOẠT ẢNH NÂNG ĐẢO RISING BLOCK EFFECT
+        function animateIslandRise(islandId) {
+            const targetIsland = islands[islandId];
+            if (!targetIsland) return;
+
+            let startTime = null;
+            const duration = 1500; // 1.5 giây bay lên
+
+            function step(timestamp) {
+                if (!startTime) startTime = timestamp;
+                const progress = timestamp - startTime;
+                const percent = Math.min(progress / duration, 1);
+
+                // Công thức Elastic Out (Bouncing nhún nhảy khi chạm đất)
+                const p = 0.3;
+                const elasticFactor = Math.pow(2, -10 * percent) * Math.sin((percent - p / 4) * (2 * Math.PI) / p) + 1;
+                
+                targetIsland.position.y = -12 + (12 * elasticFactor);
+
+                if (percent < 1) {
+                    requestAnimationFrame(step);
+                } else {
+                    targetIsland.position.y = 0; // Khóa chặt vị trí
+                }
+            }
+
+            requestAnimationFrame(step);
+        }
+
+        // TỦ ĐỒ TRANG TRÍ (HALO & GLASSES)
+        document.getElementById('btn-equip-halo').onclick = () => {
+            state.equipped.halo = !state.equipped.halo;
+            const btn = document.getElementById('btn-equip-halo');
+            
+            if (state.equipped.halo) {
+                // Tạo vòng hào quang thiên thần
+                const haloGeo = new THREE.TorusGeometry(0.24, 0.05, 8, 24);
+                const haloMat = new THREE.MeshBasicMaterial({ color: 0xffeb3b });
+                haloMesh = new THREE.Mesh(haloGeo, haloMat);
+                haloMesh.rotation.x = Math.PI / 2;
+                haloMesh.position.set(0, 1.4, -0.6); // Treo trên đầu
+                sheep.add(haloMesh);
+
+                btn.innerText = "Tháo Ra";
+                btn.className = "text-[9px] font-extrabold px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-900 hover:bg-slate-800 text-slate-350 transition-all";
+            } else {
+                if (haloMesh) {
+                    sheep.remove(haloMesh);
+                    haloMesh = null;
+                }
+                btn.innerText = "Trang Bị";
+                btn.className = "text-[9px] font-extrabold px-3 py-1.5 rounded-lg border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 transition-all";
+            }
+        };
+
+        // HỆ THỐNG TOAST THÔNG BÁO TRONG GAME
+        function showToast(msg, isSuccess = false) {
+            const toast = document.getElementById('game-toast');
+            toast.innerText = msg;
+            if (isSuccess) {
+                toast.className = "fixed top-24 left-1/2 transform -translate-x-1/2 bg-emerald-500/95 text-white font-extrabold text-xs px-6 py-3 rounded-full shadow-lg border border-emerald-400 transition-all duration-300 z-50 opacity-100 translate-y-0 scale-100";
+            } else {
+                toast.className = "fixed top-24 left-1/2 transform -translate-x-1/2 bg-red-500/95 text-white font-extrabold text-xs px-6 py-3 rounded-full shadow-lg border border-red-400 transition-all duration-300 z-50 opacity-100 translate-y-0 scale-100";
+            }
+            setTimeout(() => {
+                toast.className = "fixed top-24 left-1/2 transform -translate-x-1/2 bg-red-500/90 text-white font-extrabold text-xs px-6 py-3 rounded-full shadow-lg border border-red-400 opacity-0 pointer-events-none transition-all duration-300 z-50 translate-y-2 scale-95";
+            }, 2500);
+        }
+
+        // HÀM HỒI SINH KHI RƠI VỰC
+        function respawnPlayer() {
+            sheep.position.set(0, 1.45, 0); // Về Đảo 1
+            yVelocity = 0;
+            isAirborne = false;
+            playErrorSound();
+            showToast("⚠️ Ôi không! Chiên con bị rơi vực và đã hồi sinh ở Đảo 1.");
+            
+            // Phạt nhẹ stamina
+            state.stamina = Math.max(0, state.stamina - 1);
+            updateHUD();
+        }
+
+        // PHÁT ÂM THANH KHI NHẢY
+        function playJumpSound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(320, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(650, audioCtx.currentTime + 0.15);
+                gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.2);
+            } catch (e) {}
+        }
+
+        // HÀM TÍNH ĐỘ CAO MẶT ĐẤT DƯỚI CHÂN CHIÊN (HEIGHTMAP COLLISION)
+        function getGroundHeight(x, z) {
+            // 1. Kiểm tra va chạm với các đảo đất đã được mở khóa
+            for (let i = 1; i <= state.unlockedIslands; i++) {
+                const data = islandData.find(d => d.id === i);
+                if (data) {
+                    // Nếu đảo đã trồi lên mặt đất (y = 0)
+                    if (islands[i] && islands[i].position.y >= -0.2) {
+                        const halfSize = 3; // Kích thước đảo 6x6 -> biên chéo 3
+                        if (x >= data.x - halfSize && x <= data.x + halfSize && z >= data.z - halfSize && z <= data.z + halfSize) {
+                            return 0.6; // Bề mặt cỏ trên đảo (y = 0.6 vì đất cao 1.2)
+                        }
+                    }
+                }
+            }
+
+            // 2. Kiểm tra va chạm với các bục nhảy Parkour (Obby Platforms)
+            for (let i = 0; i < obbyPlatforms.length; i++) {
+                const p = obbyPlatforms[i];
+                // Các bục nối chỉ kích hoạt khi đảo đích đã mở khóa
+                const halfW = p.width / 2;
+                const halfD = p.depth / 2;
+                if (x >= p.x - halfW && x <= p.x + halfW && z >= p.z - halfD && z <= p.z + halfD) {
+                    return p.y + p.height / 2; // Bề mặt của bục nhảy (half-height của bục)
+                }
+            }
+
+            return -99; // Rơi tự do vào hư không
+        }
+
+        // KIỂM TRA NHẶT RƯƠNG KHO BÁU CUỐI OBBY THỬ THÁCH
+        function checkObbyTreasureCollision() {
+            if (hasCollectedTreasure) return;
+            
+            // Tọa độ rương kho báu là ở bục C5: (-4.5, 0.8, -9.0). Chiều cao đứng y = 0.8 + 2.8/2 + 0.85 = 3.05
+            const dx = sheep.position.x - (-4.5);
+            const dz = sheep.position.z - (-9.0);
+            const dist = Math.sqrt(dx * dx + dz * dz);
+            
+            if (dist < 0.95 && Math.abs(sheep.position.y - 3.05) < 1.0) {
+                hasCollectedTreasure = true;
+                
+                // Thưởng điểm rất lớn
+                state.points += 50;
+                updateHUD();
+                playHarpSound();
+                showToast("🎉 Chúc mừng! Bạn đã mở Rương Kho Báu Đức Tin! Nhận +50 Điểm Thưởng ✨ và mở khóa Gậy Chăn Chiên 🦯!", true);
+            }
+        }
+
+        // BÀN PHÍM DI CHUYỂN & GAME LOOP ANIMATION
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // 1. LẤY HƯỚNG DI CHUYỂN CỦA CHIÊN CON
+            let dirX = 0;
+            let dirZ = 0;
+
+            if (keys.w || keys.ArrowUp) dirZ = -1;
+            if (keys.s || keys.ArrowDown) dirZ = 1;
+            if (keys.a || keys.ArrowLeft) dirX = -1;
+            if (keys.d || keys.ArrowRight) dirX = 1;
+
+            isMoving = (dirX !== 0 || dirZ !== 0);
+
+            // Cho phép di chuyển tự do (trọng lực và bục nhảy obby sẽ tự động kiểm soát việc rơi vực)
+            if (isMoving) {
+                const angle = Math.atan2(dirX, dirZ);
+                sheep.position.x += Math.sin(angle) * playerSpeed;
+                sheep.position.z += Math.cos(angle) * playerSpeed;
+
+                // Xoay đầu hướng đi
+                sheep.rotation.y = angle;
+
+                // Khớp xoay chân
+                walkCycle += 0.22;
+                sheepLegs[0].rotation.x = Math.sin(walkCycle) * 0.45;
+                sheepLegs[1].rotation.x = -Math.sin(walkCycle) * 0.45;
+                sheepLegs[2].rotation.x = -Math.sin(walkCycle) * 0.45;
+                sheepLegs[3].rotation.x = Math.sin(walkCycle) * 0.45;
+            } else {
+                sheepLegs.forEach(leg => { leg.rotation.x = 0; });
+            }
+
+            // 2. VẬT LÝ NHẢY & TRỌNG LỰC RƠI TỰ DO (GRAVITY PHYSICS)
+            const groundY = getGroundHeight(sheep.position.x, sheep.position.z);
+            const targetStandingY = groundY + 0.85; // Chiều cao đứng thực tế trên bục (chiều cao chân/thân chiên)
+
+            if (isAirborne) {
+                yVelocity -= gravity;
+                sheep.position.y += yVelocity;
+
+                // Kiểm tra xem có đáp xuống bục đất nào không (khi đang rơi xuống)
+                if (yVelocity <= 0 && sheep.position.y <= targetStandingY && groundY > -50) {
+                    sheep.position.y = targetStandingY;
+                    yVelocity = 0;
+                    isAirborne = false;
+                }
+            } else {
+                // Nếu tự động đi khỏi rìa bục đất -> Rơi tự do
+                if (sheep.position.y > targetStandingY + 0.05 || groundY < -50) {
+                    isAirborne = true;
+                    yVelocity = 0; // Không có vận tốc nhảy ban đầu, chỉ rơi tự do
+                } else {
+                    // Nhịp thở phập phồng nhẹ hoặc nhún nhảy khi di chuyển trên cạn
+                    const breathing = isMoving ? Math.abs(Math.sin(walkCycle)) * 0.08 : Math.sin(Date.now() * 0.0035) * 0.02;
+                    sheep.position.y = targetStandingY + breathing;
+                }
+            }
+
+            // Kiểm tra rơi vực sâu dưới y = -6 -> Respawn hồi sinh ở Đảo 1
+            if (sheep.position.y < -6) {
+                respawnPlayer();
+            }
+
+            // Kiểm tra nhặt Rương Kho Báu ở cuối Obby
+            checkObbyTreasureCollision();
+
+            // 3. CAMERA CHẠY BÁM THEO NHÂN VẬT (CAMERA FOLLOW INTERPOLATION)
+            camera.position.x += (sheep.position.x + 8 - camera.position.x) * 0.05;
+            camera.position.z += (sheep.position.z + 8 - camera.position.z) * 0.05;
+            camera.lookAt(sheep.position);
+
+            // 4. XOAY CÁC CUỘN KINH THÁNH LƠ LỬNG
+            for (let i = 1; i <= 6; i++) {
+                const scroll = islands[i].getObjectByName("scroll");
+                if (scroll) {
+                    scroll.rotation.y += 0.015;
+                    scroll.position.y = 1 + Math.sin(Date.now() * 0.002 + i) * 0.12; // Bồng bềnh nhẹ
+                }
+            }
+
+            // 5. KIỂM TRA VA CHẠM CỘT ÁNG SÁNG KINH THÁNH
+            checkBiblePillarCollision();
+
+            // Render khung hình
+            renderer.render(scene, camera);
+        }
+
+        document.getElementById('btn-equip-glasses').onclick = () => {
+            state.equipped.glasses = !state.equipped.glasses;
+            const btn = document.getElementById('btn-equip-glasses');
+            
+            if (state.equipped.glasses) {
+                // Tạo mắt kính cận
+                const glassesGroup = new THREE.Group();
+                const frameGeo = new THREE.BoxGeometry(0.38, 0.08, 0.05);
+                const frameMat = new THREE.MeshBasicMaterial({ color: 0xd32f2f });
+                const frame = new THREE.Mesh(frameGeo, frameMat);
+                frame.position.set(0, 0.42, -0.79);
+                glassesGroup.add(frame);
+                
+                glassesMesh = glassesGroup;
+                sheep.add(glassesMesh);
+
+                btn.innerText = "Tháo Ra";
+                btn.className = "text-[9px] font-extrabold px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-900 hover:bg-slate-800 text-slate-350 transition-all";
+            } else {
+                if (glassesMesh) {
+                    sheep.remove(glassesMesh);
+                    glassesMesh = null;
+                }
+                btn.innerText = "Trang Bị";
+                btn.className = "text-[9px] font-extrabold px-3 py-1.5 rounded-lg border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 transition-all";
+            }
+        };
+
+        // Đếm ký tự
+        document.getElementById('reflection-input').addEventListener('input', (e) => {
+            const len = e.target.value.trim().length;
+            document.getElementById('reflection-char').innerText = `${len} / 30 ký tự`;
+        });
+
+        
+        // KIỂM TRA VA CHẠM CỦA CHIÊN VỚI CỘT SÁNG KINH THÁNH
+        function checkBiblePillarCollision() {
+            for (let i = 1; i <= state.unlockedIslands; i++) {
+                const data = islandData.find(d => d.id === i);
+                if (data && lightPillars[i] && lightPillars[i].visible) {
+                    const pillarX = data.x + 1.8;
+                    const pillarZ = data.z + 1.8;
+                    
+                    const dx = sheep.position.x - pillarX;
+                    const dz = sheep.position.z - pillarZ;
+                    const dist = Math.sqrt(dx * dx + dz * dz);
+
+                    if (dist < 0.82) {
+                        lightPillars[i].visible = false;
+                        triggerBibleScrollUnlock(data);
+                    }
+                }
+            }
+        }
+
+        // BẬT MODAL LỜI HỨA KINH THÁNH KHI CHẠM CỘT SÁNG
+        function triggerBibleScrollUnlock(data) {
+            playHarpSound();
+            
+            document.getElementById('modal-zone').innerText = `VÙNG ĐẤT: ${data.name.toUpperCase()}`;
+            document.getElementById('modal-title').innerText = `Nhặt được Cuộn Sách Đảo ${data.id}`;
+            document.getElementById('modal-desc').innerText = data.text;
+            document.getElementById('modal-verse').innerText = data.verse;
+
+            const modal = document.getElementById('bible-modal');
+            const card = document.getElementById('bible-card');
+
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            card.classList.remove('scale-90', 'opacity-0');
+            card.classList.add('scale-100', 'opacity-100');
+
+            state.points += 20;
+            updateHUD();
+        }
+
+        function closeBibleModal() {
+            const modal = document.getElementById('bible-modal');
+            const card = document.getElementById('bible-card');
+
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            card.classList.remove('scale-100', 'opacity-100');
+            card.classList.add('scale-90', 'opacity-0');
+        }
+
+        // HÀM PHÁT LỜI HÒA HẠT CHIP ĐỂ DI CHUYỂN
+        function playChirpSound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.15, audioCtx.currentTime + 0.05);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.35);
+            } catch (e) {}
+        }
+
+        // HÀM PHÁT ÂM THANH ĐÀN HARP DU DƯƠNG (AUDIO SYNTHESIS)
+        function playHarpSound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                
+                const playNote = (freq, delay, dur) => {
+                    setTimeout(() => {
+                        let osc = audioCtx.createOscillator();
+                        let gain = audioCtx.createGain();
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                        gain.gain.setValueAtTime(0, audioCtx.currentTime);
+                        gain.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + 0.05);
+                        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + dur);
+                        osc.start();
+                        osc.stop(audioCtx.currentTime + dur + 0.05);
+                    }, delay);
+                };
+
+                playNote(261.63, 0, 0.8);   // C4
+                playNote(329.63, 150, 0.8); // E4
+                playNote(392.00, 300, 0.8); // G4
+                playNote(523.25, 450, 1.2); // C5
+            } catch (e) {}
+        }
+
+        
+        // HÀM RESIZE MÀN HÌNH CHUẨN THREE.JS
+        
+        // ẨN / HIỆN BẢNG ĐIỀU KHIỂN DƯỚI
+        function toggleBottomPanels(isCollapse) {
+            if (document.activeElement) {
+                document.activeElement.blur();
+            }
+            const container = document.getElementById('bottom-panels-container');
+            const floatingBtn = document.getElementById('floating-show-btn');
+            
+            if (isCollapse) {
+                container.classList.add('collapsed');
+                floatingBtn.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-10', 'scale-95');
+                floatingBtn.classList.add('opacity-100', 'pointer-events-auto', 'translate-y-0', 'scale-100');
+            } else {
+                container.classList.remove('collapsed');
+                floatingBtn.classList.add('opacity-0', 'pointer-events-none', 'translate-y-10', 'scale-95');
+                floatingBtn.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0', 'scale-100');
+            }
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // HÀM PHÁT ÂM THANH CẢNH BÁO RƠI VỰC
+        function playErrorSound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+                osc.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.3);
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.35);
+            } catch (e) {}
+        }
+
+        // Khởi động game khi tải trang xong
+        window.onload = () => {
+            init3D();
+            // Tự động bỏ focus toàn bộ nút bấm sau khi click để tránh phím Space kích hoạt click lại
+            document.querySelectorAll('button').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    btn.blur();
+                });
+            });
+
+
+            document.getElementById('btn-toggle-ui').addEventListener('click', () => {
+                const container = document.getElementById('bottom-panels-container');
+                const isCollapsed = container.classList.contains('collapsed');
+                toggleBottomPanels(!isCollapsed);
+            });
+        };
+    </script>
+</body>
+</html>

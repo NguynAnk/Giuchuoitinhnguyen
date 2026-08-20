@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hành Trình Về Đất Hứa - Game Sandbox 🕊️</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #0b0f19;
+            color: #f8fafc;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .glass-panel {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .game-grid {
+            background-size: 24px 24px;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+        }
+
+        .custom-scroll::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #111827;
+            border-radius: 10px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 10px;
+            border: 2px solid #111827;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: #4b5563;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% {
+                filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.6));
+            }
+            50% {
+                filter: drop-shadow(0 0 14px rgba(245, 158, 11, 0.95));
+            }
+        }
+        .glow-active-path {
+            animation: pulse-glow 2.5s infinite;
+        }
+
+        .zone-grass { fill: #113f28; stroke: #1b633f; stroke-width: 2.5; }
+        .zone-desert { fill: #652b08; stroke: #853e0f; stroke-width: 2.5; }
+        .zone-lava { fill: #3f0707; stroke: #6b1212; stroke-width: 2.5; }
+        .zone-ruins { fill: #1e293b; stroke: #334155; stroke-width: 2.5; }
+        .zone-snow { fill: #0b3c5d; stroke: #026ba1; stroke-width: 2.5; }
+        .zone-sky { fill: #1e1b4b; stroke: #312e81; stroke-width: 2.5; }
+
+        /* Animation cho hạt bay tiếp nước */
+        @keyframes water-flight {
+            0% {
+                transform: scale(1) translate3d(0, 0, 0);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(0.6) translate3d(var(--tx), var(--ty), 0);
+                opacity: 0;
+            }
+        }
+        .water-drop-effect {
+            position: absolute;
+            z-index: 100;
+            animation: water-flight 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="p-3 sm:p-6 lg:p-8 flex flex-col items-center justify-start">
+
+    <!-- Container chính -->
+    <div class="w-full max-w-7xl flex flex-col gap-5">
+        
+        <!-- Header & HUD hiển thị tài nguyên -->
+        <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 bg-slate-900/80 p-6 rounded-[2.5rem] border border-slate-800 shadow-2xl relative overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-r from-amber-500/5 to-transparent pointer-events-none"></div>
+            <div>
+                <span class="text-amber-500 font-extrabold text-xs uppercase tracking-widest flex items-center gap-1.5">
+                    🎮 KHÔNG GIAN THỬ NGHIỆM ĐỘC LẬP
+                </span>
+                <h1 class="text-3xl font-black text-slate-100 mt-1 flex items-center gap-2">
+                    Hành Trình Về Đất Hứa <span class="text-sm font-normal text-slate-400 bg-slate-800 px-3 py-1 rounded-full border border-slate-700">Phiên bản Sandbox v1.0</span>
+                </h1>
+                <p class="text-xs text-slate-400 mt-1">Mô phỏng vòng lặp game, viết cảm nhận tĩnh nguyện nhận Mana/Nước, tiếp tế đồng đội và trang trí chiên con.</p>
+            </div>
+            
+            <!-- BẢNG ĐIỀU KHIỂN TÀI NGUYÊN (HUD) -->
+            <div class="flex items-center gap-3 flex-wrap bg-slate-950/60 p-3 rounded-3xl border border-slate-800">
+                <!-- Điểm tích lũy -->
+                <div class="flex flex-col items-center px-4 py-1.5 border-r border-slate-800">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase">Điểm Thưởng</span>
+                    <span id="hud-points" class="text-lg font-black text-yellow-400">120 ✨</span>
+                </div>
+                <!-- Mana -->
+                <div class="flex flex-col items-center px-4 py-1.5 border-r border-slate-800">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase">Man-na (🌾)</span>
+                    <span id="hud-mana" class="text-lg font-black text-emerald-400">3/5</span>
+                </div>
+                <!-- Nước -->
+                <div class="flex flex-col items-center px-4 py-1.5 border-r border-slate-800">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase">Nước Sống (💧)</span>
+                    <span id="hud-water" class="text-lg font-black text-sky-400">2/5</span>
+                </div>
+                <!-- Cột Mây / Cột Lửa -->
+                <div class="flex flex-col items-center px-4 py-1.5">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase">Bảo Vệ (☁️/🔥)</span>
+                    <span id="hud-shield" class="text-xs font-extrabold text-slate-500 uppercase mt-1 bg-slate-800/80 px-2 py-0.5 rounded-md border border-slate-700">TẮT</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Layout 2 Cột: Bản đồ bên trái, Bảng Tương tác game bên phải -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+            
+            <!-- CỘT BÊN TRÁI: BẢN ĐỒ MÊ CUNG SVG (Lấy từ demo gốc & mở rộng) -->
+            <div class="lg:col-span-8 glass-panel rounded-[2.5rem] p-5 flex flex-col overflow-hidden relative shadow-2xl">
+                <!-- Zone label -->
+                <div class="absolute top-6 left-6 z-30 pointer-events-none">
+                    <span id="current-zone-label" class="text-xs font-bold text-emerald-400 tracking-wider uppercase bg-emerald-950/90 border border-emerald-800/60 px-4 py-1.5 rounded-full shadow-lg">
+                        Đang ở: Thung Lũng Xanh
+                    </span>
+                </div>
+
+                <!-- Bản đồ cuộn được -->
+                <div class="w-full overflow-auto custom-scroll p-2 mt-12 rounded-2xl bg-[#070b13] border border-slate-800" id="map-scroll-container">
+                    <div class="w-[840px] h-[640px] relative game-grid rounded-xl overflow-hidden" id="map-island">
+                        
+                        <!-- LỚP 1: BẢN ĐỒ VÙNG ĐẤT ĐỊA HÌNH SVG -->
+                        <svg class="absolute inset-0 w-full h-full z-0 pointer-events-none">
+                            <defs>
+                                <pattern id="ocean-pattern" width="40" height="40" patternUnits="userSpaceOnUse">
+                                    <rect width="40" height="40" fill="#070b13" />
+                                    <path d="M 0 20 Q 10 15, 20 20 T 40 20" fill="none" stroke="#121a2e" stroke-width="1.2" />
+                                </pattern>
+                            </defs>
+                            <rect width="100%" height="100%" fill="url(#ocean-pattern)" />
+
+                            <!-- THIẾT KẾ ĐẢO MÊ CUNG PHÂN ZONE -->
+                            <path d="M 50 350 L 50 590 L 450 590 L 450 450 L 320 340 L 220 380 Z" class="zone-grass" />
+                            <path d="M 450 590 L 800 590 L 800 380 L 620 300 L 450 450 Z" class="zone-desert" />
+                            <path d="M 800 380 L 800 150 L 550 150 L 520 220 L 620 300 Z" class="zone-lava" />
+                            <path d="M 320 340 L 520 220 L 620 300 L 450 450 Z" class="zone-ruins" />
+                            <path d="M 50 350 L 220 380 L 320 340 L 320 180 L 50 180 Z" class="zone-snow" />
+                            <path d="M 50 180 L 320 180 L 320 30 L 550 30 L 550 150 L 50 150 Z" class="zone-sky" />
+                        </svg>
+
+                        <!-- LỚP 2: ĐƯỜNG DẪN HÀNH TRÌNH TĨNH NGUYỆN CHÍNH -->
+                        <svg class="absolute inset-0 w-full h-full z-10 pointer-events-none">
+                            <path id="quest-path-glow" d="" fill="none" stroke="rgba(245, 158, 11, 0.25)" stroke-width="9" stroke-linecap="round" class="glow-active-path" />
+                            <path id="quest-path-main" d="" fill="none" stroke="#f59e0b" stroke-width="4.5" stroke-linecap="round" stroke-dasharray="10, 8" />
+                        </svg>
+
+                        <!-- LỚP 3: CÁC NÚT ĐỊA DANH MẪU -->
+                        <div id="nodes-layer" class="absolute inset-0 z-20"></div>
+
+                        <!-- LỚP 4: CÁC QUÂN CỜ THÚ CƯNG -->
+                        <!-- 1. QUÂN CỜ CỦA NGƯỜI CHƠI CHÍNH (🐑) -->
+                        <div id="avatar-token" 
+                             class="absolute w-14 h-14 -ml-7 -mt-7 bg-white rounded-2xl shadow-[0_8px_20px_rgba(245,158,11,0.5)] border-2 border-amber-400 flex items-center justify-center text-3xl z-35 transition-all duration-1000 ease-in-out pointer-events-none"
+                             style="transform: translate3d(80px, 520px, 0);">
+                             🐑
+                             <!-- Các phụ kiện được trang bị động sẽ hiển thị ở đây -->
+                             <span id="equipped-halo" class="absolute -top-3 text-lg hidden">😇</span>
+                             <span id="equipped-glasses" class="absolute top-1 text-[11px] hidden">👓</span>
+                             <span id="equipped-staff" class="absolute -right-1 text-sm hidden">🦯</span>
+                             <div class="absolute -top-1 -right-1 w-4 h-4 bg-amber-400 rounded-full animate-ping opacity-75"></div>
+                             <div class="absolute -bottom-6 bg-slate-900/90 text-[10px] font-extrabold text-amber-400 px-2 py-0.5 rounded border border-amber-500/30 whitespace-nowrap shadow-md">
+                                 BẠN
+                             </div>
+                        </div>
+
+                        <!-- 2. QUÂN CỜ ĐỒNG ĐỘI: LAN (🐏) -->
+                        <div id="friend-lan-token" 
+                             class="absolute w-11 h-11 -ml-5.5 -mt-5.5 bg-slate-900 rounded-xl shadow-lg border border-slate-700 flex items-center justify-center text-2xl z-20 transition-all duration-700"
+                             style="transform: translate3d(230px, 440px, 0);">
+                             🐏
+                             <!-- Icon SOS nhấp nháy đỏ báo kiệt sức -->
+                             <div id="lan-sos-badge" class="absolute -top-2 -right-2 bg-red-600 text-[8px] font-black text-white px-1 py-0.5 rounded border border-red-400 animate-bounce flex items-center gap-0.5">
+                                 🆘 💧
+                             </div>
+                             <div class="absolute -bottom-6 bg-slate-950/80 text-[8px] font-extrabold text-slate-300 px-1.5 py-0.5 rounded border border-slate-700 whitespace-nowrap">
+                                 Lan (Chặng 3)
+                             </div>
+                        </div>
+
+                        <!-- 3. QUÂN CỜ ĐỒNG ĐỘI: MINH (🐐) -->
+                        <div id="friend-minh-token" 
+                             class="absolute w-11 h-11 -ml-5.5 -mt-5.5 bg-slate-900 rounded-xl shadow-lg border border-slate-700 flex items-center justify-center text-2xl z-20 transition-all duration-700"
+                             style="transform: translate3d(340px, 530px, 0);">
+                             🐐
+                             <div class="absolute -bottom-6 bg-slate-950/80 text-[8px] font-extrabold text-slate-300 px-1.5 py-0.5 rounded border border-slate-700 whitespace-nowrap">
+                                 Minh (Chặng 5)
+                             </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- CỘT BÊN PHẢI: BẢNG TƯƠNG TÁC GAME & KIỂM TRA -->
+            <div class="lg:col-span-4 flex flex-col gap-4">
+                
+                <!-- HỆ THỐNG TAB TƯƠNG TÁC -->
+                <div class="glass-panel rounded-[2.2rem] p-5 flex flex-col gap-4 shadow-2xl grow">
+                    
+                    <!-- Các tab đầu mục -->
+                    <div class="flex bg-slate-950 rounded-2xl p-1 border border-slate-800/80">
+                        <button id="tab-btn-devotional" class="flex-1 py-2 rounded-xl text-xs font-bold bg-amber-500 text-white transition-all">
+                            📖 Tĩnh Nguyện
+                        </button>
+                        <button id="tab-btn-coop" class="flex-1 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-slate-200 transition-all">
+                            🤝 Đồng Hành (Co-op)
+                        </button>
+                        <button id="tab-btn-inventory" class="flex-1 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-slate-200 transition-all">
+                            🎒 Tủ Đồ Pet
+                        </button>
+                    </div>
+
+                    <!-- NỘI DUNG TAB 1: TĨNH NGUYỆN HẰNG NGÀY (MÔ PHỎNG) -->
+                    <div id="tab-content-devotional" class="flex flex-col gap-3.5">
+                        <div class="bg-amber-500/10 border border-amber-500/25 p-3.5 rounded-2xl">
+                            <span class="text-[9px] font-black text-amber-500 uppercase tracking-wider block">Gợi ý bài học hôm nay</span>
+                            <span id="devotional-chapter" class="text-sm font-extrabold text-amber-400 block mt-0.5">Sách Ê-sai 26:3-4</span>
+                            <span class="text-xs text-slate-300 italic block mt-1">"Người nào để trí mình vững vàng nơi Ngài thì Ngài sẽ giữ người trong sự bình an trọn vẹn..."</span>
+                        </div>
+
+                        <!-- Khu vực mô phỏng nhập văn bản -->
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Viết Cảm Nhận Của Bạn (Tối thiểu 30 ký tự để kích hoạt Cột Mây/Cột Lửa):</label>
+                            <textarea id="reflection-input" rows="4" class="bg-slate-950 border border-slate-800 rounded-2xl p-3 text-xs text-slate-200 focus:outline-none focus:border-amber-500 transition-all custom-scroll" placeholder="Hôm nay bài học khuyên em phải vững vàng tin cậy Chúa..."></textarea>
+                            <div class="flex justify-between items-center text-[10px] text-slate-500">
+                                <span>Độ dài: <span id="char-count" class="font-bold">0</span> ký tự</span>
+                                <span id="quality-badge" class="font-extrabold text-red-500">Chưa Đạt Yêu Cầu</span>
+                            </div>
+                        </div>
+
+                        <!-- Quiz trắc nghiệm đi kèm -->
+                        <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800/80 flex flex-col gap-2">
+                            <span class="text-[9px] font-black text-sky-400 uppercase tracking-wider">Câu đố Lời Chúa hôm nay</span>
+                            <p class="text-xs font-semibold text-slate-200">Đấng ban bình an trọn vẹn cho người tin cậy là ai?</p>
+                            <div class="grid grid-cols-2 gap-2 mt-1">
+                                <button class="quiz-opt bg-slate-900 border border-slate-800 hover:border-amber-500 text-[11px] py-1.5 px-2 rounded-xl transition-all" onclick="selectQuizOpt(this, true)">Đức Chúa Trời</button>
+                                <button class="quiz-opt bg-slate-900 border border-slate-800 hover:border-amber-500 text-[11px] py-1.5 px-2 rounded-xl transition-all" onclick="selectQuizOpt(this, false)">Con người</button>
+                            </div>
+                        </div>
+
+                        <button id="btn-submit-devotional" class="w-full py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-extrabold text-sm rounded-2xl shadow-lg shadow-orange-500/10 active:scale-98 transition-all flex items-center justify-center gap-2">
+                            🚀 Nộp Bài Học & Tiến Chặng
+                        </button>
+                    </div>
+
+                    <!-- NỘI DUNG TAB 2: ĐỒNG HÀNH (CO-OP) -->
+                    <div id="tab-content-coop" class="flex flex-col gap-4 hidden">
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            Bầy chiên của bạn bè cũng đang hiển thị trên bản đồ. Đồng hành giúp nâng cao động lực giữ chuỗi của cả nhóm!
+                        </p>
+
+                        <!-- Danh sách thành viên nhóm -->
+                        <div class="flex flex-col gap-3">
+                            <!-- Lan -->
+                            <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-950/60 border border-slate-850">
+                                <div class="flex items-center gap-2.5">
+                                    <span class="text-2xl">🐏</span>
+                                    <div>
+                                        <h4 class="text-xs font-extrabold text-slate-200">Lan</h4>
+                                        <p class="text-[10px] text-red-500 font-semibold flex items-center gap-1">
+                                            <span>Khát nước (Lỡ chuỗi 2 ngày)</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <button id="btn-rescue-lan" class="bg-gradient-to-r from-sky-500 to-blue-500 hover:from-sky-600 hover:to-blue-600 text-white font-black text-[10px] px-3.5 py-2 rounded-xl shadow-lg transition-all flex items-center gap-1">
+                                    💧 Tiếp Tế Nước
+                                </button>
+                            </div>
+
+                            <!-- Minh -->
+                            <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-950/60 border border-slate-850">
+                                <div class="flex items-center gap-2.5">
+                                    <span class="text-2xl">🐐</span>
+                                    <div>
+                                        <h4 class="text-xs font-extrabold text-slate-200">Minh</h4>
+                                        <p class="text-[10px] text-emerald-400 font-semibold flex items-center gap-1">
+                                            <span>Khỏe mạnh (Chặng 5)</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <span class="text-[10px] text-slate-500 font-extrabold bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg">Ổn định</span>
+                            </div>
+                        </div>
+
+                        <!-- Nhật ký thông công của nhóm -->
+                        <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 flex flex-col gap-2">
+                            <span class="text-[9px] font-black text-slate-500 uppercase tracking-wider block">Lịch sử tương tác nhóm</span>
+                            <div id="coop-log" class="text-[11px] text-slate-400 flex flex-col gap-1.5 max-h-[120px] overflow-auto custom-scroll">
+                                <p>• <b class="text-slate-300">Minh</b> vừa hoàn thành tĩnh nguyện sớm (+2 điểm nhóm).</p>
+                                <p>• Hệ thống vừa tự động chuyển chặng sang ngày mới.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- NỘI DUNG TAB 3: TỦ ĐỒ PET (INVENTORY) -->
+                    <div id="tab-content-inventory" class="flex flex-col gap-3.5 hidden">
+                        <span class="text-xs text-slate-400">Trang trí cho chú chiên của bạn bằng cách thu thập phụ kiện từ các câu đố sự kiện dọc đường đi.</span>
+                        
+                        <div class="grid grid-cols-1 gap-2.5">
+                            <!-- Phụ kiện 1: Mũ thiên thần -->
+                            <div class="flex items-center justify-between p-3 bg-slate-950/60 border border-slate-850 rounded-2xl">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-amber-500/10 border border-amber-500/30 rounded-xl flex items-center justify-center text-xl shadow-inner">😇</div>
+                                    <div>
+                                        <h4 class="text-xs font-extrabold text-slate-200">Vòng Hào Quang Thiên Thần</h4>
+                                        <p class="text-[10px] text-slate-500 font-medium">Nhận khi vượt qua đố vui Sói Dữ</p>
+                                    </div>
+                                </div>
+                                <button id="inv-btn-halo" class="text-[10px] font-bold px-3 py-1.5 rounded-xl border border-slate-800 bg-slate-900 hover:bg-slate-800 text-slate-400 transition-all opacity-50 cursor-not-allowed" disabled>
+                                    Khóa 🔒
+                                </button>
+                            </div>
+
+                            <!-- Phụ kiện 2: Kính cận tri thức -->
+                            <div class="flex items-center justify-between p-3 bg-slate-950/60 border border-slate-850 rounded-2xl">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-slate-900 border border-slate-800 rounded-xl flex items-center justify-center text-xl shadow-inner">👓</div>
+                                    <div>
+                                        <h4 class="text-xs font-extrabold text-slate-200">Kính Cận Tri Thức</h4>
+                                        <p class="text-[10px] text-slate-500 font-medium">Có sẵn cho người lữ khách hành hương</p>
+                                    </div>
+                                </div>
+                                <button id="inv-btn-glasses" class="text-[10px] font-bold px-3 py-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 transition-all" onclick="toggleAccessory('glasses')">
+                                    Trang Bị
+                                </button>
+                            </div>
+
+                            <!-- Phụ kiện 3: Gậy chăn chiên -->
+                            <div class="flex items-center justify-between p-3 bg-slate-950/60 border border-slate-850 rounded-2xl">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-slate-900 border border-slate-800 rounded-xl flex items-center justify-center text-xl shadow-inner">🦯</div>
+                                    <div>
+                                        <h4 class="text-xs font-extrabold text-slate-200">Gậy Chăn Chiên Thánh</h4>
+                                        <p class="text-[10px] text-slate-500 font-medium">Mở khóa khi tích lũy đủ 150 điểm</p>
+                                    </div>
+                                </div>
+                                <button id="inv-btn-staff" class="text-[10px] font-bold px-3 py-1.5 rounded-xl border border-slate-800 bg-slate-900 hover:bg-slate-800 text-slate-400 transition-all opacity-50 cursor-not-allowed" disabled>
+                                    Khóa 🔒
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Bảng chi tiết chặng đi hiển thị ở sidebar -->
+                <div class="glass-panel rounded-[2.2rem] p-5 shadow-xl flex flex-col gap-3">
+                    <div class="border-b border-slate-800 pb-3">
+                        <span id="info-zone-badge" class="text-[9px] font-bold text-emerald-400 uppercase tracking-widest bg-emerald-500/10 px-2.5 py-0.5 rounded-md border border-emerald-500/20">
+                            VÙNG 1: THUNG LŨNG XANH
+                        </span>
+                        <h2 id="info-node-name" class="text-lg font-black text-slate-200 mt-1 flex items-center gap-1.5">
+                            <span id="info-node-icon">🌿</span> <span id="info-node-title">Cửa Vào Đức Tin</span>
+                        </h2>
+                        <div class="flex justify-between items-center text-[10px] text-slate-400 mt-1">
+                            <span id="info-node-day">Chặng: Ngày 1/30</span>
+                            <span id="info-node-coord" class="text-slate-500">Tọa độ: (80, 520)</span>
+                        </div>
+                    </div>
+
+                    <!-- Mô tả & Lời hứa -->
+                    <div class="text-[11px] text-slate-400 leading-relaxed flex flex-col gap-2">
+                        <p id="info-node-desc">Cổng chào mở lối cho hành trình tĩnh nguyện. Nơi người lữ khách đặt bước chân trung tín đầu tiên.</p>
+                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-900">
+                            <span class="text-[9px] font-bold text-amber-500 uppercase block mb-1">📖 Lời Hứa Lực Sống:</span>
+                            <p id="info-node-verse" class="italic text-slate-200">"Ta đã chọn con đường trung tín, Đặt luật lệ Chúa trước mặt ta." (Thi-thiên 119:30)</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- MÀN HÌNH MODAL PHÓNG TO TRANH MINH HỌA -->
+    <div id="illustration-modal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-[100] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-500">
+        <div class="absolute inset-0 cursor-zoom-out" onclick="closeIllustrationModal()"></div>
+        <div id="illustration-card" class="bg-slate-900 border border-slate-800 rounded-[2.5rem] shadow-2xl w-full max-w-md overflow-hidden flex flex-col relative z-10 scale-95 opacity-0 transition-all duration-500">
+            <button onclick="closeIllustrationModal()" class="absolute top-4 right-4 bg-slate-950/80 border border-slate-700 text-slate-300 w-8 h-8 rounded-full flex items-center justify-center font-bold hover:bg-slate-800 transition-colors z-20">✕</button>
+            <div class="relative w-full aspect-[4/3] bg-slate-950 overflow-hidden">
+                <img id="zoom-modal-img" src="" alt="bible-art" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
+                <div class="absolute bottom-4 left-5 right-5">
+                    <span id="zoom-modal-chapter" class="text-[9px] font-bold text-amber-400 uppercase tracking-widest bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 rounded-full">THUNG LŨNG XANH</span>
+                    <h3 id="zoom-modal-title" class="text-lg font-black text-slate-50 mt-1">Cửa Vào Đức Tin</h3>
+                </div>
+            </div>
+            <div class="p-5 flex flex-col gap-3.5 bg-slate-900">
+                <p id="zoom-modal-desc" class="text-xs text-slate-300 leading-relaxed"></p>
+                <div class="bg-slate-950/80 p-3.5 rounded-2xl border border-slate-850 text-center">
+                    <span class="text-[9px] font-black text-amber-500 uppercase tracking-widest block mb-0.5">📖 Lời Hứa Lực Sống:</span>
+                    <p id="zoom-modal-verse" class="text-xs text-slate-200 italic font-medium leading-relaxed"></p>
+                </div>
+                <button onclick="closeIllustrationModal()" class="w-full py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-extrabold text-xs rounded-xl shadow-lg transition-transform active:scale-95">
+                    📖 Tôi Đã Suy Ngẫm & Tĩnh Nguyện Xong
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MÀN HÌNH MODAL BIẾN CỐ NGẪU NHIÊN: SÓI RỪNG CHẶN ĐƯỜNG -->
+    <div id="encounter-modal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-[110] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-500">
+        <div class="bg-slate-900 border border-red-500/30 rounded-[2.5rem] shadow-2xl w-full max-w-md overflow-hidden flex flex-col p-6 items-center text-center relative gap-4">
+            <div class="text-5xl animate-bounce">🐺💥</div>
+            <div>
+                <span class="text-red-500 font-extrabold text-xs uppercase tracking-widest bg-red-500/10 px-3 py-1 rounded-full border border-red-500/20">Biến Cố Linh Trình</span>
+                <h3 class="text-xl font-black text-slate-100 mt-2">Bầy Chiên Gặp Sói Dữ Chặn Đường!</h3>
+                <p class="text-xs text-slate-400 mt-1 leading-relaxed">
+                    Sói rừng đang rình rập bầy chiên của bạn. Hãy thắp sáng ngọn đuốc đức tin bằng cách trả lời đúng câu hỏi Kinh Thánh để xua đuổi sói và nhận thưởng!
+                </p>
+            </div>
+            
+            <!-- Câu hỏi đố nhanh -->
+            <div class="w-full bg-slate-950 p-4 rounded-2xl border border-slate-800/80 text-left">
+                <span class="text-[9px] font-black text-amber-500 uppercase tracking-widest">Câu hỏi bảo vệ bầy đàn</span>
+                <p class="text-xs font-semibold text-slate-200 mt-1">Ai là người đã được Chúa gọi tên 3 lần khi còn là một cậu bé ở đền thờ?</p>
+                <div class="grid grid-cols-1 gap-2 mt-3">
+                    <button class="encounter-opt w-full bg-slate-900 hover:bg-slate-800 border border-slate-800 py-2 px-3 rounded-xl text-xs text-slate-300 text-left transition-all" onclick="answerEncounter(this, false)">A. Đa-vít</button>
+                    <button class="encounter-opt w-full bg-slate-900 hover:bg-slate-800 border border-slate-800 py-2 px-3 rounded-xl text-xs text-slate-300 text-left transition-all" onclick="answerEncounter(this, true)">B. Sa-mu-ên</button>
+                    <button class="encounter-opt w-full bg-slate-900 hover:bg-slate-800 border border-slate-800 py-2 px-3 rounded-xl text-xs text-slate-300 text-left transition-all" onclick="answerEncounter(this, false)">C. Sa-lô-môn</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT CHÍNH ĐIỀU HƯỚNG GAME SANDBOX -->
+    <script>
+        // Dữ liệu 30 ngày (tương tự map-demo nhưng có cập nhật)
+        const mazeQuestData = [
+            { day: 1, zone: "Thung Lũng Xanh", name: "Cổng Đức Tin", icon: "🌿", x: 80, y: 520, image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=600&auto=format&fit=crop&q=80", desc: "Cổng chào mở lối cho hành trình tĩnh nguyện. Nơi người lữ khách đặt bước chân trung tín đầu tiên để bắt đầu xây dựng mối tương giao ngọt ngào với Chúa.", verse: "Ta đã chọn con đường trung tín, Đặt luật lệ Chúa trước mặt ta. (Thi-thiên 119:30)" },
+            { day: 2, zone: "Thung Lũng Xanh", name: "Đồng Cỏ Bình An", icon: "🐑", x: 130, y: 450, image: "https://images.unsplash.com/photo-1484557985045-edf25e08da73?w=600&auto=format&fit=crop&q=80", desc: "Đồng cỏ xanh tươi dưới bóng mát của Đấng Chăn Giữ, nơi linh hồn bạn tìm lại sự tĩnh lặng tuyệt đối sau những ngày dài mỏi mệt.", verse: "Ngài khiến tôi an nghỉ nơi đồng cỏ xanh tươi, dẫn tôi đến mé nước bình tịnh. (Thi-thiên 23:2)" },
+            { day: 3, zone: "Thung Lũng Xanh", name: "Suối Lời Sự Sống", icon: "💧", x: 230, y: 440, image: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=600&auto=format&fit=crop&q=80", desc: "Dòng suối mát lành tuôn tràn từ thiên đàng để xoa dịu những khô cằn và nuôi lớn hạt mầm đức tin bên trong bạn.", verse: "Lời Chúa là ngọn đèn cho chân tôi, ánh sáng cho đường lối tôi. (Thi-thiên 119:105)" },
+            { day: 4, zone: "Thung Lũng Xanh", name: "Cầu Giao Ước", icon: "🌉", x: 230, y: 530, image: "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=600&auto=format&fit=crop&q=80", desc: "Chiếc cầu bắc qua thung lũng sâu thẳm, biểu trưng cho nhịp cầu Giao ước vĩnh cửu của tình yêu Chúa chẳng bao giờ dời đổi.", verse: "Giao ước hòa bình ta cũng sẽ chẳng dời đi, Đức Giê-hô-va là Đấng thương xót ngươi phán vậy. (Ê-sai 54:10)" },
+            { day: 5, zone: "Thung Lũng Xanh", name: "Cửa Ải Thử Thách", icon: "🚪", x: 340, y: 530, image: "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=600&auto=format&fit=crop&q=80", desc: "Ranh giới bước ra khỏi vùng an toàn bình lặng của Thung Lũng Xanh để đối mặt với hoang mạc sa mạc khắc nghiệt đầy cát bụi.", verse: "Hãy vững lòng bền chí, chớ run sợ, vì Giê-hô-va Đức Chúa Trời ngươi vẫn ở cùng ngươi đi bất cứ nơi nào. (Giô-suê 1:9)" },
+            { day: 6, zone: "Sa Mạc Cát Nắng", name: "Hoang Mạc Lửa Trắng", icon: "🏜️", x: 490, y: 540, image: "https://images.unsplash.com/photo-1509316975850-ff9c5edd0cd9?w=600&auto=format&fit=crop&q=80", desc: "Bản đồ dẫn sâu vào cồn cát nắng cháy, mô phỏng những ngày khô hạn tâm linh, khi bạn cảm giác như tiếng gọi cầu nguyện rơi vào thinh lặng.", verse: "Linh hồn tôi khát khao Ngài trong một đất khô khan, cực nhọc, chẳng có nước. (Thi-thiên 63:1)" },
+            { day: 7, zone: "Sa Mạc Cát Nắng", name: "Ốc Đảo Tiếp Trợ", icon: "🌴", x: 620, y: 530, image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&auto=format&fit=crop&q=80", desc: "Chúa ban Ốc đảo xanh tươi tiếp nước đúng thời điểm. Khi bạn nghĩ mình đã cạn kiệt sức lực, Ngài sẽ mở ra một nguồn sống bất ngờ.", verse: "Đức Giê-hô-va sẽ cứ dẫn dắt ngươi, làm cho ngươi no lòng giữa nơi khô hạn. (Ê-sai 58:11)" },
+            { day: 8, zone: "Sa Mạc Cát Nắng", name: "Giếng Nước Ma-ra", icon: "🧪", x: 740, y: 520, image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&auto=format&fit=crop&q=80", desc: "Dân sự oán trách vì giếng nước đắng trong hoang mạc, nhưng Chúa đã hóa dòng nước đắng thành ngọt ngào cho người tin cậy.", verse: "Ngài chỉ cho ông một gốc cây, ông ném xuống nước, nước liền hóa ngọt. (Xuất Ê-díp-tô Ký 15:25)" },
+            { day: 9, zone: "Sa Mạc Cát Nắng", name: "Núi Sinai Giao Ước", icon: "⛰️", x: 690, y: 440, image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=600&auto=format&fit=crop&q=80", desc: "Đỉnh núi Sinai chói lòa vinh quang, nơi Chúa trực tiếp phán truyền Mười Điều Răn và khắc trên những bia đá vĩnh cửu.", verse: "Bởi vì luật pháp ban cho bởi Môi-se, còn ân điển và lẽ thật đến bởi Đức Chúa Jêsus Christ. (Giăng 1:17)" },
+            { day: 10, zone: "Sa Mạc Cát Nắng", name: "Thung Lũng Quyết Định", icon: "🧭", x: 550, y: 420, image: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=600&auto=format&fit=crop&q=80", desc: "Ranh giới lựa chọn dứt khoát: rời bỏ sa mạc để sẵn sàng tiến thẳng vào lò lửa thử thách của vùng núi lửa nham thạch.", verse: "Ai thuộc về Đức Giê-hô-va, hãy đến đây cùng ta! (Xuất Ê-díp-tô Ký 32:26)" },
+            { day: 11, zone: "Núi Lửa Rực Cháy", name: "Sông Dung Nham", icon: "🌋", x: 600, y: 260, image: "https://images.unsplash.com/photo-1508873696983-2df519f0397e?w=600&auto=format&fit=crop&q=80", desc: "Mê cung núi lửa chập chùng thử thách lòng quả cảm. Nơi sức nóng của thử thách tôi luyện đức tin bạn trở nên tinh ròng hơn cả vàng ròng.", verse: "Nếu ngươi đi qua lửa, sẽ chẳng bị cháy, ngọn lửa cũng chẳng táp vào ngươi. (Ê-sai 43:2)" },
+            { day: 12, zone: "Núi Lửa Rực Cháy", name: "Bàn Thờ Của Lễ", icon: "🔥", x: 700, y: 250, image: "https://images.unsplash.com/photo-1519751138087-5bf79df62d5b?w=600&auto=format&fit=crop&q=80", desc: "Nơi người dâng của lễ sống chiêm nghiệm sự tận hiện và sẵn sàng hy sinh những ước muốn cá nhân vì Chúa.", verse: "Hãy dâng thân thể mình làm của lễ sống và thánh, đẹp lòng Đức Chúa Trời. (Rô-ma 12:1)" }
+        ];
+
+        // KHỞI TẠO STATE TRONG GAME SANDBOX
+        let gameState = {
+            points: 120,
+            mana: 3,
+            water: 2,
+            shield: false,
+            userDay: 1,
+            quizCorrectSelected: false,
+            inventory: {
+                halo: false,
+                glasses: false,
+                staff: false
+            },
+            equipped: {
+                halo: false,
+                glasses: false,
+                staff: false
+            }
+        };
+
+        // GIAO DIỆN TƯƠNG TÁC TAB
+        const tabBtnDevotional = document.getElementById('tab-btn-devotional');
+        const tabBtnCoop = document.getElementById('tab-btn-coop');
+        const tabBtnInventory = document.getElementById('tab-btn-inventory');
+
+        const tabContentDevotional = document.getElementById('tab-content-devotional');
+        const tabContentCoop = document.getElementById('tab-content-coop');
+        const tabContentInventory = document.getElementById('tab-content-inventory');
+
+        function switchTab(activeBtn, activeContent) {
+            [tabBtnDevotional, tabBtnCoop, tabBtnInventory].forEach(btn => {
+                btn.className = "flex-1 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-slate-200 transition-all";
+            });
+            [tabContentDevotional, tabContentCoop, tabContentInventory].forEach(content => {
+                content.classList.add('hidden');
+            });
+            activeBtn.className = "flex-1 py-2 rounded-xl text-xs font-bold bg-amber-500 text-white transition-all";
+            activeContent.classList.remove('hidden');
+        }
+
+        tabBtnDevotional.onclick = () => switchTab(tabBtnDevotional, tabContentDevotional);
+        tabBtnCoop.onclick = () => switchTab(tabBtnCoop, tabContentCoop);
+        tabBtnInventory.onclick = () => switchTab(tabBtnInventory, tabContentInventory);
+
+        // ĐỒNG BỘ HUD LÊN MÀN HÌNH
+        function updateHUD() {
+            document.getElementById('hud-points').innerText = `${gameState.points} ✨`;
+            document.getElementById('hud-mana').innerText = `${gameState.mana}/5`;
+            document.getElementById('hud-water').innerText = `${gameState.water}/5`;
+            
+            const shieldEl = document.getElementById('hud-shield');
+            if (gameState.shield) {
+                shieldEl.innerText = "BẬT 🔥";
+                shieldEl.className = "text-xs font-extrabold text-orange-500 uppercase mt-1 bg-orange-500/10 px-2 py-0.5 rounded-md border border-orange-500/20 shadow-[0_0_8px_rgba(245,158,11,0.2)] animate-pulse";
+            } else {
+                shieldEl.innerText = "TẮT";
+                shieldEl.className = "text-xs font-extrabold text-slate-500 uppercase mt-1 bg-slate-800/80 px-2 py-0.5 rounded-md border border-slate-700";
+            }
+
+            // Gậy chăn chiên mở khóa ở 150đ
+            const btnStaff = document.getElementById('inv-btn-staff');
+            if (gameState.points >= 150) {
+                btnStaff.disabled = false;
+                btnStaff.innerText = gameState.equipped.staff ? "Tháo Ra" : "Trang Bị";
+                btnStaff.className = "text-[10px] font-bold px-3 py-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 transition-all";
+            }
+        }
+
+        // ĐÁNH GIÁ CHẤT LƯỢNG BÀI VIẾT (LIVE VALIDATION)
+        const reflectionInput = document.getElementById('reflection-input');
+        const charCountEl = document.getElementById('char-count');
+        const qualityBadge = document.getElementById('quality-badge');
+
+        reflectionInput.addEventListener('input', () => {
+            const length = reflectionInput.value.trim().length;
+            charCountEl.innerText = length;
+
+            if (length >= 30) {
+                qualityBadge.innerText = "Đạt Yêu Cầu! Kích hoạt Cột Lửa";
+                qualityBadge.className = "font-extrabold text-emerald-500";
+            } else {
+                qualityBadge.innerText = "Chưa Đạt Yêu Cầu";
+                qualityBadge.className = "font-extrabold text-red-500";
+            }
+        });
+
+        // XỬ LÝ CHỌN CÂU ĐỐ KINH THÁNH
+        function selectQuizOpt(btn, isCorrect) {
+            document.querySelectorAll('.quiz-opt').forEach(opt => {
+                opt.className = "quiz-opt bg-slate-900 border border-slate-800 text-[11px] py-1.5 px-2 rounded-xl transition-all text-slate-300";
+            });
+            if (isCorrect) {
+                btn.className = "quiz-opt bg-emerald-500/20 border border-emerald-500 text-[11px] py-1.5 px-2 rounded-xl text-emerald-400 font-bold transition-all";
+                gameState.quizCorrectSelected = true;
+            } else {
+                btn.className = "quiz-opt bg-red-500/20 border border-red-500 text-[11px] py-1.5 px-2 rounded-xl text-red-400 font-bold transition-all";
+                gameState.quizCorrectSelected = false;
+            }
+        }
+
+        // NỘP BÀI HỌC VÀ TIẾN CHẶNG (SUBMIT FLOW)
+        document.getElementById('btn-submit-devotional').onclick = () => {
+            const textLength = reflectionInput.value.trim().length;
+            
+            if (textLength < 10) {
+                alert("⚠️ Vui lòng viết ít nhất 10 ký tự cảm nhận suy ngẫm để cho chiên ăn!");
+                return;
+            }
+
+            if (!gameState.quizCorrectSelected) {
+                alert("⚠️ Ôi! Câu trả lời Quiz Kinh Thánh chưa chính xác. Hãy chọn lại đáp án đúng để mở lối nhé!");
+                return;
+            }
+
+            // Tính toán thưởng tài nguyên
+            let pointsEarned = 10;
+            gameState.mana = Math.min(5, gameState.mana + 1);
+            gameState.water = Math.min(5, gameState.water + 1);
+
+            if (textLength >= 30) {
+                gameState.shield = true; // Kích hoạt cột mây/lửa
+                pointsEarned += 5; // Thưởng thêm điểm viết tốt
+            }
+
+            gameState.points += pointsEarned;
+            gameState.userDay = Math.min(mazeQuestData.length, gameState.userDay + 1);
+            
+            playChirpSound();
+            updateHUD();
+            updateAllMapState();
+
+            // Chờ chiên di chuyển xong (850ms), hiện modal chiêm ngưỡng tranh Lời Hứa mới
+            setTimeout(() => {
+                const currentNode = mazeQuestData.find(n => n.day === gameState.userDay);
+                if (currentNode) {
+                    openIllustrationModal(currentNode);
+                }
+            }, 850);
+
+            // Kiểm tra kích hoạt Biến Cố Ngẫu Nhiên: Sói dữ rình rập ở Ngày 4
+            if (gameState.userDay === 4 && !gameState.inventory.halo) {
+                setTimeout(() => {
+                    openEncounterModal();
+                }, 2000);
+            }
+
+            // Log nhật ký
+            addCoopLog(`• Bạn vừa nộp bài học sâu sắc (+${pointsEarned}đ). Bầy chiên nhận thêm 1 Man-na & 1 Nước.`);
+            
+            // Reset form
+            reflectionInput.value = '';
+            charCountEl.innerText = '0';
+            qualityBadge.innerText = "Chưa Đạt Yêu Cầu";
+            qualityBadge.className = "font-extrabold text-red-500";
+            gameState.quizCorrectSelected = false;
+            document.querySelectorAll('.quiz-opt').forEach(opt => {
+                opt.className = "quiz-opt bg-slate-900 border border-slate-800 text-[11px] py-1.5 px-2 rounded-xl transition-all text-slate-200";
+            });
+        };
+
+        // GỬI NƯỚC CỨU TRỢ CHO LAN (CO-OP INTERACTION)
+        document.getElementById('btn-rescue-lan').onclick = function(e) {
+            if (gameState.water <= 0) {
+                alert("❌ Bạn không đủ Nước Hằng Sống dự trữ! Hãy tĩnh nguyện hôm nay để thu hoạch thêm nước.");
+                return;
+            }
+
+            gameState.water -= 1;
+            gameState.points += 15; // Cộng điểm thưởng cứu bạn
+            updateHUD();
+
+            // Hoạt ảnh hạt nước bay từ HUD sang quân cờ của Lan trên bản đồ
+            const btnRect = e.target.getBoundingClientRect();
+            const lanToken = document.getElementById('friend-lan-token');
+            const lanRect = lanToken.getBoundingClientRect();
+
+            // Tạo thẻ hiệu ứng hạt nước bay
+            const drop = document.createElement('div');
+            drop.innerHTML = "💧";
+            drop.style.left = `${btnRect.left + window.scrollX}px`;
+            drop.style.top = `${btnRect.top + window.scrollY}px`;
+            drop.className = "text-xl pointer-events-none fixed z-[100] transition-all";
+            document.body.appendChild(drop);
+
+            const tx = lanRect.left - btnRect.left;
+            const ty = lanRect.top - btnRect.top;
+            
+            drop.style.setProperty('--tx', `${tx}px`);
+            drop.style.setProperty('--ty', `${ty}px`);
+            drop.classList.add('water-drop-effect');
+
+            setTimeout(() => {
+                drop.remove();
+                
+                // Giải thoát Lan khỏi SOS
+                document.getElementById('lan-sos-badge').classList.add('hidden');
+                document.getElementById('btn-rescue-lan').disabled = true;
+                document.getElementById('btn-rescue-lan').innerText = "Đã Tiếp Nước ✓";
+                document.getElementById('btn-rescue-lan').className = "bg-slate-800 text-slate-500 font-extrabold text-[10px] px-3.5 py-2 rounded-xl cursor-not-allowed";
+                
+                // Lan di chuyển lên chặng 4
+                lanToken.style.transform = `translate3d(230px, 530px, 0)`; // Node 4
+                
+                playChirpSound();
+                addCoopLog(`• Bạn đã gửi tiếp tế 💧 giúp giải cứu bầy chiên của Lan (+15đ). Lan tiến lên chặng 4.`);
+                alert("🎉 Tuyệt vời! Bạn đã tiếp tế thành công. Chú chiên của Lan đã hồi sinh và tiếp tục hành trình!");
+            }, 1200);
+        };
+
+        // NHẬT KÝ NHÓM
+        function addCoopLog(text) {
+            const log = document.getElementById('coop-log');
+            const p = document.createElement('p');
+            p.innerHTML = text;
+            log.appendChild(p);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        // TỦ ĐỒ PHỤ KIỆN PET (INVENTORY EQUIP SYSTEM)
+        function toggleAccessory(type) {
+            const btn = document.getElementById(`inv-btn-${type}`);
+            
+            if (type === 'glasses') {
+                gameState.equipped.glasses = !gameState.equipped.glasses;
+                const glassesEl = document.getElementById('equipped-glasses');
+                if (gameState.equipped.glasses) {
+                    glassesEl.classList.remove('hidden');
+                    btn.innerText = "Tháo Ra";
+                    btn.className = "text-[10px] font-bold px-3 py-1.5 rounded-xl border border-slate-700 bg-slate-850 hover:bg-slate-800 text-slate-300 transition-all";
+                } else {
+                    glassesEl.classList.add('hidden');
+                    btn.innerText = "Trang Bị";
+                    btn.className = "text-[10px] font-bold px-3 py-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 transition-all";
+                }
+            } else if (type === 'halo') {
+                gameState.equipped.halo = !gameState.equipped.halo;
+                const haloEl = document.getElementById('equipped-halo');
+                if (gameState.equipped.halo) {
+                    haloEl.classList.remove('hidden');
+                    btn.innerText = "Tháo Ra";
+                    btn.className = "text-[10px] font-bold px-3 py-1.5 rounded-xl border border-slate-700 bg-slate-850 hover:bg-slate-800 text-slate-300 transition-all";
+                } else {
+                    haloEl.classList.add('hidden');
+                    btn.innerText = "Trang Bị";
+                    btn.className = "text-[10px] font-bold px-3 py-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 transition-all";
+                }
+            } else if (type === 'staff') {
+                gameState.equipped.staff = !gameState.equipped.staff;
+                const staffEl = document.getElementById('equipped-staff');
+                if (gameState.equipped.staff) {
+                    staffEl.classList.remove('hidden');
+                    btn.innerText = "Tháo Ra";
+                    btn.className = "text-[10px] font-bold px-3 py-1.5 rounded-xl border border-slate-700 bg-slate-850 hover:bg-slate-800 text-slate-300 transition-all";
+                } else {
+                    staffEl.classList.add('hidden');
+                    btn.innerText = "Trang Bị";
+                    btn.className = "text-[10px] font-bold px-3 py-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 transition-all";
+                }
+            }
+        }
+
+        // XỬ LÝ BIẾN CỐ SÓI RỪNG
+        function openEncounterModal() {
+            const modal = document.getElementById('encounter-modal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function answerEncounter(btn, isCorrect) {
+            if (isCorrect) {
+                btn.className = "w-full bg-emerald-500/20 border border-emerald-500 py-2 px-3 rounded-xl text-xs text-emerald-400 font-bold transition-all text-left";
+                setTimeout(() => {
+                    alert("🎉 Chúc mừng! Bạn trả lời đúng đố Kinh Thánh. Ngọn lửa đức tin rực sáng đã đánh đuổi Sói Rừng! Bạn nhận được Hào Quang Thiên Sứ 😇");
+                    
+                    // Mở khóa Hào Quang trong tủ đồ
+                    gameState.inventory.halo = true;
+                    const btnHalo = document.getElementById('inv-btn-halo');
+                    btnHalo.disabled = false;
+                    btnHalo.innerText = "Trang Bị";
+                    btnHalo.className = "text-[10px] font-bold px-3 py-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 transition-all"
+                    btnHalo.onclick = () => toggleAccessory('halo');
+
+                    document.getElementById('encounter-modal').classList.add('opacity-0', 'pointer-events-none');
+                }, 800);
+            } else {
+                btn.className = "w-full bg-red-500/20 border border-red-500 py-2 px-3 rounded-xl text-xs text-red-400 font-bold transition-all text-left";
+                setTimeout(() => {
+                    alert("❌ Chưa chính xác rồi! Sói rừng gầm gừ dữ dội hơn. Hãy suy ngẫm lại và chọn một đáp án khác để tự vệ nhé.");
+                }, 500);
+            }
+        }
+
+        // HOẠT ẢNH BẢN ĐỒ (Lấy lại các hàm render từ map-demo.html)
+        function renderQuestPaths() {
+            const pathMain = document.getElementById('quest-path-main');
+            const pathGlow = document.getElementById('quest-path-glow');
+            
+            let pathD = `M ${mazeQuestData[0].x} ${mazeQuestData[0].y}`;
+            
+            for (let i = 1; i < mazeQuestData.length; i++) {
+                const prev = mazeQuestData[i-1];
+                const curr = mazeQuestData[i];
+                const cpX1 = prev.x + (curr.x - prev.x) / 1.5;
+                const cpY1 = prev.y;
+                const cpX2 = prev.x + (curr.x - prev.x) / 3;
+                const cpY2 = curr.y;
+                pathD += ` C ${cpX1} ${cpY1}, ${cpX2} ${cpY2}, ${curr.x} ${curr.y}`;
+            }
+
+            pathMain.setAttribute("d", pathD);
+            pathGlow.setAttribute("d", pathD);
+        }
+
+        function renderMapNodes() {
+            const container = document.getElementById('nodes-layer');
+            container.innerHTML = '';
+
+            mazeQuestData.forEach((node) => {
+                const btn = document.createElement('button');
+                btn.className = `absolute w-9 h-9 -ml-4 -mt-4 rounded-full shadow-lg flex items-center justify-center text-sm transition-all duration-300 hover:scale-125 focus:outline-none z-20`;
+                
+                if (node.day < gameState.userDay) {
+                    btn.classList.add('bg-emerald-600', 'text-white', 'border-2', 'border-emerald-300', 'hover:bg-emerald-500');
+                } else if (node.day === gameState.userDay) {
+                    btn.classList.add('bg-amber-500', 'text-white', 'border-2', 'border-white', 'animate-pulse', 'shadow-[0_0_12px_rgba(245,158,11,0.8)]');
+                } else {
+                    btn.classList.add('bg-slate-800/80', 'text-slate-500', 'border-2', 'border-slate-700/60', 'cursor-not-allowed', 'opacity-65');
+                }
+
+                btn.style.left = `${node.x}px`;
+                btn.style.top = `${node.y}px`;
+                btn.innerHTML = node.icon;
+                
+                btn.onclick = () => {
+                    if (node.day <= gameState.userDay) {
+                        showNodeInformation(node);
+                        openIllustrationModal(node);
+                    } else {
+                        playErrorSound();
+                    }
+                };
+
+                container.appendChild(btn);
+            });
+        }
+
+        function syncPlayerToken() {
+            const token = document.getElementById('avatar-token');
+            const activeNode = mazeQuestData.find(n => n.day === gameState.userDay);
+
+            if (activeNode) {
+                token.style.transform = `translate3d(${activeNode.x}px, ${activeNode.y}px, 0)`;
+
+                const scrollContainer = document.getElementById('map-scroll-container');
+                const scrollTarget = activeNode.x - scrollContainer.offsetWidth / 2;
+                scrollContainer.scrollTo({
+                    left: Math.max(0, scrollTarget),
+                    behavior: 'smooth'
+                });
+
+                const zoneLabel = document.getElementById('current-zone-label');
+                zoneLabel.innerText = `Đang ở: ${activeNode.zone}`;
+                
+                if (activeNode.zone === "Thung Lũng Xanh") {
+                    zoneLabel.className = "text-xs font-bold text-emerald-400 tracking-wider uppercase bg-emerald-950/90 border border-emerald-800 px-3 py-1 rounded-full";
+                } else if (activeNode.zone === "Sa Mạc Cát Nắng") {
+                    zoneLabel.className = "text-xs font-bold text-yellow-400 tracking-wider uppercase bg-yellow-950/90 border border-yellow-850 px-3 py-1 rounded-full";
+                } else {
+                    zoneLabel.className = "text-xs font-bold text-red-400 tracking-wider uppercase bg-red-950/90 border border-red-850 px-3 py-1 rounded-full";
+                }
+            }
+        }
+
+        function showNodeInformation(node) {
+            const zoneBadge = document.getElementById('info-zone-badge');
+            document.getElementById('info-node-icon').innerText = node.icon;
+            document.getElementById('info-node-title').innerText = node.name;
+            document.getElementById('info-node-day').innerText = `Chặng: Ngày ${node.day}/30`;
+            document.getElementById('info-node-coord').innerText = `Tọa độ: (${node.x}, ${node.y})`;
+            document.getElementById('info-node-desc').innerText = node.desc;
+            document.getElementById('info-node-verse').innerText = `"${node.verse}"`;
+
+            zoneBadge.innerText = `Vùng: ${node.zone.toUpperCase()}`;
+            if (node.zone === "Thung Lũng Xanh") {
+                zoneBadge.className = "text-[9px] font-bold text-emerald-400 uppercase tracking-widest bg-emerald-500/10 px-2.5 py-0.5 rounded-md border border-emerald-500/20";
+            } else if (node.zone === "Sa Mạc Cát Nắng") {
+                zoneBadge.className = "text-[9px] font-bold text-yellow-400 uppercase tracking-widest bg-yellow-500/10 px-2.5 py-0.5 rounded-md border border-yellow-500/20";
+            } else {
+                zoneBadge.className = "text-[9px] font-bold text-red-400 uppercase tracking-widest bg-red-500/10 px-2.5 py-0.5 rounded-md border border-red-500/20";
+            }
+        }
+
+        function openIllustrationModal(node) {
+            const modal = document.getElementById('illustration-modal');
+            const card = document.getElementById('illustration-card');
+            
+            document.getElementById('zoom-modal-img').src = node.image;
+            document.getElementById('zoom-modal-chapter').innerText = `Vùng: ${node.zone.toUpperCase()}`;
+            document.getElementById('zoom-modal-title').innerText = node.name;
+            document.getElementById('zoom-modal-desc').innerText = node.desc;
+            document.getElementById('zoom-modal-verse').innerText = `"${node.verse}"`;
+
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            card.classList.remove('scale-95', 'opacity-0');
+            card.classList.add('scale-100', 'opacity-100');
+        }
+
+        function closeIllustrationModal() {
+            const modal = document.getElementById('illustration-modal');
+            const card = document.getElementById('illustration-card');
+            
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            card.classList.remove('scale-100', 'opacity-100');
+            card.classList.add('scale-95', 'opacity-0');
+        }
+
+        // Âm thanh Harp Chiptune
+        function playChirpSound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                let osc1 = audioCtx.createOscillator();
+                let gain1 = audioCtx.createGain();
+                osc1.connect(gain1);
+                gain1.connect(audioCtx.destination);
+                osc1.type = 'sine';
+                osc1.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                gain1.gain.setValueAtTime(0, audioCtx.currentTime);
+                gain1.gain.linearRampToValueAtTime(0.2, audioCtx.currentTime + 0.05);
+                gain1.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                osc1.start();
+                osc1.stop(audioCtx.currentTime + 0.45);
+            } catch (e) {}
+        }
+
+        function playErrorSound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(140, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.2);
+            } catch (e) {}
+        }
+
+        function updateAllMapState() {
+            renderQuestPaths();
+            renderMapNodes();
+            syncPlayerToken();
+            
+            const activeNode = mazeQuestData.find(n => n.day === gameState.userDay);
+            if (activeNode) {
+                showNodeInformation(activeNode);
+            }
+        }
+
+        window.onload = () => {
+            updateHUD();
+            updateAllMapState();
+        };
+    </script>
+</body>
+</html>
