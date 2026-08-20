@@ -3,8 +3,12 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const dns = require('dns');
-dns.setDefaultResultOrder('ipv4first');
-dns.setServers(['8.8.8.8', '8.8.4.4']);
+try {
+    dns.setDefaultResultOrder('ipv4first');
+    dns.setServers(['8.8.8.8', '8.8.4.4']);
+} catch (err) {
+    console.error('DNS config warning:', err.message);
+}
 
 const app = express();
 app.use(cors({ origin: '*' }));
@@ -14,11 +18,13 @@ app.use(express.json());
 const BREVO_API_KEY = process.env.BREVO_API_KEY;
 
 // LINK MONGODB
-const MONGO_URI = "mongodb+srv://nguyenanh:16102006@cluster0.iwcowsc.mongodb.net/TinhNguyenApp?retryWrites=true&w=majority";
+const MONGO_URI = process.env.MONGO_URI || "mongodb+srv://nguyenanh:16102006@cluster0.iwcowsc.mongodb.net/TinhNguyenApp?retryWrites=true&w=majority";
 
 mongoose.connect(MONGO_URI).then(() => {
     console.log('DB Connected');
-    initSystem();
+    initSystem().catch(err => console.error("initSystem error:", err));
+}).catch(err => {
+    console.error("Lỗi kết nối MongoDB Atlas:", err);
 });
 
 // ================= SCHEMA =================
