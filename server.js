@@ -159,8 +159,15 @@ async function checkAndResetStreak(user, localDate) {
         user.shieldInitialized = true;
     }
 
-    let lastDateStr = user.lastCheckinDateStr;
-    if (!lastDateStr && user.history && user.history.length > 0) { lastDateStr = user.history[user.history.length - 1]; }
+    // Đồng bộ lịch sử điểm danh từ nhật ký dailyLogs để bảo toàn dữ liệu
+    const logDates = (user.dailyLogs || []).map(l => l.date).filter(Boolean);
+    const combinedHistory = Array.from(new Set([...(user.history || []), ...logDates])).sort();
+    if (combinedHistory.length > (user.history || []).length) {
+        user.history = combinedHistory;
+    }
+
+    let lastDateStr = combinedHistory.length > 0 ? combinedHistory[combinedHistory.length - 1] : user.lastCheckinDateStr;
+    if (lastDateStr) user.lastCheckinDateStr = lastDateStr;
 
     // Cộng điểm thưởng cuối quý (ngày 20/08/2026 trở đi)
     if (localDate >= "2026-08-20" && user.streakShields > 0 && !user.hasReceivedShieldBonus) {
