@@ -14,7 +14,11 @@
             position: relative;
             min-height: 100vh;
             overflow-x: hidden;
-        }        #bg-layer {
+            background-color: #bae6fd;
+            transition: background-color 1.2s ease-in-out;
+        }
+
+        #bg-layer {
             position: fixed;
             top: 0;
             left: 0;
@@ -23,81 +27,21 @@
             z-index: -1;
             pointer-events: none;
             overflow: hidden;
+            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 50%, #7dd3fc 100%);
+            transition: background 1.2s ease-in-out;
+        }
+
+        #bg-layer-pattern {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background-repeat: repeat;
+            opacity: 0.2;
+            transition: opacity 1.2s ease-in-out, background-image 1.2s ease-in-out;
         }
 
         #bg-layer::before {
-            content: "";
-            position: absolute;
-            top: -100px;
-            left: -100px;
-            right: -100px;
-            bottom: -100px;
-            will-change: transform;
-            pointer-events: none;
-            transition: background 1s ease-in-out, background-color 1s ease-in-out;
-        }        @keyframes slideBg {
-            0% {
-                transform: translate3d(0, 0, 0);
-            }
-            100% {
-                transform: translate3d(100px, 100px, 0);
-            }
-        }
-
-        @keyframes slideBgOffset {
-            0% {
-                transform: translate3d(0, 0, 0);
-            }
-            100% {
-                transform: translate3d(100px, 100px, 0);
-            }
-        }
-
-        .bg-theme-wood #bg-layer::before {
-            background-color: #e7e5e4;
-            background-image: repeating-linear-gradient(45deg, rgba(141, 110, 99, 0.06) 0px, rgba(141, 110, 99, 0.06) 2px, transparent 2px, transparent 20px), linear-gradient(135deg, #e7e5e4, #d6d3d1);
-            background-size: 100px 100px, 100% 100%;
-            animation: slideBg 6s linear infinite;
-        }
-
-        .bg-theme-bronze #bg-layer::before {
-            background-color: #ffedd5;
-            background-image: repeating-radial-gradient(circle at 0 0, transparent 0, rgba(217, 119, 6, 0.08) 10px, transparent 10px, transparent 25px), linear-gradient(135deg, #ffedd5, #fed7aa);
-            background-size: 100px 100px, 100% 100%;
-            animation: slideBg 8s linear infinite;
-        }
-
-        .bg-theme-iron #bg-layer::before {
-            background-color: #f1f5f9;
-            background-image: linear-gradient(45deg, rgba(100, 116, 139, 0.08) 25%, transparent 25%, transparent 75%, rgba(100, 116, 139, 0.08) 75%, rgba(100, 116, 139, 0.08)), linear-gradient(45deg, rgba(100, 116, 139, 0.08) 25%, transparent 25%, transparent 75%, rgba(100, 116, 139, 0.08) 75%, rgba(100, 116, 139, 0.08));
-            background-size: 50px 50px, 50px 50px;
-            animation: slideBgOffset 10s linear infinite;
-        }
-
-        .bg-theme-gold #bg-layer::before {
-            background-color: #fef08a;
-            background-image: radial-gradient(rgba(234, 179, 8, 0.2) 4px, transparent 4px), radial-gradient(rgba(234, 179, 8, 0.2) 4px, transparent 4px);
-            background-size: 50px 50px, 50px 50px;
-            animation: slideBgOffset 8s linear infinite;
-        }
-
-        .bg-theme-platinum #bg-layer::before {
-            background-color: #e0f2fe;
-            background-image: repeating-linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0px, rgba(59, 130, 246, 0.1) 2px, transparent 2px, transparent 20px), repeating-linear-gradient(45deg, rgba(59, 130, 246, 0.1) 0px, rgba(59, 130, 246, 0.1) 2px, transparent 2px, transparent 20px);
-            background-size: 100px 100px, 100px 100px;
-            animation: slideBg 12s linear infinite;
-        }
-
-        .bg-theme-diamond #bg-layer::before {
-            background-color: #cffafe;
-            background-image: linear-gradient(135deg, rgba(6, 182, 212, 0.15) 25%, transparent 25%, transparent 50%, rgba(6, 182, 212, 0.15) 50%, rgba(6, 182, 212, 0.15) 75%, transparent 75%, transparent);
-            background-size: 50px 50px;
-            animation: slideBg 6s linear infinite;
-        }        .bg-theme-ruby #bg-layer::before {
-            background-color: #ffe4e6;
-            background-image: radial-gradient(circle, rgba(225, 29, 72, 0.1) 20%, transparent 20%), radial-gradient(circle, rgba(225, 29, 72, 0.1) 20%, transparent 20%);
-            background-size: 50px 50px, 50px 50px;
-            animation: slideBgOffset 8s linear infinite;
+            display: none !important;
         }
 
         @media (max-width: 768px) {
@@ -858,8 +802,8 @@
 </head>
 
 <body id="app-body" class="bg-theme-wood flex items-center justify-center p-3 sm:p-4 lg:p-8 text-slate-800">
-    <!-- LỚP NỀN HOẠT ẢNH CHẠY NGẦM LIÊN TỤC -->
-    <div id="bg-layer"></div>
+    <!-- LỚP NỀN HOẠT ẢNH CHẠY NGẦM LIÊN TỤC (THEME 3 TUẦN) -->
+    <div id="bg-layer"><div id="bg-layer-pattern"></div></div>
 
     <svg width="0" height="0" class="absolute pointer-events-none">
         <defs>
@@ -1116,6 +1060,28 @@
                     </button>
                     <p id="notification-status-text" class="text-[10px] text-center mt-2 font-medium"></p>
                 </div>
+
+                <!-- TÙY BIẾN GIAO DIỆN THEME 3 TUẦN -->
+                <div class="border-t border-slate-100 pt-3 bg-sky-50/60 -mx-6 px-6 pb-4">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <div>
+                            <label class="text-xs font-bold text-slate-800 block flex items-center gap-1">🎨 Giao Diện Nền (Đổi 3 Tuần)</label>
+                            <p id="theme-status-info" class="text-[10px] text-sky-700 font-semibold">Tự động đổi mỗi 3 tuần</p>
+                        </div>
+                        <select id="setting-theme-mode" class="text-[11px] font-bold bg-white border border-sky-300 text-sky-700 px-2 py-1 rounded-lg outline-none cursor-pointer shadow-sm">
+                            <option value="auto">🔄 Tự động (3 tuần)</option>
+                            <option value="manual">📌 Chọn cố định</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center gap-2 mt-2">
+                        <select id="setting-theme-select" class="flex-1 text-xs font-semibold bg-white border border-sky-300 text-slate-700 px-2.5 py-1.5 rounded-lg outline-none cursor-pointer shadow-sm">
+                        </select>
+                        <button id="btn-apply-theme-user" class="px-3 py-1.5 bg-sky-500 hover:bg-sky-600 text-white rounded-lg text-xs font-bold transition-all shadow-sm active:scale-95 shrink-0">
+                            Áp Dụng
+                        </button>
+                    </div>
+                </div>
+
                 <div class="border-t border-slate-100 pt-3">
                     <label class="text-xs font-bold text-slate-800 block mb-2">Thay Đổi Mật Khẩu</label>
                     <input type="password" id="setting-old-pw" placeholder="Nhập mật khẩu cũ để xác nhận"
@@ -1227,6 +1193,12 @@
                     <button id="btn-test-rank-go"
                         class="text-[11px] bg-amber-500 text-white px-3 py-1.5 rounded-lg font-bold shadow-sm active:scale-95">⭐
                         Test Rank</button>
+                    <div class="flex items-center gap-1.5 border-l border-amber-300 pl-2">
+                        <label class="text-[11px] font-bold text-amber-900">🎨 Test Theme (3 tuần):</label>
+                        <select id="admin-theme-select" class="text-[11px] font-bold bg-white border border-amber-300 text-amber-700 px-2 py-1.5 rounded-lg outline-none cursor-pointer">
+                        </select>
+                        <button id="btn-admin-apply-theme" class="text-[11px] bg-sky-600 hover:bg-sky-700 text-white px-2.5 py-1.5 rounded-lg font-bold shadow-sm active:scale-95">Xem Thử</button>
+                    </div>
                     <button id="btn-test-reset"
                         class="text-[11px] bg-slate-800 text-white px-3 py-1.5 rounded-lg font-bold shadow-sm active:scale-95 ml-auto">Khôi
                         Phục Dữ Liệu</button>
@@ -2214,6 +2186,193 @@
             { text: "Nguyện tình yêu của Chúa ban cho bạn thêm năng lực!", verse: "Tôi làm được mọi sự nhờ Đấng ban thêm sức cho tôi. — Phi-líp 4:13" },
             { text: "Xin Chúa ban phước dư dật trên bạn hôm nay!", verse: "Đức Chúa Trời có quyền ban cho anh em đủ mọi thứ ơn đầy dẫy... — 2 Cô-rinh-tô 9:8" }
         ];
+
+        // ================= CƠ CHẾ ĐỔI THEME GIAO DIỆN MỖI 3 TUẦN (THIÊN NHIÊN & TĨNH NGUYỆN) =================
+        const THEME_ROTATION_DAYS = 21; // Chu kỳ 3 tuần đổi 1 lần
+        const THEME_ANCHOR_DATE = new Date("2026-10-12T00:00:00Z"); // Điểm neo (bắt đầu từ theme Xanh Lơ)
+
+        const PERIODIC_THEMES = [
+            {
+                id: 'living-waters',
+                name: 'Xanh Lơ Suối Mát',
+                desc: 'Mé nước bình tịnh & sóng êm đềm (Thi-thiên 23:2)',
+                bodyColor: '#bae6fd',
+                gradient: 'linear-gradient(135deg, #e0f2fe 0%, #bae6fd 50%, #7dd3fc 100%)',
+                pattern: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='60' viewBox='0 0 120 60'%3E%3Cpath d='M0 20 Q 30 5, 60 20 T 120 20' fill='none' stroke='%23ffffff' stroke-width='1.5' stroke-linecap='round' opacity='0.7'/%3E%3Cpath d='M0 45 Q 30 30, 60 45 T 120 45' fill='none' stroke='%23ffffff' stroke-width='1.5' stroke-linecap='round' opacity='0.45'/%3E%3C/svg%3E\")",
+                patternSize: '120px 60px',
+                patternOpacity: 0.22
+            },
+            {
+                id: 'green-pastures',
+                name: 'Đồng Cỏ Xanh Tươi',
+                desc: 'Đồng cỏ xanh tươi & nhành lá hy vọng (Thi-thiên 23:2)',
+                bodyColor: '#d1fae5',
+                gradient: 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 50%, #a7f3d0 100%)',
+                pattern: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='70' height='70' viewBox='0 0 70 70'%3E%3Cpath d='M35 15 C42 6, 52 9, 55 18 C46 22, 38 20, 35 15 Z M35 15 C28 6, 18 9, 15 18 C24 22, 32 20, 35 15 Z M35 15 L35 55 M35 38 C43 30, 53 32, 56 41 C47 45, 39 43, 35 38 Z M35 38 C27 30, 17 32, 14 41 C23 45, 31 43, 35 38 Z' fill='none' stroke='%23ffffff' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round' opacity='0.7'/%3E%3C/svg%3E\")",
+                patternSize: '70px 70px',
+                patternOpacity: 0.22
+            },
+            {
+                id: 'morning-dawn',
+                name: 'Bình Minh Hy Vọng',
+                desc: 'Ánh nắng mới & tia sáng ban mai (Ca Thương 3:23)',
+                bodyColor: '#ffedd5',
+                gradient: 'linear-gradient(135deg, #fff7ed 0%, #ffedd5 50%, #fed7aa 100%)',
+                pattern: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Ccircle cx='40' cy='40' r='7' fill='none' stroke='%23ffffff' stroke-width='1.5' opacity='0.7'/%3E%3Cline x1='40' y1='10' x2='40' y2='25' stroke='%23ffffff' stroke-width='1.5' stroke-linecap='round' opacity='0.7'/%3E%3Cline x1='40' y1='55' x2='40' y2='70' stroke='%23ffffff' stroke-width='1.5' stroke-linecap='round' opacity='0.7'/%3E%3Cline x1='10' y1='40' x2='25' y2='40' stroke='%23ffffff' stroke-width='1.5' stroke-linecap='round' opacity='0.7'/%3E%3Cline x1='55' y1='40' x2='70' y2='40' stroke='%23ffffff' stroke-width='1.5' stroke-linecap='round' opacity='0.7'/%3E%3Cline x1='19' y1='19' x2='29' y2='29' stroke='%23ffffff' stroke-width='1.2' stroke-linecap='round' opacity='0.5'/%3E%3Cline x1='51' y1='51' x2='61' y2='61' stroke='%23ffffff' stroke-width='1.2' stroke-linecap='round' opacity='0.5'/%3E%3Cline x1='61' y1='19' x2='51' y2='29' stroke='%23ffffff' stroke-width='1.2' stroke-linecap='round' opacity='0.5'/%3E%3Cline x1='29' y1='51' x2='19' y2='61' stroke='%23ffffff' stroke-width='1.2' stroke-linecap='round' opacity='0.5'/%3E%3C/svg%3E\")",
+                patternSize: '80px 80px',
+                patternOpacity: 0.2
+            },
+            {
+                id: 'heavenly-clouds',
+                name: 'Áng Mây Bình An',
+                desc: 'Áng mây bồng bềnh & sự chân thật của Chúa (Thi-thiên 57:10)',
+                bodyColor: '#ccfbf1',
+                gradient: 'linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 50%, #99f6e4 100%)',
+                pattern: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='110' height='70' viewBox='0 0 110 70'%3E%3Cpath d='M15 45 A14 14 0 0 1 38 34 A22 22 0 0 1 76 28 A19 19 0 0 1 98 45' fill='none' stroke='%23ffffff' stroke-width='1.6' stroke-linecap='round' opacity='0.75'/%3E%3Cpath d='M50 60 A12 12 0 0 1 72 52 A15 15 0 0 1 95 58' fill='none' stroke='%23ffffff' stroke-width='1.3' stroke-linecap='round' opacity='0.5'/%3E%3C/svg%3E\")",
+                patternSize: '110px 70px',
+                patternOpacity: 0.22
+            },
+            {
+                id: 'peaceful-vineyard',
+                name: 'Vườn Nho Yên Nghỉ',
+                desc: 'Nhành nho & sự gắn kết trong tình yêu thương (Giăng 15:5)',
+                bodyColor: '#fae8ff',
+                gradient: 'linear-gradient(135deg, #fdf4ff 0%, #fae8ff 50%, #f0abfc 100%)',
+                pattern: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath d='M10 70 Q 30 50, 40 30 Q 50 10, 70 10' fill='none' stroke='%23ffffff' stroke-width='1.5' stroke-linecap='round' opacity='0.7'/%3E%3Ccircle cx='38' cy='42' r='4' fill='none' stroke='%23ffffff' stroke-width='1.3' opacity='0.6'/%3E%3Ccircle cx='44' cy='48' r='4' fill='none' stroke='%23ffffff' stroke-width='1.3' opacity='0.6'/%3E%3Ccircle cx='34' cy='50' r='4' fill='none' stroke='%23ffffff' stroke-width='1.3' opacity='0.6'/%3E%3Cpath d='M25 45 Q 15 35, 20 25 Q 30 35, 25 45 Z' fill='none' stroke='%23ffffff' stroke-width='1.2' opacity='0.6'/%3E%3C/svg%3E\")",
+                patternSize: '80px 80px',
+                patternOpacity: 0.2
+            },
+            {
+                id: 'golden-sunlight',
+                name: 'Hạt Nắng Phước Hạnh',
+                desc: 'Nắng ấm ban mai & sự che chở phước hạnh (Thi-thiên 84:11)',
+                bodyColor: '#fef08a',
+                gradient: 'linear-gradient(135deg, #fefce8 0%, #fef08a 50%, #fde047 100%)',
+                pattern: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='70' height='70' viewBox='0 0 70 70'%3E%3Ccircle cx='35' cy='35' r='4' fill='none' stroke='%23ffffff' stroke-width='1.4' opacity='0.8'/%3E%3Cpath d='M35 18 C32 25, 38 25, 35 18 Z M35 52 C32 45, 38 45, 35 52 Z M18 35 C25 32, 25 38, 18 35 Z M52 35 C45 32, 45 38, 52 35 Z M23 23 C28 27, 30 24, 23 23 Z M47 47 C42 43, 40 46, 47 47 Z M47 23 C42 27, 44 30, 47 23 Z M23 47 C28 43, 26 40, 23 47 Z' fill='none' stroke='%23ffffff' stroke-width='1.3' opacity='0.65'/%3E%3C/svg%3E\")",
+                patternSize: '70px 70px',
+                patternOpacity: 0.22
+            },
+            {
+                id: 'starry-grace',
+                name: 'Trời Sao Ân Điển',
+                desc: 'Bầu trời đêm & ngàn vì sao sáng lấp lánh (Thi-thiên 147:4)',
+                bodyColor: '#0369a1',
+                gradient: 'linear-gradient(135deg, #0284c7 0%, #0369a1 50%, #075985 100%)',
+                pattern: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90' viewBox='0 0 90 90'%3E%3Cpath d='M45 25 Q 45 35 35 35 Q 45 35 45 45 Q 45 35 55 35 Q 45 35 45 25 Z' fill='%23ffffff' opacity='0.8'/%3E%3Cpath d='M15 70 Q 15 76 9 76 Q 15 76 15 82 Q 15 76 21 76 Q 15 76 15 70 Z' fill='%23ffffff' opacity='0.6'/%3E%3Ccircle cx='75' cy='15' r='1.8' fill='%23ffffff' opacity='0.65'/%3E%3Ccircle cx='80' cy='75' r='1.5' fill='%23ffffff' opacity='0.55'/%3E%3Ccircle cx='20' cy='20' r='1.5' fill='%23ffffff' opacity='0.55'/%3E%3C/svg%3E\")",
+                patternSize: '90px 90px',
+                patternOpacity: 0.24
+            },
+            {
+                id: 'eternal-mountain',
+                name: 'Núi Thánh Vững Bền',
+                desc: 'Núi cao sừng sững & sự nâng đỡ đời đời (Thi-thiên 121:1-2)',
+                bodyColor: '#cbd5e1',
+                gradient: 'linear-gradient(135deg, #f1f5f9 0%, #cbd5e1 50%, #94a3b8 100%)',
+                pattern: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='80' viewBox='0 0 120 80'%3E%3Cpath d='M0 65 L 35 25 L 65 55 L 95 28 L 120 50' fill='none' stroke='%23ffffff' stroke-width='1.5' stroke-linejoin='round' opacity='0.7'/%3E%3Ccircle cx='35' cy='18' r='2' fill='%23ffffff' opacity='0.8'/%3E%3Ccircle cx='95' cy='22' r='2' fill='%23ffffff' opacity='0.8'/%3E%3C/svg%3E\")",
+                patternSize: '120px 80px',
+                patternOpacity: 0.2
+            }
+        ];
+
+        function getPeriodicThemeInfo(date = new Date()) {
+            const diffMs = date.getTime() - THEME_ANCHOR_DATE.getTime();
+            const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+            const cycleIndex = Math.floor(Math.max(0, diffDays) / THEME_ROTATION_DAYS);
+            const themeIndex = ((cycleIndex % PERIODIC_THEMES.length) + PERIODIC_THEMES.length) % PERIODIC_THEMES.length;
+            const daysPassed = ((diffDays % THEME_ROTATION_DAYS) + THEME_ROTATION_DAYS) % THEME_ROTATION_DAYS;
+            const daysRemaining = THEME_ROTATION_DAYS - daysPassed;
+            return {
+                theme: PERIODIC_THEMES[themeIndex],
+                themeIndex,
+                daysRemaining,
+                daysPassed,
+                cycleNumber: cycleIndex + 1
+            };
+        }
+
+        let currentActiveTheme = PERIODIC_THEMES[0];
+
+        function applyPeriodicTheme(themeId = null, savePreference = false) {
+            const mode = localStorage.getItem('tinhnguyen_theme_mode') || 'auto';
+            const savedThemeId = localStorage.getItem('tinhnguyen_theme_id');
+
+            if (themeId) {
+                currentActiveTheme = PERIODIC_THEMES.find(t => t.id === themeId) || PERIODIC_THEMES[0];
+                if (savePreference) {
+                    localStorage.setItem('tinhnguyen_theme_mode', 'manual');
+                    localStorage.setItem('tinhnguyen_theme_id', currentActiveTheme.id);
+                }
+            } else if (mode === 'manual' && savedThemeId) {
+                currentActiveTheme = PERIODIC_THEMES.find(t => t.id === savedThemeId) || PERIODIC_THEMES[0];
+            } else {
+                currentActiveTheme = getPeriodicThemeInfo().theme;
+            }
+
+            const bgLayer = document.getElementById('bg-layer');
+            let bgPattern = document.getElementById('bg-layer-pattern');
+            if (bgLayer && !bgPattern) {
+                bgPattern = document.createElement('div');
+                bgPattern.id = 'bg-layer-pattern';
+                bgLayer.appendChild(bgPattern);
+            }
+
+            if (bgLayer) {
+                bgLayer.style.background = currentActiveTheme.gradient;
+            }
+            if (bgPattern) {
+                bgPattern.style.backgroundImage = currentActiveTheme.pattern;
+                bgPattern.style.backgroundSize = currentActiveTheme.patternSize;
+                bgPattern.style.opacity = currentActiveTheme.patternOpacity;
+            }
+            if (document.body) {
+                document.body.style.backgroundColor = currentActiveTheme.bodyColor;
+            }
+
+            updateThemeUIControls(currentActiveTheme);
+        }
+
+        function updateThemeUIControls(activeTheme) {
+            const mode = localStorage.getItem('tinhnguyen_theme_mode') || 'auto';
+            const info = getPeriodicThemeInfo();
+
+            const statusEl = document.getElementById('theme-status-info');
+            if (statusEl) {
+                if (mode === 'manual') {
+                    statusEl.innerText = `📌 Đang cố định: ${activeTheme.name}`;
+                } else {
+                    statusEl.innerText = `🔄 Tự động (Chu kỳ 3 tuần: còn ${info.daysRemaining} ngày)`;
+                }
+            }
+
+            const modeSelect = document.getElementById('setting-theme-mode');
+            if (modeSelect) modeSelect.value = mode;
+
+            const themeSelect = document.getElementById('setting-theme-select');
+            if (themeSelect) {
+                if (themeSelect.options.length === 0) {
+                    PERIODIC_THEMES.forEach(t => {
+                        const opt = document.createElement('option');
+                        opt.value = t.id;
+                        opt.innerText = `${t.name} (${t.desc.split('(')[0].trim()})`;
+                        themeSelect.appendChild(opt);
+                    });
+                }
+                themeSelect.value = activeTheme.id;
+            }
+
+            const adminSelect = document.getElementById('admin-theme-select');
+            if (adminSelect) {
+                if (adminSelect.options.length === 0) {
+                    PERIODIC_THEMES.forEach(t => {
+                        const opt = document.createElement('option');
+                        opt.value = t.id;
+                        opt.innerText = t.name;
+                        adminSelect.appendChild(opt);
+                    });
+                }
+                adminSelect.value = activeTheme.id;
+            }
+        }
 
         const rankData = [
             { id: 0, streak: 0, name: "Người Tìm Kiếm (Mộc)", class: "rank-wood", theme: "bg-theme-wood", hasSparkle: false },
@@ -3736,6 +3895,31 @@
                 }
             });
 
+            // Khởi chạy & Thiết lập Theme nền 3 tuần (Thiên nhiên & Tĩnh nguyện)
+            applyPeriodicTheme();
+
+            document.getElementById('setting-theme-mode')?.addEventListener('change', (e) => {
+                if (e.target.value === 'auto') {
+                    localStorage.removeItem('tinhnguyen_theme_mode');
+                    localStorage.removeItem('tinhnguyen_theme_id');
+                    applyPeriodicTheme();
+                } else {
+                    const selVal = document.getElementById('setting-theme-select')?.value;
+                    applyPeriodicTheme(selVal, true);
+                }
+            });
+
+            document.getElementById('btn-apply-theme-user')?.addEventListener('click', () => {
+                const selVal = document.getElementById('setting-theme-select')?.value;
+                applyPeriodicTheme(selVal, true);
+                alert('✨ Đã áp dụng giao diện nền thành công!');
+            });
+
+            document.getElementById('btn-admin-apply-theme')?.addEventListener('click', () => {
+                const selVal = document.getElementById('admin-theme-select')?.value;
+                applyPeriodicTheme(selVal, true);
+            });
+
             // Khởi chạy ngầm sau khi window.onload xong
             checkAutoLogin();
             setInterval(checkDailyReminder, 15000);
@@ -4438,7 +4622,8 @@
             }
 
             const currentRank = getCurrentRankInfo(userData.totalCheckins);
-            if (document.getElementById('app-body')) document.getElementById('app-body').className = 'bg-theme-wood flex items-center justify-center p-3 sm:p-4 lg:p-8 text-slate-800 ' + currentRank.theme;
+            if (document.getElementById('app-body')) document.getElementById('app-body').className = 'flex items-center justify-center p-3 sm:p-4 lg:p-8 text-slate-800 ' + currentRank.theme;
+            applyPeriodicTheme();
             if (document.getElementById('harp-wrapper')) document.getElementById('harp-wrapper').className = 'relative flex flex-col items-center justify-center h-48 w-48 mx-auto mb-2 harp-floating ' + currentRank.class;
             if (document.getElementById('rank-name-display')) document.getElementById('rank-name-display').innerText = 'Danh hiệu: ' + currentRank.name;
 
